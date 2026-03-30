@@ -200,6 +200,27 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .heatmap-day { font-size:10px;color:var(--text-light);font-weight:500;text-align:center;flex:1; }
 .dawam-footer { text-align:center;padding:24px 16px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
 
+/* DETAIL MODAL */
+#detail-modal { display:none;position:fixed;inset:0;z-index:300;background:rgba(61,42,10,.5);align-items:flex-end; }
+#detail-modal.show { display:flex; }
+.detail-sheet { background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-height:88vh;overflow-y:auto;animation:fadeUp .35s ease; }
+.detail-handle { width:40px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0; }
+.detail-content { padding:16px 20px 40px; }
+.detail-header { display:flex;align-items:center;gap:12px;margin-bottom:18px; }
+.detail-emoji-circle { width:52px;height:52px;border-radius:26px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:.5px solid var(--border); }
+.detail-title { font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--text);line-height:1.3; }
+.detail-time { font-size:12px;color:var(--text-secondary);margin-top:2px; }
+.detail-section { margin-bottom:16px; }
+.detail-section-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px; }
+.detail-text { font-size:14px;color:var(--text);line-height:1.75; }
+.detail-hadith { background:var(--accent-light);border-radius:12px;border-left:3px solid var(--accent);padding:12px 14px;margin:10px 0; }
+.detail-hadith p { font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text);line-height:1.65; }
+.detail-hadith small { font-size:11px;color:var(--text-secondary);margin-top:5px;display:block; }
+.detail-steps { display:flex;flex-direction:column;gap:8px;margin-top:8px; }
+.detail-step { display:flex;gap:10px;align-items:flex-start; }
+.detail-step-num { width:22px;height:22px;border-radius:11px;background:var(--accent);color:#fff8e8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px; }
+.detail-step-text { font-size:13px;color:var(--text);line-height:1.6;flex:1; }
+
 /* INSTALL BANNER */
 #install-banner { display:none;position:sticky;top:0;z-index:200;background:var(--accent);padding:10px 16px;align-items:center;gap:10px; }
 #install-banner.show { display:flex; }
@@ -487,6 +508,14 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 
 </div><!-- #app -->
 
+<!-- DETAIL MODAL -->
+<div id="detail-modal">
+  <div class="detail-sheet">
+    <div class="detail-handle"></div>
+    <div class="detail-content" id="detail-content"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -620,7 +649,7 @@ function renderPath(){
           <div style="flex:1"><div class="next-action-title">${next.titleFr}</div><div class="next-action-sub">${next.time}</div></div>
           <span class="next-action-xp">+${next.xp} XP</span>
         </div>
-        <button class="btn-primary" onclick="toggleItem(${next.id})">Commencer</button>
+        <button class="btn-primary" onclick="openDetail(${next.id})">Voir l'action →</button>
       </div>`;
     }
   } else {
@@ -649,8 +678,8 @@ function renderPath(){
     const isCur=cat===curCat;
     const itemsHtml=catItems.map(item=>{
       const done=!!S.checklist[item.id];
-      return `<div class="item-row${done?" checked":""}" onclick="toggleItem(${item.id})">
-        <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      return `<div class="item-row${done?" checked":""}" onclick="openDetail(${item.id})">
+        <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
         <span class="item-xp">+${item.xp} XP</span>
       </div>`;
@@ -709,6 +738,120 @@ function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classL
 function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
 function resetApp(){if(confirm("Recommencer depuis le début ?")){localStorage.removeItem(STORAGE_KEY);location.reload();}}
+
+// ═══ ITEM DETAILS ═══
+const ITEM_DETAILS = {
+  1:{
+    why:"Le Prophète ﷺ ne l'abandonnait jamais, même en voyage. C'est le pilier de la nuit.",
+    hadith:{text:"Notre Seigneur s'émerveille de deux hommes : l'un d'eux se lève de sa couche et de son drap, quittant l'amour de sa compagne pour aller prier. Dieu dit à Ses anges : \"Regardez Mon serviteur, il s'est levé par désir de ce que Je détiens et par crainte de ce que Je réserve…\"",source:"Ibn Ḥibbān, Ṣaḥīḥ"},
+    steps:["Se lever environ 1h avant l'aube (ou un court moment si c'est difficile)","Faire les ablutions","Prier 2 raka'at par 2 raka'at — objectif 11 au total : 2+2+2+2 puis Chaf' (2) puis Witr (1)","Pour commencer : juste 2 raka'at + Witr suffit, puis augmenter progressivement semaine après semaine","Après le Witr : rester assis et demander pardon (istighfar)"],
+    note:"L'enjeu n'est pas de tout faire du premier coup. Commence par 2 raka'at + Witr. La constance compte plus que la quantité."
+  },
+  2:{
+    why:"Rester assis après Fajr jusqu'au lever du soleil est l'un des moments les plus bénis de la journée.",
+    hadith:{text:"Celui qui accomplit la prière de l'aube en groupe, puis reste assis à évoquer Dieu jusqu'au lever du soleil, aura la récompense d'un pèlerinage et d'une ʿumra complète, complète, complète.",source:"At-Tirmidhī, jugé hasan"},
+    steps:["Rester à sa place après la prière du Fajr","Commencer par les invocations du matin (adhkar al-sabah)","Réciter les versets et sourates méritoires","Lire ou mémoriser du Coran","Faire l'invocation du lien spirituel (duʿâʾ ar-râbiṭa)","Se lever environ 15–20 min après le lever du soleil pour la prière du Chourouk"],
+    note:"Ce moment est une parenthèse bénie. Garde ton téléphone de côté."
+  },
+  3:{
+    why:"La prière de l'aube en congrégation vaut mieux que le monde entier et ce qu'il contient.",
+    hadith:{text:"Les deux raka'at de l'aube valent mieux que le monde entier et ce qu'il contient.",source:"Muslim"},
+    steps:["Faire les 2 raka'at sunna avant le Fajr","Aller à la mosquée si possible — sinon prier avec sa famille","Prier les 2 fard (obligatoires) avec khushū'"],
+    note:"Les 2 sunna du Fajr ne s'abandonnent jamais, même si on a manqué d'autres prières."
+  },
+  4:{
+    why:"Les prières surérogatoires comblent les lacunes des prières obligatoires et rapprochent d'Allah.",
+    hadith:{text:"Ô fils d'Adam, accomplis pour Moi quatre unités de prière au début de la journée, et Je te suffirai pour la suite.",source:"Ahmad, bonne chaîne"},
+    steps:["2 raka'at sunna avant le Fajr (avant la prière obligatoire)","2 raka'at après les ablutions (sunna de Bilāl)","4 raka'at avant le Dhuhr + 2 après","2 raka'at avant le ʿAsr","2 raka'at avant le Maghrib + 6 après (Awwābīn)","2 raka'at avant le ʿIshāʾ + 4 après","Prière du Chourouk : 2 à 8 raka'at, 10–15 min après le lever du soleil"],
+    note:"Ne cherche pas à tout faire d'un coup. Commence par les rawatib du Dhuhr et du Fajr."
+  },
+  5:{
+    why:"La récitation quotidienne du Coran est une nourriture pour le cœur. Un wird régulier, même court, vaut mieux qu'une lecture irrégulière.",
+    hadith:{text:"Récitez le Coran, car il viendra en intercession pour ses compagnons au Jour de la Résurrection.",source:"Muslim"},
+    steps:["Fixer une portion quotidienne (wird) selon ton niveau","Débutant : 3 à 5 minutes le matin, quelques versets","Intermédiaire : 1 hizb par jour (environ 25 min)","Lire de préférence après Fajr pendant la séance de l'aube","Chercher la présence du cœur plutôt que la vitesse"],
+    note:"Même une sourate courte lue avec présence vaut mieux qu'un hizb récité distraitement."
+  },
+  6:{
+    why:"Ces versets et sourates ont des mérites spécifiques rapportés dans la Sunna. Les réciter chaque matin est un bouclier et une lumière.",
+    hadith:{text:"Ô Dieu, accorde Ta bénédiction à ma communauté dans ses débuts de journée.",source:"Ahmad, Abū Dāwūd"},
+    steps:["Al-Fātiḥa [1:1–7]","Al-Baqara [2:1–5] puis Āyat al-Kursī [2:255–257] puis [2:285–286]","Āl ʿImrān [3:1–9], [3:18–19], [3:26–27], [3:190–200]","Fin de at-Tawba [9:128–129] — 7 fois","Al-Kahf [18:107–110] · Yāsīn [36] · Al-Wāqiʿa [56] · Al-Mulk [67]","Les Musabbiḥāt : Al-Ḥadīd [57], Al-Ḥashr [59], aṣ-Ṣaff [61], Al-Jumuʿa [62], At-Taghābun [64]","Les courtes : Al-Aʿlā [87] · aḍ-Ḍuḥā [93] · ash-Sharḥ [94] · Al-Qadr [97]","Az-Zalzala [99] ×4 · At-Takāthur [102] · Al-ʿAṣr [103] ×2 · Al-Māʿūn [107]","Al-Kawthar [108] ×3 · Al-Kāfirūn [109] ×4 · An-Naṣr [110] ×4 · Al-Ikhlāṣ [112] ×3","Al-Falaq [113] + An-Nās [114] — Clôturer par Al-Fātiḥa + Al-Baqara [2:1–5]"],
+    note:"Ne cherche pas à tout réciter d'un coup. Commence par Āyat al-Kursī + les 3 dernières sourates chaque matin, puis augmente progressivement."
+  },
+  7:{
+    why:"Par ce dhikr, la foi se renouvelle et le cœur se vivifie. C'est le sommet des affluents de la foi.",
+    hadith:{text:"Renouvelez votre foi ! On demanda : comment ? Il répondit : Répétez inlassablement Lā ilāha illa Llāh. Évoquez Dieu jusqu'à ce que les gens disent de vous : C'est un fou !",source:"Ahmad — Ibn Ḥibbān, Ṣaḥīḥ"},
+    steps:["Prévoir 3 moments dans la journée d'au moins 15 minutes chacun","Être seul, dans le calme, cœur présent","Répéter lentement : Lā ilāha illa Llāh","Essayer le matin (après séance aube), le milieu de journée, et avant le sommeil"],
+    note:"La présence du cœur est essentielle. 15 minutes de qualité valent mieux qu'une heure mécanique."
+  },
+  8:{
+    why:"Les bénédictions sur le Prophète ﷺ illuminent le cœur, effacent les péchés et rapprochent de lui au Jour de la Résurrection.",
+    hadith:{text:"Les plus proches de moi le Jour de la Résurrection sont ceux qui auront le plus prié sur moi.",source:"At-Tirmidhī — Ibn Ḥibbān"},
+    steps:["Objectif : au moins 300 fois par jour","Formule complète : Allāhumma ṣalli ʿalā Muḥammadin an-nabiyy, wa-ʾazwājihī ummahāti al-muʾminīn, wa-dhurriyyatihī wa-ʾahli baytih, kamā ṣallayta ʿalā Āli Ibrāhīm, ʾinnaka ḥamīdun majīd","Insister particulièrement le jeudi soir et le vendredi toute la journée","Répartir sur plusieurs moments dans la journée"],
+    note:"Tu peux les répartir : 100 après Fajr, 100 en milieu de journée, 100 le soir."
+  },
+  9:{
+    why:"Le croyant qui se couche en état de pureté, dans l'évocation de Dieu, a son ange qui intercède pour lui toute la nuit.",
+    hadith:{text:"Le croyant pieux se tient des comptes plus sévèrement que ne le ferait un roi tyrannique ou un associé avare.",source:"Maymūn ibn Mihrān, tabiʿī"},
+    steps:["Faire le bilan de sa journée : qu'est-ce que j'ai accompli ? qu'est-ce que j'ai manqué ?","Renouveler sa tawba (repentir) sincèrement","Faire les ablutions avant de dormir","Réciter les invocations du sommeil (adhkar al-nawm)","Endormi en état de pureté, en évocation de Dieu","Faire en sorte que ta dernière pensée consciente soit une confidence adressée à ton Seigneur"],
+    note:"Ne te laisse pas entraîner dans des veillées prolongées qui te feraient manquer les devoirs du lendemain. Car celui dont le lendemain n'est pas meilleur que la veille est perdant."
+  },
+  10:{
+    why:"Pour l'étudiant, ses études sont son jihad. C'est le combat propre à sa phase de vie.",
+    hadith:{text:"Dis-moi ce que tu lis, je te dirai qui tu es.",source:"Un sage"},
+    steps:["Après la prière, le Coran et l'évocation de Dieu — consacre-toi à tes études","Révise tes cours avec sérieux et méthode","Ton premier devoir religieux : acquérir un minimum de science islamique","Choisis avec discernement tes lectures : qu'elles nourrissent ta vie présente ET ta vie dernière"],
+    note:"L'étude n'est pas opposée à la spiritualité — elle en fait partie."
+  },
+  11:{
+    why:"La bonne compagnie est l'un des plus grands leviers de la foi. On est influencé par ceux qu'on fréquente.",
+    hadith:{text:"L'homme est sur la religion de son ami intime. Que chacun regarde donc qui il prend pour ami intime.",source:"Abū Dāwūd, At-Tirmidhī"},
+    steps:["Entretenir des liens avec des frères/sœurs pieux","Participer à des cercles de rappel ou d'apprentissage","Fuir les assemblées de la futilité et de la distraction","Appeler les autres au bien par l'exemple avant tout"],
+    note:"Même un coup de téléphone à un frère pieux compte comme un cercle de foi."
+  },
+  12:{
+    why:"Chercher la science est une obligation pour tout musulman. Elle élève les rangs et guide les actes.",
+    hadith:{text:"Celui à qui Dieu veut du bien, Il lui donne la compréhension de la religion.",source:"Al-Bukhārī, Muslim"},
+    steps:["Consacrer un temps quotidien à la lecture d'un livre de science islamique","Commencer par les fondamentaux : croyance, adoration, éthique","Avancer lentement mais régulièrement, avec la compréhension","Ne pas sauter d'un livre à l'autre sans finir"],
+    note:"Un chapitre par jour, compris et retenu, vaut mieux que des heures de lecture superficielle."
+  },
+  13:{
+    why:"Ton temps est ton capital. Chaque heure qui passe sans adoration ni bien est une perte.",
+    hadith:{text:"Deux bienfaits dont beaucoup de gens sont floués : la santé et le temps libre.",source:"Al-Bukhārī"},
+    steps:["Planifier sa journée la veille ou au réveil","Identifier les moments de gaspillage (réseaux, distractions)","Chaque transition entre deux activités : une occasion de dhikr","Se poser la question avant chaque acte : est-ce que cela me rapproche ou m'éloigne ?"],
+    note:"Al-Hassan al-Basri disait : J'ai vu des gens qui étaient plus avares de leur temps que de leur or."
+  },
+  14:{
+    why:"L'invocation du lien spirituel (duʿâʾ ar-râbiṭa) est un acte qui relie les cœurs croyants dans l'amour d'Allah.",
+    hadith:{text:"Nul ne peut aimer son frère pour Allah sans que cela ne l'élève en rang et ne lui ouvre les portes de Sa miséricorde.",source:"Rapporté des maîtres"},
+    steps:["La faire de préférence après la séance de l'aube","Invoquer pour ses frères et sœurs en Islam par leur nom si possible","Demander à Allah de réunir les cœurs sur l'amour de Lui","Terminer par les invocations de clôture"],
+    note:"Cette invocation se fait en silence, intérieurement. Elle n'a pas besoin d'être longue — la sincérité prime."
+  }
+};
+
+function openDetail(id){
+  const item=PROGRAM.find(i=>i.id===id);
+  const det=ITEM_DETAILS[id];
+  if(!item||!det)return;
+  const done=!!S.checklist[id];
+  const c=document.getElementById("detail-content");
+  c.innerHTML=`
+    <div class="detail-header">
+      <div class="detail-emoji-circle">${item.emoji}</div>
+      <div><div class="detail-title">${item.titleFr}</div><div class="detail-time">${item.time} · +${item.xp} XP</div></div>
+    </div>
+    ${det.why?`<div class="detail-section"><div class="detail-section-label">Pourquoi</div><div class="detail-text">${det.why}</div></div>`:""}
+    ${det.hadith?`<div class="detail-hadith"><p>« ${det.hadith.text} »</p><small>${det.hadith.source}</small></div>`:""}
+    ${det.steps?`<div class="detail-section"><div class="detail-section-label">Comment</div><div class="detail-steps">${det.steps.map((s,i)=>`<div class="detail-step"><div class="detail-step-num">${i+1}</div><div class="detail-step-text">${s}</div></div>`).join("")}</div></div>`:""}
+    ${det.note?`<div class="detail-hadith" style="border-color:var(--green);background:rgba(59,109,17,.06)"><p style="color:var(--text-secondary)">${det.note}</p></div>`:""}
+    <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
+      <button class="btn-primary" style="${done?"background:var(--green)":""}" onclick="toggleItem(${id});closeDetail()">
+        ${done?"✓ Déjà accompli — Annuler":"Marquer comme accompli"}
+      </button>
+      <button class="btn-secondary" onclick="closeDetail()">Fermer</button>
+    </div>`;
+  document.getElementById("detail-modal").classList.add("show");
+}
+function closeDetail(){document.getElementById("detail-modal").classList.remove("show");}
+document.getElementById("detail-modal").addEventListener("click",function(e){if(e.target===this)closeDetail();});
 
 // ═══ ABOUT ═══
 function showAbout(){document.getElementById("about-modal").classList.add("show");}
