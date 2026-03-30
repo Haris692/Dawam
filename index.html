@@ -201,25 +201,38 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .dawam-footer { text-align:center;padding:24px 16px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
 
 /* DETAIL MODAL */
-#detail-modal { display:none;position:fixed;inset:0;z-index:300;background:rgba(61,42,10,.5);align-items:flex-end; }
+#detail-modal { display:none;position:fixed;inset:0;z-index:300;background:rgba(61,42,10,.45);align-items:flex-end;backdrop-filter:blur(2px); }
 #detail-modal.show { display:flex; }
-.detail-sheet { background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-height:88vh;overflow-y:auto;animation:fadeUp .35s ease; }
-.detail-handle { width:40px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0; }
-.detail-content { padding:16px 20px 40px; }
-.detail-header { display:flex;align-items:center;gap:12px;margin-bottom:18px; }
-.detail-emoji-circle { width:52px;height:52px;border-radius:26px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:.5px solid var(--border); }
-.detail-title { font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--text);line-height:1.3; }
-.detail-time { font-size:12px;color:var(--text-secondary);margin-top:2px; }
-.detail-section { margin-bottom:16px; }
-.detail-section-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px; }
-.detail-text { font-size:14px;color:var(--text);line-height:1.75; }
-.detail-hadith { background:var(--accent-light);border-radius:12px;border-left:3px solid var(--accent);padding:12px 14px;margin:10px 0; }
-.detail-hadith p { font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text);line-height:1.65; }
-.detail-hadith small { font-size:11px;color:var(--text-secondary);margin-top:5px;display:block; }
-.detail-steps { display:flex;flex-direction:column;gap:8px;margin-top:8px; }
-.detail-step { display:flex;gap:10px;align-items:flex-start; }
-.detail-step-num { width:22px;height:22px;border-radius:11px;background:var(--accent);color:#fff8e8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px; }
-.detail-step-text { font-size:13px;color:var(--text);line-height:1.6;flex:1; }
+.detail-sheet { background:var(--bg);border-radius:28px 28px 0 0;width:100%;max-height:92vh;overflow-y:auto;animation:fadeUp .4s cubic-bezier(.22,1,.36,1); }
+.detail-handle { width:36px;height:4px;border-radius:2px;background:var(--border);margin:14px auto 0; }
+.detail-hero { padding:24px 24px 20px;background:linear-gradient(160deg,var(--accent-light) 0%,var(--bg) 100%);text-align:center; }
+.detail-hero-emoji { font-size:52px;display:block;margin-bottom:12px;animation:scaleIn .4s .1s cubic-bezier(.22,1,.36,1) both; }
+.detail-hero-title { font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--text);line-height:1.3;animation:fadeUp .4s .15s ease both; }
+.detail-hero-pill { display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:var(--accent);border-radius:20px;margin-top:10px;animation:fadeUp .4s .2s ease both; }
+.detail-hero-pill span { font-size:12px;font-weight:600;color:#fff8e8; }
+.detail-body { padding:4px 20px 44px; }
+.detail-quote { text-align:center;padding:20px 8px 8px;animation:fadeUp .4s .25s ease both; }
+.detail-quote-marks { font-size:36px;color:var(--border);line-height:1;font-family:Georgia;display:block;margin-bottom:4px; }
+.detail-quote-text { font-family:var(--font-display);font-size:14px;font-style:italic;color:var(--text);line-height:1.8; }
+.detail-quote-source { font-size:11px;color:var(--text-light);margin-top:8px;font-weight:500; }
+.detail-divider { height:1px;background:var(--border);margin:16px 0;opacity:.5; }
+.detail-section-label { font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px; }
+.detail-section-label::after { content:'';flex:1;height:1px;background:var(--border);opacity:.5; }
+.detail-timeline { display:flex;flex-direction:column; }
+.detail-step-row { display:flex;gap:14px;align-items:flex-start;padding-bottom:18px; }
+.detail-step-row:last-child { padding-bottom:0; }
+.detail-step-left { display:flex;flex-direction:column;align-items:center;gap:0; }
+.detail-step-num { width:28px;height:28px;border-radius:14px;background:var(--accent);color:#fff8e8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(186,117,23,.3); }
+.detail-step-line { width:1.5px;flex:1;min-height:14px;background:linear-gradient(to bottom,var(--accent),var(--border));margin-top:4px;opacity:.35; }
+.detail-step-row:last-child .detail-step-line { display:none; }
+.detail-step-text { font-size:13.5px;color:var(--text);line-height:1.7;flex:1;padding-top:4px; }
+.detail-tip { background:rgba(59,109,17,.07);border-radius:16px;padding:14px 16px;margin-top:18px;display:flex;gap:12px;align-items:flex-start;border:.5px solid rgba(59,109,17,.15); }
+.detail-tip-icon { font-size:20px;flex-shrink:0;margin-top:1px; }
+.detail-tip-text { font-size:13px;color:var(--text);line-height:1.7;font-style:italic; }
+.detail-cta { margin-top:24px;display:flex;flex-direction:column;gap:8px; }
+.btn-done { display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:16px;border:none;cursor:pointer;font-family:var(--font-body);font-size:15px;font-weight:600;background:var(--green);color:#fff;transition:opacity .15s,transform .1s; }
+.btn-done:active { opacity:.85;transform:scale(.98); }
+.btn-done.undone { background:rgba(186,117,23,.12);color:var(--accent); }
 
 /* INSTALL BANNER */
 #install-banner { display:none;position:sticky;top:0;z-index:200;background:var(--accent);padding:10px 16px;align-items:center;gap:10px; }
@@ -833,20 +846,43 @@ function openDetail(id){
   if(!item||!det)return;
   const done=!!S.checklist[id];
   const c=document.getElementById("detail-content");
+  const stepsHtml=det.steps?det.steps.map((s,i)=>`
+    <div class="detail-step-row fade-up" style="animation-delay:${.3+i*.06}s">
+      <div class="detail-step-left">
+        <div class="detail-step-num">${i+1}</div>
+        <div class="detail-step-line"></div>
+      </div>
+      <div class="detail-step-text">${s}</div>
+    </div>`).join(""):"";
   c.innerHTML=`
-    <div class="detail-header">
-      <div class="detail-emoji-circle">${item.emoji}</div>
-      <div><div class="detail-title">${item.titleFr}</div><div class="detail-time">${item.time} · +${item.xp} XP</div></div>
+    <div class="detail-hero">
+      <span class="detail-hero-emoji">${item.emoji}</span>
+      <div class="detail-hero-title">${item.titleFr}</div>
+      <div><div class="detail-hero-pill"><span>⏱ ${item.time} &nbsp;·&nbsp; +${item.xp} XP</span></div></div>
     </div>
-    ${det.why?`<div class="detail-section"><div class="detail-section-label">Pourquoi</div><div class="detail-text">${det.why}</div></div>`:""}
-    ${det.hadith?`<div class="detail-hadith"><p>« ${det.hadith.text} »</p><small>${det.hadith.source}</small></div>`:""}
-    ${det.steps?`<div class="detail-section"><div class="detail-section-label">Comment</div><div class="detail-steps">${det.steps.map((s,i)=>`<div class="detail-step"><div class="detail-step-num">${i+1}</div><div class="detail-step-text">${s}</div></div>`).join("")}</div></div>`:""}
-    ${det.note?`<div class="detail-hadith" style="border-color:var(--green);background:rgba(59,109,17,.06)"><p style="color:var(--text-secondary)">${det.note}</p></div>`:""}
-    <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
-      <button class="btn-primary" style="${done?"background:var(--green)":""}" onclick="toggleItem(${id});closeDetail()">
-        ${done?"✓ Déjà accompli — Annuler":"Marquer comme accompli"}
-      </button>
-      <button class="btn-secondary" onclick="closeDetail()">Fermer</button>
+    <div class="detail-body">
+      ${det.why?`<p class="fade-up" style="font-size:14px;color:var(--text-secondary);line-height:1.75;text-align:center;padding:0 4px;animation-delay:.2s">${det.why}</p>`:""}
+      ${det.hadith?`
+      <div class="detail-quote">
+        <span class="detail-quote-marks">❝</span>
+        <div class="detail-quote-text">${det.hadith.text}</div>
+        <div class="detail-quote-source">— ${det.hadith.source}</div>
+      </div>
+      <div class="detail-divider"></div>`:""}
+      ${det.steps?`
+      <div class="detail-section-label fade-up" style="animation-delay:.28s">Comment procéder</div>
+      <div class="detail-timeline">${stepsHtml}</div>`:""}
+      ${det.note?`
+      <div class="detail-tip fade-up" style="animation-delay:${.3+det.steps.length*.06}s">
+        <span class="detail-tip-icon">💡</span>
+        <div class="detail-tip-text">${det.note}</div>
+      </div>`:""}
+      <div class="detail-cta fade-up" style="animation-delay:.5s">
+        <button class="btn-done${done?" undone":""}" onclick="toggleItem(${id});closeDetail()">
+          ${done?"↩ Annuler l'action":"✓ Accompli — barakAllahu fik"}
+        </button>
+        <button class="btn-secondary" onclick="closeDetail()">Fermer</button>
+      </div>
     </div>`;
   document.getElementById("detail-modal").classList.add("show");
 }
