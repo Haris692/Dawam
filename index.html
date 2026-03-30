@@ -229,6 +229,8 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .about-question { font-family:var(--font-display);font-size:16px;font-style:italic;color:var(--accent);text-align:center;margin-top:24px;line-height:1.6; }
 .about-footer { text-align:center;padding-top:24px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 </head>
 <body>
 <div id="app">
@@ -432,6 +434,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="profil-section-title fade-up" style="animation-delay:.25s">Paramètres</div>
     <div class="profil-menu fade-up" style="animation-delay:.3s">
+      <div class="profil-menu-item" onclick="handleNotifTap()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)" id="notif-menu-icon">🔔</div><span class="profil-menu-text" id="notif-menu-text">Activer les rappels</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showToast('Thèmes disponibles bientôt ✨')"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Changer le thème</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="resetApp()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔄</div><span class="profil-menu-text">Recommencer l'onboarding</span><span class="profil-menu-arrow">›</span></div>
@@ -687,6 +690,7 @@ function renderProfil(){
   document.getElementById("stat-total").textContent=S.totalDays+1;
   document.getElementById("stat-palier").textContent=S.palier;
   document.getElementById("stat-palier-name").textContent=pi.name;
+  updateNotifMenuItem();
 
   // Heatmap
   const days=["L","M","M","J","V","S","D"];
@@ -746,6 +750,58 @@ function launchApp(){
   document.getElementById("tab-path").classList.add("active");
   renderPath();
   setTimeout(showInstallBanner,3000);
+  initFirebase();
+}
+
+// ═══ FIREBASE / NOTIFICATIONS ═══
+const FB_CONFIG = {
+  apiKey:"AIzaSyDexH0FEUl7-BzKyw6KlxdeW8CzpzUXK-E",
+  authDomain:"dawam-e8ee6.firebaseapp.com",
+  projectId:"dawam-e8ee6",
+  storageBucket:"dawam-e8ee6.firebasestorage.app",
+  messagingSenderId:"878189379770",
+  appId:"1:878189379770:web:7110ce18ff799df1f04283"
+};
+const VAPID_KEY = "BNCdaCVH2ta2YLc_yaqQ2RiYEJtkpfoH6pR3S9cJT8TSQf7gJhCqCEcGDL1a6XcSb9wfVncbMjo8dd83zTQdduw";
+let messaging = null;
+
+function initFirebase(){
+  if(typeof firebase==="undefined")return;
+  try{
+    firebase.initializeApp(FB_CONFIG);
+    messaging=firebase.messaging();
+    messaging.onMessage(payload=>{
+      showToast((payload.notification?.title||"Dawam")+" — "+(payload.notification?.body||""));
+    });
+  }catch(e){}
+}
+
+async function requestNotifPermission(){
+  if(!("Notification" in window)){showToast("Notifications non supportées");return;}
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){showToast("Permission refusée");return;}
+    if(!messaging){showToast("Firebase non disponible");return;}
+    const token=await messaging.getToken({vapidKey:VAPID_KEY});
+    localStorage.setItem("fcm_token",token);
+    localStorage.setItem("notif_enabled","1");
+    showToast("Rappels activés ✓");
+    updateNotifMenuItem();
+  }catch(e){showToast("Erreur lors de l'activation");}
+}
+
+function updateNotifMenuItem(){
+  const el=document.getElementById("notif-menu-text");
+  const ic=document.getElementById("notif-menu-icon");
+  if(!el)return;
+  const on=localStorage.getItem("notif_enabled")==="1";
+  el.textContent=on?"Rappels activés ✓":"Activer les rappels";
+  if(ic)ic.textContent=on?"✅":"🔔";
+}
+
+function handleNotifTap(){
+  if(localStorage.getItem("notif_enabled")==="1"){showToast("Rappels déjà activés ✓");}
+  else{requestNotifPermission();}
 }
 
 load();
