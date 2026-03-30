@@ -153,6 +153,8 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .item-row:last-child { border-bottom:none; }
 .item-row:active { background:rgba(186,117,23,.06); }
 .item-row.checked { background:rgba(59,109,17,.04); }
+.item-row.locked { opacity: 0.42; cursor: default; }
+.item-row.locked:active { background: none; }
 .item-check { width:22px;height:22px;border-radius:11px;flex-shrink:0;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;background:#fff; }
 .item-row.checked .item-check { background:var(--green);border-color:var(--green); }
 .item-check-icon { display:none; }
@@ -649,9 +651,14 @@ function renderPath(){
   const body=document.getElementById("path-body");
   body.innerHTML="";
 
-  // Next action
+  // Ordre temporel et détection des sections futures (verrouillées)
+  const catOrder=["aube","matin","journee","soir","nuit"];
+  const curIdx=catOrder.indexOf(curCat);
+  const futureCats=catOrder.slice(curIdx+1);
+
+  // Next action — uniquement dans les sections accessibles maintenant ou passées
   if(!allDone){
-    const next=items.find(i=>!S.checklist[i.id]);
+    const next=items.find(i=>!S.checklist[i.id]&&!futureCats.includes(i.cat));
     if(next){
       const secLabel=SECTIONS[next.cat]?.label||next.time;
       const isCur=next.cat===curCat;
@@ -678,9 +685,7 @@ function renderPath(){
 
   body.innerHTML+=`<div class="section-sep fade-up" style="animation-delay:.08s">Ton parcours du jour</div>`;
 
-  // Sections triées par pertinence temporelle
-  const catOrder=["aube","matin","journee","soir","nuit"];
-  const curIdx=catOrder.indexOf(curCat);
+  // Sections triées : courante en premier, puis futures, puis passées
   const ordered=[...catOrder.slice(curIdx),...catOrder.slice(0,curIdx)];
 
   ordered.forEach((cat,si)=>{
@@ -689,8 +694,15 @@ function renderPath(){
     const sec=SECTIONS[cat];
     const secChecked=catItems.filter(i=>S.checklist[i.id]).length;
     const isCur=cat===curCat;
+    const catIdx=catOrder.indexOf(cat);
+    const isFuture=catIdx>curIdx;
     const itemsHtml=catItems.map(item=>{
       const done=!!S.checklist[item.id];
+      if(isFuture)return `<div class="item-row locked" onclick="showLockedHint('${cat}')">
+        <div class="item-check" style="background:transparent;border-color:var(--border)"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="var(--text-light)" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="5.5" width="7" height="5.5" rx="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 0 1 3 0v1.5"/></svg></div>
+        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
+        <span class="item-xp" style="color:var(--text-light)">+${item.xp} XP</span>
+      </div>`;
       return `<div class="item-row${done?" checked":""}" onclick="openDetail(${item.id})">
         <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
@@ -700,9 +712,9 @@ function renderPath(){
     body.innerHTML+=`<div class="section-block fade-up" style="animation-delay:${.1+si*.03}s">
       <div class="section-header" onclick="toggleSection(this)">
         <div class="section-header-left"><span class="section-header-emoji">${sec.emoji}</span><span class="section-header-label">${sec.label}</span></div>
-        <div style="display:flex;align-items:center;gap:6px">${isCur?'<span class="section-current-badge">● Maintenant</span>':''}<span class="section-header-badge">${secChecked}/${catItems.length}</span></div>
+        <div style="display:flex;align-items:center;gap:6px">${isCur?'<span class="section-current-badge">● Maintenant</span>':''}${isFuture?'<span class="section-header-badge" style="color:var(--text-light)">🔒 Plus tard</span>':''}<span class="section-header-badge">${secChecked}/${catItems.length}</span></div>
       </div>
-      <div class="section-items">${itemsHtml}</div>
+      <div class="section-items"${isFuture?' style="display:none"':''}>${itemsHtml}</div>
     </div>`;
   });
 }
@@ -750,6 +762,7 @@ function renderProfil(){
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","profil"].includes(id));}
 function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
+function showLockedHint(cat){const msgs={aube:"Disponible avant l'aube",matin:"Disponible ce matin",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible cette nuit"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 function resetApp(){if(confirm("Recommencer depuis le début ?")){localStorage.removeItem(STORAGE_KEY);location.reload();}}
 
 // ═══ ITEM DETAILS ═══
