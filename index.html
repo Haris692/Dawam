@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f5ede0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dawam">
+<meta name="description" content="Dawam — Petit, mais constant. Ton compagnon spirituel quotidien.">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Dawam — Petit, mais constant.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5ede0; --bg-card: #faeeda; --bg-glass: rgba(245,237,224,0.8);
+  --accent: #BA7517; --accent-dark: #8a6020; --accent-light: #faeeda;
+  --text: #3d2a0a; --text-secondary: #8a6020; --text-light: #b89060;
+  --green: #3B6D11; --green-light: #EAF3DE;
+  --border: rgba(186,117,23,0.2); --border-light: rgba(186,117,23,0.1);
+  --shadow: 0 2px 16px rgba(138,96,32,0.10);
+  --radius: 16px;
+  --font-display: 'Lora', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; background: var(--bg); }
+body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; min-height: -webkit-fill-available; display: flex; flex-direction: column; }
+#app { width: 100%; max-width: 430px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.screen.active { display: flex; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes scaleIn { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
+@keyframes checkPop { 0%{transform:scale(0)} 60%{transform:scale(1.3)} 100%{transform:scale(1)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+.fade-up { animation: fadeUp .45s cubic-bezier(.22,1,.36,1) both; }
+.fade-in { animation: fadeIn .35s ease both; }
+.scale-in { animation: scaleIn .4s cubic-bezier(.22,1,.36,1) both; }
+.btn-primary { display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:14px;border:none;cursor:pointer;background:var(--accent);color:#fff8e8;font-family:var(--font-body);font-size:15px;font-weight:600;transition:opacity .15s,transform .1s; }
+.btn-primary:active { opacity:.85;transform:scale(.98); }
+.btn-secondary { background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:14px;color:var(--text-secondary);padding:10px;width:100%;text-align:center;transition:opacity .15s; }
+.btn-secondary:active { opacity:.6; }
+.card { background:#fff;border-radius:var(--radius);border:.5px solid var(--border);padding:16px 18px;box-shadow:var(--shadow); }
+
+/* BOTTOM NAV */
+#bottom-nav { display:none;flex-direction:row;background:#fff;border-top:.5px solid var(--border);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:100; }
+#bottom-nav.visible { display:flex; }
+.nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:opacity .15s; }
+.nav-tab svg { width:22px;height:22px;stroke-width:1.8; }
+.nav-tab span { font-size:10px;font-weight:500;color:var(--text-light); }
+.nav-tab.active svg { stroke:var(--accent); }
+.nav-tab.active span { color:var(--accent); }
+.nav-tab:not(.active) svg { stroke:var(--text-light); }
+
+/* SPLASH */
+#splash { background:var(--bg);justify-content:center;align-items:center;padding:60px 32px 40px;min-height:100vh; }
+.splash-logo { font-family:var(--font-display);font-size:52px;font-weight:700;color:var(--accent);letter-spacing:-1px;animation:fadeUp .6s ease both; }
+.splash-tagline { font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--text-secondary);margin-top:6px;margin-bottom:40px;animation:fadeUp .6s .1s ease both; }
+.splash-sep { width:60px;height:1px;background:var(--border);margin-bottom:32px;animation:fadeIn .6s .2s ease both; }
+.splash-label { font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);margin-bottom:16px;animation:fadeUp .5s .3s ease both; }
+.splash-quote { font-family:var(--font-display);font-size:16px;font-style:italic;font-weight:400;color:var(--text);line-height:1.65;text-align:center;animation:fadeUp .5s .4s ease both; }
+.splash-actions { margin-top:auto;width:100%;display:flex;flex-direction:column;gap:8px;animation:fadeUp .5s .6s ease both; }
+
+/* ONBOARDING */
+#onboarding { background:var(--bg);min-height:100vh; }
+.ob-page { display:none;flex-direction:column;padding:56px 24px 24px;min-height:100vh; }
+.ob-page.active { display:flex; }
+.ob-dots { display:flex;gap:5px;justify-content:center;margin-bottom:36px; }
+.ob-dot { width:6px;height:6px;border-radius:3px;background:var(--border);transition:all .3s; }
+.ob-dot.active { width:20px;background:var(--green); }
+.ob-dot.done { background:rgba(59,109,17,.35); }
+.ob-emoji-circle { width:80px;height:80px;border-radius:40px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;box-shadow:0 0 0 8px rgba(186,117,23,.08); }
+.ob-label { font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--green);text-align:center;margin-bottom:8px; }
+.ob-title { font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);text-align:center;line-height:1.3;margin-bottom:14px; }
+.ob-desc { font-size:14px;color:var(--text-secondary);text-align:center;line-height:1.65;margin-bottom:24px;padding:14px 16px;background:#fff;border-radius:14px;border:.5px solid var(--border-light); }
+.ob-options { display:flex;flex-direction:column;gap:10px;width:100%; }
+.ob-option { display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:#fff;border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
+.ob-option.selected { border-color:var(--green);background:rgba(59,109,17,.07); }
+.ob-option-emoji { font-size:24px; }
+.ob-option-text { flex:1; }
+.ob-option-label { font-size:15px;font-weight:600;color:var(--text); }
+.ob-option-desc { font-size:12px;color:var(--text-light);margin-top:2px; }
+.ob-radio { width:20px;height:20px;border-radius:10px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.ob-option.selected .ob-radio { border-color:var(--green); }
+.ob-radio-dot { width:10px;height:10px;border-radius:5px;background:var(--green);display:none; }
+.ob-option.selected .ob-radio-dot { display:block;animation:checkPop .25s ease; }
+.ob-name-input { width:100%;padding:16px;border-radius:14px;border:1.5px solid var(--border);background:#fff;font-family:var(--font-body);font-size:18px;font-weight:600;color:var(--text);outline:none;transition:border-color .2s; }
+.ob-name-input:focus { border-color:var(--accent); }
+.ob-bottom { margin-top:auto;padding-top:20px;display:flex;align-items:center;justify-content:space-between; }
+.ob-back { width:44px;height:44px;border-radius:22px;background:rgba(186,117,23,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px; }
+.ob-counter { font-size:13px;font-weight:500;color:var(--text-light); }
+.ob-next { display:flex;align-items:center;gap:8px;padding:12px 22px;border-radius:20px;border:none;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:600;color:#fff;transition:opacity .15s; }
+.ob-next:disabled { opacity:.4;cursor:not-allowed; }
+.ob-features { display:flex;flex-direction:column;gap:8px;width:100%; }
+.ob-feature { display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:12px;border:.5px solid var(--border-light); }
+.ob-feature-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px; }
+.ob-feature-text { font-size:14px;font-weight:600;color:var(--text); }
+.ob-result-palier { text-align:center;padding:20px;background:var(--accent-light);border-radius:16px;border:.5px solid var(--border);margin-bottom:20px; }
+.ob-result-emoji { font-size:48px;margin-bottom:8px; }
+.ob-result-name { font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--accent-dark);margin-bottom:4px; }
+.ob-result-desc { font-size:13px;color:var(--text-secondary);line-height:1.5; }
+.ob-result-msg { font-family:var(--font-display);font-size:14px;font-style:italic;color:var(--text-secondary);text-align:center;line-height:1.6;padding:16px;background:rgba(59,109,17,.06);border-radius:12px;margin-top:16px; }
+
+/* PATH */
+#path { background:var(--bg); }
+.path-hero { padding:52px 20px 24px;padding-top:max(52px,calc(44px + env(safe-area-inset-top))); }
+.path-hero-top { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+.path-hero-time { font-size:12px;font-weight:500;color:var(--text-secondary); }
+.path-hero-chip { display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:var(--accent-light);border:.5px solid var(--border); }
+.path-hero-chip span { font-size:12px;font-weight:600;color:var(--accent-dark); }
+.path-hero-name { font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);margin-bottom:6px; }
+.path-hero-motiv { font-size:13px;font-style:italic;color:var(--text-secondary);line-height:1.55;margin-bottom:16px;opacity:.85; }
+.path-hero-sep { height:1px;background:var(--border);opacity:.4;margin-bottom:14px; }
+.path-prog-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:6px; }
+.path-prog-label { font-size:13px;font-weight:600;color:var(--text); }
+.path-prog-right { font-size:12px;color:var(--text-secondary); }
+.path-prog-bar { height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:14px; }
+.path-prog-fill { height:100%;background:var(--accent);border-radius:3px;transition:width .6s cubic-bezier(.34,1.2,.64,1); }
+.path-pills { display:flex;gap:8px; }
+.path-pill-constance { display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(59,109,17,.1); }
+.path-pill-dot { width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite; }
+.path-pill-text { font-size:12px;font-weight:600;color:var(--green); }
+.path-body { padding:0 16px 16px;display:flex;flex-direction:column;gap:14px; }
+.next-action-card { background:var(--accent-light);border-radius:var(--radius);padding:18px;border:.5px solid var(--border); }
+.next-action-label { font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px; }
+.next-action-row { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
+.next-action-icon { width:42px;height:42px;border-radius:11px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:.5px solid var(--border-light); }
+.next-action-title { font-size:15px;font-weight:600;color:var(--text); }
+.next-action-sub { font-size:12px;color:var(--text-secondary);margin-top:2px; }
+.next-action-xp { font-size:13px;font-weight:600;color:var(--accent);flex-shrink:0; }
+.stats-row { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.stats-card { background:#fff;border-radius:14px;padding:14px;border:.5px solid var(--border);box-shadow:var(--shadow); }
+.stats-label { font-size:10px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px; }
+.stats-percent { font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-display); }
+.stats-count { font-size:11px;color:var(--text-secondary);margin-top:2px;margin-bottom:8px; }
+.stats-mini-bar { height:4px;background:var(--border);border-radius:2px;overflow:hidden; }
+.stats-mini-fill { height:100%;background:var(--accent);border-radius:2px;transition:width .6s ease; }
+.week-theme { font-size:13px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:6px; }
+.week-sub { font-size:11px;color:var(--text-secondary); }
+.section-sep { font-size:10px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;padding:0 2px; }
+.section-block { background:#fff;border-radius:var(--radius);border:.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow); }
+.section-header { display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:.5px solid var(--border-light);cursor:pointer;user-select:none; }
+.section-header-left { display:flex;align-items:center;gap:8px; }
+.section-header-emoji { font-size:16px; }
+.section-header-label { font-size:13px;font-weight:600;color:var(--text); }
+.section-header-badge { font-size:11px;color:var(--text-secondary);background:var(--bg);padding:2px 8px;border-radius:10px;border:.5px solid var(--border-light); }
+.section-current-badge { font-size:10px;font-weight:600;color:var(--green);background:rgba(59,109,17,.1);padding:2px 8px;border-radius:10px; }
+.section-items { display:flex;flex-direction:column; }
+.item-row { display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;border-bottom:.5px solid var(--border-light);transition:background .15s;user-select:none; }
+.item-row:last-child { border-bottom:none; }
+.item-row:active { background:rgba(186,117,23,.06); }
+.item-row.checked { background:rgba(59,109,17,.04); }
+.item-check { width:22px;height:22px;border-radius:11px;flex-shrink:0;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;background:#fff; }
+.item-row.checked .item-check { background:var(--green);border-color:var(--green); }
+.item-check-icon { display:none; }
+.item-row.checked .item-check-icon { display:block;animation:checkPop .25s ease; }
+.item-text { flex:1;min-width:0; }
+.item-title { font-size:13px;font-weight:500;color:var(--text);line-height:1.3; }
+.item-row.checked .item-title { text-decoration:line-through;color:var(--text-light); }
+.item-sub { font-size:11px;color:var(--text-light);margin-top:1px; }
+.item-xp { font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0; }
+.all-done-card { text-align:center;padding:24px;background:#fff;border-radius:var(--radius);border:.5px solid var(--border); }
+.all-done-emoji { font-size:36px;margin-bottom:8px; }
+.all-done-text { font-family:var(--font-display);font-size:16px;font-weight:500;color:var(--green); }
+
+/* PROFIL */
+#profil { background:var(--bg); }
+.profil-header { padding:52px 20px 20px;padding-top:max(52px,calc(44px + env(safe-area-inset-top))); }
+.profil-title { font-family:var(--font-display);font-size:28px;font-weight:600;color:var(--text);margin-bottom:4px; }
+.profil-sub { font-size:13px;color:var(--text-secondary); }
+.profil-body { padding:0 16px 16px;display:flex;flex-direction:column;gap:14px; }
+.profil-identity { background:var(--accent-light);border-radius:var(--radius);padding:20px;border:.5px solid var(--border);display:flex;align-items:center;gap:14px; }
+.profil-avatar { width:56px;height:56px;border-radius:28px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;font-weight:700;color:#fff8e8;flex-shrink:0; }
+.profil-name { font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text); }
+.profil-palier-text { font-size:13px;color:var(--text-secondary);margin-top:3px; }
+.stats-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.stat-card { background:#fff;border-radius:14px;padding:16px;border:.5px solid var(--border);box-shadow:var(--shadow); }
+.stat-card-value { font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--accent); }
+.stat-card-label { font-size:12px;color:var(--text-secondary);margin-top:3px; }
+.stat-card-sub { font-size:11px;color:var(--text-light);margin-top:2px; }
+.profil-section-title { font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;padding:0 2px; }
+.profil-menu { background:#fff;border-radius:var(--radius);border:.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow); }
+.profil-menu-item { display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:.5px solid var(--border-light);cursor:pointer;transition:background .15s; }
+.profil-menu-item:last-child { border-bottom:none; }
+.profil-menu-item:active { background:rgba(186,117,23,.05); }
+.profil-menu-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.profil-menu-text { flex:1;font-size:14px;font-weight:500;color:var(--text); }
+.profil-menu-arrow { color:var(--text-light);font-size:18px; }
+.heatmap { display:grid;grid-template-columns:repeat(7,1fr);gap:4px; }
+.heatmap-cell { aspect-ratio:1;border-radius:3px;background:var(--border-light); }
+.heatmap-cell.a1 { background:rgba(59,109,17,.25); }
+.heatmap-cell.a2 { background:rgba(59,109,17,.5); }
+.heatmap-cell.a3 { background:rgba(59,109,17,.75); }
+.heatmap-cell.a4 { background:var(--green); }
+.heatmap-cell.today { box-shadow:0 0 0 1.5px var(--accent); }
+.heatmap-label { display:flex;justify-content:space-between;margin-bottom:6px; }
+.heatmap-day { font-size:10px;color:var(--text-light);font-weight:500;text-align:center;flex:1; }
+.dawam-footer { text-align:center;padding:24px 16px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
+
+/* INSTALL BANNER */
+#install-banner { display:none;position:sticky;top:0;z-index:200;background:var(--accent);padding:10px 16px;align-items:center;gap:10px; }
+#install-banner.show { display:flex; }
+#install-banner p { flex:1;font-size:13px;font-weight:500;color:#fff8e8;line-height:1.4; }
+#install-banner button { background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;white-space:nowrap; }
+#install-banner .close-banner { background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;padding:0 4px; }
+
+/* TOAST */
+#toast { position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff8e8;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:999; }
+#toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+
+/* ABOUT MODAL */
+#about-modal { display:none;position:fixed;inset:0;z-index:300;background:rgba(61,42,10,.5);align-items:flex-end; }
+#about-modal.show { display:flex; }
+.about-sheet { background:var(--bg);border-radius:24px 24px 0 0;padding:0;width:100%;max-height:88vh;overflow-y:auto;animation:fadeUp .35s ease; }
+.about-handle { width:40px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0; }
+.about-content { padding:20px 24px 40px; }
+.about-title { font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px; }
+.about-interpel { font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--text-secondary);margin-bottom:20px;line-height:1.6; }
+.about-verset { background:var(--accent-light);border-radius:12px;border-left:3px solid var(--accent);padding:14px 16px;margin:16px 0; }
+.about-verset p { font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--text);line-height:1.6; }
+.about-verset small { font-size:12px;color:var(--text-secondary);margin-top:6px;display:block; }
+.about-citation { background:rgba(59,109,17,.07);border-radius:12px;border-left:3px solid var(--green);padding:14px 16px;margin:16px 0; }
+.about-citation p { font-family:var(--font-display);font-size:14px;font-style:italic;color:var(--text);line-height:1.6; }
+.about-para { font-size:15px;color:var(--text);line-height:1.7;margin-bottom:14px; }
+.about-section-title { font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text);margin:24px 0 10px; }
+.about-question { font-family:var(--font-display);font-size:16px;font-style:italic;color:var(--accent);text-align:center;margin-top:24px;line-height:1.6; }
+.about-footer { text-align:center;padding-top:24px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- INSTALL BANNER (iOS) -->
+<div id="install-banner">
+  <p>Installe Dawam sur ton écran d'accueil pour l'utiliser hors-ligne.</p>
+  <button onclick="showInstallInstructions()">Installer</button>
+  <button class="close-banner" onclick="closeBanner()">✕</button>
+</div>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+  <p class="splash-logo">Dawam</p>
+  <p class="splash-tagline">Petit, mais constant.</p>
+  <div class="splash-sep"></div>
+  <p class="splash-label">À chaque moment son action</p>
+  <p class="splash-quote">"Ton âge est ton capital. L'enjeu n'est pas d'agir comme tu veux, quand tu veux — mais d'accomplir l'action appropriée au moment opportun."</p>
+  <div class="splash-actions">
+    <button class="btn-primary" onclick="goToOnboarding()">Commencer</button>
+    <button class="btn-secondary" onclick="showAbout()">En savoir plus →</button>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="screen" id="onboarding">
+  <!-- Page 0: Welcome -->
+  <div class="ob-page active" data-page="0">
+    <div class="ob-dots" id="dots-0"></div>
+    <div class="ob-emoji-circle">🕌</div>
+    <p class="ob-label">Bismillah</p>
+    <h1 class="ob-title">Bienvenue dans Dawam</h1>
+    <p class="ob-desc">"L'enjeu n'est pas d'agir comme tu veux, quand tu veux, mais d'accomplir l'action appropriée au moment opportun."</p>
+    <div class="ob-features">
+      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(59,109,17,.1)">🌙</div><span class="ob-feature-text">Prières de la nuit</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(186,117,23,.1)">📿</div><span class="ob-feature-text">Invocations du matin et du soir</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(74,144,217,.1)">📖</div><span class="ob-feature-text">Lecture du Coran</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(212,53,126,.1)">🌱</div><span class="ob-feature-text">Constance — sans pression</span></div>
+    </div>
+    <div class="ob-bottom">
+      <div style="width:44px"></div>
+      <span class="ob-counter">1 / 7</span>
+      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 1: Prénom -->
+  <div class="ob-page" data-page="1">
+    <div class="ob-dots" id="dots-1"></div>
+    <div class="ob-emoji-circle">🤲</div>
+    <p class="ob-label">Fais connaissance</p>
+    <h1 class="ob-title">Comment tu t'appelles ?</h1>
+    <p class="ob-desc">Pour personnaliser ton expérience, dis-nous ton prénom.</p>
+    <input class="ob-name-input" type="text" placeholder="Ton prénom…" id="name-input" oninput="checkNameInput()" autocomplete="given-name">
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">2 / 7</span>
+      <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 2: Salat -->
+  <div class="ob-page" data-page="2">
+    <div class="ob-dots" id="dots-2"></div>
+    <div class="ob-emoji-circle">🕌</div>
+    <p class="ob-label">Question 1 sur 5</p>
+    <h1 class="ob-title">La prière</h1>
+    <p class="ob-desc">Sois honnête avec toi-même — c'est la première étape.</p>
+    <div class="ob-options" data-key="salat">
+      <div class="ob-option" data-value="0" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Peu ou pas encore</div><div class="ob-option-desc">Je commence mon chemin</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="2" onclick="selectOption(this)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">2 à 4 prières</div><div class="ob-option-desc">Pas encore les 5 régulièrement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="5" onclick="selectOption(this)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Les 5 prières</div><div class="ob-option-desc">Régulièrement, alhamdulillah</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    </div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">3 / 7</span>
+      <button class="ob-next" id="q1-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 3: Coran -->
+  <div class="ob-page" data-page="3">
+    <div class="ob-dots" id="dots-3"></div>
+    <div class="ob-emoji-circle">📖</div>
+    <p class="ob-label">Question 2 sur 5</p>
+    <h1 class="ob-title">Le Coran</h1>
+    <p class="ob-desc">La lecture quotidienne du Coran est un pilier du programme.</p>
+    <div class="ob-options" data-key="quran">
+      <div class="ob-option" data-value="0" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Pas encore régulier</div><div class="ob-option-desc">Je lis peu en ce moment</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="1" onclick="selectOption(this)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Parfois</div><div class="ob-option-desc">Pas encore quotidiennement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="2" onclick="selectOption(this)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Wird quotidien</div><div class="ob-option-desc">J'ai un wird régulier</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    </div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">4 / 7</span>
+      <button class="ob-next" id="q2-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 4: Prière de nuit -->
+  <div class="ob-page" data-page="4">
+    <div class="ob-dots" id="dots-4"></div>
+    <div class="ob-emoji-circle">🌙</div>
+    <p class="ob-label">Question 3 sur 5</p>
+    <h1 class="ob-title">La prière de nuit</h1>
+    <p class="ob-desc">Le pilier fondamental du programme spirituel quotidien.</p>
+    <div class="ob-options" data-key="witr">
+      <div class="ob-option" data-value="0" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Pas encore</div><div class="ob-option-desc">Je n'ai pas encore cette habitude</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="1" onclick="selectOption(this)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Parfois</div><div class="ob-option-desc">De temps en temps</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="2" onclick="selectOption(this)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Régulièrement</div><div class="ob-option-desc">Prière de nuit + programme nocturne</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    </div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">5 / 7</span>
+      <button class="ob-next" id="q3-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 5: Situation de vie -->
+  <div class="ob-page" data-page="5">
+    <div class="ob-dots" id="dots-5"></div>
+    <div class="ob-emoji-circle">🧭</div>
+    <p class="ob-label">Question 4 sur 5</p>
+    <h1 class="ob-title">Ta situation de vie</h1>
+    <p class="ob-desc">Pour adapter ton parcours à ton rythme de vie.</p>
+    <div class="ob-options" data-key="type">
+      <div class="ob-option" data-value="worker" onclick="selectOption(this)"><span class="ob-option-emoji">💼</span><div class="ob-option-text"><div class="ob-option-label">Actif / Travailleur</div><div class="ob-option-desc">Journées chargées, sessions courtes</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="student" onclick="selectOption(this)"><span class="ob-option-emoji">📚</span><div class="ob-option-text"><div class="ob-option-label">Étudiant</div><div class="ob-option-desc">Temps d'étude à intégrer au programme</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="married" onclick="selectOption(this)"><span class="ob-option-emoji">🏡</span><div class="ob-option-text"><div class="ob-option-label">En famille</div><div class="ob-option-desc">Actes relationnels inclus dans le parcours</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    </div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">6 / 7</span>
+      <button class="ob-next" id="q4-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 6: Intentions -->
+  <div class="ob-page" data-page="6">
+    <div class="ob-dots" id="dots-6"></div>
+    <div class="ob-emoji-circle">🎯</div>
+    <p class="ob-label">Question 5 sur 5</p>
+    <h1 class="ob-title">Tes intentions</h1>
+    <p class="ob-desc">Choisis une ou plusieurs intentions — elles guideront ton message quotidien.</p>
+    <div class="ob-options" data-key="goal" data-multi="true">
+      <div class="ob-option" data-value="taqwa" onclick="selectOption(this)"><span class="ob-option-emoji">💚</span><div class="ob-option-text"><div class="ob-option-label">Me rapprocher d'Allah</div><div class="ob-option-desc">Renforcer mon lien et ma dévotion</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="habits" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Bâtir des habitudes</div><div class="ob-option-desc">Être constant dans mes adorations</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="serenity" onclick="selectOption(this)"><span class="ob-option-emoji">🕊️</span><div class="ob-option-text"><div class="ob-option-label">Trouver la sérénité</div><div class="ob-option-desc">Paix du cœur et équilibre intérieur</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="knowledge" onclick="selectOption(this)"><span class="ob-option-emoji">📚</span><div class="ob-option-text"><div class="ob-option-label">Apprendre ma religion</div><div class="ob-option-desc">Mieux comprendre et pratiquer l'Islam</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    </div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">7 / 7</span>
+      <button class="ob-next" id="q5-next" style="background:var(--accent)" onclick="finishOnboarding()" disabled>COMMENCER →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PATH -->
+<div class="screen" id="path">
+  <div class="path-hero fade-up">
+    <div class="path-hero-top">
+      <span class="path-hero-time" id="hero-time"></span>
+      <div class="path-hero-chip"><span id="hero-chip">🌱 Débutant</span></div>
+    </div>
+    <div class="path-hero-name" id="hero-name">Bonjour</div>
+    <div class="path-hero-motiv" id="hero-motiv"></div>
+    <div class="path-hero-sep"></div>
+    <div class="path-prog-row">
+      <span class="path-prog-label" id="prog-label">0 / 0 objectifs</span>
+      <span class="path-prog-right" id="prog-right">Commence par une étape</span>
+    </div>
+    <div class="path-prog-bar"><div class="path-prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="path-pills">
+      <div class="path-pill-constance"><div class="path-pill-dot"></div><span class="path-pill-text" id="pill-constance">Semaine 1</span></div>
+    </div>
+  </div>
+  <div class="path-body" id="path-body"></div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- PROFIL -->
+<div class="screen" id="profil">
+  <div class="profil-header fade-up">
+    <div class="profil-title">Mon profil</div>
+    <div class="profil-sub">Petit, mais constant.</div>
+  </div>
+  <div class="profil-body">
+    <div class="profil-identity scale-in">
+      <div class="profil-avatar" id="profil-avatar">?</div>
+      <div>
+        <div class="profil-name" id="profil-name">—</div>
+        <div class="profil-palier-text" id="profil-palier">—</div>
+      </div>
+    </div>
+    <div class="stats-grid fade-up" style="animation-delay:.1s">
+      <div class="stat-card"><div class="stat-card-value" id="stat-constance">0</div><div class="stat-card-label">Jours de constance</div><div class="stat-card-sub">Cette semaine</div></div>
+      <div class="stat-card"><div class="stat-card-value" id="stat-actions">0</div><div class="stat-card-label">Actions accomplies</div><div class="stat-card-sub">Aujourd'hui</div></div>
+      <div class="stat-card"><div class="stat-card-value" id="stat-total">0</div><div class="stat-card-label">Total jours actifs</div><div class="stat-card-sub">Depuis le début</div></div>
+      <div class="stat-card"><div class="stat-card-value" id="stat-palier">1</div><div class="stat-card-label">Palier actuel</div><div class="stat-card-sub" id="stat-palier-name">Débutant</div></div>
+    </div>
+    <div class="profil-section-title fade-up" style="animation-delay:.15s">Activité récente</div>
+    <div class="card fade-up" style="animation-delay:.2s;padding:16px">
+      <div class="stats-label" style="margin-bottom:8px">7 derniers jours</div>
+      <div class="heatmap-label" id="heatmap-labels"></div>
+      <div class="heatmap" id="heatmap"></div>
+    </div>
+    <div class="profil-section-title fade-up" style="animation-delay:.25s">Paramètres</div>
+    <div class="profil-menu fade-up" style="animation-delay:.3s">
+      <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="showToast('Thèmes disponibles bientôt ✨')"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Changer le thème</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="resetApp()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔄</div><span class="profil-menu-text">Recommencer l'onboarding</span><span class="profil-menu-arrow">›</span></div>
+    </div>
+    <div class="dawam-footer">Dawam · Petit, mais constant.</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav">
+  <button class="nav-tab active" onclick="showTab('path',this)" id="tab-path">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Accueil</span>
+  </button>
+  <button class="nav-tab" onclick="showTab('profil',this)" id="tab-profil">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </button>
+</nav>
+
+<!-- ABOUT MODAL -->
+<div id="about-modal">
+  <div class="about-sheet">
+    <div class="about-handle"></div>
+    <div class="about-content">
+      <div class="about-title">À chaque moment son action</div>
+      <div class="about-interpel">Ô mon frère croyant, ô ma sœur croyante,</div>
+      <div class="about-verset">
+        <p>« C'est Lui qui a créé la mort et la vie afin de vous éprouver [et voir] qui de vous agit le mieux. »</p>
+        <small>Sourate al-Mulk, verset 2</small>
+      </div>
+      <p class="about-para">Entre la vie et la mort, s'étend un temps d'action pour l'être humain, autrement dit : un champ dédié à l'adoration. Ton âge est ton capital, il t'appartient donc d'organiser ton temps entre les obligations et les différents engagements, afin que certains n'empiètent pas sur d'autres.</p>
+      <p class="about-para">L'enjeu n'est pas d'agir comme tu veux, quand tu veux, mais d'accomplir l'action appropriée au moment opportun. Tu dois donc discerner ce que requiert chaque instant : œuvre du cœur, de la langue ou des membres, et t'y appliquer avec soin, afin qu'elle prenne place là où Dieu la veut, et qu'elle soit agréée par Lui – exalté soit-Il.</p>
+      <div class="about-citation">
+        <p>« Sache qu'il est des œuvres propres au jour que Dieu n'accepte pas la nuit, et des œuvres propres à la nuit que Dieu n'accepte pas le jour. »</p>
+      </div>
+      <div class="about-section-title">Le passage du temps de l'habitude au temps de l'adoration</div>
+      <div class="about-verset">
+        <p>« Quiconque, homme ou femme, accomplit une œuvre vertueuse tout en étant croyant, Nous lui ferons vivre une vie pleine de bien. »</p>
+        <small>Sourate an-Naḥl, verset 97</small>
+      </div>
+      <p class="about-para">C'est donc par la foi et les œuvres vertueuses que s'accomplit le bonheur véritable. Mais le croyant se doit de baliser sa vie quotidienne par des repères clairs, afin que son pas soit fermement ancré dans le temps de l'adoration et de l'engagement, et non dans celui de l'habitude ou de la distraction.</p>
+      <div class="about-citation">
+        <p>« Celui qui passe un jour de sa vie sans avoir accompli un droit dû, ou rempli une obligation, ou fondé une noblesse, ou mérité une louange, ou établi un bien, ou recherché un savoir — a trahi son jour et s'est montré injuste envers lui-même. »</p>
+      </div>
+      <p class="about-question">Alors… comment commenceras-tu ta journée ? Comment la termineras-tu ? Et quelle est la clé du passage du temps de l'habitude au temps de l'adoration ?</p>
+      <div class="about-footer">Petit, mais constant.</div>
+      <br>
+      <button class="btn-primary" onclick="closeAbout()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<div id="toast"></div>
+
+<script>
+// ═══ DATA ═══
+const PROGRAM = [
+  {id:9,  titleFr:"Convenances du sommeil",        emoji:"🌙", time:"Cette nuit",        xp:15, cat:"nuit",    paliers:[1,2,3,4]},
+  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"Ce matin",          xp:25, cat:"matin",   paliers:[1,2,3,4]},
+  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"À l'aube",          xp:20, cat:"aube",    paliers:[2,3,4]},
+  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"Ce matin",          xp:20, cat:"matin",   paliers:[2,3,4]},
+  {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Ce matin",         xp:20, cat:"matin",   paliers:[2,3,4]},
+  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"Ce matin",          xp:15, cat:"matin",   paliers:[3,4]},
+  {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[3,4]},
+  {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[3,4]},
+  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"Cette nuit",        xp:15, cat:"nuit",    paliers:[3,4]},
+  {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Cette nuit",        xp:25, cat:"nuit",    paliers:[4]},
+  {id:10, titleFr:"Obligations de l'étudiant",     emoji:"📚", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4]},
+  {id:11, titleFr:"Cercle de foi",                 emoji:"🤝", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4]},
+  {id:12, titleFr:"Acquisition du savoir",         emoji:"📗", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4]},
+  {id:13, titleFr:"Garde du temps",                emoji:"⏰", time:"Dans la journée",   xp:10, cat:"journee", paliers:[4]},
+];
+const PALIER = {
+  1:{name:"Débutant",emoji:"🌱",desc:"Chaque grand voyage commence par un premier pas."},
+  2:{name:"En chemin",emoji:"🌿",desc:"Tu as de belles habitudes. Unifions-les."},
+  3:{name:"Intermédiaire",emoji:"🌳",desc:"Tu es déjà sur le chemin. Approfondissons."},
+  4:{name:"Bienfaisant",emoji:"🌟",desc:"Programme complet — la constance est ta force."},
+};
+const SECTIONS = {
+  aube:    {label:"À l'aube",        emoji:"🌄"},
+  matin:   {label:"Ce matin",        emoji:"🌅"},
+  journee: {label:"Dans la journée", emoji:"☀️"},
+  soir:    {label:"Ce soir",         emoji:"🌇"},
+  nuit:    {label:"Cette nuit",      emoji:"🌙"},
+};
+const WEEK_THEMES = [
+  "La constance dans les adorations",
+  "L'intention sincère",
+  "La présence du cœur",
+  "La patience et la gratitude",
+];
+const MOTIVS = [
+  '"L\'acte le plus aimé d\'Allah est celui accompli régulièrement, même s\'il est petit."',
+  '"Chaque jour qui passe est une partie de toi qui s\'en va."',
+  '"Sache qu\'il est des œuvres propres au jour que Dieu n\'accepte pas la nuit."',
+  "Reprends là où tu t'es arrêté — la porte est toujours ouverte.",
+  "Continue, barakAllahu fik — la constance est plus aimée que l'abondance.",
+  '"Petit, mais constant." — c\'est ton chemin.',
+];
+
+// ═══ STATE ═══
+const STORAGE_KEY = "dawam_pwa_v1";
+let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[]},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[]};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S));}
+function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JSON.parse(r)};}catch{}}
+
+// ═══ ONBOARDING ═══
+let obPage=0, obAns={};
+const OB_N=7;
+function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
+function goToOnboarding(){showScreen("onboarding");obPage=0;renderObPage(0);initDots();}
+function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");}
+function obNext(){obPage++;if(obPage<OB_N)renderObPage(obPage);}
+function obBack(){if(obPage>0){obPage--;renderObPage(obPage);}else showScreen("splash");}
+function checkNameInput(){const v=document.getElementById("name-input").value.trim();document.getElementById("name-next").disabled=!v;if(v)obAns.name=v;}
+function selectOption(el){
+  const parent=el.closest(".ob-options");
+  const isMulti=parent.dataset.multi==="true";
+  const key=parent.dataset.key;
+  const val=el.dataset.value;
+  if(!isMulti){parent.querySelectorAll(".ob-option").forEach(o=>o.classList.remove("selected"));el.classList.add("selected");obAns[key]=isNaN(val)?val:Number(val);}
+  else{el.classList.toggle("selected");if(!obAns[key])obAns[key]=[];if(el.classList.contains("selected")){if(!obAns[key].includes(val))obAns[key].push(val);}else{obAns[key]=obAns[key].filter(v=>v!==val);}}
+  const map={salat:"q1-next",quran:"q2-next",witr:"q3-next",type:"q4-next",goal:"q5-next"};
+  const btnId=map[key];
+  if(btnId){const btn=document.getElementById(btnId);if(btn)btn.disabled=isMulti?obAns[key].length===0:false;}
+}
+function calcPalier(p){let s=0;if(p.salat>=5)s+=3;else if(p.salat>=2)s+=1;s+=Math.min(p.quran||0,2);s+=Math.min(p.witr||0,2);if(s>=7)return 3;if(s>=3)return 2;return 1;}
+function finishOnboarding(){
+  const name=document.getElementById("name-input")?.value.trim()||obAns.name||"ami";
+  const profile={salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"]};
+  S.name=name;S.profile=profile;S.palier=calcPalier(profile);S.weekNumber=1;S.checklist={};S.totalDays=0;S.lastDate=null;S.history=[];
+  save();launchApp();
+}
+
+// ═══ PATH ═══
+function getGreet(){const h=new Date().getHours();if(h<6)return"Bonne nuit";if(h<12)return"Bonjour";if(h<17)return"Bon après-midi";if(h<20)return"Bonne soirée";return"Bonsoir";}
+function getTimeLabel(){const h=new Date().getHours(),m=String(new Date().getMinutes()).padStart(2,"0");return`${h}h${m}`;}
+function getCurrentCat(){const h=new Date().getHours();if(h>=3&&h<7)return"aube";if(h>=7&&h<12)return"matin";if(h>=12&&h<17)return"journee";if(h>=17&&h<21)return"soir";return"nuit";}
+function getActiveItems(){return PROGRAM.filter(i=>i.paliers.includes(S.palier));}
+function checkNewDay(){
+  const today=new Date().toISOString().split("T")[0];
+  if(S.lastDate&&S.lastDate!==today){
+    const checked=Object.values(S.checklist).filter(Boolean).length;
+    S.history.push({date:S.lastDate,checked,total:getActiveItems().length});
+    if(S.history.length>30)S.history.shift();
+    S.totalDays++;S.checklist={};
+  }
+  S.lastDate=today;save();
+}
+
+function renderPath(){
+  checkNewDay();
+  const items=getActiveItems();
+  const checked=Object.values(S.checklist).filter(Boolean).length;
+  const total=items.length;
+  const pct=total>0?Math.round(checked/total*100):0;
+  const allDone=checked===total&&total>0;
+  const pi=PALIER[S.palier];
+  const curCat=getCurrentCat();
+
+  document.getElementById("hero-time").textContent=getGreet()+" · "+getTimeLabel();
+  document.getElementById("hero-name").textContent=(S.name?`Bonjour, ${S.name}`:"Bonjour");
+  document.getElementById("hero-chip").textContent=pi.emoji+" "+pi.name;
+  document.getElementById("hero-motiv").textContent=MOTIVS[Math.floor(Math.random()*MOTIVS.length)];
+  document.getElementById("prog-label").textContent=allDone?"Journée complète !": `${checked} / ${total} objectifs`;
+  document.getElementById("prog-right").textContent=allDone?"Ma sha Allah 🌟":`${pct}% accompli`;
+  document.getElementById("prog-fill").style.width=Math.max(pct,1)+"%";
+  document.getElementById("pill-constance").textContent=`Semaine ${S.weekNumber} · ${pi.name}`;
+
+  const body=document.getElementById("path-body");
+  body.innerHTML="";
+
+  // Next action
+  if(!allDone){
+    const next=items.find(i=>!S.checklist[i.id]);
+    if(next){
+      const secLabel=SECTIONS[next.cat]?.label||next.time;
+      const isCur=next.cat===curCat;
+      body.innerHTML+=`<div class="next-action-card fade-up">
+        <div class="next-action-label">${isCur?"● Maintenant":"● Prochaine étape"} · ${secLabel}</div>
+        <div class="next-action-row">
+          <div class="next-action-icon">${next.emoji}</div>
+          <div style="flex:1"><div class="next-action-title">${next.titleFr}</div><div class="next-action-sub">${next.time}</div></div>
+          <span class="next-action-xp">+${next.xp} XP</span>
+        </div>
+        <button class="btn-primary" onclick="toggleItem(${next.id})">Commencer</button>
+      </div>`;
+    }
+  } else {
+    body.innerHTML+=`<div class="all-done-card fade-up"><div class="all-done-emoji">🌟</div><div class="all-done-text">Journée complète — Ma sha Allah !</div></div>`;
+  }
+
+  // Stats
+  const theme=WEEK_THEMES[(S.weekNumber-1)%WEEK_THEMES.length];
+  body.innerHTML+=`<div class="stats-row fade-up" style="animation-delay:.05s">
+    <div class="stats-card"><div class="stats-label">Progression</div><div class="stats-percent">${pct}%</div><div class="stats-count">${checked} / ${total} étapes</div><div class="stats-mini-bar"><div class="stats-mini-fill" style="width:${pct}%"></div></div></div>
+    <div class="stats-card"><div class="stats-label">Cette semaine</div><div class="week-theme">${theme}</div><div class="week-sub">${pi.name}</div></div>
+  </div>`;
+
+  body.innerHTML+=`<div class="section-sep fade-up" style="animation-delay:.08s">Ton parcours du jour</div>`;
+
+  // Sections triées par pertinence temporelle
+  const catOrder=["aube","matin","journee","soir","nuit"];
+  const curIdx=catOrder.indexOf(curCat);
+  const ordered=[...catOrder.slice(curIdx),...catOrder.slice(0,curIdx)];
+
+  ordered.forEach((cat,si)=>{
+    const catItems=items.filter(i=>i.cat===cat);
+    if(!catItems.length)return;
+    const sec=SECTIONS[cat];
+    const secChecked=catItems.filter(i=>S.checklist[i.id]).length;
+    const isCur=cat===curCat;
+    const itemsHtml=catItems.map(item=>{
+      const done=!!S.checklist[item.id];
+      return `<div class="item-row${done?" checked":""}" onclick="toggleItem(${item.id})">
+        <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
+        <span class="item-xp">+${item.xp} XP</span>
+      </div>`;
+    }).join("");
+    body.innerHTML+=`<div class="section-block fade-up" style="animation-delay:${.1+si*.03}s">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left"><span class="section-header-emoji">${sec.emoji}</span><span class="section-header-label">${sec.label}</span></div>
+        <div style="display:flex;align-items:center;gap:6px">${isCur?'<span class="section-current-badge">● Maintenant</span>':''}<span class="section-header-badge">${secChecked}/${catItems.length}</span></div>
+      </div>
+      <div class="section-items">${itemsHtml}</div>
+    </div>`;
+  });
+}
+
+function toggleSection(h){const items=h.nextElementSibling;const hidden=items.style.display==="none";items.style.display=hidden?"flex":"none";if(hidden)items.style.flexDirection="column";}
+
+function toggleItem(id){
+  S.checklist[id]=!S.checklist[id];save();
+  if(S.checklist[id])showToast("✓ Accompli · barakAllahu fik");
+  renderPath();
+  if(document.getElementById("profil").classList.contains("active"))renderProfil();
+}
+
+// ═══ PROFIL ═══
+function renderProfil(){
+  const pi=PALIER[S.palier];
+  const items=getActiveItems();
+  const checked=Object.values(S.checklist).filter(Boolean).length;
+  document.getElementById("profil-avatar").textContent=S.name?S.name[0].toUpperCase():"?";
+  document.getElementById("profil-name").textContent=S.name||"—";
+  document.getElementById("profil-palier").textContent=pi.emoji+" "+pi.name+" · Semaine "+S.weekNumber;
+  document.getElementById("stat-constance").textContent=S.weekNumber;
+  document.getElementById("stat-actions").textContent=checked;
+  document.getElementById("stat-total").textContent=S.totalDays+1;
+  document.getElementById("stat-palier").textContent=S.palier;
+  document.getElementById("stat-palier-name").textContent=pi.name;
+
+  // Heatmap
+  const days=["L","M","M","J","V","S","D"];
+  document.getElementById("heatmap-labels").innerHTML=days.map(d=>`<div class="heatmap-day">${d}</div>`).join("");
+  const hm=document.getElementById("heatmap");
+  hm.innerHTML="";
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const key=d.toISOString().split("T")[0];
+    const isToday=i===0;
+    let level=0;
+    if(isToday){level=Math.min(Math.floor(checked/Math.max(items.length,1)*4),4);}
+    else{const h=S.history.find(h=>h.date===key);if(h)level=Math.min(Math.floor(h.checked/Math.max(h.total,1)*4),4);}
+    hm.innerHTML+=`<div class="heatmap-cell a${level}${isToday?" today":""}"></div>`;
+  }
+}
+
+// ═══ NAV ═══
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","profil"].includes(id));}
+function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
+function resetApp(){if(confirm("Recommencer depuis le début ?")){localStorage.removeItem(STORAGE_KEY);location.reload();}}
+
+// ═══ ABOUT ═══
+function showAbout(){document.getElementById("about-modal").classList.add("show");}
+function closeAbout(){document.getElementById("about-modal").classList.remove("show");}
+document.getElementById("about-modal").addEventListener("click",function(e){if(e.target===this)closeAbout();});
+
+// ═══ PWA INSTALL ═══
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;});
+function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
+function isInStandaloneMode(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;}
+function showInstallBanner(){
+  if(isInStandaloneMode())return;
+  if(localStorage.getItem("install_dismissed"))return;
+  document.getElementById("install-banner").classList.add("show");
+}
+function closeBanner(){document.getElementById("install-banner").classList.remove("show");localStorage.setItem("install_dismissed","1");}
+function showInstallInstructions(){
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;closeBanner();});return;}
+  if(isIOS()){alert("Pour installer Dawam :\n\n1. Appuie sur le bouton Partager (□↑) en bas de Safari\n2. Choisis \"Sur l'écran d'accueil\"\n3. Appuie sur \"Ajouter\"\n\nDawam apparaîtra comme une vraie app !");return;}
+  showToast("Utilise le menu de ton navigateur → Installer l'application");
+}
+
+// ═══ SERVICE WORKER ═══
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").then(()=>{console.log("SW registered");}).catch(()=>{});
+  });
+}
+
+// ═══ INIT ═══
+function launchApp(){
+  showScreen("path");
+  document.getElementById("bottom-nav").classList.add("visible");
+  document.getElementById("tab-path").classList.add("active");
+  renderPath();
+  setTimeout(showInstallBanner,3000);
+}
+
+load();
+if(S.name){launchApp();}else{showScreen("splash");}
+</script>
+</body>
+</html>
