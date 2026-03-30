@@ -1,4 +1,4 @@
-const CACHE = "dawam-v1";
+const CACHE = "dawam-v2";
 const ASSETS = [
   "./",
   "./index.html",
