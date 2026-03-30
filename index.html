@@ -243,6 +243,12 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 #install-banner button { background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;white-space:nowrap; }
 #install-banner .close-banner { background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;cursor:pointer;padding:0 4px; }
 
+/* UPDATE BANNER */
+#update-banner { display:none;position:sticky;top:0;z-index:201;background:var(--green);padding:10px 16px;align-items:center;gap:10px; }
+#update-banner.show { display:flex; }
+#update-banner p { flex:1;font-size:13px;font-weight:500;color:#fff;line-height:1.4; }
+#update-banner button { background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.45);border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;white-space:nowrap; }
+
 /* TOAST */
 #toast { position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff8e8;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:999; }
 #toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
@@ -268,6 +274,12 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 </head>
 <body>
 <div id="app">
+
+<!-- UPDATE BANNER -->
+<div id="update-banner">
+  <p>Nouvelle version disponible ✨</p>
+  <button onclick="applyUpdate()">Mettre à jour</button>
+</div>
 
 <!-- INSTALL BANNER (iOS) -->
 <div id="install-banner">
@@ -925,10 +937,36 @@ function showInstallInstructions(){
 }
 
 // ═══ SERVICE WORKER ═══
+let _swWaiting=null;
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("sw.js").then(()=>{console.log("SW registered");}).catch(()=>{});
+    navigator.serviceWorker.register("sw.js").then(reg=>{
+      // Nouvelle version en cours d'installation
+      reg.addEventListener("updatefound",()=>{
+        const nw=reg.installing;
+        nw.addEventListener("statechange",()=>{
+          if(nw.state==="installed"&&navigator.serviceWorker.controller){
+            _swWaiting=nw;
+            document.getElementById("update-banner").classList.add("show");
+          }
+        });
+      });
+      // Vérifier si un SW attend déjà (cas où la page a été rechargée)
+      if(reg.waiting&&navigator.serviceWorker.controller){
+        _swWaiting=reg.waiting;
+        document.getElementById("update-banner").classList.add("show");
+      }
+    }).catch(()=>{});
+    // Recharger quand le nouveau SW prend le contrôle
+    let _refreshing=false;
+    navigator.serviceWorker.addEventListener("controllerchange",()=>{
+      if(!_refreshing){_refreshing=true;location.reload();}
+    });
   });
+}
+function applyUpdate(){
+  if(_swWaiting){_swWaiting.postMessage("skipWaiting");}
+  else{location.reload();}
 }
 
 // ═══ INIT ═══
