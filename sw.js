@@ -6,7 +6,8 @@ const ASSETS = [
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  // Ne pas skipWaiting automatiquement — on attend le signal de l'app
+  // Prendre le contrôle immédiatement (important pour migrer depuis une ancienne version sans bouton de mise à jour)
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", e => {

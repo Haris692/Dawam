@@ -1,0 +1,40 @@
+name: Deploy Dawam PWA
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Injecte le SHA du commit dans le nom du cache SW
+      # → déclenche la bannière "Nouvelle version" chez tous les utilisateurs
+      - name: Bump SW cache version
+        run: |
+          SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          sed -i "s/const CACHE = \"dawam-[^\"]*\"/const CACHE = \"dawam-${SHA}\"/" sw.js
+          echo "Cache version: dawam-${SHA}"
+
+      - uses: actions/configure-pages@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - uses: actions/deploy-pages@v4
+        id: deployment
