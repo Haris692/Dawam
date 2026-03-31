@@ -210,15 +210,17 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .toggle-switch.on { background:var(--accent); }
 .toggle-switch::after { content:'';width:20px;height:20px;border-radius:10px;background:#fff;position:absolute;top:3px;left:3px;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2); }
 .toggle-switch.on::after { transform:translateX(18px); }
-.heatmap { display:grid;grid-template-columns:repeat(7,1fr);gap:4px; }
-.heatmap-cell { aspect-ratio:1;border-radius:3px;background:var(--border-light); }
-.heatmap-cell.a1 { background:rgba(59,109,17,.25); }
-.heatmap-cell.a2 { background:rgba(59,109,17,.5); }
-.heatmap-cell.a3 { background:rgba(59,109,17,.75); }
-.heatmap-cell.a4 { background:var(--green); }
-.heatmap-cell.today { box-shadow:0 0 0 1.5px var(--accent); }
-.heatmap-label { display:flex;justify-content:space-between;margin-bottom:6px; }
-.heatmap-day { font-size:10px;color:var(--text-light);font-weight:500;text-align:center;flex:1; }
+.days-timeline { display:flex;flex-direction:column; }
+.day-row { display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:.5px solid var(--border-light); }
+.day-row:last-child { border-bottom:none; }
+.day-row-label { min-width:82px;font-size:12px;font-weight:500;color:var(--text-secondary); }
+.day-row.is-today .day-row-label { color:var(--accent);font-weight:600; }
+.day-row.no-data .day-row-label { opacity:.45; }
+.day-row-bar { flex:1;height:7px;background:var(--border-light);border-radius:4px;overflow:hidden; }
+.day-row-fill { height:100%;border-radius:4px;transition:width .6s cubic-bezier(.34,1.2,.64,1); }
+.day-row-count { min-width:36px;text-align:right;font-size:11px;font-weight:600;color:var(--text-light); }
+.day-row.is-today .day-row-count { color:var(--accent); }
+.day-row.no-data .day-row-count { opacity:.35; }
 .dawam-footer { text-align:center;padding:24px 16px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
 
 /* DETAIL MODAL */
@@ -372,7 +374,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <div style="width:44px"></div>
-      <span class="ob-counter">1 / 8</span>
+      <span class="ob-counter">1 / 10</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
@@ -386,7 +388,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     <input class="ob-name-input" type="text" placeholder="Ton prénom…" id="name-input" oninput="checkNameInput()" autocomplete="given-name">
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">2 / 8</span>
+      <span class="ob-counter">2 / 10</span>
       <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -404,7 +406,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">3 / 8</span>
+      <span class="ob-counter">3 / 10</span>
       <button class="ob-next" id="q1-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -422,7 +424,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">4 / 8</span>
+      <span class="ob-counter">4 / 10</span>
       <button class="ob-next" id="q2-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -440,7 +442,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">5 / 8</span>
+      <span class="ob-counter">5 / 10</span>
       <button class="ob-next" id="q3-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -458,7 +460,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">6 / 8</span>
+      <span class="ob-counter">6 / 10</span>
       <button class="ob-next" id="q4-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -477,7 +479,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">7 / 8</span>
+      <span class="ob-counter">7 / 10</span>
       <button class="ob-next" id="q5-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -491,13 +493,58 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     <input class="ob-name-input" type="text" placeholder="Ex: Paris, Casablanca, Dubaï…" id="city-input" oninput="checkCityInput()" autocomplete="off">
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">8 / 8</span>
+      <span class="ob-counter">8 / 10</span>
       <button class="ob-next" id="city-next" style="background:var(--green)" onclick="obNext()">Voir mon programme →</button>
     </div>
   </div>
-  <!-- Page 8: Programme proposé + personnalisation -->
+  <!-- Page 8: Thème -->
   <div class="ob-page" data-page="8">
     <div class="ob-dots" id="dots-8"></div>
+    <div class="ob-emoji-circle">🎨</div>
+    <p class="ob-label">Personnalise</p>
+    <h1 class="ob-title">Choisis ton thème</h1>
+    <p class="ob-desc">Tu pourras le changer à tout moment depuis ton profil.</p>
+    <div id="ob-theme-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%"></div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">9 / 10</span>
+      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 9: Notifications -->
+  <div class="ob-page" data-page="9">
+    <div class="ob-dots" id="dots-9"></div>
+    <div class="ob-emoji-circle">🔔</div>
+    <p class="ob-label">Rappels intelligents</p>
+    <h1 class="ob-title">Rester constant ?</h1>
+    <p class="ob-desc">Reçois un rappel quotidien calé sur les vrais horaires de prière de ta ville.</p>
+    <div class="ob-options">
+      <div class="ob-option" id="ob-notif-yes" onclick="obChooseNotif(true, this)">
+        <span class="ob-option-emoji">🔔</span>
+        <div class="ob-option-text">
+          <div class="ob-option-label">Oui, active les rappels</div>
+          <div class="ob-option-desc">Notifs basées sur Fajr et Isha</div>
+        </div>
+        <div class="ob-radio"><div class="ob-radio-dot"></div></div>
+      </div>
+      <div class="ob-option" id="ob-notif-no" onclick="obChooseNotif(false, this)">
+        <span class="ob-option-emoji">🔕</span>
+        <div class="ob-option-text">
+          <div class="ob-option-label">Pas maintenant</div>
+          <div class="ob-option-desc">Activable depuis le profil</div>
+        </div>
+        <div class="ob-radio"><div class="ob-radio-dot"></div></div>
+      </div>
+    </div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">10 / 10</span>
+      <button class="ob-next" id="ob-notif-next" style="background:var(--green)" onclick="obNextFromNotifs()" disabled>Voir mon programme →</button>
+    </div>
+  </div>
+  <!-- Page 10: Programme proposé + personnalisation -->
+  <div class="ob-page" data-page="10">
+    <div class="ob-dots" id="dots-10"></div>
     <p class="ob-label" style="text-align:center;margin-bottom:6px">Ton programme</p>
     <h1 class="ob-title" style="margin-bottom:20px">Voici ton point de départ</h1>
     <div id="result-content"></div>
@@ -554,9 +601,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="profil-section-title fade-up" style="animation-delay:.15s">Activité récente</div>
     <div class="card fade-up" style="animation-delay:.2s;padding:16px">
-      <div class="stats-label" style="margin-bottom:8px">7 derniers jours</div>
-      <div class="heatmap-label" id="heatmap-labels"></div>
-      <div class="heatmap" id="heatmap"></div>
+      <div id="days-timeline"></div>
     </div>
     <div class="profil-section-title fade-up" style="animation-delay:.25s">Paramètres</div>
     <div class="profil-menu fade-up" style="animation-delay:.3s">
@@ -719,12 +764,59 @@ function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JS
 
 // ═══ ONBOARDING ═══
 let obPage=0, obAns={};
-const OB_N=9;
+const OB_N=11;
 function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
 function goToOnboarding(){showScreen("onboarding");obPage=0;renderObPage(0);initDots();}
-function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");if(n===8)renderResultPage();}
+function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");if(n===10)renderResultPage();if(n===8)renderObThemeGrid();}
 function obNext(){obPage++;if(obPage<OB_N)renderObPage(obPage);}
 function obBack(){if(obPage>0){obPage--;renderObPage(obPage);}else showScreen("splash");}
+
+// ─── Thème onboarding ───
+function renderObThemeGrid(){
+  const current=localStorage.getItem('dawam_theme')||'default';
+  const el=document.getElementById('ob-theme-grid');
+  if(!el)return;
+  el.innerHTML=Object.entries(THEMES).map(([key,t])=>{
+    const sel=key===current;
+    return`<div onclick="obSelectTheme('${key}')" style="border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;border:2px solid ${sel?t.accent:'rgba(128,100,50,0.15)'};background:${t.bg};transition:all .2s;position:relative">
+      <div style="font-size:20px;margin-bottom:4px">${t.emoji}</div>
+      <div style="display:flex;gap:3px;justify-content:center;margin-bottom:4px">
+        <div style="width:10px;height:10px;border-radius:50%;background:${t.accent}"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:${t.green}"></div>
+      </div>
+      <div style="font-size:10px;font-weight:600;color:${t.text};line-height:1.2">${t.name}</div>
+      ${sel?`<div style="position:absolute;top:4px;right:4px;width:14px;height:14px;border-radius:50%;background:${t.accent};display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><polyline points="1,4 3,6.5 7,1.5" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`:''}
+    </div>`;
+  }).join('');
+}
+function obSelectTheme(key){applyTheme(key);renderObThemeGrid();}
+
+// ─── Notifications onboarding ───
+function obChooseNotif(wantsNotif, el){
+  document.getElementById('ob-notif-yes').classList.toggle('selected', wantsNotif);
+  document.getElementById('ob-notif-no').classList.toggle('selected', !wantsNotif);
+  document.getElementById('ob-notif-next').disabled=false;
+  obAns.notifs=wantsNotif;
+}
+async function obNextFromNotifs(){
+  if(obAns.notifs===true){
+    const btn=document.getElementById('ob-notif-next');
+    btn.disabled=true;
+    btn.textContent='Activation…';
+    try{
+      const sub=await subscribePush();
+      await fetch(`${PUSH_WORKER}/subscribe`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sub.toJSON(),city:obAns.city||''})});
+      obAns._pushSub=sub.endpoint;
+      showToast('Rappels activés ✓');
+    }catch(e){
+      showToast('Notifications non disponibles sur cet appareil');
+      obAns._pushSub=null;
+    }
+    btn.disabled=false;
+    btn.textContent='Voir mon programme →';
+  }
+  obNext();
+}
 function checkNameInput(){const v=document.getElementById("name-input").value.trim();document.getElementById("name-next").disabled=!v;if(v)obAns.name=v;}
 function checkCityInput(){const v=document.getElementById("city-input")?.value.trim();if(v)obAns.city=v;else delete obAns.city;}
 function selectOption(el){
@@ -793,7 +885,8 @@ function finishOnboarding(){
   const selSorted=[...obSelectedSteps].sort((a,b)=>a-b);
   const isCustom=obSelectedSteps.length>0&&JSON.stringify(selSorted)!==JSON.stringify(defaultIds);
   localStorage.removeItem(STORAGE_KEY);
-  S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null};
+  const notifs=obAns._pushSub?{pushSub:obAns._pushSub}:null;
+  S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null,notifs};
   save();launchApp();
 }
 
@@ -950,20 +1043,32 @@ function renderProfil(){
   if(toggle)toggle.classList.toggle('on',isDarkMode());
   renderNotifToggle();
 
-  // Heatmap
-  const days=["L","M","M","J","V","S","D"];
-  document.getElementById("heatmap-labels").innerHTML=days.map(d=>`<div class="heatmap-day">${d}</div>`).join("");
-  const hm=document.getElementById("heatmap");
-  hm.innerHTML="";
+  // Timeline 7 derniers jours
+  const DAY_NAMES=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const tl=document.getElementById("days-timeline");
+  tl.className='days-timeline';
+  let tlHtml='';
   for(let i=6;i>=0;i--){
     const d=new Date();d.setDate(d.getDate()-i);
     const key=d.toISOString().split("T")[0];
     const isToday=i===0;
-    let level=0;
-    if(isToday){level=Math.min(Math.floor(checked/Math.max(items.length,1)*4),4);}
-    else{const h=S.history.find(h=>h.date===key);if(h)level=Math.min(Math.floor(h.checked/Math.max(h.total,1)*4),4);}
-    hm.innerHTML+=`<div class="heatmap-cell a${level}${isToday?" today":""}"></div>`;
+    let done=0,total=items.length,hasData=isToday;
+    if(isToday){done=checked;}
+    else{const entry=S.history.find(h=>h.date===key);if(entry){done=entry.checked;total=Math.max(entry.total||total,1);hasData=true;}else{total=0;}}
+    const pct=total>0?Math.round(done/total*100):0;
+    const level=!hasData?0:pct===0?0:pct<35?1:pct<65?2:pct<90?3:4;
+    const fillColors=['','var(--accent)','var(--accent)','var(--accent)','var(--green)'];
+    const fillOpacity=['','0.3','0.6','1','1'];
+    const fillStyle=level===0?'width:0%':`width:${pct}%;background:${fillColors[level]};opacity:${fillOpacity[level]}`;
+    const label=isToday?"Aujourd'hui":`${DAY_NAMES[d.getDay()]} · ${d.getDate()}`;
+    const countText=!hasData?'—':`${done}/${total}`;
+    tlHtml+=`<div class="day-row${isToday?' is-today':''}${!hasData?' no-data':''}">
+      <div class="day-row-label">${label}</div>
+      <div class="day-row-bar"><div class="day-row-fill" style="${fillStyle}"></div></div>
+      <div class="day-row-count">${countText}</div>
+    </div>`;
   }
+  tl.innerHTML=tlHtml;
 }
 
 // ═══ NAV ═══
@@ -1231,7 +1336,7 @@ async function toggleNotifs() {
     await fetch(`${PUSH_WORKER}/subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sub.toJSON()),
+      body: JSON.stringify({ ...sub.toJSON(), city: S.profile?.city || '' }),
     });
     S.notifs = { pushSub: sub.endpoint };
     save();

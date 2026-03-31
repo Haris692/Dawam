@@ -24,16 +24,35 @@ self.addEventListener("message", e => {
 });
 
 // ── Push notification reçue du serveur ────────────────────────────────────
-const PUSH_MSGS = [
-  { title: "Dawam 🌙", body: "Heure du Witr — commence ta journée avec Allah." },
-  { title: "Dawam 🌄", body: "La séance de l'aube t'attend. Petit, mais constant." },
-  { title: "Dawam 📿", body: "N'oublie pas ton programme spirituel aujourd'hui." },
-  { title: "Dawam ☀️", body: "Une nouvelle journée, une nouvelle occasion de constance." },
-  { title: "Dawam 💚", body: "Renouvelle ton intention et reprends là où tu t'es arrêté." },
-];
+const PUSH_MSGS = {
+  qiyam: {
+    title: "Dawam 🌙",
+    body: "L'heure du Witr approche. Lève-toi et commence ta journée avec Allah.",
+  },
+  aube: {
+    title: "Dawam 🌄",
+    body: "La séance de l'aube t'attend — Coran, adhkar, constance.",
+  },
+  journee: {
+    title: "Dawam ☀️",
+    body: "Rappel de journée : bénédictions sur le Prophète ﷺ et garde du temps.",
+  },
+  nuit: {
+    title: "Dawam 🌙",
+    body: "Avant de dormir — les convenances du sommeil t'attendent.",
+  },
+  default: {
+    title: "Dawam 📿",
+    body: "Ton programme spirituel t'attend. Petit, mais constant.",
+  },
+};
 
 self.addEventListener("push", e => {
-  const msg = PUSH_MSGS[Math.floor(Math.random() * PUSH_MSGS.length)];
+  let type = "default";
+  if (e.data) {
+    try { type = e.data.text().trim(); } catch (_) {}
+  }
+  const msg = PUSH_MSGS[type] ?? PUSH_MSGS.default;
   e.waitUntil(
     self.registration.showNotification(msg.title, {
       body: msg.body,
@@ -42,6 +61,7 @@ self.addEventListener("push", e => {
       vibrate: [200, 100, 200],
       tag: "dawam-daily",
       renotify: true,
+      data: { type },
     })
   );
 });

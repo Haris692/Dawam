@@ -12,7 +12,10 @@ id = "011a83c71e714515b11cbf69cc490b13"
 # 3h UTC = 5h Paris (heure d'été) / 4h (hiver)
 # Modifie selon ton fuseau horaire cible
 [triggers]
-crons = ["0 3 * * *"]
+crons = [
+  "*/10 * * * *",  # Adaptatif — vérifie les horaires de prière toutes les 10 min
+  "0 10 * * *"     # Journée fixe — 12h Paris (10h UTC)
+]
 
 # Variables publiques (les secrets VAPID sont dans wrangler secret)
 [vars]
