@@ -267,6 +267,28 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 #toast { position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff8e8;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:999; }
 #toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
 
+/* AUBE TIMER */
+#aube-timer { display:none;position:fixed;inset:0;z-index:400;background:var(--bg);flex-direction:column; }
+#aube-timer.show { display:flex; }
+.timer-header { display:flex;align-items:center;justify-content:space-between;padding:max(20px,calc(16px + env(safe-area-inset-top))) 20px 12px; }
+.timer-header-title { font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text); }
+.timer-close { width:36px;height:36px;border-radius:18px;background:var(--border-light);border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.timer-progress-bar { height:3px;background:var(--border);margin:0 20px 0; }
+.timer-progress-fill { height:100%;background:var(--accent);border-radius:3px;transition:width .5s ease; }
+.timer-body { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px 12px;text-align:center;overflow-y:auto; }
+.timer-step-label { font-size:11px;font-weight:600;color:var(--text-light);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px; }
+.timer-emoji { font-size:60px;margin-bottom:14px; }
+.timer-step-title { font-family:var(--font-display);font-size:24px;font-weight:600;color:var(--text);margin-bottom:4px; }
+.timer-step-subtitle { font-size:14px;color:var(--text-secondary);margin-bottom:20px; }
+.timer-countdown { font-family:var(--font-display);font-size:52px;font-weight:700;color:var(--accent);margin-bottom:6px;font-variant-numeric:tabular-nums;min-height:64px;display:flex;align-items:center;justify-content:center; }
+.timer-countdown.ending { color:var(--green);animation:pulse 1s ease-in-out infinite; }
+.timer-step-desc { font-size:13px;color:var(--text-secondary);line-height:1.75;max-width:320px;margin:0 auto; }
+.timer-footer { padding:12px 20px;padding-bottom:max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px; }
+.timer-chourouk-info { font-size:11px;color:var(--text-light);text-align:center;padding:4px 0; }
+.timer-next-btn { display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:14px;border:none;cursor:pointer;background:var(--accent);color:#fff8e8;font-family:var(--font-body);font-size:15px;font-weight:600;transition:opacity .15s; }
+.timer-next-btn:active { opacity:.85; }
+.timer-skip-btn { background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-light);padding:6px;text-align:center; }
+
 /* ABOUT MODAL */
 #about-modal { display:none;position:fixed;inset:0;z-index:300;background:rgba(61,42,10,.5);align-items:flex-end; }
 #about-modal.show { display:flex; }
@@ -332,7 +354,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <div style="width:44px"></div>
-      <span class="ob-counter">1 / 7</span>
+      <span class="ob-counter">1 / 8</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
@@ -346,7 +368,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     <input class="ob-name-input" type="text" placeholder="Ton prénom…" id="name-input" oninput="checkNameInput()" autocomplete="given-name">
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">2 / 7</span>
+      <span class="ob-counter">2 / 8</span>
       <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -364,7 +386,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">3 / 7</span>
+      <span class="ob-counter">3 / 8</span>
       <button class="ob-next" id="q1-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -382,7 +404,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">4 / 7</span>
+      <span class="ob-counter">4 / 8</span>
       <button class="ob-next" id="q2-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -400,7 +422,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">5 / 7</span>
+      <span class="ob-counter">5 / 8</span>
       <button class="ob-next" id="q3-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -418,11 +440,11 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">6 / 7</span>
+      <span class="ob-counter">6 / 8</span>
       <button class="ob-next" id="q4-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 6: Intentions (counter updated: 6/7 questionnaire, then result) -->
+  <!-- Page 6: Intentions -->
   <div class="ob-page" data-page="6">
     <div class="ob-dots" id="dots-6"></div>
     <div class="ob-emoji-circle">🎯</div>
@@ -437,13 +459,27 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">7 / 7</span>
-      <button class="ob-next" id="q5-next" style="background:var(--green)" onclick="obNext()" disabled>Voir mon programme →</button>
+      <span class="ob-counter">7 / 8</span>
+      <button class="ob-next" id="q5-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 7: Programme proposé + personnalisation -->
+  <!-- Page 7: Ville -->
   <div class="ob-page" data-page="7">
     <div class="ob-dots" id="dots-7"></div>
+    <div class="ob-emoji-circle">🕌</div>
+    <p class="ob-label">Horaires de prière</p>
+    <h1 class="ob-title">Ta ville</h1>
+    <p class="ob-desc">Pour adapter ton programme aux horaires de prière exacts. Optionnel — tu pourras le modifier plus tard.</p>
+    <input class="ob-name-input" type="text" placeholder="Ex: Paris, Casablanca, Dubaï…" id="city-input" oninput="checkCityInput()" autocomplete="off">
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">8 / 8</span>
+      <button class="ob-next" id="city-next" style="background:var(--green)" onclick="obNext()">Voir mon programme →</button>
+    </div>
+  </div>
+  <!-- Page 8: Programme proposé + personnalisation -->
+  <div class="ob-page" data-page="8">
+    <div class="ob-dots" id="dots-8"></div>
     <p class="ob-label" style="text-align:center;margin-bottom:6px">Ton programme</p>
     <h1 class="ob-title" style="margin-bottom:20px">Voici ton point de départ</h1>
     <div id="result-content"></div>
@@ -561,6 +597,28 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 
 </div><!-- #app -->
 
+<!-- AUBE TIMER OVERLAY -->
+<div id="aube-timer">
+  <div class="timer-header">
+    <span class="timer-header-title">Séance de l'aube</span>
+    <button class="timer-close" onclick="closeAubeTimer()">✕</button>
+  </div>
+  <div class="timer-progress-bar"><div class="timer-progress-fill" id="aube-progress-fill" style="width:0%"></div></div>
+  <div class="timer-body">
+    <div class="timer-step-label" id="aube-step-label">Étape 1 / 6</div>
+    <div class="timer-emoji" id="aube-step-emoji">📿</div>
+    <div class="timer-step-title" id="aube-step-title">Invocations du matin</div>
+    <div class="timer-step-subtitle" id="aube-step-subtitle">Adhkar al-ṣabāḥ</div>
+    <div class="timer-countdown" id="aube-countdown">15:00</div>
+    <div class="timer-step-desc" id="aube-step-desc"></div>
+  </div>
+  <div class="timer-footer">
+    <div class="timer-chourouk-info" id="aube-chourouk-info"></div>
+    <button class="timer-next-btn" id="aube-next-btn" onclick="aubeNextStep()">Étape suivante →</button>
+    <button class="timer-skip-btn" onclick="aubeNextStep()">Passer cette étape</button>
+  </div>
+</div>
+
 <!-- DETAIL MODAL -->
 <div id="detail-modal">
   <div class="detail-sheet">
@@ -574,20 +632,20 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 <script>
 // ═══ DATA ═══
 const PROGRAM = [
-  {id:9,  titleFr:"Convenances du sommeil",        emoji:"🌙", time:"Cette nuit",        xp:15, cat:"nuit",    paliers:[1,2,3,4]},
-  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"Ce matin",          xp:25, cat:"matin",   paliers:[1,2,3,4]},
-  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"À l'aube",          xp:20, cat:"aube",    paliers:[2,3,4]},
-  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"Ce matin",          xp:20, cat:"matin",   paliers:[2,3,4]},
-  {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Ce matin",         xp:20, cat:"matin",   paliers:[2,3,4]},
-  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"Ce matin",          xp:15, cat:"matin",   paliers:[3,4]},
+  {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[4]},
+  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4]},
+  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[2,3,4]},
+  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4]},
+  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"À l'aube",          xp:25, cat:"aube",    paliers:[1,2,3,4]},
+  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"À l'aube",          xp:20, cat:"aube",    paliers:[2,3,4]},
   {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[3,4]},
   {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[3,4]},
-  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"Cette nuit",        xp:15, cat:"nuit",    paliers:[3,4]},
-  {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Cette nuit",        xp:25, cat:"nuit",    paliers:[4]},
+  {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Toute la journée",  xp:20, cat:"journee", paliers:[2,3,4]},
   {id:10, titleFr:"Obligations de l'étudiant",     emoji:"📚", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4]},
   {id:11, titleFr:"Cercle de foi",                 emoji:"🤝", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4]},
   {id:12, titleFr:"Acquisition du savoir",         emoji:"📗", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4]},
   {id:13, titleFr:"Garde du temps",                emoji:"⏰", time:"Dans la journée",   xp:10, cat:"journee", paliers:[4]},
+  {id:9,  titleFr:"Convenances du sommeil",        emoji:"🌙", time:"Avant de dormir",   xp:15, cat:"nuit",    paliers:[1,2,3,4]},
 ];
 const PALIER = {
   1:{name:"Débutant",emoji:"🌱",desc:"Chaque grand voyage commence par un premier pas."},
@@ -596,11 +654,11 @@ const PALIER = {
   4:{name:"Bienfaisant",emoji:"🌟",desc:"Programme complet — la constance est ta force."},
 };
 const SECTIONS = {
-  aube:    {label:"À l'aube",        emoji:"🌄"},
-  matin:   {label:"Ce matin",        emoji:"🌅"},
-  journee: {label:"Dans la journée", emoji:"☀️"},
-  soir:    {label:"Ce soir",         emoji:"🌇"},
-  nuit:    {label:"Cette nuit",      emoji:"🌙"},
+  qiyam:   {label:"Dernier tiers de la nuit", emoji:"🌙"},
+  aube:    {label:"À l'aube",                 emoji:"🌄"},
+  journee: {label:"Dans la journée",          emoji:"☀️"},
+  soir:    {label:"Ce soir",                  emoji:"🌇"},
+  nuit:    {label:"Avant de dormir",          emoji:"🌙"},
 };
 const WEEK_THEMES = [
   "La constance dans les adorations",
@@ -619,19 +677,20 @@ const MOTIVS = [
 
 // ═══ STATE ═══
 const STORAGE_KEY = "dawam_pwa_v1";
-let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[]},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[],customSteps:null};
+let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[],city:""},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[],customSteps:null,prayerTimes:null};
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S));}
 function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JSON.parse(r)};}catch{}}
 
 // ═══ ONBOARDING ═══
 let obPage=0, obAns={};
-const OB_N=8;
+const OB_N=9;
 function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
 function goToOnboarding(){showScreen("onboarding");obPage=0;renderObPage(0);initDots();}
-function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");if(n===7)renderResultPage();}
+function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");if(n===8)renderResultPage();}
 function obNext(){obPage++;if(obPage<OB_N)renderObPage(obPage);}
 function obBack(){if(obPage>0){obPage--;renderObPage(obPage);}else showScreen("splash");}
 function checkNameInput(){const v=document.getElementById("name-input").value.trim();document.getElementById("name-next").disabled=!v;if(v)obAns.name=v;}
+function checkCityInput(){const v=document.getElementById("city-input")?.value.trim();if(v)obAns.city=v;else delete obAns.city;}
 function selectOption(el){
   const parent=el.closest(".ob-options");
   const isMulti=parent.dataset.multi==="true";
@@ -692,7 +751,7 @@ function toggleStep(id){
 
 function finishOnboarding(){
   const name=document.getElementById("name-input")?.value.trim()||obAns.name||"ami";
-  const profile={salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"]};
+  const profile={salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"],city:obAns.city||""};
   const palier=calcPalier(profile);
   const defaultIds=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id).sort((a,b)=>a-b);
   const selSorted=[...obSelectedSteps].sort((a,b)=>a-b);
@@ -705,7 +764,28 @@ function finishOnboarding(){
 // ═══ PATH ═══
 function getGreet(){const h=new Date().getHours();if(h<6)return"Bonne nuit";if(h<12)return"Bonjour";if(h<17)return"Bon après-midi";if(h<20)return"Bonne soirée";return"Bonsoir";}
 function getTimeLabel(){const h=new Date().getHours(),m=String(new Date().getMinutes()).padStart(2,"0");return`${h}h${m}`;}
-function getCurrentCat(){const h=new Date().getHours();if(h>=6&&h<8)return"aube";if(h>=8&&h<13)return"matin";if(h>=13&&h<17)return"journee";if(h>=17&&h<21)return"soir";return"nuit";}
+function inRange(cur,start,end){if(start<=end)return cur>=start&&cur<end;return cur>=start||cur<end;}
+function getCurrentCat(){
+  const now=new Date();
+  const cur=now.getHours()*60+now.getMinutes();
+  const pt=S.prayerTimes;
+  if(pt&&pt.Fajr&&pt.Sunrise&&pt.Maghrib&&pt.Isha){
+    const fajr=parseTime(pt.Fajr),sunrise=parseTime(pt.Sunrise);
+    const maghrib=parseTime(pt.Maghrib),isha=parseTime(pt.Isha);
+    const midnight=parseTime(pt.Midnight||"00:00");
+    if(inRange(cur,fajr,sunrise))return"aube";
+    if(inRange(cur,sunrise,maghrib))return"journee";
+    if(inRange(cur,maghrib,isha))return"soir";
+    if(inRange(cur,isha,midnight))return"nuit";
+    return"qiyam";
+  }
+  const h=now.getHours();
+  if(h>=5&&h<8)return"aube";
+  if(h>=8&&h<18)return"journee";
+  if(h>=18&&h<21)return"soir";
+  if(h>=21||h<3)return"nuit";
+  return"qiyam";
+}
 function getActiveItems(){if(S.customSteps&&S.customSteps.length>0)return PROGRAM.filter(i=>S.customSteps.includes(i.id));return PROGRAM.filter(i=>i.paliers.includes(S.palier));}
 function checkNewDay(){
   const today=new Date().toISOString().split("T")[0];
@@ -741,7 +821,7 @@ function renderPath(){
   body.innerHTML="";
 
   // Ordre temporel et détection des sections futures (verrouillées)
-  const catOrder=["nuit","aube","matin","journee","soir"];
+  const catOrder=["qiyam","aube","journee","soir","nuit"];
   const curIdx=catOrder.indexOf(curCat);
   const futureCats=catOrder.slice(curIdx+1);
 
@@ -851,7 +931,7 @@ function renderProfil(){
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","profil"].includes(id));}
 function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
-function showLockedHint(cat){const msgs={nuit:"Disponible cette nuit",aube:"Disponible après le Fajr",matin:"Disponible ce matin",journee:"Disponible dans la journée",soir:"Disponible ce soir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
+function showLockedHint(cat){const msgs={qiyam:"Disponible la nuit (dernier tiers)",aube:"Disponible après le Fajr",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible avant de dormir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 function resetApp(){if(confirm("Recommencer depuis le début ?")){localStorage.removeItem(STORAGE_KEY);location.reload();}}
 
 // ═══ ITEM DETAILS ═══
@@ -943,6 +1023,7 @@ const ITEM_DETAILS = {
 };
 
 function openDetail(id){
+  if(id===2&&getCurrentCat()==="aube"){openAubeTimer();return;}
   const item=PROGRAM.find(i=>i.id===id);
   const det=ITEM_DETAILS[id];
   if(!item||!det)return;
@@ -1046,12 +1127,123 @@ function applyUpdate(){
   else{location.reload();}
 }
 
+// ═══ PRAYER TIMES ═══
+const PT_CACHE_KEY="dawam_pt";
+function parseTime(t){if(!t)return 0;const[h,m]=t.split(":").map(Number);return h*60+m;}
+async function fetchPrayerTimes(city){
+  if(!city)return null;
+  const today=new Date();
+  const dateStr=`${String(today.getDate()).padStart(2,"0")}-${String(today.getMonth()+1).padStart(2,"0")}-${today.getFullYear()}`;
+  const cacheRaw=localStorage.getItem(PT_CACHE_KEY);
+  if(cacheRaw){try{const c=JSON.parse(cacheRaw);if(c.date===dateStr&&c.city===city)return c.timings;}catch{}}
+  try{
+    const url=`https://api.aladhan.com/v1/timingsByAddress/${dateStr}?address=${encodeURIComponent(city)}&method=2`;
+    const r=await fetch(url);const data=await r.json();
+    if(data.code===200){const timings=data.data.timings;localStorage.setItem(PT_CACHE_KEY,JSON.stringify({date:dateStr,city,timings}));return timings;}
+  }catch{}
+  return null;
+}
+
+// ═══ AUBE TIMER ═══
+const AUBE_STEPS=[
+  {emoji:"📿",title:"Invocations du matin",subtitle:"Adhkar al-ṣabāḥ",minutes:15,desc:"Lis les invocations du matin avec présence du cœur. Prends le temps de peser chaque parole."},
+  {emoji:"✨",title:"Sourates méritoires",subtitle:"Programme matinal",minutes:15,desc:"Récite les sourates méritoires : Āyat al-Kursī, les 3 Protectrices, et les sourates de ton programme."},
+  {emoji:"📖",title:"Lecture du Coran",subtitle:"Wird coranique",minutes:15,desc:"Lis ta portion quotidienne du Coran (wird). La présence du cœur prime sur la vitesse."},
+  {emoji:"🔗",title:"Du'a rabita",subtitle:"Invocation du lien spirituel",minutes:5,desc:"Invoque pour tes frères et sœurs en Islam. Demande à Allah de réunir les cœurs sur Son amour."},
+  {emoji:"🌅",title:"Recueillement",subtitle:"Jusqu'au lever du soleil",minutes:10,desc:"Reste en recueillement et dhikr silencieux. Attends le lever du soleil avec présence du cœur."},
+  {emoji:"☀️",title:"Prière du Chourouk",subtitle:"2 à 8 raka'at",minutes:10,desc:"Prie le Chourouk — 15 à 20 min après le lever du soleil. Récompense d'un pèlerinage et d'une ʿumra complète."},
+];
+let _aubeSteps=[],aubeTimerStep=0,aubeTimerInterval=null,aubeTimerEnd=null;
+
+function openAubeTimer(){
+  const pt=S.prayerTimes;
+  const steps=AUBE_STEPS.map(s=>({...s}));
+  if(pt&&pt.Sunrise){
+    const now=new Date();
+    const cur=now.getHours()*60+now.getMinutes();
+    let toChourouk=parseTime(pt.Sunrise)-cur;
+    if(toChourouk<0)toChourouk+=1440;
+    if(toChourouk>5&&toChourouk<120){
+      const fixedTotal=15+15+15+5+10; // steps 0-3 + chourouk
+      const recueillement=Math.max(2,toChourouk-fixedTotal);
+      steps[4]={...steps[4],minutes:recueillement};
+    }
+  }
+  _aubeSteps=steps;
+  aubeTimerStep=0;
+  document.getElementById("aube-timer").classList.add("show");
+  renderAubeStep();
+}
+function renderAubeStep(){
+  const step=_aubeSteps[aubeTimerStep];
+  const total=_aubeSteps.length;
+  const pct=Math.round(aubeTimerStep/total*100);
+  const isLast=aubeTimerStep===total-1;
+  const pt=S.prayerTimes;
+  let info="";
+  if(pt&&pt.Sunrise){
+    const now=new Date();
+    const cur=now.getHours()*60+now.getMinutes();
+    let rem=parseTime(pt.Sunrise)-cur;
+    if(rem<0)rem+=1440;
+    const h=Math.floor(rem/60),m=rem%60;
+    info=`Chourouk dans ${h>0?h+"h ":""}${m}min · ${pt.Sunrise}`;
+  }
+  document.getElementById("aube-step-label").textContent=`Étape ${aubeTimerStep+1} / ${total}`;
+  document.getElementById("aube-step-emoji").textContent=step.emoji;
+  document.getElementById("aube-step-title").textContent=step.title;
+  document.getElementById("aube-step-subtitle").textContent=step.subtitle;
+  document.getElementById("aube-step-desc").textContent=step.desc;
+  document.getElementById("aube-chourouk-info").textContent=info;
+  document.getElementById("aube-progress-fill").style.width=pct+"%";
+  document.getElementById("aube-next-btn").textContent=isLast?"✓ Terminer la séance →":"Étape suivante →";
+  if(aubeTimerInterval)clearInterval(aubeTimerInterval);
+  if(step.minutes>0){
+    aubeTimerEnd=Date.now()+step.minutes*60*1000;
+    updateAubeCountdown();
+    aubeTimerInterval=setInterval(updateAubeCountdown,1000);
+  }else{
+    document.getElementById("aube-countdown").textContent="";
+    document.getElementById("aube-countdown").classList.remove("ending");
+  }
+}
+function updateAubeCountdown(){
+  const rem=Math.max(0,aubeTimerEnd-Date.now());
+  const m=Math.floor(rem/60000),s=Math.floor((rem%60000)/1000);
+  const cd=document.getElementById("aube-countdown");
+  cd.textContent=`${m}:${String(s).padStart(2,"0")}`;
+  cd.classList.toggle("ending",rem<60000&&rem>0);
+  if(rem===0){clearInterval(aubeTimerInterval);playAubeBeep();setTimeout(()=>aubeNextStep(),2500);}
+}
+function aubeNextStep(){
+  if(aubeTimerStep<_aubeSteps.length-1){aubeTimerStep++;renderAubeStep();playAubeBeep();}
+  else{closeAubeTimer();}
+}
+function closeAubeTimer(){
+  if(aubeTimerInterval)clearInterval(aubeTimerInterval);
+  document.getElementById("aube-timer").classList.remove("show");
+}
+function playAubeBeep(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.value=880;osc.type="sine";
+    gain.gain.setValueAtTime(0.3,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+1.2);
+  }catch{}
+}
+
 // ═══ INIT ═══
 function launchApp(){
   showScreen("path");
   document.getElementById("bottom-nav").classList.add("visible");
   document.getElementById("tab-path").classList.add("active");
   renderPath();
+  if(S.profile&&S.profile.city){
+    fetchPrayerTimes(S.profile.city).then(pt=>{if(pt){S.prayerTimes=pt;save();renderPath();}});
+  }
   setTimeout(showInstallBanner,3000);
 }
 
