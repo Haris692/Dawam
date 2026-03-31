@@ -6,7 +6,7 @@ compatibility_date = "2024-09-23"
 # À remplir après `wrangler kv namespace create SUBSCRIPTIONS`
 [[kv_namespaces]]
 binding = "SUBSCRIPTIONS"
-id = "REMPLACE_PAR_TON_KV_ID"
+id = "011a83c71e714515b11cbf69cc490b13"
 
 # Cron : envoie la notif quotidienne
 # 3h UTC = 5h Paris (heure d'été) / 4h (hiver)
@@ -16,4 +16,4 @@ crons = ["0 3 * * *"]
 
 # Variables publiques (les secrets VAPID sont dans wrangler secret)
 [vars]
-VAPID_SUBJECT = "mailto:REMPLACE_PAR_TON_EMAIL"
+VAPID_SUBJECT = "mailto:harisgarrigos692@gmail.com"
