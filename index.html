@@ -206,6 +206,10 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .profil-menu-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
 .profil-menu-text { flex:1;font-size:14px;font-weight:500;color:var(--text); }
 .profil-menu-arrow { color:var(--text-light);font-size:18px; }
+.toggle-switch { width:44px;height:26px;border-radius:13px;background:var(--border);position:relative;transition:background .25s;flex-shrink:0; }
+.toggle-switch.on { background:var(--accent); }
+.toggle-switch::after { content:'';width:20px;height:20px;border-radius:10px;background:#fff;position:absolute;top:3px;left:3px;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2); }
+.toggle-switch.on::after { transform:translateX(18px); }
 .heatmap { display:grid;grid-template-columns:repeat(7,1fr);gap:4px; }
 .heatmap-cell { aspect-ratio:1;border-radius:3px;background:var(--border-light); }
 .heatmap-cell.a1 { background:rgba(59,109,17,.25); }
@@ -556,7 +560,8 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     </div>
     <div class="profil-section-title fade-up" style="animation-delay:.25s">Paramètres</div>
     <div class="profil-menu fade-up" style="animation-delay:.3s">
-<div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="toggleDarkMode()"><div class="profil-menu-icon" style="background:rgba(15,25,35,.1)">🌙</div><span class="profil-menu-text">Mode sombre</span><div class="toggle-switch" id="dark-toggle"></div></div>
+      <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showThemeModal()"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Changer le thème</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="resetApp()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔄</div><span class="profil-menu-text">Recommencer l'onboarding</span><span class="profil-menu-arrow">›</span></div>
     </div>
@@ -940,6 +945,8 @@ function renderProfil(){
   document.getElementById("stat-total").textContent=S.totalDays+1;
   document.getElementById("stat-palier").textContent=S.palier;
   document.getElementById("stat-palier-name").textContent=pi.name;
+  const toggle=document.getElementById('dark-toggle');
+  if(toggle)toggle.classList.toggle('on',isDarkMode());
 
   // Heatmap
   const days=["L","M","M","J","V","S","D"];
@@ -1154,6 +1161,20 @@ function selectTheme(key){applyTheme(key);renderThemeGrid();}
 function showThemeModal(){renderThemeGrid();document.getElementById('theme-modal').classList.add('show');}
 function closeThemeModal(){document.getElementById('theme-modal').classList.remove('show');}
 document.getElementById('theme-modal').addEventListener('click',function(e){if(e.target===this)closeThemeModal();});
+
+// ═══ DARK MODE ═══
+function isDarkMode(){return !!(THEMES[localStorage.getItem('dawam_theme')||'default']?.dark);}
+function toggleDarkMode(){
+  const current=localStorage.getItem('dawam_theme')||'default';
+  if(isDarkMode()){
+    applyTheme(localStorage.getItem('dawam_last_light')||'default');
+  } else {
+    localStorage.setItem('dawam_last_light',current);
+    applyTheme('nuit');
+  }
+  const toggle=document.getElementById('dark-toggle');
+  if(toggle)toggle.classList.toggle('on',isDarkMode());
+}
 
 // ═══ ABOUT ═══
 function showAbout(){document.getElementById("about-modal").classList.add("show");}
