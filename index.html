@@ -312,6 +312,24 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 /* ABOUT MODAL */
 #about-modal { display:none;position:fixed;inset:0;z-index:300;background:var(--overlay);align-items:flex-end; }
 #about-modal.show { display:flex; }
+#feedback-modal { display:none;position:fixed;inset:0;z-index:300;background:var(--overlay);align-items:flex-end; }
+#feedback-modal.show { display:flex; }
+.fb-sheet { background:var(--bg);border-radius:24px 24px 0 0;width:100%;padding:0;animation:fadeUp .35s ease; }
+.fb-content { padding:20px 24px 40px;display:flex;flex-direction:column;gap:16px; }
+.fb-title { font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text); }
+.fb-sub { font-size:13px;color:var(--text-secondary);line-height:1.5; }
+.fb-ratings { display:flex;gap:10px; }
+.fb-rating { flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--bg-card);cursor:pointer;transition:all .2s; }
+.fb-rating.selected { border-color:var(--green);background:rgba(59,109,17,.07); }
+.fb-rating-emoji { font-size:28px; }
+.fb-rating-label { font-size:11px;font-weight:600;color:var(--text-secondary); }
+.fb-rating.selected .fb-rating-label { color:var(--green); }
+.fb-textarea { width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--border);background:var(--bg-card);font-family:var(--font-body);font-size:14px;color:var(--text);outline:none;resize:none;min-height:90px;transition:border-color .2s; }
+.fb-textarea:focus { border-color:var(--accent); }
+.fb-textarea::placeholder { color:var(--text-light); }
+.fb-sent { text-align:center;padding:20px 0; }
+.fb-sent-emoji { font-size:48px;margin-bottom:10px; }
+.fb-sent-msg { font-family:var(--font-display);font-size:16px;color:var(--text);line-height:1.5; }
 .about-sheet { background:var(--bg);border-radius:24px 24px 0 0;padding:0;width:100%;max-height:88vh;overflow-y:auto;animation:fadeUp .35s ease; }
 .about-handle { width:40px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0; }
 .about-content { padding:20px 24px 40px; }
@@ -608,6 +626,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
       <div class="profil-menu-item" onclick="toggleNotifs()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔔</div><span class="profil-menu-text">Rappels quotidiens</span><div class="toggle-switch" id="notif-toggle"></div></div>
       <div class="profil-menu-item" onclick="toggleDarkMode()"><div class="profil-menu-icon" style="background:rgba(15,25,35,.1)">🌙</div><span class="profil-menu-text">Mode sombre</span><div class="toggle-switch" id="dark-toggle"></div></div>
       <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="showFeedbackModal()"><div class="profil-menu-icon" style="background:rgba(74,158,218,.1)">💬</div><span class="profil-menu-text">Donner mon avis</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showThemeModal()"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Changer le thème</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="resetApp()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔄</div><span class="profil-menu-text">Recommencer l'onboarding</span><span class="profil-menu-arrow">›</span></div>
     </div>
@@ -677,6 +696,14 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 </div>
 
 </div><!-- #app -->
+
+<!-- FEEDBACK MODAL -->
+<div id="feedback-modal">
+  <div class="fb-sheet">
+    <div class="about-handle"></div>
+    <div class="fb-content" id="fb-content"></div>
+  </div>
+</div>
 
 <!-- AUBE TIMER OVERLAY -->
 <div id="aube-timer">
@@ -1371,6 +1398,50 @@ function toggleDarkMode(){
 function showAbout(){document.getElementById("about-modal").classList.add("show");}
 function closeAbout(){document.getElementById("about-modal").classList.remove("show");}
 document.getElementById("about-modal").addEventListener("click",function(e){if(e.target===this)closeAbout();});
+
+// ═══ FEEDBACK ═══
+let fbRating = 0;
+function showFeedbackModal(){
+  fbRating=0;
+  document.getElementById('fb-content').innerHTML=`
+    <div class="fb-title">Ton avis compte</div>
+    <div class="fb-sub">Comment tu trouves Dawam jusqu'ici ? Ton retour aide à améliorer l'app.</div>
+    <div class="fb-ratings" id="fb-ratings">
+      <div class="fb-rating" data-val="1" onclick="selectRating(1)"><div class="fb-rating-emoji">😕</div><div class="fb-rating-label">Difficile</div></div>
+      <div class="fb-rating" data-val="2" onclick="selectRating(2)"><div class="fb-rating-emoji">🙂</div><div class="fb-rating-label">Bien</div></div>
+      <div class="fb-rating" data-val="3" onclick="selectRating(3)"><div class="fb-rating-emoji">🌟</div><div class="fb-rating-label">Excellent</div></div>
+    </div>
+    <textarea class="fb-textarea" id="fb-text" placeholder="Un commentaire, une suggestion… (optionnel)" maxlength="400"></textarea>
+    <button class="btn-primary" id="fb-send" onclick="submitFeedback()" disabled>Envoyer</button>
+    <button class="btn-secondary" onclick="closeFeedbackModal()">Annuler</button>`;
+  document.getElementById('feedback-modal').classList.add('show');
+}
+function closeFeedbackModal(){document.getElementById('feedback-modal').classList.remove('show');}
+document.getElementById('feedback-modal').addEventListener('click',function(e){if(e.target===this)closeFeedbackModal();});
+function selectRating(val){
+  fbRating=val;
+  document.querySelectorAll('.fb-rating').forEach(el=>el.classList.toggle('selected',Number(el.dataset.val)===val));
+  document.getElementById('fb-send').disabled=false;
+}
+async function submitFeedback(){
+  const comment=document.getElementById('fb-text').value.trim();
+  if(!fbRating)return;
+  const btn=document.getElementById('fb-send');
+  btn.disabled=true;btn.textContent='Envoi…';
+  try{
+    await fetch(`${PUSH_WORKER}/feedback`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({rating:fbRating,comment,palier:S.palier,name:S.name||''}),
+    });
+    const emojis={1:'🤲',2:'💚',3:'🌟'};
+    const msgs={1:'Merci pour ton honnêteté — chaque retour aide à améliorer Dawam.',2:'Jazak Allah khayran !',3:'Alhamdulillah ! Que Allah te bénisse dans ta constance.'};
+    document.getElementById('fb-content').innerHTML=`<div class="fb-sent"><div class="fb-sent-emoji">${emojis[fbRating]}</div><div class="fb-sent-msg">${msgs[fbRating]}</div></div><button class="btn-primary" style="margin-top:16px" onclick="closeFeedbackModal()">Fermer</button>`;
+  }catch(e){
+    btn.disabled=false;btn.textContent='Envoyer';
+    showToast('Erreur — réessaie plus tard');
+  }
+}
 
 // ═══ PWA INSTALL ═══
 let deferredPrompt=null;

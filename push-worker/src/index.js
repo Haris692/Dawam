@@ -341,6 +341,36 @@ export default {
       return json({ ok: true, type: notifType, message: 'Notifications envoyées' });
     }
 
+    // Soumettre un avis utilisateur
+    if (pathname === '/feedback' && request.method === 'POST') {
+      const { rating, comment, palier, name } = await request.json().catch(() => ({}));
+      if (!rating) return json({ error: 'missing rating' }, 400);
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      await env.SUBSCRIPTIONS.put(`feedback:${id}`, JSON.stringify({
+        rating,
+        comment: (comment || '').slice(0, 400),
+        palier: palier || null,
+        name: (name || '').slice(0, 30),
+        at: new Date().toISOString(),
+      }), { expirationTtl: 60 * 60 * 24 * 90 }); // 90 jours
+      return json({ ok: true });
+    }
+
+    // Lire tous les avis (protégé par TEST_TOKEN)
+    if (pathname === '/feedback/list' && request.method === 'GET') {
+      const token = new URL(request.url).searchParams.get('token');
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+      const list = await env.SUBSCRIPTIONS.list({ prefix: 'feedback:' });
+      const items = await Promise.all(
+        list.keys.map(async ({ name }) => {
+          const raw = await env.SUBSCRIPTIONS.get(name);
+          return raw ? JSON.parse(raw) : null;
+        })
+      );
+      const sorted = items.filter(Boolean).sort((a, b) => b.at.localeCompare(a.at));
+      return json({ count: sorted.length, items: sorted });
+    }
+
     return new Response('Dawam Push Service 🌙', { headers: CORS });
   },
 
