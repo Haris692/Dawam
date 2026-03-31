@@ -103,6 +103,20 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .ob-result-name { font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--accent-dark);margin-bottom:4px; }
 .ob-result-desc { font-size:13px;color:var(--text-secondary);line-height:1.5; }
 .ob-result-msg { font-family:var(--font-display);font-size:14px;font-style:italic;color:var(--text-secondary);text-align:center;line-height:1.6;padding:16px;background:rgba(59,109,17,.06);border-radius:12px;margin-top:16px; }
+/* RESULT PAGE */
+.ob-result-step { display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:12px;border:.5px solid var(--border-light);margin-bottom:8px; }
+.ob-result-step-emoji { font-size:20px;flex-shrink:0; }
+.ob-result-step-info { flex:1;min-width:0; }
+.ob-result-step-title { font-size:13px;font-weight:600;color:var(--text); }
+.ob-result-step-time { font-size:11px;color:var(--text-light);margin-top:2px; }
+.ob-result-step-xp { font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0; }
+.ob-result-step.edit-mode { cursor:pointer;transition:all .2s; }
+.ob-result-step.edit-mode.selected { border-color:var(--green);background:rgba(59,109,17,.06); }
+.ob-result-check { width:20px;height:20px;border-radius:10px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;transition:all .2s; }
+.ob-result-step.selected .ob-result-check { background:var(--green);border-color:var(--green); }
+.ob-edit-toggle { width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--text-secondary);margin-top:10px;transition:all .2s; }
+.ob-edit-toggle.active { border-color:var(--green);color:var(--green);background:rgba(59,109,17,.06); }
+.ob-step-badge { font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:2px 7px;border-radius:8px;flex-shrink:0; }
 
 /* PATH */
 #path { background:var(--bg); }
@@ -408,7 +422,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
       <button class="ob-next" id="q4-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 6: Intentions -->
+  <!-- Page 6: Intentions (counter updated: 6/7 questionnaire, then result) -->
   <div class="ob-page" data-page="6">
     <div class="ob-dots" id="dots-6"></div>
     <div class="ob-emoji-circle">🎯</div>
@@ -424,7 +438,19 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
       <span class="ob-counter">7 / 7</span>
-      <button class="ob-next" id="q5-next" style="background:var(--accent)" onclick="finishOnboarding()" disabled>COMMENCER →</button>
+      <button class="ob-next" id="q5-next" style="background:var(--green)" onclick="obNext()" disabled>Voir mon programme →</button>
+    </div>
+  </div>
+  <!-- Page 7: Programme proposé + personnalisation -->
+  <div class="ob-page" data-page="7">
+    <div class="ob-dots" id="dots-7"></div>
+    <p class="ob-label" style="text-align:center;margin-bottom:6px">Ton programme</p>
+    <h1 class="ob-title" style="margin-bottom:20px">Voici ton point de départ</h1>
+    <div id="result-content"></div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">Étape finale</span>
+      <button class="ob-next" style="background:var(--green)" onclick="finishOnboarding()">Commencer →</button>
     </div>
   </div>
 </div>
@@ -593,16 +619,16 @@ const MOTIVS = [
 
 // ═══ STATE ═══
 const STORAGE_KEY = "dawam_pwa_v1";
-let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[]},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[]};
+let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[]},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[],customSteps:null};
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S));}
 function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JSON.parse(r)};}catch{}}
 
 // ═══ ONBOARDING ═══
 let obPage=0, obAns={};
-const OB_N=7;
+const OB_N=8;
 function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
 function goToOnboarding(){showScreen("onboarding");obPage=0;renderObPage(0);initDots();}
-function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");}
+function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");if(n===7)renderResultPage();}
 function obNext(){obPage++;if(obPage<OB_N)renderObPage(obPage);}
 function obBack(){if(obPage>0){obPage--;renderObPage(obPage);}else showScreen("splash");}
 function checkNameInput(){const v=document.getElementById("name-input").value.trim();document.getElementById("name-next").disabled=!v;if(v)obAns.name=v;}
@@ -618,11 +644,61 @@ function selectOption(el){
   if(btnId){const btn=document.getElementById(btnId);if(btn)btn.disabled=isMulti?obAns[key].length===0:false;}
 }
 function calcPalier(p){let s=0;if(p.salat>=5)s+=3;else if(p.salat>=2)s+=1;s+=Math.min(p.quran||0,2);s+=Math.min(p.witr||0,2);if(s>=7)return 3;if(s>=3)return 2;return 1;}
+// ─── Page résultat + personnalisation ───
+let obEditMode=false, obSelectedSteps=[];
+function renderResultPage(){
+  obEditMode=false;
+  const palier=calcPalier({salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0});
+  obSelectedSteps=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id);
+  renderResultContent(palier);
+}
+function renderResultContent(palier){
+  const el=document.getElementById("result-content");
+  if(!el)return;
+  const pi=PALIER[palier];
+  const chk=`<svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  let html=`<div class="ob-result-palier"><div class="ob-result-emoji">${pi.emoji}</div><div class="ob-result-name">${pi.name}</div><div class="ob-result-desc">${pi.desc}</div></div>`;
+  if(!obEditMode){
+    const steps=PROGRAM.filter(i=>obSelectedSteps.includes(i.id));
+    html+=`<p class="ob-label" style="text-align:left;margin-bottom:10px">Ton programme · ${steps.length} étapes</p>`;
+    html+=steps.map(item=>`<div class="ob-result-step"><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div><span class="ob-result-step-xp">+${item.xp} XP</span></div>`).join("");
+    html+=`<button class="ob-edit-toggle" onclick="toggleResultEdit()">✏️ Modifier mon programme</button>`;
+  } else {
+    html+=`<p class="ob-label" style="text-align:left;margin-bottom:6px">Personnalise ton programme</p>`;
+    html+=`<p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5">Coche ou décoche les étapes selon ce que tu veux travailler.</p>`;
+    const proposed=PROGRAM.filter(i=>i.paliers.includes(palier));
+    const advanced=PROGRAM.filter(i=>!i.paliers.includes(palier));
+    const renderStep=item=>{
+      const sel=obSelectedSteps.includes(item.id);
+      const adv=!item.paliers.includes(palier);
+      return `<div class="ob-result-step edit-mode${sel?" selected":""}" onclick="toggleStep(${item.id})"><div class="ob-result-check">${sel?chk:""}</div><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div>${adv?`<span class="ob-step-badge">avancé</span>`:`<span class="ob-result-step-xp">+${item.xp} XP</span>`}</div>`;
+    };
+    html+=proposed.map(renderStep).join("");
+    if(advanced.length){html+=`<p class="ob-label" style="text-align:left;margin:14px 0 8px;color:var(--accent)">Étapes avancées</p>`;html+=advanced.map(renderStep).join("");}
+    html+=`<button class="ob-edit-toggle active" onclick="toggleResultEdit()">✓ Valider la sélection</button>`;
+  }
+  el.innerHTML=html;
+}
+function toggleResultEdit(){
+  obEditMode=!obEditMode;
+  renderResultContent(calcPalier({salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0}));
+  document.getElementById("result-content")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function toggleStep(id){
+  if(obSelectedSteps.includes(id)){if(obSelectedSteps.length>1)obSelectedSteps=obSelectedSteps.filter(s=>s!==id);}
+  else{obSelectedSteps=[...obSelectedSteps,id];}
+  renderResultContent(calcPalier({salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0}));
+}
+
 function finishOnboarding(){
   const name=document.getElementById("name-input")?.value.trim()||obAns.name||"ami";
   const profile={salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"]};
+  const palier=calcPalier(profile);
+  const defaultIds=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id).sort((a,b)=>a-b);
+  const selSorted=[...obSelectedSteps].sort((a,b)=>a-b);
+  const isCustom=obSelectedSteps.length>0&&JSON.stringify(selSorted)!==JSON.stringify(defaultIds);
   localStorage.removeItem(STORAGE_KEY);
-  S={name,profile,palier:calcPalier(profile),weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[]};
+  S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null};
   save();launchApp();
 }
 
@@ -630,7 +706,7 @@ function finishOnboarding(){
 function getGreet(){const h=new Date().getHours();if(h<6)return"Bonne nuit";if(h<12)return"Bonjour";if(h<17)return"Bon après-midi";if(h<20)return"Bonne soirée";return"Bonsoir";}
 function getTimeLabel(){const h=new Date().getHours(),m=String(new Date().getMinutes()).padStart(2,"0");return`${h}h${m}`;}
 function getCurrentCat(){const h=new Date().getHours();if(h>=6&&h<8)return"aube";if(h>=8&&h<13)return"matin";if(h>=13&&h<17)return"journee";if(h>=17&&h<21)return"soir";return"nuit";}
-function getActiveItems(){return PROGRAM.filter(i=>i.paliers.includes(S.palier));}
+function getActiveItems(){if(S.customSteps&&S.customSteps.length>0)return PROGRAM.filter(i=>S.customSteps.includes(i.id));return PROGRAM.filter(i=>i.paliers.includes(S.palier));}
 function checkNewDay(){
   const today=new Date().toISOString().split("T")[0];
   if(S.lastDate&&S.lastDate!==today){
