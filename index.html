@@ -621,14 +621,15 @@ function calcPalier(p){let s=0;if(p.salat>=5)s+=3;else if(p.salat>=2)s+=1;s+=Mat
 function finishOnboarding(){
   const name=document.getElementById("name-input")?.value.trim()||obAns.name||"ami";
   const profile={salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"]};
-  S.name=name;S.profile=profile;S.palier=calcPalier(profile);S.weekNumber=1;S.checklist={};S.totalDays=0;S.lastDate=null;S.history=[];
+  localStorage.removeItem(STORAGE_KEY);
+  S={name,profile,palier:calcPalier(profile),weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[]};
   save();launchApp();
 }
 
 // ═══ PATH ═══
 function getGreet(){const h=new Date().getHours();if(h<6)return"Bonne nuit";if(h<12)return"Bonjour";if(h<17)return"Bon après-midi";if(h<20)return"Bonne soirée";return"Bonsoir";}
 function getTimeLabel(){const h=new Date().getHours(),m=String(new Date().getMinutes()).padStart(2,"0");return`${h}h${m}`;}
-function getCurrentCat(){const h=new Date().getHours();if(h>=3&&h<7)return"aube";if(h>=7&&h<12)return"matin";if(h>=12&&h<17)return"journee";if(h>=17&&h<21)return"soir";return"nuit";}
+function getCurrentCat(){const h=new Date().getHours();if(h>=6&&h<8)return"aube";if(h>=8&&h<13)return"matin";if(h>=13&&h<17)return"journee";if(h>=17&&h<21)return"soir";return"nuit";}
 function getActiveItems(){return PROGRAM.filter(i=>i.paliers.includes(S.palier));}
 function checkNewDay(){
   const today=new Date().toISOString().split("T")[0];
@@ -664,7 +665,7 @@ function renderPath(){
   body.innerHTML="";
 
   // Ordre temporel et détection des sections futures (verrouillées)
-  const catOrder=["aube","matin","journee","soir","nuit"];
+  const catOrder=["nuit","aube","matin","journee","soir"];
   const curIdx=catOrder.indexOf(curCat);
   const futureCats=catOrder.slice(curIdx+1);
 
@@ -774,7 +775,7 @@ function renderProfil(){
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","profil"].includes(id));}
 function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
-function showLockedHint(cat){const msgs={aube:"Disponible avant l'aube",matin:"Disponible ce matin",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible cette nuit"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
+function showLockedHint(cat){const msgs={nuit:"Disponible cette nuit",aube:"Disponible après le Fajr",matin:"Disponible ce matin",journee:"Disponible dans la journée",soir:"Disponible ce soir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 function resetApp(){if(confirm("Recommencer depuis le début ?")){localStorage.removeItem(STORAGE_KEY);location.reload();}}
 
 // ═══ ITEM DETAILS ═══
