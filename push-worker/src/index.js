@@ -108,6 +108,15 @@ export default {
       return json({ ok: true });
     }
 
+    // Test manuel — envoie la notif à tous les abonnés immédiatement
+    // Protégé par un token secret (wrangler secret put TEST_TOKEN)
+    if (pathname === '/send-test' && request.method === 'POST') {
+      const { token } = await request.json().catch(() => ({}));
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+      await notifyAll(env);
+      return json({ ok: true, message: 'Notifications envoyées' });
+    }
+
     // Supprimer une subscription
     if (pathname === '/unsubscribe' && request.method === 'POST') {
       const { endpoint } = await request.json();
