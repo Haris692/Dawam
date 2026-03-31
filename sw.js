@@ -23,6 +23,40 @@ self.addEventListener("message", e => {
   if (e.data === "skipWaiting") self.skipWaiting();
 });
 
+// ── Push notification reçue du serveur ────────────────────────────────────
+const PUSH_MSGS = [
+  { title: "Dawam 🌙", body: "Heure du Witr — commence ta journée avec Allah." },
+  { title: "Dawam 🌄", body: "La séance de l'aube t'attend. Petit, mais constant." },
+  { title: "Dawam 📿", body: "N'oublie pas ton programme spirituel aujourd'hui." },
+  { title: "Dawam ☀️", body: "Une nouvelle journée, une nouvelle occasion de constance." },
+  { title: "Dawam 💚", body: "Renouvelle ton intention et reprends là où tu t'es arrêté." },
+];
+
+self.addEventListener("push", e => {
+  const msg = PUSH_MSGS[Math.floor(Math.random() * PUSH_MSGS.length)];
+  e.waitUntil(
+    self.registration.showNotification(msg.title, {
+      body: msg.body,
+      icon: "./icon-192.png",
+      badge: "./icon-192.png",
+      vibrate: [200, 100, 200],
+      tag: "dawam-daily",
+      renotify: true,
+    })
+  );
+});
+
+// Clic sur la notification → ouvre l'app
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(clients => {
+      if (clients.length > 0) return clients[0].focus();
+      return self.clients.openWindow("./");
+    })
+  );
+});
+
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
