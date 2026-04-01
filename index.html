@@ -45,8 +45,47 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 .splash-exiting { animation: splashOut .55s cubic-bezier(.4,0,.2,1) forwards !important; }
 .particle { position:fixed; width:6px; height:6px; border-radius:50%; pointer-events:none; z-index:999; }
+@keyframes checkPop {
+  0%  { transform: scale(0) rotate(-10deg); }
+  60% { transform: scale(1.3) rotate(4deg); }
+  100%{ transform: scale(1) rotate(0deg); }
+}
+@keyframes ringExpand {
+  0%  { transform: scale(.8); opacity: .9; }
+  100%{ transform: scale(2.4); opacity: 0; }
+}
+@keyframes starFloat {
+  0%  { opacity: 1; transform: translateY(0) scale(1); }
+  100%{ opacity: 0; transform: translateY(-50px) scale(.4); }
+}
+@keyframes xpPop {
+  0%  { opacity: 0; transform: scale(.5) translateY(4px); }
+  70% { opacity: 1; transform: scale(1.15) translateY(-2px); }
+  100%{ opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes overlayFadeIn  { from{ opacity: 0; } to{ opacity: 1; } }
+@keyframes overlayFadeOut { from{ opacity: 1; } to{ opacity: 0; } }
+@keyframes starCenter {
+  0%  { opacity: 0; transform: translate(-50%,-50%) scale(0) rotate(-20deg); }
+  40% { opacity: 1; transform: translate(-50%,-50%) scale(1.3) rotate(5deg); }
+  65% { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+  85% { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+  100%{ opacity: 0; transform: translate(-50%,-50%) scale(.8) rotate(0deg); }
+}
+@keyframes msgReveal {
+  0%  { opacity: 0; transform: translate(-50%,-50%) translateY(20px); }
+  50% { opacity: 0; transform: translate(-50%,-50%) translateY(20px); }
+  75% { opacity: 1; transform: translate(-50%,-50%) translateY(0); }
+  90% { opacity: 1; transform: translate(-50%,-50%) translateY(0); }
+  100%{ opacity: 0; transform: translate(-50%,-50%) translateY(-10px); }
+}
+@keyframes pA { 0%{opacity:.9;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(-60px,-80px) scale(0)} }
+@keyframes pB { 0%{opacity:.9;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(60px,-80px) scale(0)} }
+@keyframes pC { 0%{opacity:.9;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(-40px,-100px) scale(0)} }
+@keyframes pD { 0%{opacity:.9;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(40px,-100px) scale(0)} }
+@keyframes pE { 0%{opacity:.9;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(80px,-60px) scale(0)} }
+@keyframes pF { 0%{opacity:.9;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(-80px,-60px) scale(0)} }
 @keyframes scaleIn { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
-@keyframes checkPop { 0%{transform:scale(0)} 60%{transform:scale(1.3)} 100%{transform:scale(1)} }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
 .fade-up { animation: fadeUp .45s cubic-bezier(.22,1,.36,1) both; }
 .fade-in { animation: fadeIn .35s ease both; }
@@ -175,13 +214,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .section-header-badge { font-size:11px;color:var(--text-secondary);background:var(--bg);padding:2px 8px;border-radius:10px;border:.5px solid var(--border-light); }
 .section-current-badge { font-size:10px;font-weight:600;color:var(--green);background:rgba(59,109,17,.1);padding:2px 8px;border-radius:10px; }
 .section-items { display:flex;flex-direction:column; }
-.item-row { display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;border-bottom:.5px solid var(--border-light);transition:background .15s;user-select:none; }
+.item-row { display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;border-bottom:.5px solid var(--border-light);transition:background .15s;user-select:none;position:relative; }
 .item-row:last-child { border-bottom:none; }
 .item-row:active { background:rgba(186,117,23,.06); }
 .item-row.checked { background:rgba(59,109,17,.04); }
 .item-row.locked { opacity: 0.42; cursor: default; }
 .item-row.locked:active { background: none; }
-.item-check { width:22px;height:22px;border-radius:11px;flex-shrink:0;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--bg-card); }
+.item-check { width:22px;height:22px;border-radius:11px;flex-shrink:0;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--bg-card);position:relative; }
 .item-row.checked .item-check { background:var(--green);border-color:var(--green); }
 .item-check-icon { display:none; }
 .item-row.checked .item-check-icon { display:block;animation:checkPop .25s ease; }
@@ -190,6 +229,31 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .item-row.checked .item-title { text-decoration:line-through;color:var(--text-light); }
 .item-sub { font-size:11px;color:var(--text-light);margin-top:1px; }
 .item-xp { font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0; }
+.item-check-ring { position:absolute;width:22px;height:22px;border-radius:11px;border:2px solid #3B6D11;pointer-events:none;opacity:0; }
+.item-check-ring.fire { animation:ringExpand .5s ease-out forwards; }
+.item-star-wrap { position:absolute;right:44px;top:50%;transform:translateY(-50%);display:flex;gap:2px;pointer-events:none; }
+.item-star { font-size:12px;opacity:0;color:#BA7517; }
+.item-star.fire { animation:starFloat .6s ease-out forwards; }
+.item-star:nth-child(2).fire { animation-delay:.08s; }
+.item-star:nth-child(3).fire { animation-delay:.16s; }
+.item-xp-badge { font-size:11px;font-weight:600;color:#BA7517;flex-shrink:0;opacity:0;transition:opacity .2s; }
+.item-xp-badge.show { opacity:1;animation:xpPop .4s cubic-bezier(.34,1.56,.64,1) both; }
+#dawam-completion-overlay { display:none;position:fixed;inset:0;background:rgba(61,42,10,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:9999; }
+#dawam-completion-overlay.show { display:block;animation:overlayFadeIn .4s ease forwards; }
+#dawam-completion-overlay.hide { animation:overlayFadeOut .4s ease forwards; }
+#dawam-center-star { position:fixed;top:42%;left:50%;transform:translate(-50%,-50%);font-size:90px;color:#BA7517;opacity:0;pointer-events:none;text-shadow:0 0 40px rgba(186,117,23,.7); }
+#dawam-center-star.fire { animation:starCenter 2.8s cubic-bezier(.22,1,.36,1) forwards; }
+#dawam-completion-msg { position:fixed;top:60%;left:50%;transform:translate(-50%,-50%);text-align:center;opacity:0;pointer-events:none;width:260px; }
+#dawam-completion-msg.fire { animation:msgReveal 2.8s ease forwards; }
+#dawam-completion-msg h2 { font-family:'Lora',Georgia,serif;font-size:24px;font-weight:600;color:#f7e8c0;margin-bottom:10px;line-height:1.3; }
+#dawam-completion-msg p { font-size:14px;font-style:italic;color:rgba(247,232,192,.75);line-height:1.6; }
+.dawam-cp { position:fixed;top:42%;left:50%;width:8px;height:8px;border-radius:50%;opacity:0;pointer-events:none;z-index:10000; }
+.dawam-cp.fire-a { animation:pA .9s .3s ease-out forwards; }
+.dawam-cp.fire-b { animation:pB .9s .35s ease-out forwards; }
+.dawam-cp.fire-c { animation:pC .9s .25s ease-out forwards; }
+.dawam-cp.fire-d { animation:pD .9s .4s ease-out forwards; }
+.dawam-cp.fire-e { animation:pE .9s .3s ease-out forwards; }
+.dawam-cp.fire-f { animation:pF .9s .28s ease-out forwards; }
 .all-done-card { text-align:center;padding:24px;background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border); }
 .all-done-emoji { font-size:36px;margin-bottom:8px; }
 .all-done-text { font-family:var(--font-display);font-size:16px;font-weight:500;color:var(--green); }
@@ -1141,14 +1205,115 @@ function renderPath(){
 
 function toggleSection(h){const items=h.nextElementSibling;const hidden=items.style.display==="none";items.style.display=hidden?"flex":"none";if(hidden)items.style.flexDirection="column";}
 
-function toggleItem(id){
-  S.checklist[id]=!S.checklist[id];save();
-  if(S.checklist[id])showToast("✓ Accompli · barakAllahu fik");
+function toggleItem(id) {
+  S.checklist[id] = !S.checklist[id];
+  save();
+
+  if (S.checklist[id]) {
+    animateItemComplete(id);
+
+    const items = getActiveItems();
+    const allDone = items.every(i => S.checklist[i.id]);
+    if (allDone) {
+      setTimeout(() => fireCompletionOverlay(), 900);
+    } else {
+      const TOASTS = [
+        "✓ barakAllahu fik",
+        "✓ Ma sha Allah — continue !",
+        "✓ Petit mais constant ✦",
+        "✓ Accompli — la constance, c'est ça",
+      ];
+      const done = items.filter(i => S.checklist[i.id]).length;
+      showToast(TOASTS[(done - 1) % TOASTS.length]);
+    }
+  }
+
   renderPath();
-  if(document.getElementById("profil").classList.contains("active"))renderProfil();
+  if (document.getElementById('profil').classList.contains('active')) renderProfil();
 }
 
 // ═══ PROFIL ═══
+function animateItemComplete(itemId) {
+  const rows = document.querySelectorAll('.item-row');
+  let targetRow = null;
+  rows.forEach(row => {
+    if (row.getAttribute('onclick')?.includes(`toggleItem(${itemId})`)) {
+      targetRow = row;
+    }
+  });
+  if (!targetRow) return;
+
+  const check = targetRow.querySelector('.item-check');
+  if (check) {
+    check.style.background = '#3B6D11';
+    check.style.borderColor = '#3B6D11';
+    const svg = check.querySelector('svg');
+    if (svg) { svg.style.opacity='1'; svg.style.transform='scale(1)'; svg.style.animation='checkPop .35s cubic-bezier(.34,1.56,.64,1) both'; }
+    let ring = check.querySelector('.item-check-ring');
+    if (!ring) { ring = document.createElement('div'); ring.className='item-check-ring'; check.appendChild(ring); }
+    ring.className = 'item-check-ring';
+    setTimeout(() => ring.classList.add('fire'), 10);
+  }
+
+  let starWrap = targetRow.querySelector('.item-star-wrap');
+  if (!starWrap) {
+    starWrap = document.createElement('div');
+    starWrap.className = 'item-star-wrap';
+    starWrap.innerHTML = '<span class="item-star">✦</span><span class="item-star">✦</span><span class="item-star">✦</span>';
+    targetRow.appendChild(starWrap);
+  }
+  setTimeout(() => {
+    starWrap.querySelectorAll('.item-star').forEach((s, i) => {
+      setTimeout(() => s.classList.add('fire'), i * 75);
+    });
+  }, 80);
+
+  let xpBadge = targetRow.querySelector('.item-xp-badge');
+  if (!xpBadge) {
+    const item = getActiveItems().find(i => i.id === itemId);
+    if (item) {
+      xpBadge = document.createElement('span');
+      xpBadge.className = 'item-xp-badge';
+      xpBadge.textContent = '+' + (item.xp || 15) + ' XP';
+      targetRow.appendChild(xpBadge);
+    }
+  }
+  if (xpBadge) setTimeout(() => xpBadge.classList.add('show'), 220);
+
+  setTimeout(() => { targetRow.style.background = 'rgba(59,109,17,.04)'; }, 150);
+}
+
+function fireCompletionOverlay() {
+  const overlay = document.getElementById('dawam-completion-overlay');
+  const star = document.getElementById('dawam-center-star');
+  const msg = document.getElementById('dawam-completion-msg');
+  if (!overlay) return;
+
+  overlay.classList.add('show');
+  star.classList.add('fire');
+  msg.classList.add('fire');
+
+  const classes = ['fire-a','fire-b','fire-c','fire-d','fire-e','fire-f'];
+  for (let i = 1; i <= 6; i++) {
+    const el = document.getElementById('dcp' + i);
+    if (el) el.classList.add(classes[i - 1]);
+  }
+
+  setTimeout(() => {
+    overlay.classList.add('hide');
+    setTimeout(() => {
+      overlay.classList.remove('show', 'hide');
+      star.classList.remove('fire');
+      msg.classList.remove('fire');
+      const classes2 = ['fire-a','fire-b','fire-c','fire-d','fire-e','fire-f'];
+      for (let i = 1; i <= 6; i++) {
+        const el = document.getElementById('dcp' + i);
+        if (el) el.classList.remove(classes2[i - 1]);
+      }
+    }, 400);
+  }, 3200);
+}
+
 function renderProfil(){
   const pi=PALIER[S.palier];
   const items=getActiveItems();
@@ -1713,6 +1878,20 @@ function launchApp(){
 load();
 if(S.name){launchApp();}else{showScreen("splash");}
 </script>
+<!-- Overlay journée complète -->
+<div id="dawam-completion-overlay">
+  <span id="dawam-center-star">✦</span>
+  <div class="dawam-cp" id="dcp1" style="background:#BA7517;width:10px;height:10px;"></div>
+  <div class="dawam-cp" id="dcp2" style="background:#3B6D11;width:8px;height:8px;"></div>
+  <div class="dawam-cp" id="dcp3" style="background:#f0c040;width:6px;height:6px;"></div>
+  <div class="dawam-cp" id="dcp4" style="background:#BA7517;width:7px;height:7px;"></div>
+  <div class="dawam-cp" id="dcp5" style="background:#3B6D11;width:9px;height:9px;"></div>
+  <div class="dawam-cp" id="dcp6" style="background:#c9930a;width:6px;height:6px;"></div>
+  <div id="dawam-completion-msg">
+    <h2>Ma sha Allah</h2>
+    <p>"Petit, mais constant."<br>Journée complète — barakAllahu fik.</p>
+  </div>
+</div>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1072044f08d248e0be77669337b38ac2"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
