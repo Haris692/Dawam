@@ -58,7 +58,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .card { background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border);padding:16px 18px;box-shadow:var(--shadow); }
 
 /* BOTTOM NAV */
-#bottom-nav { display:none;flex-direction:row;background:var(--bg-card);border-top:.5px solid var(--border);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:100; }
+#bottom-nav { display:none;flex-direction:row;background:rgba(245,237,224,.72);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border-top:.5px solid rgba(186,117,23,.12);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:100;box-shadow:0 -1px 0 rgba(255,255,255,.6) inset; }
 #bottom-nav.visible { display:flex; }
 .nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:opacity .15s; }
 .nav-tab svg { width:22px;height:22px;stroke-width:1.8; }
