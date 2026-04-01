@@ -28,8 +28,8 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { height: 100%; background: var(--bg); }
-body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; min-height: -webkit-fill-available; display: flex; flex-direction: column; }
-#app { width: 100%; max-width: 430px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+body { font-family: var(--font-body); background: var(--bg); height: 100vh; height: -webkit-fill-available; display: flex; flex-direction: column; overflow: hidden; }
+#app { width: 100%; max-width: 430px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; height: 100%; }
 .screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .screen.active { display: flex; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
@@ -149,7 +149,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .path-pill-constance { display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(59,109,17,.1); }
 .path-pill-dot { width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite; }
 .path-pill-text { font-size:12px;font-weight:600;color:var(--green); }
-.path-body { padding:0 16px 16px;display:flex;flex-direction:column;gap:14px; }
+.path-body { padding:0 16px 80px;display:flex;flex-direction:column;gap:14px; }
 .next-action-card { background:var(--accent-light);border-radius:var(--radius);padding:18px;border:.5px solid var(--border); }
 .next-action-label { font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px; }
 .next-action-row { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
@@ -199,7 +199,7 @@ body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; 
 .profil-header { padding:52px 20px 20px;padding-top:max(52px,calc(44px + env(safe-area-inset-top))); }
 .profil-title { font-family:var(--font-display);font-size:28px;font-weight:600;color:var(--text);margin-bottom:4px; }
 .profil-sub { font-size:13px;color:var(--text-secondary); }
-.profil-body { padding:0 16px 16px;display:flex;flex-direction:column;gap:14px; }
+.profil-body { padding:0 16px 80px;display:flex;flex-direction:column;gap:14px; }
 .profil-identity { background:var(--accent-light);border-radius:var(--radius);padding:20px;border:.5px solid var(--border);display:flex;align-items:center;gap:14px; }
 .profil-avatar { width:56px;height:56px;border-radius:28px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;font-weight:700;color:#fff8e8;flex-shrink:0; }
 .profil-name { font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text); }
