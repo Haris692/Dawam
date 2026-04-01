@@ -188,7 +188,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .path-pill-constance { display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(59,109,17,.1); }
 .path-pill-dot { width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite; }
 .path-pill-text { font-size:12px;font-weight:600;color:var(--green); }
-.path-body { padding:0 16px 80px;display:flex;flex-direction:column;gap:14px; }
+.path-body { padding:0 16px 80px;display:flex;flex-direction:column;gap:14px;transition:opacity .2s ease; }
 .next-action-card { background:var(--accent-light);border-radius:var(--radius);padding:18px;border:.5px solid var(--border); }
 .next-action-label { font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px; }
 .next-action-row { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
@@ -1205,17 +1205,51 @@ function renderPath(){
 
 function toggleSection(h){const items=h.nextElementSibling;const hidden=items.style.display==="none";items.style.display=hidden?"flex":"none";if(hidden)items.style.flexDirection="column";}
 
+function patchAfterToggle(id) {
+  // Met à jour le row en place sans toucher au DOM global
+  document.querySelectorAll('.item-check').forEach(check => {
+    if (check.getAttribute('onclick')?.includes(`toggleItem(${id})`)) {
+      const row = check.closest('.item-row');
+      if (!row) return;
+      const done = !!S.checklist[id];
+      row.classList.toggle('checked', done);
+      const icon = check.querySelector('.item-check-icon');
+      if (icon) icon.style.display = done ? 'block' : 'none';
+      const title = row.querySelector('.item-title');
+      if (title) title.style.textDecoration = done ? 'line-through' : '';
+    }
+  });
+
+  // Met à jour la barre de progression sans re-render
+  const items = getActiveItems();
+  const checked = Object.values(S.checklist).filter(Boolean).length;
+  const total = items.length;
+  const pct = total > 0 ? Math.round(checked / total * 100) : 0;
+  const allDone = checked === total && total > 0;
+  const el = document.getElementById;
+  el('prog-label').textContent = allDone ? 'Journée complète !' : `${checked} / ${total} objectifs`;
+  el('prog-right').textContent = allDone ? 'Ma sha Allah 🌟' : `${pct}% accompli`;
+  el('prog-fill').style.width = Math.max(pct, 1) + '%';
+}
+
+function renderPathSmooth() {
+  const body = document.getElementById('path-body');
+  body.style.opacity = '0';
+  setTimeout(() => { renderPath(); body.style.opacity = '1'; }, 180);
+}
+
 function toggleItem(id) {
   S.checklist[id] = !S.checklist[id];
   save();
 
   if (S.checklist[id]) {
+    patchAfterToggle(id);
     animateItemComplete(id);
 
     const items = getActiveItems();
     const allDone = items.every(i => S.checklist[i.id]);
     if (allDone) {
-      setTimeout(() => { renderPath(); fireCompletionOverlay(); }, 750);
+      setTimeout(() => { renderPathSmooth(); fireCompletionOverlay(); }, 750);
     } else {
       const TOASTS = [
         "✓ barakAllahu fik",
@@ -1225,10 +1259,10 @@ function toggleItem(id) {
       ];
       const done = items.filter(i => S.checklist[i.id]).length;
       showToast(TOASTS[(done - 1) % TOASTS.length]);
-      setTimeout(() => renderPath(), 700);
+      setTimeout(() => renderPathSmooth(), 750);
     }
   } else {
-    renderPath();
+    renderPathSmooth();
   }
 
   if (document.getElementById('profil').classList.contains('active')) renderProfil();
