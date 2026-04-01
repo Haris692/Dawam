@@ -346,13 +346,46 @@ export default {
       const { rating, comment, palier, name } = await request.json().catch(() => ({}));
       if (!rating) return json({ error: 'missing rating' }, 400);
       const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-      await env.SUBSCRIPTIONS.put(`feedback:${id}`, JSON.stringify({
+      const stars = ['', '😕', '😊', '🌟'][rating] || '?';
+      const data = {
         rating,
         comment: (comment || '').slice(0, 400),
         palier: palier || null,
         name: (name || '').slice(0, 30),
         at: new Date().toISOString(),
-      }), { expirationTtl: 60 * 60 * 24 * 90 }); // 90 jours
+      };
+      await env.SUBSCRIPTIONS.put(`feedback:${id}`, JSON.stringify(data), { expirationTtl: 60 * 60 * 24 * 90 });
+
+      // Envoi email via Resend
+      if (env.RESEND_API_KEY) {
+        const ratingLabels = { 1: 'À améliorer', 2: 'Bien', 3: 'Excellent' };
+        const emailBody = [
+          `Nouvel avis Dawam ${stars}`,
+          ``,
+          `Note     : ${stars} ${ratingLabels[rating] || rating}/3`,
+          `Utilisateur : ${data.name || 'Anonyme'}`,
+          `Palier   : ${data.palier || 'non renseigné'}`,
+          `Date     : ${data.at}`,
+          ``,
+          `Commentaire :`,
+          data.comment || '(aucun commentaire)',
+        ].join('\n');
+
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Dawam App <onboarding@resend.dev>',
+            to: ['mydawam.app@gmail.com'],
+            subject: `${stars} Nouvel avis Dawam — ${ratingLabels[rating] || 'Note ' + rating}`,
+            text: emailBody,
+          }),
+        }).catch(() => {}); // ne pas bloquer si Resend est KO
+      }
+
       return json({ ok: true });
     }
 
