@@ -1215,7 +1215,7 @@ function toggleItem(id) {
     const items = getActiveItems();
     const allDone = items.every(i => S.checklist[i.id]);
     if (allDone) {
-      setTimeout(() => fireCompletionOverlay(), 900);
+      setTimeout(() => { renderPath(); fireCompletionOverlay(); }, 750);
     } else {
       const TOASTS = [
         "✓ barakAllahu fik",
@@ -1225,20 +1225,21 @@ function toggleItem(id) {
       ];
       const done = items.filter(i => S.checklist[i.id]).length;
       showToast(TOASTS[(done - 1) % TOASTS.length]);
+      setTimeout(() => renderPath(), 700);
     }
+  } else {
+    renderPath();
   }
 
-  renderPath();
   if (document.getElementById('profil').classList.contains('active')) renderProfil();
 }
 
 // ═══ PROFIL ═══
 function animateItemComplete(itemId) {
-  const rows = document.querySelectorAll('.item-row');
   let targetRow = null;
-  rows.forEach(row => {
-    if (row.getAttribute('onclick')?.includes(`toggleItem(${itemId})`)) {
-      targetRow = row;
+  document.querySelectorAll('.item-check').forEach(check => {
+    if (check.getAttribute('onclick')?.includes(`toggleItem(${itemId})`)) {
+      targetRow = check.closest('.item-row');
     }
   });
   if (!targetRow) return;
