@@ -1226,10 +1226,9 @@ function patchAfterToggle(id) {
   const total = items.length;
   const pct = total > 0 ? Math.round(checked / total * 100) : 0;
   const allDone = checked === total && total > 0;
-  const el = document.getElementById;
-  el('prog-label').textContent = allDone ? 'Journée complète !' : `${checked} / ${total} objectifs`;
-  el('prog-right').textContent = allDone ? 'Ma sha Allah 🌟' : `${pct}% accompli`;
-  el('prog-fill').style.width = Math.max(pct, 1) + '%';
+  document.getElementById('prog-label').textContent = allDone ? 'Journée complète !' : `${checked} / ${total} objectifs`;
+  document.getElementById('prog-right').textContent = allDone ? 'Ma sha Allah 🌟' : `${pct}% accompli`;
+  document.getElementById('prog-fill').style.width = Math.max(pct, 1) + '%';
 }
 
 function renderPathSmooth() {
