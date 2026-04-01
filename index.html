@@ -172,9 +172,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* PATH */
 #path { background:var(--bg); }
 .path-hero { padding:52px 20px 24px;padding-top:max(52px,calc(44px + env(safe-area-inset-top))); }
-.path-hero-top { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
-.path-hero-time { font-size:12px;font-weight:500;color:var(--text-secondary); }
-.path-hero-chip { display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:var(--accent-light);border:.5px solid var(--border); }
+.path-hero-chip { display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:var(--accent-light);border:.5px solid var(--border);margin-bottom:14px; }
 .path-hero-chip span { font-size:12px;font-weight:600;color:var(--accent-dark); }
 .path-hero-name { font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);margin-bottom:6px; }
 .path-hero-motiv { font-size:13px;font-style:italic;color:var(--text-secondary);line-height:1.55;margin-bottom:16px;opacity:.85; }
@@ -700,10 +698,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <!-- PATH -->
 <div class="screen" id="path">
   <div class="path-hero fade-up">
-    <div class="path-hero-top">
-      <span class="path-hero-time" id="hero-time"></span>
-      <div class="path-hero-chip"><span id="hero-chip">🌱 Débutant</span></div>
-    </div>
+    <div class="path-hero-chip"><span id="hero-chip">🌱 Débutant</span></div>
     <div class="path-hero-name" id="hero-name">Bonjour</div>
     <div class="path-hero-motiv" id="hero-motiv"></div>
     <div class="path-hero-sep"></div>
@@ -1129,9 +1124,8 @@ function renderPath(){
   const pi=PALIER[S.palier];
   const curCat=getCurrentCat();
 
-  document.getElementById("hero-time").textContent=getGreet()+" · "+getTimeLabel();
-  document.getElementById("hero-name").textContent=(S.name?`Bonjour, ${S.name}`:"Bonjour");
   document.getElementById("hero-chip").textContent=pi.emoji+" "+pi.name;
+  document.getElementById("hero-name").textContent=(S.name?`Bonjour, ${S.name}`:"Bonjour");
   document.getElementById("hero-motiv").textContent=MOTIVS[Math.floor(Math.random()*MOTIVS.length)];
   document.getElementById("prog-label").textContent=allDone?"Journée complète !": `${checked} / ${total} objectifs`;
   document.getElementById("prog-right").textContent=allDone?"Ma sha Allah 🌟":`${pct}% accompli`;
