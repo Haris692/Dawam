@@ -207,12 +207,18 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .week-sub { font-size:11px;color:var(--text-secondary); }
 .section-sep { font-size:10px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;padding:0 2px; }
 .section-block { background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow); }
+.section-block.past-block { opacity:.58;border-color:var(--border-light); }
+.section-block.past-block .section-header-label { color:var(--text-secondary); }
 .section-header { display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:.5px solid var(--border-light);cursor:pointer;user-select:none; }
 .section-header-left { display:flex;align-items:center;gap:8px; }
 .section-header-emoji { font-size:16px; }
 .section-header-label { font-size:13px;font-weight:600;color:var(--text); }
 .section-header-badge { font-size:11px;color:var(--text-secondary);background:var(--bg);padding:2px 8px;border-radius:10px;border:.5px solid var(--border-light); }
 .section-current-badge { font-size:10px;font-weight:600;color:var(--green);background:rgba(59,109,17,.1);padding:2px 8px;border-radius:10px; }
+.path-group-label { display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:16px 4px 6px;color:var(--text-light); }
+.path-group-label.now { color:var(--accent);font-size:11px; }
+.path-group-label.past { opacity:.55; }
+.missed-badge { font-size:10px;font-weight:600;color:var(--text-light);flex-shrink:0; }
 .section-items { display:flex;flex-direction:column; }
 .item-row { display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;border-bottom:.5px solid var(--border-light);transition:background .15s;user-select:none;position:relative; }
 .item-row:last-child { border-bottom:none; }
@@ -1167,40 +1173,73 @@ function renderPath(){
     <div class="stats-card"><div class="stats-label">Cette semaine</div><div class="week-theme">${theme}</div><div class="week-sub">${pi.name}</div></div>
   </div>`;
 
-  body.innerHTML+=`<div class="section-sep fade-up" style="animation-delay:.08s">Ton parcours du jour</div>`;
+  // Helper : génère le HTML d'une section selon son statut
+  const renderSection = (cat, si, status) => {
+    const catItems = items.filter(i => i.cat === cat);
+    if (!catItems.length) return '';
+    const sec = SECTIONS[cat];
+    const secChecked = catItems.filter(i => S.checklist[i.id]).length;
+    const isFut = status === 'future';
+    const isPast = status === 'past';
+    const isCur = status === 'current';
+    const allSecDone = secChecked === catItems.length;
 
-  // Sections triées : courante en premier, puis futures, puis passées
-  const ordered=[...catOrder.slice(curIdx),...catOrder.slice(0,curIdx)];
+    const lockSvg = `<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="var(--text-light)" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="5.5" width="7" height="5.5" rx="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 0 1 3 0v1.5"/></svg>`;
 
-  ordered.forEach((cat,si)=>{
-    const catItems=items.filter(i=>i.cat===cat);
-    if(!catItems.length)return;
-    const sec=SECTIONS[cat];
-    const secChecked=catItems.filter(i=>S.checklist[i.id]).length;
-    const isCur=cat===curCat;
-    const catIdx=catOrder.indexOf(cat);
-    const isFuture=catIdx>curIdx;
-    const itemsHtml=catItems.map(item=>{
-      const done=!!S.checklist[item.id];
-      if(isFuture)return `<div class="item-row locked" onclick="showLockedHint('${cat}')">
-        <div class="item-check" style="background:transparent;border-color:var(--border)"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="var(--text-light)" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="5.5" width="7" height="5.5" rx="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 0 1 3 0v1.5"/></svg></div>
+    const itemsHtml = catItems.map(item => {
+      const done = !!S.checklist[item.id];
+      if (isFut) return `<div class="item-row locked" onclick="showLockedHint('${cat}')">
+        <div class="item-check" style="background:transparent;border-color:var(--border)">${lockSvg}</div>
         <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
         <span class="item-xp" style="color:var(--text-light)">+${item.xp} XP</span>
       </div>`;
-      return `<div class="item-row${done?" checked":""}" onclick="openDetail(${item.id})">
+      const right = (isPast && !done)
+        ? `<span class="missed-badge">Manqué</span>`
+        : `<span class="item-xp"${isPast && !done ? ' style="opacity:.4"' : ''}>+${item.xp} XP</span>`;
+      return `<div class="item-row${done ? ' checked' : ''}" onclick="openDetail(${item.id})">
         <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
-        <span class="item-xp">+${item.xp} XP</span>
+        ${right}
       </div>`;
-    }).join("");
-    body.innerHTML+=`<div class="section-block fade-up" style="animation-delay:${.1+si*.03}s">
+    }).join('');
+
+    const collapsed = isFut || isPast;
+    const badgeRight = isFut
+      ? `<span class="section-header-badge" style="color:var(--text-light)">🔒</span>`
+      : isCur ? `<span class="section-current-badge">● Maintenant</span>` : '';
+    const doneBadge = allSecDone ? `<span class="section-header-badge" style="color:var(--green)">✓ ${secChecked}/${catItems.length}</span>` : `<span class="section-header-badge">${secChecked}/${catItems.length}</span>`;
+
+    return `<div class="section-block${isPast ? ' past-block' : ''} fade-up" style="animation-delay:${.1+si*.03}s">
       <div class="section-header" onclick="toggleSection(this)">
         <div class="section-header-left"><span class="section-header-emoji">${sec.emoji}</span><span class="section-header-label">${sec.label}</span></div>
-        <div style="display:flex;align-items:center;gap:6px">${isCur?'<span class="section-current-badge">● Maintenant</span>':''}${isFuture?'<span class="section-header-badge" style="color:var(--text-light)">🔒 Plus tard</span>':''}<span class="section-header-badge">${secChecked}/${catItems.length}</span></div>
+        <div style="display:flex;align-items:center;gap:6px">${badgeRight}${doneBadge}</div>
       </div>
-      <div class="section-items"${isFuture?' style="display:none"':''}>${itemsHtml}</div>
+      <div class="section-items"${collapsed ? ' style="display:none"' : ''}>${itemsHtml}</div>
     </div>`;
-  });
+  };
+
+  // Groupes : À faire / À venir / Passé
+  const pastCats   = catOrder.slice(0, curIdx).filter(c => items.some(i => i.cat === c));
+  const futureCats2 = catOrder.slice(curIdx + 1).filter(c => items.some(i => i.cat === c));
+  const hasCur     = items.some(i => i.cat === curCat);
+
+  // À faire (maintenant)
+  if (hasCur) {
+    body.innerHTML += `<div class="path-group-label now fade-up" style="animation-delay:.08s">● À faire</div>`;
+    body.innerHTML += renderSection(curCat, 0, 'current');
+  }
+
+  // À venir
+  if (futureCats2.length) {
+    body.innerHTML += `<div class="path-group-label fade-up" style="animation-delay:.11s">À venir</div>`;
+    futureCats2.forEach((cat, si) => { body.innerHTML += renderSection(cat, si + 1, 'future'); });
+  }
+
+  // Passé
+  if (pastCats.length) {
+    body.innerHTML += `<div class="path-group-label past fade-up" style="animation-delay:.14s">Passé</div>`;
+    pastCats.forEach((cat, si) => { body.innerHTML += renderSection(cat, si + 1, 'past'); });
+  }
 }
 
 function toggleSection(h){const items=h.nextElementSibling;const hidden=items.style.display==="none";items.style.display=hidden?"flex":"none";if(hidden)items.style.flexDirection="column";}
