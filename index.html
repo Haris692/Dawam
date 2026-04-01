@@ -1074,7 +1074,7 @@ function finishOnboarding(){
   localStorage.removeItem(STORAGE_KEY);
   const notifs=obAns._pushSub?{pushSub:obAns._pushSub}:null;
   S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null,notifs};
-  save();launchApp();
+  save();launchApp();track('launch');track('onboarding_complete');
 }
 
 // ═══ PATH ═══
@@ -1928,6 +1928,20 @@ function playAubeBeep(){
   }catch{}
 }
 
+// ═══ ANALYTICS ═══
+function getUid() {
+  let uid = localStorage.getItem('_dawam_uid');
+  if (!uid) { uid = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('_dawam_uid', uid); }
+  return uid;
+}
+function track(event) {
+  fetch(`${PUSH_WORKER}/track`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event, uid: getUid() }),
+  }).catch(() => {});
+}
+
 // ═══ INIT ═══
 function launchApp(){
   showScreen("path");
@@ -1943,7 +1957,7 @@ function launchApp(){
 // Notifications push — à configurer ultérieurement
 
 load();
-if(S.name){launchApp();}else{showScreen("splash");}
+if(S.name){launchApp();track('launch');}else{showScreen("splash");}
 </script>
 <!-- Overlay journée complète -->
 <div id="dawam-completion-overlay">

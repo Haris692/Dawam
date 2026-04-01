@@ -404,6 +404,83 @@ export default {
       return json({ count: sorted.length, items: sorted });
     }
 
+    // ── Analytics : track event ──────────────────────────────────────────────
+    // POST /track  { event: "launch" | "onboarding_complete", uid? }
+    if (pathname === '/track' && request.method === 'POST') {
+      const { event, uid } = await request.json().catch(() => ({}));
+      const allowed = ['launch', 'onboarding_complete'];
+      if (!allowed.includes(event)) return json({ error: 'unknown event' }, 400);
+
+      const today = todayUTC();
+
+      // Compteur global de l'event
+      const totalKey = `stats:total:${event}`;
+      const prev = parseInt(await env.SUBSCRIPTIONS.get(totalKey) || '0');
+      await env.SUBSCRIPTIONS.put(totalKey, String(prev + 1));
+
+      // Compteur du jour
+      const dayKey = `stats:day:${today}:${event}`;
+      const prevDay = parseInt(await env.SUBSCRIPTIONS.get(dayKey) || '0');
+      await env.SUBSCRIPTIONS.put(dayKey, String(prevDay + 1), { expirationTtl: 60 * 60 * 24 * 90 });
+
+      // Utilisateurs uniques : on stocke l'uid (hash côté client) pour éviter les doublons du jour
+      if (uid) {
+        const uniqKey = `stats:uniq:${today}:${event}:${uid.slice(0, 32)}`;
+        await env.SUBSCRIPTIONS.put(uniqKey, '1', { expirationTtl: 60 * 60 * 24 * 7 });
+      }
+
+      return json({ ok: true });
+    }
+
+    // ── Analytics : stats (protégé) ──────────────────────────────────────────
+    // GET /stats?token=xxx
+    if (pathname === '/stats' && request.method === 'GET') {
+      const token = new URL(request.url).searchParams.get('token');
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+
+      const today = todayUTC();
+      const [
+        totalLaunch, totalOnboard,
+        todayLaunch, todayOnboard,
+      ] = await Promise.all([
+        env.SUBSCRIPTIONS.get('stats:total:launch'),
+        env.SUBSCRIPTIONS.get('stats:total:onboarding_complete'),
+        env.SUBSCRIPTIONS.get(`stats:day:${today}:launch`),
+        env.SUBSCRIPTIONS.get(`stats:day:${today}:onboarding_complete`),
+      ]);
+
+      // Utilisateurs uniques du jour (compter les clés uniq:today:*)
+      const uniqList = await env.SUBSCRIPTIONS.list({ prefix: `stats:uniq:${today}:` });
+      const uniqLaunch    = uniqList.keys.filter(k => k.name.includes(':launch:')).length;
+      const uniqOnboard   = uniqList.keys.filter(k => k.name.includes(':onboarding_complete:')).length;
+
+      // Derniers 7 jours
+      const days = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setUTCDate(d.getUTCDate() - i);
+        const ds = `${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`;
+        const [l, o] = await Promise.all([
+          env.SUBSCRIPTIONS.get(`stats:day:${ds}:launch`),
+          env.SUBSCRIPTIONS.get(`stats:day:${ds}:onboarding_complete`),
+        ]);
+        days.push({ date: ds, launch: parseInt(l||'0'), onboarding: parseInt(o||'0') });
+      }
+
+      return json({
+        total: {
+          launches:   parseInt(totalLaunch  || '0'),
+          onboardings: parseInt(totalOnboard || '0'),
+        },
+        today: {
+          launches:    parseInt(todayLaunch  || '0'),
+          onboardings: parseInt(todayOnboard || '0'),
+          unique_launches:    uniqLaunch,
+          unique_onboardings: uniqOnboard,
+        },
+        last7days: days,
+      });
+    }
+
     return new Response('Dawam Push Service 🌙', { headers: CORS });
   },
 
