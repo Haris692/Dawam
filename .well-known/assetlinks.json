@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.mydawam.app",
+    "sha256_cert_fingerprints": [
+      "CC:3B:24:A7:CB:4A:54:52:12:E3:BC:7F:35:A2:63:17:98:FA:74:21:57:6D:78:DD:17:58:5F:6A:28:FE:57:68"
+    ]
+  }
+}]
