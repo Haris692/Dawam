@@ -928,27 +928,23 @@ const MOTIVS = [
 ];
 
 // ═══ INVOCATIONS DATA ═══
+const _ADHKAR_COMMUN = [
+  { arabic:"أَسْتَغْفِرُ اللَّهَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ", phonetic:"Astaghfiru llaha lladhi la ilaha illa Huwa l-Hayyu l-Qayyumu wa atubu ilayh", french:"Je demande pardon à Allah, Celui en dehors duquel il n'y a pas de divinité, le Vivant, le Subsistant, et je me repens à Lui.", repeat:3, source:"Abu Dawud & Tirmidhi" },
+  { arabic:"حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ", phonetic:"Hasbiyallahu la ilaha illa Huwa, 'alayhi tawakkaltu, wa Huwa Rabbu l-'arshi l-'azim", french:"Allah me suffit. Nul dieu qu'Lui. En Lui je place ma confiance. Il est le Seigneur du Trône immense.", repeat:7, source:"Abu Dawud" },
+  { arabic:"اللَّهُمَّ أَجِرْنِي مِنَ النَّارِ", phonetic:"Allahumma ajirni mina n-nar", french:"Ô Allah, préserve-moi du Feu.", repeat:7, source:"Abu Dawud & Nasa'i" },
+  { arabic:"لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ", phonetic:"La hawla wa la quwwata illa billahi l-'aliyyi l-'azim", french:"Il n'y a de force ni de puissance qu'en Allah, le Très-Haut, l'Immense.", repeat:10, source:"Bukhari & Muslim" },
+  { arabic:"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَيُحْيِي وَيُمِيتُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", phonetic:"La ilaha illallah wahdahu la sharika lah, lahul mulku walahul hamd, wa yuhyi wa yumitu, wa Huwa 'ala kulli shay'in qadir", french:"Nul dieu qu'Allah Seul, sans associé. À Lui la royauté, à Lui la louange. Il donne la vie et donne la mort. Il est Omnipotent.", repeat:10, source:"Tirmidhi" },
+  { arabic:"سُورَةُ الْإِخْلَاصِ", phonetic:"Qul Huwa llahu Ahad, Allahu s-Samad, lam yalid wa lam yulad, wa lam yakun lahu kufuwan ahad", french:"Sourate Al-Ikhlas — Dis : Il est Allah, Unique. Allah, le Seul à qui on s'adresse. Il n'engendre pas et n'est pas engendré. Et nul n'est égal à Lui.", repeat:10, source:"Coran 112" },
+  { arabic:"سُورَةُ الْفَلَقِ + سُورَةُ النَّاسِ", phonetic:"Qul a'udhu bi Rabbi l-falaq... / Qul a'udhu bi Rabbi n-nas...", french:"Sourate Al-Falaq + Sourate An-Nas — les deux protections.", repeat:3, source:"Coran 113-114" },
+  { arabic:"سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ", phonetic:"SubhanAllahi l-'azimi wa bihamdih", french:"Gloire à Allah l'Immense et louange à Lui.", repeat:3, source:"Bukhari & Muslim" },
+];
 const ADHKAR = {
   matin: [
-    { arabic:"أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", phonetic:"Asbahna wa asbahal mulku lillah, walhamdulillah, la ilaha illallah wahdahu la sharika lah, lahul mulku walahul hamd, wa Huwa 'ala kulli shay'in qadir", french:"Nous voilà au matin et toute souveraineté appartient à Allah. Louange à Allah. Nul dieu qu'Allah Seul, sans associé. À Lui la royauté, à Lui la louange. Il est Omnipotent.", repeat:1, source:"Muslim" },
-    { arabic:"اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ", phonetic:"Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilayka n-nushur", french:"Ô Allah, c'est par Toi que nous atteignons le matin et par Toi le soir, par Toi nous vivons et mourons, et vers Toi est la résurrection.", repeat:1, source:"Tirmidhi" },
-    { arabic:"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", phonetic:"La ilaha illallah wahdahu la sharika lah, lahul mulku walahul hamd, wa Huwa 'ala kulli shay'in qadir", french:"Nul dieu qu'Allah Seul, sans associé. À Lui la royauté, à Lui la louange. Il est Omnipotent.", repeat:10, source:"Bukhari & Muslim" },
-    { arabic:"سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", phonetic:"SubhanAllahi wa bihamdih", french:"Gloire à Allah et louange à Lui.", repeat:100, source:"Muslim" },
-    { arabic:"أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ", phonetic:"A'udhu bi kalimati llahi t-tammati min sharri ma khalaq", french:"Je cherche refuge dans les paroles parfaites d'Allah contre le mal de ce qu'Il a créé.", repeat:3, source:"Muslim" },
-    { arabic:"بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", phonetic:"Bismillahi lladhi la yadurru ma'a smihi shay'un fi l-ardi wa la fi s-sama'i wa Huwa s-sami'u l-'alim", french:"Au nom d'Allah, Celui dont le nom protège de tout mal sur terre et dans le ciel. Il est l'Audient, l'Omniscient.", repeat:3, source:"Abu Dawud & Tirmidhi" },
-    { arabic:"اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ", phonetic:"Allahumma inni as'aluka l-'afwa wa l-'afiyata fi d-dunya wa l-akhirah", french:"Ô Allah, je Te demande le pardon et la santé dans ce monde et dans l'au-delà.", repeat:3, source:"Ibn Majah" },
-    { arabic:"حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ", phonetic:"Hasbiyallahu la ilaha illa Huwa, 'alayhi tawakkaltu wa Huwa Rabbu l-'arshi l-'azim", french:"Allah me suffit. Nul dieu qu'Allah. En Lui je place ma confiance. Il est le Seigneur du Trône immense.", repeat:7, source:"Abu Dawud" },
+    ..._ADHKAR_COMMUN,
+    { arabic:"سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", phonetic:"SubhanAllahi wa bihamdih", french:"Gloire à Allah et louange à Lui.", repeat:100, source:"Muslim", note:"Au lever du soleil" },
+    { arabic:"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", phonetic:"La ilaha illallah wahdahu la sharika lah, lahul mulku walahul hamd, wa Huwa 'ala kulli shay'in qadir", french:"Nul dieu qu'Allah Seul, sans associé. À Lui la royauté, à Lui la louange. Il est Omnipotent.", repeat:100, source:"Bukhari & Muslim", note:"Au lever du soleil" },
   ],
-  soir: [
-    { arabic:"أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", phonetic:"Amsayna wa amsal mulku lillah, walhamdulillah, la ilaha illallah wahdahu la sharika lah, lahul mulku walahul hamd, wa Huwa 'ala kulli shay'in qadir", french:"Nous voilà au soir et toute souveraineté appartient à Allah. Louange à Allah. Nul dieu qu'Allah Seul, sans associé.", repeat:1, source:"Muslim" },
-    { arabic:"اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ", phonetic:"Allahumma bika amsayna wa bika asbahna wa bika nahya wa bika namutu wa ilayka l-masir", french:"Ô Allah, c'est par Toi que nous atteignons le soir et par Toi le matin, par Toi nous vivons et mourons, et vers Toi est le retour.", repeat:1, source:"Tirmidhi" },
-    { arabic:"بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا", phonetic:"Bismika Allahumma amutu wa ahya", french:"En Ton nom, ô Allah, je meurs et je vis.", repeat:1, source:"Bukhari" },
-    { arabic:"اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ", phonetic:"Allahumma qini 'adhabaka yawma tab'athu 'ibadak", french:"Ô Allah, préserve-moi de Ton châtiment le Jour où Tu ressusciteras Tes serviteurs.", repeat:3, source:"Abu Dawud & Tirmidhi" },
-    { arabic:"سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", phonetic:"SubhanAllahi wa bihamdih", french:"Gloire à Allah et louange à Lui.", repeat:100, source:"Muslim" },
-    { arabic:"أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ", phonetic:"A'udhu bi kalimati llahi t-tammati min sharri ma khalaq", french:"Je cherche refuge dans les paroles parfaites d'Allah contre le mal de ce qu'Il a créé.", repeat:3, source:"Muslim" },
-    { arabic:"بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", phonetic:"Bismillahi lladhi la yadurru ma'a smihi shay'un fi l-ardi wa la fi s-sama'i wa Huwa s-sami'u l-'alim", french:"Au nom d'Allah, Celui dont le nom protège de tout mal sur terre et dans le ciel.", repeat:3, source:"Abu Dawud & Tirmidhi" },
-    { arabic:"رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ إِنَّكَ أَنْتَ التَّوَّابُ الرَّحِيمُ", phonetic:"Rabbi ghfir li wa tub 'alayya, innaka anta t-tawwabu r-rahim", french:"Seigneur, pardonne-moi et reviens à moi — Tu es Celui qui revient, le Très Miséricordieux.", repeat:100, source:"Al-Bukhari" },
-  ],
+  soir: [..._ADHKAR_COMMUN],
 };
 const DHIKR_LIST = [
   { title:"Istighfar", arabic:"أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ", phonetic:"Astaghfirullaha wa atubu ilayh", french:"Je demande pardon à Allah et je me repens à Lui.", repeat:100, source:"Bukhari & Muslim", note:"À réciter après chaque prière et en toutes circonstances." },
@@ -1392,6 +1388,7 @@ function renderInvocContent() {
     const items = ADHKAR[_invocTab] || [];
     el.innerHTML = items.map((a, i) => `
       <div class="invoc-card" style="animation:fadeUp .3s ease ${i * 0.04}s both">
+        ${a.note ? `<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${a.note}</div>` : ''}
         <span class="invoc-repeat">× ${a.repeat}</span>
         <div class="invoc-arabic">${a.arabic}</div>
         <div class="invoc-phonetic">${a.phonetic}</div>
