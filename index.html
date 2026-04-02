@@ -423,6 +423,17 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .about-section-title { font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text);margin:24px 0 10px; }
 .about-question { font-family:var(--font-display);font-size:16px;font-style:italic;color:var(--accent);text-align:center;margin-top:24px;line-height:1.6; }
 .about-footer { text-align:center;padding-top:24px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
+/* ── Invoc Popup ── */
+#invoc-popup { position:fixed;inset:0;z-index:500;display:none;align-items:flex-end;background:var(--overlay); }
+#invoc-popup.show { display:flex;animation:overlayFadeIn .2s ease; }
+.invoc-popup-sheet { background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:430px;margin:0 auto;max-height:88vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.2,1,.4,1); }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.invoc-popup-header { display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:.5px solid var(--border);flex-shrink:0; }
+.invoc-popup-title { font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text); }
+.invoc-popup-close { width:32px;height:32px;border-radius:50%;background:var(--bg-card);border:none;font-size:18px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1; }
+.invoc-popup-body { overflow-y:auto;padding:12px 16px 32px;flex:1; }
+.invoc-popup-single { padding:24px 20px 16px;text-align:center; }
+.invoc-popup-single .invoc-arabic { font-size:28px;line-height:1.8;text-align:center;margin-bottom:14px; }
 /* ── Invocations ── */
 .invoc-tabs-bar { display:flex;gap:6px;padding:14px 16px 10px;position:sticky;top:0;background:var(--bg);z-index:10;border-bottom:.5px solid var(--border); }
 .invoc-tab { flex:1;padding:8px 4px;border:1.5px solid var(--border);background:var(--bg-card);border-radius:10px;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all .18s;line-height:1.2; }
@@ -789,6 +800,17 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <span>Profil</span>
   </button>
 </nav>
+
+<!-- INVOC POPUP -->
+<div id="invoc-popup" onclick="if(event.target===this)closeInvocPopup()">
+  <div class="invoc-popup-sheet">
+    <div class="invoc-popup-header">
+      <div class="invoc-popup-title" id="invoc-popup-title"></div>
+      <button class="invoc-popup-close" onclick="closeInvocPopup()">×</button>
+    </div>
+    <div class="invoc-popup-body" id="invoc-popup-body"></div>
+  </div>
+</div>
 
 <!-- THEME MODAL -->
 <div id="theme-modal">
@@ -1246,7 +1268,7 @@ function renderPath(){
         ? `<span class="missed-badge">Manqué</span>`
         : `<span class="item-xp"${isPast && !done ? ' style="opacity:.4"' : ''}>+${item.xp} XP</span>`;
       const invocTab = INVOC_LINK[item.id];
-      const rowClick = invocTab ? `openInvocFromDetail('${invocTab}')` : `openDetail(${item.id})`;
+      const rowClick = invocTab ? `openInvocFromDetail(${item.id})` : `openDetail(${item.id})`;
       const invocBadge = invocTab ? `<span style="font-size:10px;color:var(--accent);opacity:.7;margin-left:4px">📿</span>` : '';
       return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
         <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -1624,12 +1646,42 @@ const ITEM_DETAILS = {
   }
 };
 
-const INVOC_LINK={2:'matin',7:'dhikr',8:'dhikr',9:'soir'};
-function openInvocFromDetail(tab){
-  closeDetail();
-  _invocTab=tab;
-  showTab('invocations',document.getElementById('tab-invocations'));
+const INVOC_LINK={
+  2:{title:"Invocations du matin",tab:'matin'},
+  7:{title:"Le meilleur dhikr — Tahlil",tab:'dhikr',idx:2},
+  8:{title:"La prière sur le Prophète ﷺ",tab:'dhikr',idx:1},
+  9:{title:"Invocations du soir",tab:'soir'},
+};
+function openInvocFromDetail(itemId){
+  const link=INVOC_LINK[itemId];
+  if(!link)return;
+  const titleEl=document.getElementById('invoc-popup-title');
+  const bodyEl=document.getElementById('invoc-popup-body');
+  titleEl.textContent=link.title;
+  const cardHtml=(a,i)=>`
+    <div class="invoc-card" style="animation:fadeUp .25s ease ${i*.05}s both">
+      <span class="invoc-repeat">× ${a.repeat}</span>
+      <div class="invoc-arabic">${a.arabic}</div>
+      <div class="invoc-phonetic">${a.phonetic}</div>
+      <div class="invoc-french">${a.french}</div>
+      <div class="invoc-source">${a.source}</div>
+    </div>`;
+  if(link.tab==='dhikr'&&link.idx!=null){
+    const d=DHIKR_LIST[link.idx];
+    bodyEl.innerHTML=`<div class="invoc-popup-single">
+      <span class="invoc-repeat">× ${d.repeat}</span>
+      <div class="invoc-arabic">${d.arabic}</div>
+      <div class="invoc-phonetic">${d.phonetic}</div>
+      <div class="invoc-french">${d.french}</div>
+      <div class="invoc-source" style="margin-top:8px">${d.source}</div>
+    </div>`;
+  } else {
+    const items=ADHKAR[link.tab]||[];
+    bodyEl.innerHTML=items.map(cardHtml).join('');
+  }
+  document.getElementById('invoc-popup').classList.add('show');
 }
+function closeInvocPopup(){document.getElementById('invoc-popup').classList.remove('show');}
 function openDetail(id){
   if(id===2&&getCurrentCat()==="aube"){openAubeTimer();return;}
   const item=PROGRAM.find(i=>i.id===id);
