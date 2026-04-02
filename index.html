@@ -1621,6 +1621,12 @@ const ITEM_DETAILS = {
   }
 };
 
+const INVOC_LINK={2:'matin',7:'dhikr',8:'dhikr',9:'soir'};
+function openInvocFromDetail(tab){
+  closeDetail();
+  _invocTab=tab;
+  showTab('invocations',document.getElementById('tab-invocations'));
+}
 function openDetail(id){
   if(id===2&&getCurrentCat()==="aube"){openAubeTimer();return;}
   const item=PROGRAM.find(i=>i.id===id);
@@ -1660,6 +1666,7 @@ function openDetail(id){
         <div class="detail-tip-text">${det.note}</div>
       </div>`:""}
       <div class="detail-cta fade-up" style="animation-delay:.5s">
+        ${INVOC_LINK[id]?`<button class="btn-primary" style="background:var(--green);border-color:var(--green);margin-bottom:8px" onclick="openInvocFromDetail('${INVOC_LINK[id]}')">📿 Voir les invocations →</button>`:''}
         <button class="btn-done${done?" undone":""}" onclick="toggleItem(${id});closeDetail()">
           ${done?"↩ Annuler l'action":"✓ Accompli — barakAllahu fik"}
         </button>
