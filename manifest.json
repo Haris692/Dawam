@@ -13,5 +13,18 @@
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
+  "screenshots": [
+    { "src": "screenshot_apk/screen1.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen2.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen3.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen4.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen5.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen6.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen7.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen8.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen9.jpg",  "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen10.jpg", "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "screenshot_apk/screen11.jpg", "sizes": "945x2048", "type": "image/jpeg", "form_factor": "narrow" }
+  ],
   "categories": ["lifestyle", "health"]
 }
