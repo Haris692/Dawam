@@ -1245,9 +1245,12 @@ function renderPath(){
       const right = (isPast && !done)
         ? `<span class="missed-badge">Manqué</span>`
         : `<span class="item-xp"${isPast && !done ? ' style="opacity:.4"' : ''}>+${item.xp} XP</span>`;
-      return `<div class="item-row${done ? ' checked' : ''}" onclick="openDetail(${item.id})">
+      const invocTab = INVOC_LINK[item.id];
+      const rowClick = invocTab ? `openInvocFromDetail('${invocTab}')` : `openDetail(${item.id})`;
+      const invocBadge = invocTab ? `<span style="font-size:10px;color:var(--accent);opacity:.7;margin-left:4px">📿</span>` : '';
+      return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
         <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
+        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}${invocBadge}</div><div class="item-sub">${item.time}</div></div>
         ${right}
       </div>`;
     }).join('');
@@ -1666,7 +1669,6 @@ function openDetail(id){
         <div class="detail-tip-text">${det.note}</div>
       </div>`:""}
       <div class="detail-cta fade-up" style="animation-delay:.5s">
-        ${INVOC_LINK[id]?`<button class="btn-primary" style="background:var(--green);border-color:var(--green);margin-bottom:8px" onclick="openInvocFromDetail('${INVOC_LINK[id]}')">📿 Voir les invocations →</button>`:''}
         <button class="btn-done${done?" undone":""}" onclick="toggleItem(${id});closeDetail()">
           ${done?"↩ Annuler l'action":"✓ Accompli — barakAllahu fik"}
         </button>
