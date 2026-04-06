@@ -107,28 +107,28 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .nav-tab:not(.active) svg { stroke:var(--text-light); }
 
 /* SPLASH */
-#splash { background:var(--bg);justify-content:center;align-items:center;padding:60px 32px 40px;min-height:100vh; }
-.splash-logo { font-family:var(--font-display);font-size:52px;font-weight:700;color:var(--accent);letter-spacing:-1px;animation:fadeUp .6s ease both; }
-.splash-tagline { font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--text-secondary);margin-top:6px;margin-bottom:40px;animation:fadeUp .6s .1s ease both; }
-.splash-sep { width:60px;height:1px;background:var(--border);margin-bottom:32px;animation:fadeIn .6s .2s ease both; }
-.splash-label { font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);margin-bottom:16px;animation:fadeUp .5s .3s ease both; }
-.splash-quote { font-family:var(--font-display);font-size:16px;font-style:italic;font-weight:400;color:var(--text);line-height:1.65;text-align:center;animation:fadeUp .5s .4s ease both; }
-.splash-actions { margin-top:auto;width:100%;display:flex;flex-direction:column;gap:8px;animation:fadeUp .5s .6s ease both; }
+#splash { background:var(--bg);justify-content:flex-start;align-items:center;padding:clamp(32px,8vh,60px) 32px 0;overflow:hidden; }
+.splash-logo { font-family:var(--font-display);font-size:clamp(40px,10vw,52px);font-weight:700;color:var(--accent);letter-spacing:-1px;animation:fadeUp .6s ease both; }
+.splash-tagline { font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--text-secondary);margin-top:6px;margin-bottom:clamp(16px,4vh,40px);animation:fadeUp .6s .1s ease both; }
+.splash-sep { width:60px;height:1px;background:var(--border);margin-bottom:clamp(12px,3vh,32px);animation:fadeIn .6s .2s ease both; }
+.splash-label { font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);margin-bottom:12px;animation:fadeUp .5s .3s ease both; }
+.splash-quote { font-family:var(--font-display);font-size:clamp(13px,3.5vw,16px);font-style:italic;font-weight:400;color:var(--text);line-height:1.65;text-align:center;animation:fadeUp .5s .4s ease both; }
+.splash-actions { margin-top:auto;flex-shrink:0;width:100%;display:flex;flex-direction:column;gap:8px;padding:16px 0 clamp(16px,4vh,32px);animation:fadeUp .5s .6s ease both; }
 
 /* ONBOARDING */
-#onboarding { background:var(--bg);min-height:100vh; }
-.ob-page { display:none;flex-direction:column;padding:56px 24px 24px;min-height:100vh; }
+#onboarding { background:var(--bg);overflow:hidden; }
+.ob-page { display:none;flex-direction:column;padding:clamp(20px,5vh,40px) 24px 0;height:100%; }
 .ob-page.active { display:flex; }
-.ob-dots { display:flex;gap:5px;justify-content:center;margin-bottom:36px; }
+.ob-dots { display:flex;gap:5px;justify-content:center;margin-bottom:clamp(14px,3vh,28px); }
 .ob-dot { width:6px;height:6px;border-radius:3px;background:var(--border);transition:all .3s; }
 .ob-dot.active { width:20px;background:var(--green); }
 .ob-dot.done { background:rgba(59,109,17,.35); }
-.ob-emoji-circle { width:80px;height:80px;border-radius:40px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;box-shadow:0 0 0 8px rgba(186,117,23,.08); }
-.ob-label { font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--green);text-align:center;margin-bottom:8px; }
-.ob-title { font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);text-align:center;line-height:1.3;margin-bottom:14px; }
-.ob-desc { font-size:14px;color:var(--text-secondary);text-align:center;line-height:1.65;margin-bottom:24px;padding:14px 16px;background:var(--bg-card);border-radius:14px;border:.5px solid var(--border-light); }
-.ob-options { display:flex;flex-direction:column;gap:10px;width:100%; }
-.ob-option { display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
+.ob-emoji-circle { width:clamp(56px,14vw,80px);height:clamp(56px,14vw,80px);border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:clamp(24px,7vw,36px);margin:0 auto clamp(10px,2.5vh,20px);box-shadow:0 0 0 8px rgba(186,117,23,.08); }
+.ob-label { font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--green);text-align:center;margin-bottom:6px; }
+.ob-title { font-family:var(--font-display);font-size:clamp(20px,5.5vw,26px);font-weight:600;color:var(--text);text-align:center;line-height:1.3;margin-bottom:clamp(8px,2vh,14px); }
+.ob-desc { font-size:13px;color:var(--text-secondary);text-align:center;line-height:1.6;margin-bottom:clamp(12px,2.5vh,20px);padding:10px 14px;background:var(--bg-card);border-radius:14px;border:.5px solid var(--border-light); }
+.ob-options { display:flex;flex-direction:column;gap:8px;width:100%; }
+.ob-option { display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
 .ob-option.selected { border-color:var(--green);background:rgba(59,109,17,.07); }
 .ob-option-emoji { font-size:24px; }
 .ob-option-text { flex:1; }
@@ -140,7 +140,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .ob-option.selected .ob-radio-dot { display:block;animation:checkPop .25s ease; }
 .ob-name-input { width:100%;padding:16px;border-radius:14px;border:1.5px solid var(--border);background:var(--bg-card);font-family:var(--font-body);font-size:18px;font-weight:600;color:var(--text);outline:none;transition:border-color .2s; }
 .ob-name-input:focus { border-color:var(--accent); }
-.ob-bottom { margin-top:auto;padding-top:20px;display:flex;align-items:center;justify-content:space-between; }
+.ob-bottom { margin-top:auto;flex-shrink:0;padding:12px 0 clamp(16px,3.5vh,28px);display:flex;align-items:center;justify-content:space-between;background:var(--bg); }
 .ob-back { width:44px;height:44px;border-radius:22px;background:rgba(186,117,23,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px; }
 .ob-counter { font-size:13px;font-weight:500;color:var(--text-light); }
 .ob-next { display:flex;align-items:center;gap:8px;padding:12px 22px;border-radius:20px;border:none;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:600;color:#fff;transition:opacity .15s; }
@@ -165,6 +165,27 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .ob-result-step.edit-mode.selected { border-color:var(--green);background:rgba(59,109,17,.06); }
 .ob-result-check { width:20px;height:20px;border-radius:10px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--bg-card);transition:all .2s; }
 .ob-result-step.selected .ob-result-check { background:var(--green);border-color:var(--green); }
+/* SLIDER SALAT */
+.ob-slider-wrap { width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0; }
+.ob-slider-value { font-family:var(--font-display);font-size:clamp(48px,14vw,72px);font-weight:700;color:var(--accent);line-height:1; }
+.ob-slider-sub { font-size:13px;color:var(--text-secondary);text-align:center;min-height:20px; }
+.ob-slider { width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer;margin:4px 0; }
+.ob-slider::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(186,117,23,.4); }
+.ob-slider-ticks { width:100%;display:flex;justify-content:space-between;padding:0 2px; }
+.ob-slider-ticks span { font-size:11px;color:var(--text-light);font-weight:600; }
+/* PRAYER CHECKBOXES */
+.ob-prayer-grid { display:flex;flex-direction:column;gap:8px;width:100%; }
+.ob-prayer-card { display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
+.ob-prayer-card.selected { border-color:var(--green);background:rgba(59,109,17,.07); }
+.ob-prayer-name { font-size:15px;font-weight:600;color:var(--text);flex:1; }
+.ob-prayer-ar { font-family:'Amiri',serif;font-size:17px;color:var(--accent);margin-right:4px; }
+.ob-prayer-chk { width:22px;height:22px;border-radius:11px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s; }
+.ob-prayer-card.selected .ob-prayer-chk { border-color:var(--green);background:var(--green); }
+.ob-prayer-chk svg { display:none; }
+.ob-prayer-card.selected .ob-prayer-chk svg { display:block; }
+/* CORAN SUB-OPTIONS */
+.ob-coran-sub { width:100%;margin-top:10px; }
+.ob-coran-sub-label { font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
 .ob-edit-toggle { width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--text-secondary);margin-top:10px;transition:all .2s; }
 .ob-edit-toggle.active { border-color:var(--green);color:var(--green);background:rgba(59,109,17,.06); }
 .ob-step-badge { font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:2px 7px;border-radius:8px;flex-shrink:0; }
@@ -498,8 +519,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="splash-sep"></div>
   <p class="splash-label">À chaque moment son action</p>
   <p class="splash-quote">"Ton âge est ton capital. L'enjeu n'est pas d'agir comme tu veux, quand tu veux — mais d'accomplir l'action appropriée au moment opportun."</p>
-  <div id="cycle-wrap" style="width:100%;margin:24px 0;">
-    <svg id="cycle-svg" width="100%" viewBox="0 0 300 300" style="display:block;transform-origin:center;transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;">
+  <div id="cycle-wrap" style="width:100%;flex:1;min-height:0;margin:clamp(8px,2vh,16px) 0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+    <svg id="cycle-svg" width="100%" height="100%" viewBox="0 0 300 300" style="display:block;max-height:100%;transform-origin:center;transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;">
       <defs>
         <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#f0e0c0" stop-opacity=".5"/>
@@ -581,45 +602,82 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 2: Salat -->
+  <!-- Page 2: Prières — Slider -->
   <div class="ob-page" data-page="2">
     <div class="ob-dots" id="dots-2"></div>
     <div class="ob-emoji-circle">🕌</div>
     <p class="ob-label">Question 1 sur 5</p>
     <h1 class="ob-title">La prière</h1>
-    <p class="ob-desc">Sois honnête avec toi-même — c'est la première étape.</p>
-    <div class="ob-options" data-key="salat">
-      <div class="ob-option" data-value="0" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Peu ou pas encore</div><div class="ob-option-desc">Je commence mon chemin</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="2" onclick="selectOption(this)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">2 à 4 prières</div><div class="ob-option-desc">Pas encore les 5 régulièrement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="5" onclick="selectOption(this)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Les 5 prières</div><div class="ob-option-desc">Régulièrement, alhamdulillah</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    <p class="ob-desc">Sois honnête avec toi-même — combien de prières tu fais par jour en ce moment ?</p>
+    <div class="ob-slider-wrap">
+      <div class="ob-slider-value" id="salat-display">0</div>
+      <div class="ob-slider-sub" id="salat-label">Je n'ai pas encore cette habitude</div>
+      <input class="ob-slider" type="range" min="0" max="5" value="0" id="salat-slider" oninput="handleSalatSlider(this.value)">
+      <div class="ob-slider-ticks"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">3 / 10</span>
-      <button class="ob-next" id="q1-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+      <span class="ob-counter">3 / 11</span>
+      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
-  <!-- Page 3: Coran -->
+  <!-- Page 3: Lesquelles ? (sautée si 0 ou 5) -->
   <div class="ob-page" data-page="3">
     <div class="ob-dots" id="dots-3"></div>
+    <div class="ob-emoji-circle">🕌</div>
+    <p class="ob-label">Précise</p>
+    <h1 class="ob-title">Lesquelles ?</h1>
+    <p class="ob-desc">Sélectionne les prières que tu fais régulièrement — on activera un rappel avant chacune.</p>
+    <div class="ob-prayer-grid">
+      <div class="ob-prayer-card" data-prayer="fajr" onclick="togglePrayerCard(this)">
+        <span class="ob-prayer-name">Fajr</span><span class="ob-prayer-ar">الفجر</span>
+        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="ob-prayer-card" data-prayer="dhuhr" onclick="togglePrayerCard(this)">
+        <span class="ob-prayer-name">Dhuhr</span><span class="ob-prayer-ar">الظهر</span>
+        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="ob-prayer-card" data-prayer="asr" onclick="togglePrayerCard(this)">
+        <span class="ob-prayer-name">Asr</span><span class="ob-prayer-ar">العصر</span>
+        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="ob-prayer-card" data-prayer="maghrib" onclick="togglePrayerCard(this)">
+        <span class="ob-prayer-name">Maghrib</span><span class="ob-prayer-ar">المغرب</span>
+        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="ob-prayer-card" data-prayer="isha" onclick="togglePrayerCard(this)">
+        <span class="ob-prayer-name">Isha</span><span class="ob-prayer-ar">العشاء</span>
+        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+    </div>
+    <div class="ob-bottom">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">4 / 11</span>
+      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 4: Coran -->
+  <div class="ob-page" data-page="4">
+    <div class="ob-dots" id="dots-4"></div>
     <div class="ob-emoji-circle">📖</div>
     <p class="ob-label">Question 2 sur 5</p>
     <h1 class="ob-title">Le Coran</h1>
     <p class="ob-desc">La lecture quotidienne du Coran est un pilier du programme.</p>
-    <div class="ob-options" data-key="quran">
-      <div class="ob-option" data-value="0" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Pas encore régulier</div><div class="ob-option-desc">Je lis peu en ce moment</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="1" onclick="selectOption(this)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Parfois</div><div class="ob-option-desc">Pas encore quotidiennement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="2" onclick="selectOption(this)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Wird quotidien</div><div class="ob-option-desc">J'ai un wird régulier</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    <div class="ob-options" id="coran-main-options">
+      <div class="ob-option" data-value="never" onclick="selectCoranType(this,'never')"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Jamais ou presque</div><div class="ob-option-desc">Je lis peu en ce moment</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="sometimes" onclick="selectCoranType(this,'sometimes')"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Parfois</div><div class="ob-option-desc">Pas encore quotidiennement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="daily" onclick="selectCoranType(this,'daily')"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Quotidiennement</div><div class="ob-option-desc">J'ai un wird régulier</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
     </div>
+    <div class="ob-coran-sub" id="coran-sub" style="display:none"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">4 / 10</span>
+      <span class="ob-counter">5 / 11</span>
       <button class="ob-next" id="q2-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 4: Prière de nuit -->
-  <div class="ob-page" data-page="4">
-    <div class="ob-dots" id="dots-4"></div>
+  <!-- Page 5: Prière de nuit -->
+  <div class="ob-page" data-page="5">
+    <div class="ob-dots" id="dots-5"></div>
     <div class="ob-emoji-circle">🌙</div>
     <p class="ob-label">Question 3 sur 5</p>
     <h1 class="ob-title">La prière de nuit</h1>
@@ -631,13 +689,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">5 / 10</span>
+      <span class="ob-counter">6 / 11</span>
       <button class="ob-next" id="q3-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 5: Situation de vie -->
-  <div class="ob-page" data-page="5">
-    <div class="ob-dots" id="dots-5"></div>
+  <!-- Page 6: Situation de vie -->
+  <div class="ob-page" data-page="6">
+    <div class="ob-dots" id="dots-6"></div>
     <div class="ob-emoji-circle">🧭</div>
     <p class="ob-label">Question 4 sur 5</p>
     <h1 class="ob-title">Ta situation de vie</h1>
@@ -649,13 +707,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">6 / 10</span>
+      <span class="ob-counter">7 / 11</span>
       <button class="ob-next" id="q4-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 6: Intentions -->
-  <div class="ob-page" data-page="6">
-    <div class="ob-dots" id="dots-6"></div>
+  <!-- Page 7: Intentions -->
+  <div class="ob-page" data-page="7">
+    <div class="ob-dots" id="dots-7"></div>
     <div class="ob-emoji-circle">🎯</div>
     <p class="ob-label">Question 5 sur 5</p>
     <h1 class="ob-title">Tes intentions</h1>
@@ -668,27 +726,27 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">7 / 10</span>
+      <span class="ob-counter">8 / 11</span>
       <button class="ob-next" id="q5-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 7: Ville -->
-  <div class="ob-page" data-page="7">
-    <div class="ob-dots" id="dots-7"></div>
-    <div class="ob-emoji-circle">🕌</div>
+  <!-- Page 8: Ville -->
+  <div class="ob-page" data-page="8">
+    <div class="ob-dots" id="dots-8"></div>
+    <div class="ob-emoji-circle">🏙️</div>
     <p class="ob-label">Horaires de prière</p>
     <h1 class="ob-title">Ta ville</h1>
     <p class="ob-desc">Pour adapter ton programme aux horaires de prière exacts. Optionnel — tu pourras le modifier plus tard.</p>
     <input class="ob-name-input" type="text" placeholder="Ex: Paris, Casablanca, Dubaï…" id="city-input" oninput="checkCityInput()" autocomplete="off">
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">8 / 10</span>
-      <button class="ob-next" id="city-next" style="background:var(--green)" onclick="obNext()">Voir mon programme →</button>
+      <span class="ob-counter">9 / 11</span>
+      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
-  <!-- Page 8: Thème -->
-  <div class="ob-page" data-page="8">
-    <div class="ob-dots" id="dots-8"></div>
+  <!-- Page 9: Thème -->
+  <div class="ob-page" data-page="9">
+    <div class="ob-dots" id="dots-9"></div>
     <div class="ob-emoji-circle">🎨</div>
     <p class="ob-label">Personnalise</p>
     <h1 class="ob-title">Choisis ton thème</h1>
@@ -696,23 +754,23 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div id="ob-theme-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">9 / 10</span>
+      <span class="ob-counter">10 / 11</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
-  <!-- Page 9: Notifications -->
-  <div class="ob-page" data-page="9">
-    <div class="ob-dots" id="dots-9"></div>
+  <!-- Page 10: Notifications -->
+  <div class="ob-page" data-page="10">
+    <div class="ob-dots" id="dots-10"></div>
     <div class="ob-emoji-circle">🔔</div>
     <p class="ob-label">Rappels intelligents</p>
     <h1 class="ob-title">Rester constant ?</h1>
-    <p class="ob-desc">Reçois un rappel quotidien calé sur les vrais horaires de prière de ta ville.</p>
+    <p class="ob-desc">Reçois un rappel avant chaque prière sélectionnée et un rappel quotidien pour ton programme.</p>
     <div class="ob-options">
       <div class="ob-option" id="ob-notif-yes" onclick="obChooseNotif(true, this)">
         <span class="ob-option-emoji">🔔</span>
         <div class="ob-option-text">
           <div class="ob-option-label">Oui, active les rappels</div>
-          <div class="ob-option-desc">Notifs basées sur Fajr et Isha</div>
+          <div class="ob-option-desc">Notifs calées sur tes prières</div>
         </div>
         <div class="ob-radio"><div class="ob-radio-dot"></div></div>
       </div>
@@ -727,13 +785,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">10 / 10</span>
+      <span class="ob-counter">11 / 11</span>
       <button class="ob-next" id="ob-notif-next" style="background:var(--green)" onclick="obNextFromNotifs()" disabled>Voir mon programme →</button>
     </div>
   </div>
-  <!-- Page 10: Programme proposé + personnalisation -->
-  <div class="ob-page" data-page="10">
-    <div class="ob-dots" id="dots-10"></div>
+  <!-- Page 11: Programme proposé -->
+  <div class="ob-page" data-page="11">
+    <div class="ob-dots" id="dots-11"></div>
     <p class="ob-label" style="text-align:center;margin-bottom:6px">Ton programme</p>
     <h1 class="ob-title" style="margin-bottom:20px">Voici ton point de départ</h1>
     <div id="result-content"></div>
@@ -1014,7 +1072,7 @@ function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JS
 
 // ═══ ONBOARDING ═══
 let obPage=0, obAns={};
-const OB_N=11;
+const OB_N=12;
 function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
 function goToOnboarding() {
   const splash = document.getElementById('splash');
@@ -1059,9 +1117,64 @@ function goToOnboarding() {
     initDots();
   }, 550);
 }
-function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");if(n===10)renderResultPage();if(n===8)renderObThemeGrid();}
-function obNext(){obPage++;if(obPage<OB_N)renderObPage(obPage);}
-function obBack(){if(obPage>0){obPage--;renderObPage(obPage);}else showScreen("splash");}
+function renderObPage(n){document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active"));const p=document.querySelector(`.ob-page[data-page="${n}"]`);if(p)p.classList.add("active");if(n===11)renderResultPage();if(n===9)renderObThemeGrid();}
+function obNext(){
+  if(obPage===2){const c=obAns.salatCount??0;obPage=(c===0||c===5)?4:3;}
+  else{obPage++;}
+  if(obPage<OB_N)renderObPage(obPage);
+}
+function obBack(){
+  if(obPage===4){const c=obAns.salatCount??0;obPage=(c===0||c===5)?2:3;}
+  else if(obPage>0){obPage--;}
+  else{showScreen("splash");return;}
+  renderObPage(obPage);
+}
+// ─── Slider salat ───
+const SALAT_LABELS=["Je n'ai pas encore cette habitude","Je fais 1 prière par jour","Je fais 2 prières par jour","Je fais 3 prières par jour","Je fais 4 prières par jour","Les 5 prières — alhamdulillah ✓"];
+function handleSalatSlider(val){
+  val=Number(val);obAns.salatCount=val;
+  document.getElementById("salat-display").textContent=val;
+  document.getElementById("salat-label").textContent=SALAT_LABELS[val];
+  const pct=(val/5)*100;
+  document.getElementById("salat-slider").style.background=`linear-gradient(to right,var(--green) ${pct}%,var(--border) ${pct}%)`;
+  if(val===5)obAns.prayers=["fajr","dhuhr","asr","maghrib","isha"];
+  else if(val===0)obAns.prayers=[];
+}
+// ─── Checkboxes prières ───
+function togglePrayerCard(el){
+  el.classList.toggle("selected");
+  const p=el.dataset.prayer;
+  if(!obAns.prayers)obAns.prayers=[];
+  if(el.classList.contains("selected")){if(!obAns.prayers.includes(p))obAns.prayers.push(p);}
+  else{obAns.prayers=obAns.prayers.filter(x=>x!==p);}
+}
+// ─── Coran type + sous-options ───
+function selectCoranType(el,type){
+  document.querySelectorAll("#coran-main-options .ob-option").forEach(o=>o.classList.remove("selected"));
+  el.classList.add("selected");
+  obAns.quranType=type;delete obAns.quranGoal;
+  const sub=document.getElementById("coran-sub");
+  const btn=document.getElementById("q2-next");
+  btn.disabled=true;
+  const chk=`<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if(type==="daily"){
+    sub.style.display="block";
+    sub.innerHTML=`<p class="ob-coran-sub-label">Combien par session ?</p>`+
+      [["versets","Quelques versets","~2 min","📖"],["page","1 page","~5-10 min","📖"],["pages","Plusieurs pages","~15-20 min","📖"],["hizb","1 hizb ou plus","~30 min+","📖"]]
+      .map(([v,l,d,e])=>`<div class="ob-option" style="margin-bottom:8px" onclick="selectCoranGoal(this,'${v}')"><span class="ob-option-emoji">${e}</span><div class="ob-option-text"><div class="ob-option-label">${l}</div><div class="ob-option-desc">${d}</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>`).join("");
+  }else{
+    sub.style.display="block";
+    sub.innerHTML=`<p class="ob-coran-sub-label">Par où veux-tu commencer ?</p>`+
+      [["sourates","3 sourates courtes","~2 min par jour","🌱"],["page","1 page","~5 min par jour","🌿"],["try","Je veux juste essayer","On t'accompagne","🤲"]]
+      .map(([v,l,d,e])=>`<div class="ob-option" style="margin-bottom:8px" onclick="selectCoranGoal(this,'${v}')"><span class="ob-option-emoji">${e}</span><div class="ob-option-text"><div class="ob-option-label">${l}</div><div class="ob-option-desc">${d}</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>`).join("");
+  }
+}
+function selectCoranGoal(el,val){
+  document.querySelectorAll("#coran-sub .ob-option").forEach(o=>o.classList.remove("selected"));
+  el.classList.add("selected");
+  obAns.quranGoal=val;
+  document.getElementById("q2-next").disabled=false;
+}
 
 // ─── Thème onboarding ───
 function renderObThemeGrid(){
@@ -1126,12 +1239,21 @@ function selectOption(el){
   const btnId=map[key];
   if(btnId){const btn=document.getElementById(btnId);if(btn)btn.disabled=isMulti?obAns[key].length===0:false;}
 }
-function calcPalier(p){let s=0;if(p.salat>=5)s+=3;else if(p.salat>=2)s+=1;s+=Math.min(p.quran||0,2);s+=Math.min(p.witr||0,2);if(s>=7)return 3;if(s>=3)return 2;return 1;}
+function calcPalier(p){
+  let s=0;
+  const sc=p.salatCount??p.salat??0;
+  if(sc>=5)s+=3;else if(sc>=3)s+=2;else if(sc>=1)s+=1;
+  if(p.quranType==="daily"){s+=p.quranGoal==="hizb"?2:1;}
+  else if(p.quranGoal&&p.quranGoal!=="try")s+=0;
+  else s+=Math.min(p.quran||0,2);
+  s+=Math.min(p.witr||0,2);
+  if(s>=7)return 3;if(s>=3)return 2;return 1;
+}
 // ─── Page résultat + personnalisation ───
 let obEditMode=false, obSelectedSteps=[];
 function renderResultPage(){
   obEditMode=false;
-  const palier=calcPalier({salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0});
+  const palier=calcPalier({salatCount:obAns.salatCount??0,quranType:obAns.quranType,quranGoal:obAns.quranGoal,witr:obAns.witr??0});
   obSelectedSteps=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id);
   renderResultContent(palier);
 }
@@ -1164,18 +1286,24 @@ function renderResultContent(palier){
 }
 function toggleResultEdit(){
   obEditMode=!obEditMode;
-  renderResultContent(calcPalier({salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0}));
+  renderResultContent(calcPalier({salatCount:obAns.salatCount??0,quranType:obAns.quranType,quranGoal:obAns.quranGoal,witr:obAns.witr??0}));
   document.getElementById("result-content")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function toggleStep(id){
   if(obSelectedSteps.includes(id)){if(obSelectedSteps.length>1)obSelectedSteps=obSelectedSteps.filter(s=>s!==id);}
   else{obSelectedSteps=[...obSelectedSteps,id];}
-  renderResultContent(calcPalier({salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0}));
+  renderResultContent(calcPalier({salatCount:obAns.salatCount??0,quranType:obAns.quranType,quranGoal:obAns.quranGoal,witr:obAns.witr??0}));
 }
 
 function finishOnboarding(){
   const name=document.getElementById("name-input")?.value.trim()||obAns.name||"ami";
-  const profile={salat:obAns.salat??0,quran:obAns.quran??0,witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"],city:obAns.city||""};
+  const sc=obAns.salatCount??0;
+  const profile={
+    salatCount:sc,prayers:obAns.prayers||[],
+    quranType:obAns.quranType||"never",quranGoal:obAns.quranGoal||"try",
+    salat:sc,quran:obAns.quranType==="daily"?2:(obAns.quranType==="sometimes"?1:0),
+    witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"],city:obAns.city||""
+  };
   const palier=calcPalier(profile);
   const defaultIds=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id).sort((a,b)=>a-b);
   const selSorted=[...obSelectedSteps].sort((a,b)=>a-b);
