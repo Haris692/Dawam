@@ -1498,7 +1498,58 @@ function getCurrentCat(){
   if(h>=21||h<3)return"nuit";
   return"qiyam";
 }
-function getActiveItems(){if(S.customSteps&&S.customSteps.length>0)return PROGRAM.filter(i=>S.customSteps.includes(i.id));return PROGRAM.filter(i=>i.paliers.includes(S.palier));}
+// ═══ PRAYER ITEMS (dynamic, based on S.profile.prayers) ═══
+const PRAYER_META = {
+  fajr:   {id:100,titleFr:"Fajr",      emoji:"🌅",time:"À l'aube",          xp:20,cat:"aube",    ar:"الفجر"},
+  dhuhr:  {id:101,titleFr:"Dhuhr",     emoji:"☀️", time:"À midi",            xp:20,cat:"journee", ar:"الظهر"},
+  asr:    {id:102,titleFr:"Asr",       emoji:"🌤️", time:"Dans l'après-midi", xp:20,cat:"journee", ar:"العصر"},
+  maghrib:{id:103,titleFr:"Maghrib",   emoji:"🌇",time:"Au coucher du soleil",xp:20,cat:"soir",   ar:"المغرب"},
+  isha:   {id:104,titleFr:"Isha",      emoji:"🌙",time:"En soirée",          xp:20,cat:"nuit",    ar:"العشاء"},
+};
+const PRAYER_FLOWS = {
+  100:{ type:'steps', steps:[
+    {emoji:'💧',title:'Fais le wudu',desc:'Prépare-toi intérieurement. Les ablutions sont le début de la prière.',tip:'Commence par bismillah et finis par la shahada.'},
+    {emoji:'🌅',title:'Sunna de Fajr — 2 raka\'at',desc:'Ces 2 raka\'at sont plus chères au Prophète ﷺ que le monde entier.',tip:'« Les 2 raka\'at de l\'aube valent mieux que le monde et ce qu\'il contient. » — Muslim'},
+    {emoji:'🤲',title:'Fajr — 2 raka\'at fard',desc:'Avec présence du cœur. Lis lentement, sens chaque verset.',arabic:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',phonetic:'Bismillāhi r-raḥmāni r-raḥīm'},
+    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
+  ]},
+  101:{ type:'steps', steps:[
+    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
+    {emoji:'☀️',title:'Sunna avant — 4 raka\'at',desc:'2+2 raka\'at avant Dhuhr. Le Prophète ﷺ ne les abandonnait presque jamais.',tip:'« Celui qui maintient les 4 raka\'at avant et après Dhuhr, Allah lui interdit le feu. » — At-Tirmidhī'},
+    {emoji:'🤲',title:'Dhuhr — 4 raka\'at fard',desc:'4 raka\'at avec présence et recueillement.'},
+    {emoji:'🕌',title:'Sunna après — 2 raka\'at',desc:'2 raka\'at après Dhuhr. Complète ta prière.'},
+    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
+  ]},
+  102:{ type:'steps', steps:[
+    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
+    {emoji:'🌤️',title:'Asr — 4 raka\'at fard',desc:'Prends le temps de bien les accomplir. L\'Asr est une prière de haute valeur.',tip:'« Celui qui rate l\'Asr — c\'est comme s\'il avait perdu sa famille et ses biens. » — Al-Bukhāri'},
+    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
+  ]},
+  103:{ type:'steps', steps:[
+    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
+    {emoji:'🌇',title:'Maghrib — 3 raka\'at fard',desc:'Prie dès l\'entrée du temps. Le Prophète ﷺ se hâtait pour Maghrib.',tip:'« Priez Maghrib à l\'entrée de son temps, car c\'est là que les étoiles commencent à apparaître. » — Ahmad'},
+    {emoji:'🕌',title:'Sunna après — 2 raka\'at',desc:'2 raka\'at de Sunna après Maghrib. Ou 6 raka\'at d\'Awwābīn si tu veux plus.'},
+    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
+  ]},
+  104:{ type:'steps', steps:[
+    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
+    {emoji:'🌙',title:'Isha — 4 raka\'at fard',desc:'La dernière prière de la journée. Termine-la avec présence.',tip:'« Celui qui prie Isha en jamaʿa, c\'est comme s\'il avait prié la moitié de la nuit. » — Muslim'},
+    {emoji:'🕌',title:'Sunna après — 2 raka\'at',desc:'2 raka\'at après Isha. Puis le Witr si tu ne le fais pas plus tard.'},
+    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
+  ]},
+};
+function getPrayerItems(){
+  const prayers=S.profile?.prayers||[];
+  return prayers.map(p=>PRAYER_META[p]).filter(Boolean);
+}
+function getActiveItems(){
+  const prayers=getPrayerItems();
+  let base;
+  if(S.customSteps&&S.customSteps.length>0)base=PROGRAM.filter(i=>S.customSteps.includes(i.id));
+  else base=PROGRAM.filter(i=>i.paliers.includes(S.palier));
+  // Inject prayers first (they appear in their natural time slot)
+  return [...prayers,...base];
+}
 function checkNewDay(){
   const today=new Date().toISOString().split("T")[0];
   if(S.lastDate&&S.lastDate!==today){
@@ -2566,8 +2617,8 @@ const GUIDED_FLOWS = {
 let _gId=null,_gStep=0,_gChecked=new Set(),_gCount=0,_gTimerSec=0,_gTimerTotal=0,_gSession=0,_gInterval=null,_gRunning=false;
 
 function openGuided(id){
-  const item=PROGRAM.find(p=>p.id===id);
-  const flow=GUIDED_FLOWS[id];
+  const item=PROGRAM.find(p=>p.id===id)||getPrayerItems().find(p=>p.id===id);
+  const flow=GUIDED_FLOWS[id]||PRAYER_FLOWS[id];
   if(!item||!flow){openDetail(id);return;}
   _gId=id;_gStep=0;_gChecked=new Set();_gCount=0;_gSession=0;_gRunning=false;
   if(_gInterval){clearInterval(_gInterval);_gInterval=null;}
@@ -2585,7 +2636,7 @@ function openGuided(id){
 }
 
 function renderGuided(){
-  const flow=GUIDED_FLOWS[_gId]; if(!flow)return;
+  const flow=GUIDED_FLOWS[_gId]||PRAYER_FLOWS[_gId]; if(!flow)return;
   const body=document.getElementById('guided-body');
   const cta=document.getElementById('guided-cta');
   const dots=document.getElementById('guided-dots');
@@ -2679,7 +2730,7 @@ function guidedSkip(){
 }
 
 function guidedTap(){
-  const flow=GUIDED_FLOWS[_gId]; if(!flow||flow.type!=='counter')return;
+  const flow=GUIDED_FLOWS[_gId]||PRAYER_FLOWS[_gId]; if(!flow||flow.type!=='counter')return;
   _gCount++;
   const valEl=document.getElementById('guided-count-val'); if(valEl)valEl.textContent=_gCount;
   const C=2*Math.PI*66,pct=Math.min(_gCount/flow.target,1);
@@ -2698,7 +2749,7 @@ function guidedCheckItem(i){
 }
 
 function guidedTimerStart(){
-  const flow=GUIDED_FLOWS[_gId]; if(!flow)return;
+  const flow=GUIDED_FLOWS[_gId]||PRAYER_FLOWS[_gId]; if(!flow)return;
   _gRunning=true;
   _gInterval=setInterval(()=>{
     if(flow.mode==='up'){
