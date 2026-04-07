@@ -1082,7 +1082,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="guided-body" id="guided-body"></div>
   <div class="guided-footer">
     <button class="btn-primary" id="guided-cta">Commencer</button>
-    <button id="guided-skip" onclick="guidedSkip()" style="display:none;width:100%;margin-top:10px;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;opacity:.7;">Passer pour aujourd'hui →</button>
+    <button id="guided-skip" onclick="guidedSkip()" style="display:none;width:100%;margin-top:10px;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;opacity:.7;">Terminer ✓</button>
   </div>
 </div>
 
@@ -2675,7 +2675,7 @@ function renderGuided(){
 
 function guidedSkip(){
   guidedTimerStop();
-  closeGuided();
+  renderGuidedDone();
 }
 
 function guidedTap(){
