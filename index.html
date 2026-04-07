@@ -1586,7 +1586,6 @@ function renderPath(){
         ? `<span class="missed-badge">Manqué</span>`
         : `<span class="item-xp"${isPast && !done ? ' style="opacity:.4"' : ''}>+${item.xp} XP</span>`;
       const rowClick = `openGuided(${item.id})`;
-      const invocBadge = invocTab ? `<span style="font-size:10px;color:var(--accent);opacity:.7;margin-left:4px">📿</span>` : '';
       return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
         <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
@@ -1594,7 +1593,7 @@ function renderPath(){
       </div>`;
     }).join('');
 
-    const collapsed = isFut || isPast;
+    const collapsed = isPast;
     const badgeRight = isFut
       ? `<span class="section-header-badge" style="color:var(--text-light)">🔒</span>`
       : isCur ? `<span class="section-current-badge">● Maintenant</span>` : '';
@@ -2749,7 +2748,7 @@ function renderGuidedDone(){
 function closeGuided(){
   guidedTimerStop();
   document.getElementById('guided-screen').classList.remove('show');
-  setTimeout(()=>{document.getElementById('guided-body').innerHTML='';_gId=null;},420);
+  setTimeout(()=>{document.getElementById('guided-body').innerHTML='';_gId=null;renderPath();},420);
 }
 
 // ═══ ANALYTICS ═══
