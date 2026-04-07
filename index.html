@@ -1082,6 +1082,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="guided-body" id="guided-body"></div>
   <div class="guided-footer">
     <button class="btn-primary" id="guided-cta">Commencer</button>
+    <button id="guided-skip" onclick="guidedSkip()" style="display:none;width:100%;margin-top:10px;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;opacity:.7;">Passer pour aujourd'hui →</button>
   </div>
 </div>
 
@@ -1587,7 +1588,7 @@ function renderPath(){
         : `<span class="item-xp"${isPast && !done ? ' style="opacity:.4"' : ''}>+${item.xp} XP</span>`;
       const rowClick = `openGuided(${item.id})`;
       return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
-        <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
         ${right}
       </div>`;
@@ -2588,6 +2589,8 @@ function renderGuided(){
   const body=document.getElementById('guided-body');
   const cta=document.getElementById('guided-cta');
   const dots=document.getElementById('guided-dots');
+  const skipBtn=document.getElementById('guided-skip');
+  if(skipBtn) skipBtn.style.display=(flow.type==='timer')?'block':'none';
 
   if(flow.type==='steps'){
     const steps=flow.steps,total=steps.length;
@@ -2668,6 +2671,11 @@ function renderGuided(){
     cta.textContent=allChecked?'Terminer ✓':'J\'ai fait ce que je pouvais →';
     cta.onclick=()=>renderGuidedDone();
   }
+}
+
+function guidedSkip(){
+  guidedTimerStop();
+  closeGuided();
 }
 
 function guidedTap(){
