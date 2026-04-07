@@ -258,6 +258,24 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .stats-mini-fill { height:100%;background:var(--accent);border-radius:2px;transition:width .6s ease; }
 .week-theme { font-size:13px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:6px; }
 .week-sub { font-size:11px;color:var(--text-secondary); }
+/* PROGRAMME DE LA SEMAINE */
+.prog-week-card { background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border);padding:18px;box-shadow:var(--shadow);border-left:3px solid var(--accent); }
+.prog-week-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.prog-week-badge { font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px; }
+.prog-week-palier { font-size:11px;color:var(--text-secondary);font-weight:600; }
+.prog-week-title { font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;font-family:var(--font-display);line-height:1.3; }
+.prog-week-goal { font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.45; }
+.prog-week-divider { height:1px;background:var(--border);opacity:.5;margin-bottom:12px; }
+.prog-week-encouragement { font-size:12px;color:var(--text-secondary);font-style:italic;line-height:1.55;margin-bottom:14px;padding-left:10px;border-left:2px solid var(--accent);opacity:.8; }
+.prog-week-progress { display:flex;flex-direction:column;gap:6px; }
+.prog-week-bar { height:5px;background:var(--border);border-radius:3px;overflow:hidden; }
+.prog-week-fill { height:100%;background:var(--accent);border-radius:3px;transition:width .6s ease; }
+.prog-week-count { font-size:11px;color:var(--text-secondary); }
+/* PALIER MOONS */
+.palier-moons { display:inline-flex;align-items:center;gap:2px; }
+/* ITEM WHY */
+.item-why { font-size:11px;color:var(--accent-dark);font-style:italic;margin-top:2px;opacity:.7;line-height:1.35; }
+.item-row.checked .item-why { color:var(--text-light);opacity:.5; }
 .section-sep { font-size:10px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;padding:0 2px; }
 .section-block { background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow); }
 .section-block.past-block { opacity:.58;border-color:var(--border-light); }
@@ -1170,20 +1188,20 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <script>
 // ═══ DATA ═══
 const PROGRAM = [
-  {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[5]},
-  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5]},
-  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[2,3,4,5]},
-  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5]},
-  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"À l'aube",          xp:25, cat:"aube",    paliers:[1,2,3,4,5]},
-  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"À l'aube",          xp:20, cat:"aube",    paliers:[3,4,5]},
-  {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4,5]},
-  {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4,5]},
-  {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Toute la journée",  xp:20, cat:"journee", paliers:[2,3,4,5]},
-  {id:10, titleFr:"Obligations de l'étudiant",     emoji:"📚", time:"Dans la journée",   xp:15, cat:"journee", paliers:[5]},
-  {id:11, titleFr:"Cercle de foi",                 emoji:"🤝", time:"Dans la journée",   xp:20, cat:"journee", paliers:[5]},
-  {id:12, titleFr:"Acquisition du savoir",         emoji:"📗", time:"Dans la journée",   xp:15, cat:"journee", paliers:[5]},
-  {id:13, titleFr:"Garde du temps",                emoji:"⏰", time:"Dans la journée",   xp:10, cat:"journee", paliers:[5]},
-  {id:9,  titleFr:"Convenances du sommeil",        emoji:"🌙", time:"Avant de dormir",   xp:15, cat:"nuit",    paliers:[1,2,3,4,5]},
+  {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[5],       why:"Le Prophète ﷺ ne l'abandonnait jamais — ni en voyage ni à la maison."},
+  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5],   why:"2 raka'at valent mieux que le monde entier et ce qu'il contient."},
+  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[2,3,4,5], why:"Récompense d'un pèlerinage et d'une ʿumra complète. Complète."},
+  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5],   why:"Unit les cœurs dans l'amour d'Allah à travers le temps."},
+  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"À l'aube",          xp:25, cat:"aube",    paliers:[1,2,3,4,5], why:"Il viendra le Jour du Jugement en intercesseur pour ses compagnons."},
+  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"À l'aube",          xp:20, cat:"aube",    paliers:[3,4,5],   why:"Al-Mulk protège du châtiment de la tombe chaque nuit."},
+  {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4,5],     why:"Une maison au Paradis pour chaque jour où tu les accomplis."},
+  {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4,5],     why:"« Renouvelez votre foi en répétant Lâ ilâha illâ Llâh. » — Ahmad"},
+  {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Toute la journée",  xp:20, cat:"journee", paliers:[2,3,4,5], why:"Chaque bénédiction t'en vaut 10 d'Allah et efface 10 péchés."},
+  {id:10, titleFr:"Obligations de l'étudiant",     emoji:"📚", time:"Dans la journée",   xp:15, cat:"journee", paliers:[5],       why:"La recherche du savoir est une obligation pour tout musulman."},
+  {id:11, titleFr:"Cercle de foi",                 emoji:"🤝", time:"Dans la journée",   xp:20, cat:"journee", paliers:[5],       why:"Les cercles d'évocation sont les jardins du Paradis sur Terre."},
+  {id:12, titleFr:"Acquisition du savoir",         emoji:"📗", time:"Dans la journée",   xp:15, cat:"journee", paliers:[5],       why:"Allah facilite le chemin vers le Paradis à celui qui cherche le savoir."},
+  {id:13, titleFr:"Garde du temps",                emoji:"⏰", time:"Dans la journée",   xp:10, cat:"journee", paliers:[5],       why:"« Tu n'es qu'un ensemble de jours — chaque jour qui passe t'emporte. »"},
+  {id:9,  titleFr:"Convenances du sommeil",        emoji:"🌙", time:"Avant de dormir",   xp:15, cat:"nuit",    paliers:[1,2,3,4,5], why:"L'ange prie pour toi toute la nuit si tu dors en état de pureté."},
 ];
 const PALIER = {
   1:{name:"L'Éveillé",   nameAr:"النَّاشِئ",    emoji:"🌑", desc:"Le premier pas est le plus courageux."},
@@ -1200,10 +1218,26 @@ const SECTIONS = {
   nuit:    {label:"Avant de dormir",          emoji:"🌙"},
 };
 const WEEK_THEMES = [
-  "La constance dans les adorations",
-  "L'intention sincère",
-  "La présence du cœur",
-  "La patience et la gratitude",
+  {
+    title: "La constance dans les adorations",
+    goal: "Accomplir chaque étape sans exception, même petitement",
+    encouragement: "« L'acte le plus aimé d'Allah est celui accompli régulièrement, même s'il est petit. » — Bukhari",
+  },
+  {
+    title: "L'intention sincère",
+    goal: "Renouveler l'intention à chaque action : tout pour Allah",
+    encouragement: "« Les actes ne valent que par leurs intentions, et chacun n'a que ce qu'il a eu l'intention de faire. » — Bukhari & Muslim",
+  },
+  {
+    title: "La présence du cœur",
+    goal: "Ralentir — lire le Coran lentement, faire le dhikr avec conscience",
+    encouragement: "« Allah n'exauce pas l'invocation d'un cœur distrait et inattentif. » — Tirmidhi",
+  },
+  {
+    title: "La patience et la gratitude",
+    goal: "Remercier Allah à chaque étape accomplie, même la plus petite",
+    encouragement: "« Étrange est l'affaire du croyant... si un bien l'atteint, il rend grâces, si une épreuve l'atteint, il est patient. » — Muslim",
+  },
 ];
 const MOTIVS = [
   '"L\'acte le plus aimé d\'Allah est celui accompli régulièrement, même s\'il est petit."',
@@ -1635,7 +1669,8 @@ function renderPath(){
   const pi=PALIER[S.palier];
   const curCat=getCurrentCat();
 
-  document.getElementById("hero-chip").textContent=pi.emoji+" "+pi.name;
+  const moonHtml=[1,2,3,4,5].map(k=>`<span style="opacity:${k<=S.palier?1:.22};font-size:${k===S.palier?'15px':'11px'};transition:opacity .3s">${PALIER[k].emoji}</span>`).join('');
+  document.getElementById("hero-chip").innerHTML=`<span class="palier-moons">${moonHtml}</span>&nbsp;${pi.name}`;
   document.getElementById("hero-name").textContent=(S.name?`Bonjour, ${S.name}`:"Bonjour");
   document.getElementById("hero-motiv").textContent=MOTIVS[Math.floor(Math.random()*MOTIVS.length)];
   document.getElementById("prog-label").textContent=allDone?"Journée complète !": `${checked} / ${total} objectifs`;
@@ -1671,11 +1706,21 @@ function renderPath(){
     body.innerHTML+=`<div class="all-done-card fade-up"><div class="all-done-emoji">🌟</div><div class="all-done-text">Journée complète — Ma sha Allah !</div></div>`;
   }
 
-  // Stats
-  const theme=WEEK_THEMES[(S.weekNumber-1)%WEEK_THEMES.length];
-  body.innerHTML+=`<div class="stats-row fade-up" style="animation-delay:.05s">
-    <div class="stats-card"><div class="stats-label">Progression</div><div class="stats-percent">${pct}%</div><div class="stats-count">${checked} / ${total} étapes</div><div class="stats-mini-bar"><div class="stats-mini-fill" style="width:${pct}%"></div></div></div>
-    <div class="stats-card"><div class="stats-label">Cette semaine</div><div class="week-theme">${theme}</div><div class="week-sub">${pi.name}</div></div>
+  // Programme de la semaine
+  const wt=WEEK_THEMES[(S.weekNumber-1)%WEEK_THEMES.length];
+  body.innerHTML+=`<div class="prog-week-card fade-up" style="animation-delay:.05s">
+    <div class="prog-week-header">
+      <span class="prog-week-badge">Semaine ${S.weekNumber}</span>
+      <span class="prog-week-palier">${pi.emoji} ${pi.name}</span>
+    </div>
+    <div class="prog-week-title">${wt.title}</div>
+    <div class="prog-week-goal">🎯 ${wt.goal}</div>
+    <div class="prog-week-divider"></div>
+    <div class="prog-week-encouragement">${wt.encouragement}</div>
+    <div class="prog-week-progress">
+      <div class="prog-week-bar"><div class="prog-week-fill" style="width:${pct}%"></div></div>
+      <span class="prog-week-count">${checked} / ${total} étapes accomplies · ${pct}%</span>
+    </div>
   </div>`;
 
   // Helper : génère le HTML d'une section selon son statut
@@ -1695,7 +1740,7 @@ function renderPath(){
       const done = !!S.checklist[item.id];
       if (isFut) return `<div class="item-row locked" onclick="showLockedHint('${cat}')">
         <div class="item-check" style="background:transparent;border-color:var(--border)">${lockSvg}</div>
-        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
+        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div>${item.why?`<div class="item-why">${item.why}</div>`:''}</div>
         <span class="item-xp" style="color:var(--text-light)">+${item.xp} XP</span>
       </div>`;
       const right = (isPast && !done)
@@ -1704,7 +1749,7 @@ function renderPath(){
       const rowClick = `openGuided(${item.id})`;
       return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
         <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
+        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div>${item.why?`<div class="item-why">${item.why}</div>`:''}</div>
         ${right}
       </div>`;
     }).join('');
