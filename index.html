@@ -118,10 +118,11 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* ONBOARDING */
 #onboarding { background:var(--bg);overflow:hidden; }
 .ob-page { display:none;flex-direction:column;padding:clamp(20px,5vh,40px) 24px 0;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch; }
-.ob-page.active { display:flex;animation:obSlideIn .28s ease both; }
-.ob-page.active.ob-back { animation:obSlideInBack .28s ease both; }
-@keyframes obSlideIn { from{opacity:0;transform:translateX(28px)} to{opacity:1;transform:none} }
-@keyframes obSlideInBack { from{opacity:0;transform:translateX(-28px)} to{opacity:1;transform:none} }
+.ob-page.active { display:flex; }
+.ob-page.ob-slide-in { animation:obSlideIn .26s ease forwards; }
+.ob-page.ob-slide-back { animation:obSlideInBack .26s ease forwards; }
+@keyframes obSlideIn { from{opacity:0;transform:translateX(26px)} to{opacity:1;transform:none} }
+@keyframes obSlideInBack { from{opacity:0;transform:translateX(-26px)} to{opacity:1;transform:none} }
 .ob-dots { display:flex;gap:5px;justify-content:center;margin-bottom:clamp(14px,3vh,28px); }
 .ob-dot { width:6px;height:6px;border-radius:3px;background:var(--border);transition:all .3s; }
 .ob-dot.active { width:20px;background:var(--green); }
@@ -1292,11 +1293,12 @@ function goToOnboarding() {
   }, 550);
 }
 function renderObPage(n, goBack=false){
-  document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active","ob-back"));
+  document.querySelectorAll(".ob-page").forEach(p=>p.classList.remove("active","ob-slide-in","ob-slide-back"));
   const p=document.querySelector(`.ob-page[data-page="${n}"]`);
   if(!p)return;
-  if(goBack)p.classList.add("ob-back");
   p.classList.add("active");
+  void p.offsetWidth; // force reflow → animation repart proprement
+  p.classList.add(goBack?"ob-slide-back":"ob-slide-in");
   if(n===13)renderResultPage();
   if(n===11)renderObThemeGrid();
 }
