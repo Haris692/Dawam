@@ -502,6 +502,69 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .invoc-french { font-family:var(--font-body);font-size:14px;color:var(--text);line-height:1.6;margin-bottom:10px; }
 .invoc-source { font-size:11px;color:var(--text-light);font-style:italic; }
 .invoc-section-title { font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;padding:14px 0 8px;margin:0; }
+
+/* ═══ GUIDED SCREEN ═══ */
+#guided-screen{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94);}
+#guided-screen.show{transform:translateY(0);}
+.guided-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 8px;flex-shrink:0;}
+.guided-back{width:38px;height:38px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:18px;}
+.guided-dots{display:flex;gap:6px;align-items:center;}
+.guided-dot{width:6px;height:6px;border-radius:3px;background:var(--border-light);transition:all .3s;}
+.guided-dot.active{width:18px;background:var(--accent);}
+.guided-dot.done{background:var(--green);}
+.guided-xp-tag{font-size:12px;color:var(--accent);font-weight:600;padding:4px 12px;background:var(--accent-light);border-radius:100px;}
+.guided-body{flex:1;overflow-y:auto;padding:20px 24px 8px;display:flex;flex-direction:column;}
+.guided-footer{padding:12px 24px calc(16px + env(safe-area-inset-bottom));flex-shrink:0;}
+/* steps */
+.guided-step{display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;}
+.guided-step-num{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:24px;}
+.guided-step-emoji{font-size:58px;line-height:1;margin-bottom:20px;}
+.guided-step-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.2;}
+.guided-step-desc{font-size:15px;color:var(--text-secondary);line-height:1.65;max-width:320px;}
+.guided-step-arabic{font-family:'Amiri',serif;font-size:22px;direction:rtl;color:var(--accent);margin:16px 0 4px;line-height:1.8;text-align:center;}
+.guided-step-phonetic{font-size:13px;color:var(--text-secondary);font-style:italic;text-align:center;}
+.guided-step-tip{margin-top:20px;padding:14px 16px;background:var(--bg-card);border-radius:12px;border-left:3px solid var(--accent);text-align:left;font-size:13px;color:var(--text-secondary);line-height:1.5;width:100%;}
+/* counter */
+.guided-counter{display:flex;flex-direction:column;align-items:center;flex:1;}
+.guided-counter-arabic{font-family:'Amiri',serif;font-size:clamp(18px,5vw,26px);direction:rtl;color:var(--text);line-height:1.8;text-align:center;margin-bottom:4px;}
+.guided-counter-phonetic{font-size:13px;color:var(--accent);font-style:italic;text-align:center;margin-bottom:4px;}
+.guided-counter-french{font-size:12px;color:var(--text-light);text-align:center;line-height:1.5;margin-bottom:24px;max-width:280px;}
+.guided-count-ring-wrap{position:relative;width:160px;height:160px;margin-bottom:20px;}
+.guided-count-ring-svg{width:160px;height:160px;transform:rotate(-90deg);}
+.guided-count-info{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.guided-count-val{font-size:44px;font-weight:700;color:var(--text);line-height:1;}
+.guided-count-target{font-size:13px;color:var(--text-light);}
+.guided-tap-btn{width:100%;padding:20px;background:var(--bg-card);border:2px solid var(--accent);border-radius:18px;color:var(--accent);font-size:16px;font-weight:600;cursor:pointer;transition:transform .1s,background .15s;}
+.guided-tap-btn:active{transform:scale(.97);background:var(--accent-light);}
+/* timer */
+.guided-timer{display:flex;flex-direction:column;align-items:center;flex:1;}
+.guided-timer-session-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:8px;}
+.guided-timer-arabic{font-family:'Amiri',serif;font-size:clamp(20px,5vw,28px);direction:rtl;color:var(--text);line-height:1.8;text-align:center;margin-bottom:4px;}
+.guided-timer-phonetic{font-size:13px;color:var(--accent);font-style:italic;text-align:center;margin-bottom:20px;}
+.guided-timer-display{font-size:72px;font-weight:700;color:var(--text);letter-spacing:-2px;line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums;}
+.guided-timer-display.running{color:var(--accent);}
+.guided-timer-bar{width:100%;height:5px;background:var(--border-light);border-radius:100px;overflow:hidden;margin-bottom:20px;}
+.guided-timer-fill{height:100%;background:var(--accent);border-radius:100px;transition:width 1s linear;}
+.guided-session-dots{display:flex;gap:10px;margin-bottom:16px;}
+.guided-session-dot{width:10px;height:10px;border-radius:50%;background:var(--border);}
+.guided-session-dot.done{background:var(--green);}
+.guided-session-dot.current{background:var(--accent);}
+/* checklist */
+.guided-checklist{display:flex;flex-direction:column;gap:10px;flex:1;}
+.guided-cl-title{font-size:13px;color:var(--text-secondary);margin-bottom:4px;line-height:1.4;}
+.guided-cl-item{display:flex;align-items:center;gap:14px;padding:15px 16px;background:var(--bg-card);border-radius:14px;border:1px solid var(--border-light);cursor:pointer;transition:border-color .2s,background .2s;}
+.guided-cl-item.checked{border-color:var(--green);background:var(--green-light);}
+.guided-cl-box{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;transition:all .2s;}
+.guided-cl-item.checked .guided-cl-box{background:var(--green);border-color:var(--green);}
+.guided-cl-label{font-size:14px;color:var(--text);line-height:1.3;flex:1;}
+.guided-cl-item.checked .guided-cl-label{text-decoration:line-through;color:var(--text-secondary);}
+/* done */
+.guided-done{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:14px;padding:20px 0;}
+.guided-done-emoji{font-size:72px;animation:guidedPop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes guidedPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.guided-done-title{font-size:24px;font-weight:700;color:var(--text);}
+.guided-done-xp{font-size:20px;color:var(--accent);font-weight:700;}
+.guided-done-sub{font-size:14px;color:var(--text-secondary);max-width:260px;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -1009,6 +1072,19 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 
 <div id="toast"></div>
 
+<!-- GUIDED SCREEN -->
+<div id="guided-screen">
+  <div class="guided-header">
+    <button class="guided-back" onclick="closeGuided()">←</button>
+    <div class="guided-dots" id="guided-dots"></div>
+    <div class="guided-xp-tag" id="guided-xp-tag"></div>
+  </div>
+  <div class="guided-body" id="guided-body"></div>
+  <div class="guided-footer">
+    <button class="btn-primary" id="guided-cta">Commencer</button>
+  </div>
+</div>
+
 <script>
 // ═══ DATA ═══
 const PROGRAM = [
@@ -1472,7 +1548,7 @@ function renderPath(){
           <div style="flex:1"><div class="next-action-title">${next.titleFr}</div><div class="next-action-sub">${next.time}</div></div>
           <span class="next-action-xp">+${next.xp} XP</span>
         </div>
-        <button class="btn-primary" onclick="openDetail(${next.id})">Voir l'action →</button>
+        <button class="btn-primary" onclick="openGuided(${next.id})">Voir l'action →</button>
       </div>`;
     }
   } else {
@@ -1509,12 +1585,11 @@ function renderPath(){
       const right = (isPast && !done)
         ? `<span class="missed-badge">Manqué</span>`
         : `<span class="item-xp"${isPast && !done ? ' style="opacity:.4"' : ''}>+${item.xp} XP</span>`;
-      const invocTab = INVOC_LINK[item.id];
-      const rowClick = invocTab ? `openInvocFromDetail(${item.id})` : `openDetail(${item.id})`;
+      const rowClick = `openGuided(${item.id})`;
       const invocBadge = invocTab ? `<span style="font-size:10px;color:var(--accent);opacity:.7;margin-left:4px">📿</span>` : '';
       return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
         <div class="item-check" onclick="event.stopPropagation();toggleItem(${item.id})"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}${invocBadge}</div><div class="item-sub">${item.time}</div></div>
+        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
         ${right}
       </div>`;
     }).join('');
@@ -2395,6 +2470,293 @@ function playAubeBeep(){
     gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
     osc.start(ctx.currentTime);osc.stop(ctx.currentTime+1.2);
   }catch{}
+}
+
+// ═══ GUIDED ═══
+const GUIDED_FLOWS = {
+  1:{ type:'steps', steps:[
+    {emoji:'⏰',title:'Réveille-toi',desc:'Commence par dire Alhamdulillah. La nuit appartient à ceux qui la saisissent.',tip:'Si c\'est difficile de te lever — pose ton alarme loin du lit. Le premier pas est le plus courageux.'},
+    {emoji:'💧',title:'Fais le wudu',desc:'Prends ton temps. Les ablutions préparent l\'extérieur pour préparer l\'intérieur.'},
+    {emoji:'🤲',title:'2 raka\'at légères pour commencer',desc:'C\'est la Sunna d\'ouvrir la prière de nuit. Courtes, pour réveiller le corps et le cœur.',tip:'Pour les débutants : ces 2 raka\'at + Witr suffisent. Augmente progressivement.'},
+    {emoji:'📿',title:'Continue 2 par 2',desc:'Autant que tu peux — 2, 4, 6, 8 raka\'at. Chaque paire compte.'},
+    {emoji:'🌙',title:'Termine par le Witr',desc:'1 raka\'a minimum. Le Prophète ﷺ ne l\'abandonnait jamais — ni en voyage ni à la maison.',arabic:'اللَّهُمَّ إِنَّا نَسْتَعِينُكَ',phonetic:'Allāhumma innā nasta\'īnuk'},
+    {emoji:'🌟',title:'Istighfar après le Witr',desc:'Reste assis. Demande pardon. C\'est l\'heure la plus proche de la miséricorde divine.',tip:'« Ceux qui demandent pardon à l\'aurore » — sourate Adh-Dhāriyāt, verset 18'},
+  ]},
+  2:{ type:'steps', steps:[
+    {emoji:'🧘',title:'Reste assis après Fajr',desc:'Ne te lève pas encore. Reste sur ton tapis, mains posées, cœur présent.',tip:'« Celui qui reste assis jusqu\'au lever du soleil aura la récompense d\'un pèlerinage complet. » — At-Tirmidhī'},
+    {emoji:'📿',title:'Invocations du matin',desc:'Récite les adhkar du matin à voix basse. Istighfar, puis les invocations habituelles.'},
+    {emoji:'📖',title:'Versets méritoires',desc:'Al-Fātiḥa, Āyat al-Kursī, les 3 dernières sourates. Ces versets sont ton bouclier du matin.'},
+    {emoji:'🔗',title:'Du\'a ar-Rābiṭa',desc:'Invoque pour tes frères et sœurs en Islam. En silence, intérieurement. La sincérité prime.',tip:'Invoque par leurs noms si tu peux. Cette invocation relie les cœurs dans l\'amour d\'Allah.'},
+    {emoji:'☀️',title:'Attends le lever du soleil',desc:'Puis prie 2 à 8 raka\'at du Chourouk — récompense égale à un pèlerinage, complète, complète.'},
+  ]},
+  3:{ type:'steps', steps:[
+    {emoji:'🕌',title:'2 raka\'at sunna avant Fajr',desc:'Ces 2 raka\'at ne s\'abandonnent jamais. Plus aimées du Prophète ﷺ que le monde entier.',tip:'« Les 2 raka\'at de l\'aube valent mieux que le monde et ce qu\'il contient. » — Muslim'},
+    {emoji:'🤲',title:'Prière du Fajr — 2 raka\'at fard',desc:'Avec présence du cœur. Pense à ce que tu récites, verset par verset.'},
+    {emoji:'☀️',title:'Prière du Chourouk',desc:'10 à 15 min après le lever du soleil — 2 à 8 raka\'at. C\'est là que la journée prend racine.'},
+  ]},
+  4:{ type:'checklist', title:'Les rawatib que tu fais aujourd\'hui', items:[
+    '2 raka\'at sunna avant le Fajr',
+    '2 raka\'at après le wudu (sunna de Bilāl)',
+    '4 raka\'at avant le Dhuhr + 2 après',
+    '2 raka\'at avant le \'Asr',
+    '2 raka\'at avant le Maghrib + 6 après (Awwābīn)',
+    '2 raka\'at avant le \'Ishāʾ + 4 après',
+    'Chourouk : 2–8 raka\'at après le lever du soleil',
+  ]},
+  5:{ type:'timer', label:'Lecture du Coran', mode:'up', canFinishEarly:true,
+    arabic:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+    phonetic:'Bismillāhi r-raḥmāni r-raḥīm',
+    prompt:'Ouvre ton Coran à ton wird du jour. Lis lentement, avec présence du cœur.',
+  },
+  6:{ type:'checklist', title:'Sourates méritoires du matin', items:[
+    'Al-Fātiḥa [1]',
+    'Al-Baqara 1–5 · Āyat al-Kursī 255–257 · 285–286',
+    'Al-Kahf [18]',
+    'Yā-Sīn [36]',
+    'Al-Wāqi\'a [56]',
+    'Al-Mulk [67]',
+    'Al-Ikhlāṣ ×3 + Al-Falaq + An-Nās',
+    'Az-Zalzala ×4 · Al-\'Aṣr ×2 · Al-Kāfirūn ×4',
+  ]},
+  7:{ type:'timer', label:'Tahlil', mode:'down', sessions:3, duration:900,
+    arabic:'لَا إِلَهَ إِلَّا اللَّهُ',
+    phonetic:'Lā ilāha illa Llāh',
+    french:'Il n\'y a de divinité qu\'Allah',
+  },
+  8:{ type:'counter', target:300, milestone:100,
+    arabic:'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ النَّبِيِّ',
+    phonetic:'Allāhumma ṣalli \'alā Sayyidinā Muḥammad',
+    french:'Ô Allah, prie sur notre maître Muhammad le prophète ﷺ',
+  },
+  9:{ type:'steps', steps:[
+    {emoji:'📋',title:'Bilan de ta journée',desc:'Qu\'as-tu accompli ? Qu\'as-tu manqué ? Sois honnête, sans sévérité excessive.',tip:'Al-Hassan al-Basri : « Que chaque croyant se tienne des comptes plus sévèrement que ne le ferait un associé avare. »'},
+    {emoji:'🤲',title:'Renouvelle ta tawba',desc:'Demande sincèrement pardon pour les manquements. Allah est Tawwāb — Il se retourne vers celui qui revient vers Lui.'},
+    {emoji:'💧',title:'Fais le wudu',desc:'Pour dormir en état de pureté. L\'ange prie pour toi toute la nuit.',tip:'« Celui qui dort en état de pureté — un ange l\'accompagne et dit : Ô Allah, pardonne à Ton serviteur. » — Ibn Ḥibbān'},
+    {emoji:'📿',title:'Invocations du sommeil',desc:'Āyat al-Kursī, les 3 dernières sourates, la supplication du sommeil. Fais-les à voix basse.'},
+    {emoji:'🌙',title:'Dors sur le côté droit',desc:'Et que ta dernière pensée consciente soit une confidence adressée à ton Seigneur. Remets-toi à Lui.'},
+  ]},
+  10:{ type:'steps', steps:[
+    {emoji:'📚',title:'Après tes adorations — tes études',desc:'C\'est ton jihad de l\'époque. Tes études sont un acte d\'adoration si tu les orientes vers le bien.',tip:'« Dis-moi ce que tu lis, je te dirai qui tu es. »'},
+    {emoji:'🎯',title:'Une tâche précise aujourd\'hui',desc:'Choisis une chose à accomplir. Une seule. Fais-la bien plutôt que de survoler plusieurs.'},
+    {emoji:'✅',title:'C\'est accompli',desc:'Tu l\'as fait. Chaque journée d\'effort honnête compte. Continue demain, même petitement.'},
+  ]},
+  11:{ type:'steps', steps:[
+    {emoji:'🤝',title:'Contacte un frère ou une sœur pieux(se)',desc:'Un message, un appel, une visite. La bonne compagnie est l\'un des plus grands leviers de la foi.',tip:'« L\'homme est sur la religion de son ami intime. » — Abū Dāwūd'},
+    {emoji:'🕌',title:'Un cercle de rappel aujourd\'hui',desc:'Khutba, cours, podcast islamique de qualité. Cherche à nourrir ton cœur régulièrement.'},
+    {emoji:'💡',title:'Ce que tu retiens',desc:'Une parole, un hadith, une idée. Ce qu\'on note, on le retient. Ce qu\'on oublie, c\'est comme s\'il n\'avait pas eu lieu.'},
+  ]},
+  12:{ type:'steps', steps:[
+    {emoji:'📗',title:'Ouvre ton livre de science',desc:'Croyance, fiqh, hadith, tafsir — là où tu en es. Avance à ton rythme.',tip:'« Celui à qui Dieu veut du bien, Il lui donne la compréhension de la religion. » — Al-Bukhāri'},
+    {emoji:'🔍',title:'Un chapitre, compris et retenu',desc:'Lis lentement. Ne passe pas à la suite si tu n\'as pas compris. La lenteur ici est une vertu.'},
+    {emoji:'✍️',title:'Note l\'essentiel',desc:'Une définition, une règle, une phrase. Ce que tu notes, tu le retiens. Ce que tu retiens, tu peux l\'appliquer.'},
+  ]},
+  13:{ type:'steps', steps:[
+    {emoji:'🗓',title:'Planifie ta journée',desc:'Au réveil ou la veille — qu\'est-ce qui doit être fait ? Qu\'est-ce qui peut attendre ?'},
+    {emoji:'📵',title:'Identifie les temps gaspillés',desc:'Réseaux, distractions, procrastination. Honnêteté sans culpabilité.',tip:'« Deux bienfaits dont beaucoup de gens sont floués : la santé et le temps libre. » — Al-Bukhāri'},
+    {emoji:'⚡',title:'Une chose à changer demain',desc:'Pas tout. Une chose. Les habitudes durables se construisent une décision à la fois.'},
+  ]},
+  14:{ type:'steps', steps:[
+    {emoji:'🤫',title:'Installe-toi dans le calme',desc:'Seul, en silence, après la séance de l\'aube. Cette invocation se fait intérieurement.'},
+    {emoji:'💚',title:'Invoque pour tes frères et sœurs',desc:'Par leurs noms si tu peux. Demande à Allah de les guider, de les préserver, de les réunir sur Son amour.'},
+    {emoji:'🤲',title:'Demande à Allah de réunir les cœurs',desc:'Sur Son amour. Sur l\'obéissance à Lui. Sur la miséricorde mutuelle entre croyants.',arabic:'اللَّهُمَّ أَلِّفْ بَيْنَ قُلُوبِنَا',phonetic:'Allāhumma allif bayna qulūbinā'},
+    {emoji:'📖',title:'Termine par Al-Fātiḥa',desc:'Pour eux et pour toi. Que cette invocation scelle ta séance matinale.'},
+  ]},
+};
+
+let _gId=null,_gStep=0,_gChecked=new Set(),_gCount=0,_gTimerSec=0,_gTimerTotal=0,_gSession=0,_gInterval=null,_gRunning=false;
+
+function openGuided(id){
+  const item=PROGRAM.find(p=>p.id===id);
+  const flow=GUIDED_FLOWS[id];
+  if(!item||!flow){openDetail(id);return;}
+  _gId=id;_gStep=0;_gChecked=new Set();_gCount=0;_gSession=0;_gRunning=false;
+  if(_gInterval){clearInterval(_gInterval);_gInterval=null;}
+  // Coran: adapter la durée au profil
+  if(id===5){
+    const g=S.profile?.quranGoal||'try';
+    const dur=g==='hizb'?25*60:g==='pages'?20*60:g==='1page'?10*60:5*60;
+    GUIDED_FLOWS[5].duration=dur;
+  }
+  _gTimerSec=flow.mode==='up'?0:(flow.duration||0);
+  _gTimerTotal=flow.duration||0;
+  document.getElementById('guided-xp-tag').textContent='+'+item.xp+' XP';
+  document.getElementById('guided-screen').classList.add('show');
+  renderGuided();
+}
+
+function renderGuided(){
+  const flow=GUIDED_FLOWS[_gId]; if(!flow)return;
+  const body=document.getElementById('guided-body');
+  const cta=document.getElementById('guided-cta');
+  const dots=document.getElementById('guided-dots');
+
+  if(flow.type==='steps'){
+    const steps=flow.steps,total=steps.length;
+    dots.innerHTML=steps.map((_,i)=>`<div class="guided-dot${i<_gStep?' done':i===_gStep?' active':''}"></div>`).join('');
+    if(_gStep>=total){renderGuidedDone();return;}
+    const s=steps[_gStep];
+    body.innerHTML=`<div class="guided-step fade-up">
+      <div class="guided-step-num">Étape ${_gStep+1} / ${total}</div>
+      <div class="guided-step-emoji">${s.emoji}</div>
+      <div class="guided-step-title">${s.title}</div>
+      <div class="guided-step-desc">${s.desc}</div>
+      ${s.arabic?`<div class="guided-step-arabic">${s.arabic}</div><div class="guided-step-phonetic">${s.phonetic}</div>`:''}
+      ${s.tip?`<div class="guided-step-tip">💡 ${s.tip}</div>`:''}
+    </div>`;
+    cta.textContent=_gStep<total-1?'C\'est fait, continuer →':'Terminer la séance ✓';
+    cta.onclick=()=>{_gStep++;renderGuided();};
+  }
+  else if(flow.type==='counter'){
+    dots.innerHTML='';
+    const C=2*Math.PI*66,pct=Math.min(_gCount/flow.target,1),offset=C*(1-pct);
+    body.innerHTML=`<div class="guided-counter fade-up">
+      <div class="guided-counter-arabic">${flow.arabic}</div>
+      <div class="guided-counter-phonetic">${flow.phonetic}</div>
+      <div class="guided-counter-french">${flow.french}</div>
+      <div class="guided-count-ring-wrap">
+        <svg class="guided-count-ring-svg" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="66" fill="none" stroke="var(--border)" stroke-width="8"/>
+          <circle id="guided-ring-arc" cx="80" cy="80" r="66" fill="none" stroke="var(--accent)" stroke-width="8"
+            stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"
+            stroke-linecap="round" transform="rotate(-90 80 80)" style="transition:stroke-dashoffset .2s"/>
+        </svg>
+        <div class="guided-count-info">
+          <div class="guided-count-val" id="guided-count-val">${_gCount}</div>
+          <div class="guided-count-target">/ ${flow.target}</div>
+        </div>
+      </div>
+      <button class="guided-tap-btn" onclick="guidedTap()">＋ Appuie pour compter</button>
+    </div>`;
+    cta.textContent=_gCount>=flow.target?'Terminer ✓':'Terminer (avant la fin)';
+    cta.onclick=()=>renderGuidedDone();
+  }
+  else if(flow.type==='timer'){
+    const sessions=flow.sessions||1;
+    dots.innerHTML=Array.from({length:sessions},(_,i)=>`<div class="guided-dot${i<_gSession?' done':i===_gSession?' active':''}"></div>`).join('');
+    const displaySec=flow.mode==='up'?_gTimerSec:_gTimerSec;
+    const mm=String(Math.floor(displaySec/60)).padStart(2,'0'),ss=String(displaySec%60).padStart(2,'0');
+    const pct=_gTimerTotal>0?(flow.mode==='up'?_gTimerSec/_gTimerTotal:1-_gTimerSec/_gTimerTotal)*100:0;
+    body.innerHTML=`<div class="guided-timer fade-up">
+      ${sessions>1?`<div class="guided-timer-session-label">Session ${_gSession+1} / ${sessions}</div><div class="guided-session-dots">${Array.from({length:sessions},(_,i)=>`<div class="guided-session-dot${i<_gSession?' done':i===_gSession?' current':''}"></div>`).join('')}</div>`:''}
+      <div class="guided-timer-arabic">${flow.arabic}</div>
+      <div class="guided-timer-phonetic">${flow.phonetic}</div>
+      ${flow.french?`<p style="font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:12px">${flow.french}</p>`:''}
+      ${flow.prompt?`<p style="font-size:14px;color:var(--text-secondary);text-align:center;line-height:1.5;margin-bottom:16px;max-width:280px">${flow.prompt}</p>`:''}
+      <div class="guided-timer-display${_gRunning?' running':''}" id="guided-timer-display">${mm}:${ss}</div>
+      <div class="guided-timer-bar"><div class="guided-timer-fill" id="guided-timer-fill" style="width:${pct.toFixed(1)}%"></div></div>
+    </div>`;
+    if(!_gRunning){
+      cta.textContent='▶ Commencer';
+      cta.onclick=()=>guidedTimerStart();
+    } else if(flow.canFinishEarly){
+      cta.textContent='J\'ai terminé ma lecture ✓';
+      cta.onclick=()=>{guidedTimerStop();renderGuidedDone();};
+    } else {
+      cta.textContent='⏸ Pause';
+      cta.onclick=()=>guidedTimerPause();
+    }
+  }
+  else if(flow.type==='checklist'){
+    dots.innerHTML='';
+    const items=flow.items,allChecked=items.length>0&&items.every((_,i)=>_gChecked.has(i));
+    body.innerHTML=`<div class="guided-checklist fade-up">
+      <p class="guided-cl-title">${flow.title}</p>
+      ${items.map((label,i)=>`<div class="guided-cl-item${_gChecked.has(i)?' checked':''}" onclick="guidedCheckItem(${i})">
+        <div class="guided-cl-box">${_gChecked.has(i)?'✓':''}</div>
+        <div class="guided-cl-label">${label}</div>
+      </div>`).join('')}
+    </div>`;
+    cta.textContent=allChecked?'Terminer ✓':'J\'ai fait ce que je pouvais →';
+    cta.onclick=()=>renderGuidedDone();
+  }
+}
+
+function guidedTap(){
+  const flow=GUIDED_FLOWS[_gId]; if(!flow||flow.type!=='counter')return;
+  _gCount++;
+  const valEl=document.getElementById('guided-count-val'); if(valEl)valEl.textContent=_gCount;
+  const C=2*Math.PI*66,pct=Math.min(_gCount/flow.target,1);
+  const arc=document.getElementById('guided-ring-arc'); if(arc)arc.setAttribute('stroke-dashoffset',(C*(1-pct)).toFixed(1));
+  if(flow.milestone&&_gCount>0&&_gCount%flow.milestone===0){
+    showToast(_gCount>=flow.target?'Ma sha Allah ! ✨ '+flow.target+'/'+flow.target:'⭐ '+_gCount+' — Continue !');
+  }
+  const cta=document.getElementById('guided-cta');
+  if(cta&&_gCount>=flow.target){cta.textContent='Terminer ✓';}
+  if(_gCount>=flow.target)setTimeout(()=>renderGuidedDone(),600);
+}
+
+function guidedCheckItem(i){
+  if(_gChecked.has(i))_gChecked.delete(i);else _gChecked.add(i);
+  renderGuided();
+}
+
+function guidedTimerStart(){
+  const flow=GUIDED_FLOWS[_gId]; if(!flow)return;
+  _gRunning=true;
+  _gInterval=setInterval(()=>{
+    if(flow.mode==='up'){
+      _gTimerSec++;
+      const el=document.getElementById('guided-timer-display');
+      const fill=document.getElementById('guided-timer-fill');
+      if(el){const mm=String(Math.floor(_gTimerSec/60)).padStart(2,'0'),ss=String(_gTimerSec%60).padStart(2,'0');el.textContent=`${mm}:${ss}`;el.classList.add('running');}
+      if(fill&&_gTimerTotal>0){const pct=Math.min(_gTimerSec/_gTimerTotal*100,100);fill.style.width=pct+'%';}
+    } else {
+      _gTimerSec--;
+      const el=document.getElementById('guided-timer-display');
+      const fill=document.getElementById('guided-timer-fill');
+      if(el){const mm=String(Math.floor(_gTimerSec/60)).padStart(2,'0'),ss=String(_gTimerSec%60).padStart(2,'0');el.textContent=`${mm}:${ss}`;el.classList.add('running');}
+      if(fill&&_gTimerTotal>0){fill.style.width=((1-_gTimerSec/_gTimerTotal)*100).toFixed(1)+'%';}
+      if(_gTimerSec<=0){
+        clearInterval(_gInterval);_gInterval=null;_gRunning=false;
+        _gSession++;playAubeBeep();
+        if(_gSession>=(flow.sessions||1)){renderGuidedDone();}
+        else{_gTimerSec=flow.duration;_gTimerTotal=flow.duration;showToast('Session '+_gSession+' terminée 🌟');setTimeout(()=>renderGuided(),600);}
+      }
+    }
+  },1000);
+  renderGuided();
+}
+
+function guidedTimerPause(){
+  if(_gInterval){clearInterval(_gInterval);_gInterval=null;}
+  _gRunning=false; renderGuided();
+}
+
+function guidedTimerStop(){
+  if(_gInterval){clearInterval(_gInterval);_gInterval=null;}
+  _gRunning=false;
+}
+
+function renderGuidedDone(){
+  guidedTimerStop();
+  const item=PROGRAM.find(p=>p.id===_gId); if(!item)return;
+  if(!S.checklist[_gId]){
+    S.checklist[_gId]=true; save();
+    setTimeout(()=>{
+      patchAfterToggle(_gId);
+      const items=getActiveItems();
+      const checked=Object.values(S.checklist).filter(Boolean).length;
+      if(checked===items.length)setTimeout(()=>{closeGuided();fireCompletionOverlay();},1400);
+    },800);
+  }
+  document.getElementById('guided-dots').innerHTML='';
+  document.getElementById('guided-xp-tag').textContent='';
+  const msgs=['Que Allah l\'accepte de toi.','Barakallahu fik.','Petit mais constant — c\'est le secret.','Les anges sont témoins de ta constance.','Continue ainsi — chaque jour compte.'];
+  document.getElementById('guided-body').innerHTML=`<div class="guided-done fade-up">
+    <div class="guided-done-emoji">✨</div>
+    <div class="guided-done-title">Accompli !</div>
+    <div class="guided-done-xp">+${item.xp} XP</div>
+    <div class="guided-done-sub">${msgs[Math.floor(Math.random()*msgs.length)]}</div>
+  </div>`;
+  const cta=document.getElementById('guided-cta');
+  cta.textContent='Retour →';
+  cta.onclick=()=>closeGuided();
+}
+
+function closeGuided(){
+  guidedTimerStop();
+  document.getElementById('guided-screen').classList.remove('show');
+  setTimeout(()=>{document.getElementById('guided-body').innerHTML='';_gId=null;},420);
 }
 
 // ═══ ANALYTICS ═══
