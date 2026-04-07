@@ -701,11 +701,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="ob-emoji-circle">🧭</div>
     <p class="ob-label">Question 4 sur 5</p>
     <h1 class="ob-title">Ta situation de vie</h1>
-    <p class="ob-desc">Pour adapter ton parcours à ton rythme de vie.</p>
-    <div class="ob-options" data-key="type">
-      <div class="ob-option" data-value="worker" onclick="selectOption(this)"><span class="ob-option-emoji">💼</span><div class="ob-option-text"><div class="ob-option-label">Actif / Travailleur</div><div class="ob-option-desc">Journées chargées, sessions courtes</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="student" onclick="selectOption(this)"><span class="ob-option-emoji">📚</span><div class="ob-option-text"><div class="ob-option-label">Étudiant</div><div class="ob-option-desc">Temps d'étude à intégrer au programme</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="married" onclick="selectOption(this)"><span class="ob-option-emoji">🏡</span><div class="ob-option-text"><div class="ob-option-label">En famille</div><div class="ob-option-desc">Actes relationnels inclus dans le parcours</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    <p class="ob-desc">Tu peux choisir plusieurs situations — le parcours s'adaptera.</p>
+    <div class="ob-options" data-key="situations" data-multi="true">
+      <div class="ob-option" data-value="worker" onclick="selectOption(this)"><span class="ob-option-emoji">💼</span><div class="ob-option-text"><div class="ob-option-label">Travail</div><div class="ob-option-desc">Journées chargées, contraintes d'horaire</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="student" onclick="selectOption(this)"><span class="ob-option-emoji">📚</span><div class="ob-option-text"><div class="ob-option-label">Études</div><div class="ob-option-desc">Lycée, université, formation</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="married" onclick="selectOption(this)"><span class="ob-option-emoji">🏡</span><div class="ob-option-text"><div class="ob-option-label">En famille</div><div class="ob-option-desc">Conjoint, enfants, vie commune</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="home" onclick="selectOption(this)"><span class="ob-option-emoji">🏠</span><div class="ob-option-text"><div class="ob-option-label">À la maison</div><div class="ob-option-desc">Horaire libre, sans contrainte fixe</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="night_shift" onclick="selectOption(this)"><span class="ob-option-emoji">🌙</span><div class="ob-option-text"><div class="ob-option-label">Travail de nuit</div><div class="ob-option-desc">Horaires décalés ou nuit</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
@@ -1260,7 +1262,7 @@ function selectOption(el){
   const val=el.dataset.value;
   if(!isMulti){parent.querySelectorAll(".ob-option").forEach(o=>o.classList.remove("selected"));el.classList.add("selected");obAns[key]=isNaN(val)?val:Number(val);}
   else{el.classList.toggle("selected");if(!obAns[key])obAns[key]=[];if(el.classList.contains("selected")){if(!obAns[key].includes(val))obAns[key].push(val);}else{obAns[key]=obAns[key].filter(v=>v!==val);}}
-  const map={salat:"q1-next",quran:"q2-next",witr:"q3-next",type:"q4-next",goal:"q5-next"};
+  const map={salat:"q1-next",quran:"q2-next",witr:"q3-next",situations:"q4-next",goal:"q5-next"};
   const btnId=map[key];
   if(btnId){const btn=document.getElementById(btnId);if(btn)btn.disabled=isMulti?obAns[key].length===0:false;}
 }
@@ -1327,7 +1329,7 @@ function finishOnboarding(){
     salatCount:sc,prayers:obAns.prayers||[],
     quranType:obAns.quranType||"never",quranGoal:obAns.quranGoal||"try",
     salat:sc,quran:obAns.quranType==="daily"?2:(obAns.quranType==="sometimes"?1:0),
-    witr:Math.min(obAns.witr??0,2),witrLevel:obAns.witr??0,witrWakeup:obAns.witrWakeup||null,type:obAns.type||"worker",goal:obAns.goal||["taqwa"],city:obAns.city||""
+    witr:Math.min(obAns.witr??0,2),witrLevel:obAns.witr??0,witrWakeup:obAns.witrWakeup||null,situations:obAns.situations||["worker"],type:(obAns.situations||["worker"])[0],goal:obAns.goal||["taqwa"],city:obAns.city||""
   };
   const palier=calcPalier(profile);
   const defaultIds=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id).sort((a,b)=>a-b);
