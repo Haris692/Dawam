@@ -183,6 +183,14 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .ob-prayer-card.selected .ob-prayer-chk { border-color:var(--green);background:var(--green); }
 .ob-prayer-chk svg { display:none; }
 .ob-prayer-card.selected .ob-prayer-chk svg { display:block; }
+/* CITY AUTOCOMPLETE */
+.city-sug-wrap { width:100%;position:relative;margin-top:0; }
+.city-sug-list { position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg-card);border:1.5px solid var(--green);border-radius:12px;overflow:hidden;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.12); }
+.city-sug-item { padding:13px 14px;cursor:pointer;font-size:14px;color:var(--text);border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:8px; }
+.city-sug-item:last-child { border-bottom:none; }
+.city-sug-item:active { background:var(--bg-glass); }
+.city-sug-none { padding:12px 14px;font-size:13px;color:var(--text-light);text-align:center; }
+
 /* CORAN SUB-OPTIONS */
 .ob-coran-sub { width:100%;margin-top:10px; }
 .ob-coran-sub-label { font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
@@ -742,7 +750,10 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <p class="ob-label">Horaires de prière</p>
     <h1 class="ob-title">Ta ville</h1>
     <p class="ob-desc">Pour adapter ton programme aux horaires de prière exacts. Optionnel — tu pourras le modifier plus tard.</p>
-    <input class="ob-name-input" type="text" placeholder="Ex: Paris, Casablanca, Dubaï…" id="city-input" oninput="checkCityInput()" autocomplete="off">
+    <div class="city-sug-wrap">
+      <input class="ob-name-input" type="text" placeholder="Ex: Paris, Casablanca, Dubaï…" id="city-input" oninput="checkCityInput()" autocomplete="off">
+      <div id="city-suggestions"></div>
+    </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
       <span class="ob-counter">9 / 11</span>
@@ -1255,7 +1266,37 @@ async function obNextFromNotifs(){
   obNext();
 }
 function checkNameInput(){const v=document.getElementById("name-input").value.trim();document.getElementById("name-next").disabled=!v;if(v)obAns.name=v;}
-function checkCityInput(){const v=document.getElementById("city-input")?.value.trim();if(v)obAns.city=v;else delete obAns.city;}
+let _cityTimer=null;
+function checkCityInput(){
+  const v=document.getElementById("city-input")?.value.trim();
+  if(v)obAns.city=v;else delete obAns.city;
+  clearTimeout(_cityTimer);
+  const box=document.getElementById("city-suggestions");
+  if(!v||v.length<2){box.innerHTML="";return;}
+  box.innerHTML=`<div class="city-sug-list"><div class="city-sug-none">Recherche…</div></div>`;
+  _cityTimer=setTimeout(()=>_fetchCities(v),450);
+}
+async function _fetchCities(q){
+  const box=document.getElementById("city-suggestions");
+  if(!box)return;
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&addressdetails=1&limit=6&accept-language=fr`);
+    const data=await r.json();
+    const cities=data.filter(d=>d.class==="place"&&["city","town","village","municipality"].includes(d.type));
+    if(!cities.length){box.innerHTML=`<div class="city-sug-list"><div class="city-sug-none">Aucune ville trouvée</div></div>`;return;}
+    box.innerHTML=`<div class="city-sug-list">${cities.slice(0,5).map(c=>{
+      const name=c.address.city||c.address.town||c.address.village||c.name;
+      const cc=(c.address.country_code||"").toUpperCase();
+      const display=cc?`${name}, ${cc}`:name;
+      return `<div class="city-sug-item" onclick="selectCitySug('${display.replace(/'/g,"\\'").replace(/\\/g,"\\\\")}')">📍 ${display}</div>`;
+    }).join("")}</div>`;
+  }catch{box.innerHTML=`<div class="city-sug-list"><div class="city-sug-none">Erreur de connexion</div></div>`;}
+}
+function selectCitySug(val){
+  document.getElementById("city-input").value=val;
+  obAns.city=val;
+  document.getElementById("city-suggestions").innerHTML="";
+}
 function selectOption(el){
   const parent=el.closest(".ob-options");
   const isMulti=parent.dataset.multi==="true";
