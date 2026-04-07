@@ -2901,7 +2901,7 @@ function guidedTimerStop(){
 
 function renderGuidedDone(){
   guidedTimerStop();
-  const item=PROGRAM.find(p=>p.id===_gId); if(!item)return;
+  const item=PROGRAM.find(p=>p.id===_gId)||getPrayerItems().find(p=>p.id===_gId); if(!item)return;
   // toggleItem gère : save, patchAfterToggle, toast, renderPathSmooth, fireCompletionOverlay
   if(!S.checklist[_gId]) toggleItem(_gId);
   document.getElementById('guided-dots').innerHTML='';
