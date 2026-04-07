@@ -2730,15 +2730,8 @@ function guidedTimerStop(){
 function renderGuidedDone(){
   guidedTimerStop();
   const item=PROGRAM.find(p=>p.id===_gId); if(!item)return;
-  if(!S.checklist[_gId]){
-    S.checklist[_gId]=true; save();
-    setTimeout(()=>{
-      patchAfterToggle(_gId);
-      const items=getActiveItems();
-      const checked=Object.values(S.checklist).filter(Boolean).length;
-      if(checked===items.length)setTimeout(()=>{closeGuided();fireCompletionOverlay();},1400);
-    },800);
-  }
+  // toggleItem gère : save, patchAfterToggle, toast, renderPathSmooth, fireCompletionOverlay
+  if(!S.checklist[_gId]) toggleItem(_gId);
   document.getElementById('guided-dots').innerHTML='';
   document.getElementById('guided-xp-tag').textContent='';
   const msgs=['Que Allah l\'accepte de toi.','Barakallahu fik.','Petit mais constant — c\'est le secret.','Les anges sont témoins de ta constance.','Continue ainsi — chaque jour compte.'];
