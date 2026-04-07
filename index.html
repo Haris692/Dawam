@@ -1012,26 +1012,27 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <script>
 // ═══ DATA ═══
 const PROGRAM = [
-  {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[4]},
-  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4]},
-  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[2,3,4]},
-  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4]},
-  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"À l'aube",          xp:25, cat:"aube",    paliers:[1,2,3,4]},
-  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"À l'aube",          xp:20, cat:"aube",    paliers:[2,3,4]},
-  {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[3,4]},
-  {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[3,4]},
-  {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Toute la journée",  xp:20, cat:"journee", paliers:[2,3,4]},
-  {id:10, titleFr:"Obligations de l'étudiant",     emoji:"📚", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4]},
-  {id:11, titleFr:"Cercle de foi",                 emoji:"🤝", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4]},
-  {id:12, titleFr:"Acquisition du savoir",         emoji:"📗", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4]},
-  {id:13, titleFr:"Garde du temps",                emoji:"⏰", time:"Dans la journée",   xp:10, cat:"journee", paliers:[4]},
-  {id:9,  titleFr:"Convenances du sommeil",        emoji:"🌙", time:"Avant de dormir",   xp:15, cat:"nuit",    paliers:[1,2,3,4]},
+  {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[5]},
+  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5]},
+  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[2,3,4,5]},
+  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5]},
+  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"À l'aube",          xp:25, cat:"aube",    paliers:[1,2,3,4,5]},
+  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"À l'aube",          xp:20, cat:"aube",    paliers:[3,4,5]},
+  {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4,5]},
+  {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4,5]},
+  {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Toute la journée",  xp:20, cat:"journee", paliers:[2,3,4,5]},
+  {id:10, titleFr:"Obligations de l'étudiant",     emoji:"📚", time:"Dans la journée",   xp:15, cat:"journee", paliers:[5]},
+  {id:11, titleFr:"Cercle de foi",                 emoji:"🤝", time:"Dans la journée",   xp:20, cat:"journee", paliers:[5]},
+  {id:12, titleFr:"Acquisition du savoir",         emoji:"📗", time:"Dans la journée",   xp:15, cat:"journee", paliers:[5]},
+  {id:13, titleFr:"Garde du temps",                emoji:"⏰", time:"Dans la journée",   xp:10, cat:"journee", paliers:[5]},
+  {id:9,  titleFr:"Convenances du sommeil",        emoji:"🌙", time:"Avant de dormir",   xp:15, cat:"nuit",    paliers:[1,2,3,4,5]},
 ];
 const PALIER = {
-  1:{name:"Débutant",emoji:"🌱",desc:"Chaque grand voyage commence par un premier pas."},
-  2:{name:"En chemin",emoji:"🌿",desc:"Tu as de belles habitudes. Unifions-les."},
-  3:{name:"Intermédiaire",emoji:"🌳",desc:"Tu es déjà sur le chemin. Approfondissons."},
-  4:{name:"Bienfaisant",emoji:"🌟",desc:"Programme complet — la constance est ta force."},
+  1:{name:"L'Éveillé",   nameAr:"النَّاشِئ",    emoji:"🌑", desc:"Le premier pas est le plus courageux."},
+  2:{name:"Le Marcheur", nameAr:"السَّالِك",    emoji:"🌒", desc:"Tu as un rythme. Construisons dessus."},
+  3:{name:"Le Constant", nameAr:"المُدَاوِم",   emoji:"🌓", desc:"La fondation est solide. Approfondissons."},
+  4:{name:"Le Déterminé",nameAr:"المُتَزَوِّد", emoji:"🌔", desc:"La structure est en place. Allons plus loin."},
+  5:{name:"Le Vaillant", nameAr:"المُجَاهِد",   emoji:"🌕", desc:"Programme complet — la constance est ta bataille."},
 };
 const SECTIONS = {
   qiyam:   {label:"Dernier tiers de la nuit", emoji:"🌙"},
@@ -1315,14 +1316,20 @@ function selectOption(el){
   if(btnId){const btn=document.getElementById(btnId);if(btn)btn.disabled=isMulti?obAns[key].length===0:false;}
 }
 function calcPalier(p){
-  let s=0;
-  const sc=p.salatCount??p.salat??0;
-  if(sc>=5)s+=3;else if(sc>=3)s+=2;else if(sc>=1)s+=1;
-  if(p.quranType==="daily"){s+=p.quranGoal==="hizb"?2:1;}
-  else if(p.quranGoal&&p.quranGoal!=="try")s+=0;
-  else s+=Math.min(p.quran||0,2);
-  s+=Math.min(p.witr||0,2);
-  if(s>=7)return 3;if(s>=3)return 2;return 1;
+  const sc   = p.salatCount ?? p.salat ?? 0;
+  const witr = p.witrLevel  ?? p.witr  ?? 0;
+  const qt   = p.quranType  || "jamais";
+  // La salat plafonne le palier maximum
+  if(sc<=1) return 1;
+  if(sc<=3) return 2;
+  if(sc==4) return 3;
+  // sc==5 : coran + witr affinent le niveau 3/4/5
+  const quranScore = (qt==="quotidien"||qt==="daily") ? 2 : qt==="parfois" ? 1 : 0;
+  const witrScore  = Math.min(witr, 3);
+  const secondary  = quranScore + witrScore; // max 5
+  if(secondary>=4) return 5;
+  if(secondary>=2) return 4;
+  return 3;
 }
 // ─── Page résultat + personnalisation ───
 let obEditMode=false, obSelectedSteps=[];
@@ -1377,7 +1384,7 @@ function finishOnboarding(){
     salatCount:sc,prayers:obAns.prayers||[],
     quranType:obAns.quranType||"never",quranGoal:obAns.quranGoal||"try",
     salat:sc,quran:obAns.quranType==="daily"?2:(obAns.quranType==="sometimes"?1:0),
-    witr:Math.min(obAns.witr??0,2),witrLevel:obAns.witr??0,witrWakeup:obAns.witrWakeup||null,situations:obAns.situations||["worker"],type:(obAns.situations||["worker"])[0],goal:obAns.goal||["taqwa"],city:obAns.city||""
+    witr:obAns.witr??0,witrLevel:obAns.witr??0,witrWakeup:obAns.witrWakeup||null,situations:obAns.situations||["worker"],type:(obAns.situations||["worker"])[0],goal:obAns.goal||["taqwa"],city:obAns.city||""
   };
   const palier=calcPalier(profile);
   const defaultIds=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id).sort((a,b)=>a-b);
