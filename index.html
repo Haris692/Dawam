@@ -1181,7 +1181,7 @@ function selectWitrType(el,val){
     btn.disabled=true;
     sub.style.display="block";
     sub.innerHTML=`<p class="ob-coran-sub-label">Tu te réveilles avant le Fajr ?</p>`+
-      [["sometimes","Oui, parfois","Il m'arrive de me lever la nuit","🌙"],["never","Non, je dors jusqu'au Fajr","On va t'aider à commencer","😴"],["fajr_awake","Je fais le Fajr sans me recoucher","Déjà un bon ancrage","🌄"]]
+      [["sometimes","Oui, parfois","Il m'arrive de me lever la nuit","🌙"],["fajr_only","Je me lève juste pour le Fajr","Et je me rendors après","🌅"],["fajr_awake","Je fais le Fajr sans me recoucher","Déjà un bon ancrage","🌄"],["miss_fajr","Je ne me lève pas au Fajr","On commence par là ensemble","😴"]]
       .map(([v,l,d,e])=>`<div class="ob-option" style="margin-bottom:8px" onclick="selectWitrWakeup(this,'${v}')"><span class="ob-option-emoji">${e}</span><div class="ob-option-text"><div class="ob-option-label">${l}</div><div class="ob-option-desc">${d}</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>`).join("");
   }else{
     sub.style.display="none";sub.innerHTML="";
