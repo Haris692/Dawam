@@ -682,11 +682,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <p class="ob-label">Question 3 sur 5</p>
     <h1 class="ob-title">La prière de nuit</h1>
     <p class="ob-desc">Le pilier fondamental du programme spirituel quotidien.</p>
-    <div class="ob-options" data-key="witr">
-      <div class="ob-option" data-value="0" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Pas encore</div><div class="ob-option-desc">Je n'ai pas encore cette habitude</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="1" onclick="selectOption(this)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Parfois</div><div class="ob-option-desc">De temps en temps</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="2" onclick="selectOption(this)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Régulièrement</div><div class="ob-option-desc">Prière de nuit + programme nocturne</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    <div class="ob-options" id="witr-main-options">
+      <div class="ob-option" data-value="0" onclick="selectWitrType(this,0)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Pas encore</div><div class="ob-option-desc">Je dors jusqu'au Fajr</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="1" onclick="selectWitrType(this,1)"><span class="ob-option-emoji">🌙</span><div class="ob-option-text"><div class="ob-option-label">Le Witr seul</div><div class="ob-option-desc">1 rak'a avant le Fajr, parfois</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="2" onclick="selectWitrType(this,2)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Witr + Chaf'</div><div class="ob-option-desc">3 rak'aat régulièrement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" data-value="3" onclick="selectWitrType(this,3)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Qiyam complet</div><div class="ob-option-desc">7 à 11 rak'aat — programme nocturne</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
     </div>
+    <div class="ob-coran-sub" id="witr-sub" style="display:none"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
       <span class="ob-counter">6 / 11</span>
@@ -1169,6 +1171,29 @@ function selectCoranType(el,type){
       .map(([v,l,d,e])=>`<div class="ob-option" style="margin-bottom:8px" onclick="selectCoranGoal(this,'${v}')"><span class="ob-option-emoji">${e}</span><div class="ob-option-text"><div class="ob-option-label">${l}</div><div class="ob-option-desc">${d}</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>`).join("");
   }
 }
+function selectWitrType(el,val){
+  document.querySelectorAll("#witr-main-options .ob-option").forEach(o=>o.classList.remove("selected"));
+  el.classList.add("selected");
+  obAns.witr=val;delete obAns.witrWakeup;
+  const sub=document.getElementById("witr-sub");
+  const btn=document.getElementById("q3-next");
+  if(val===0){
+    btn.disabled=true;
+    sub.style.display="block";
+    sub.innerHTML=`<p class="ob-coran-sub-label">Tu te réveilles avant le Fajr ?</p>`+
+      [["sometimes","Oui, parfois","Il m'arrive de me lever la nuit","🌙"],["never","Non, je dors jusqu'au Fajr","On va t'aider à commencer","😴"],["fajr_awake","Je fais le Fajr sans me recoucher","Déjà un bon ancrage","🌄"]]
+      .map(([v,l,d,e])=>`<div class="ob-option" style="margin-bottom:8px" onclick="selectWitrWakeup(this,'${v}')"><span class="ob-option-emoji">${e}</span><div class="ob-option-text"><div class="ob-option-label">${l}</div><div class="ob-option-desc">${d}</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>`).join("");
+  }else{
+    sub.style.display="none";sub.innerHTML="";
+    btn.disabled=false;
+  }
+}
+function selectWitrWakeup(el,val){
+  document.querySelectorAll("#witr-sub .ob-option").forEach(o=>o.classList.remove("selected"));
+  el.classList.add("selected");
+  obAns.witrWakeup=val;
+  document.getElementById("q3-next").disabled=false;
+}
 function selectCoranGoal(el,val){
   document.querySelectorAll("#coran-sub .ob-option").forEach(o=>o.classList.remove("selected"));
   el.classList.add("selected");
@@ -1302,7 +1327,7 @@ function finishOnboarding(){
     salatCount:sc,prayers:obAns.prayers||[],
     quranType:obAns.quranType||"never",quranGoal:obAns.quranGoal||"try",
     salat:sc,quran:obAns.quranType==="daily"?2:(obAns.quranType==="sometimes"?1:0),
-    witr:obAns.witr??0,type:obAns.type||"worker",goal:obAns.goal||["taqwa"],city:obAns.city||""
+    witr:Math.min(obAns.witr??0,2),witrLevel:obAns.witr??0,witrWakeup:obAns.witrWakeup||null,type:obAns.type||"worker",goal:obAns.goal||["taqwa"],city:obAns.city||""
   };
   const palier=calcPalier(profile);
   const defaultIds=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id).sort((a,b)=>a-b);
