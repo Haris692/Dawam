@@ -615,10 +615,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <div id="app">
 
 <!-- UPDATE BANNER -->
-<div id="update-banner">
-  <p>Nouvelle version disponible ✨</p>
-  <button onclick="applyUpdate()">Mettre à jour</button>
-</div>
+<div id="update-banner" style="display:none"></div>
 
 <!-- INSTALL BANNER (iOS) -->
 <div id="install-banner">
@@ -2501,20 +2498,22 @@ let _swWaiting=null;
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>{
     navigator.serviceWorker.register("sw.js").then(reg=>{
-      // Nouvelle version en cours d'installation
+      const doUpdate = (sw) => {
+        _swWaiting = sw;
+        sw.postMessage("skipWaiting");
+      };
+      // Nouvelle version en cours d'installation → mise à jour auto
       reg.addEventListener("updatefound",()=>{
         const nw=reg.installing;
         nw.addEventListener("statechange",()=>{
           if(nw.state==="installed"&&navigator.serviceWorker.controller){
-            _swWaiting=nw;
-            document.getElementById("update-banner").classList.add("show");
+            doUpdate(nw);
           }
         });
       });
-      // Vérifier si un SW attend déjà (cas où la page a été rechargée)
+      // SW déjà en attente au chargement → mise à jour auto
       if(reg.waiting&&navigator.serviceWorker.controller){
-        _swWaiting=reg.waiting;
-        document.getElementById("update-banner").classList.add("show");
+        doUpdate(reg.waiting);
       }
     }).catch(()=>{});
     // Recharger quand le nouveau SW prend le contrôle
