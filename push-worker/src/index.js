@@ -694,9 +694,9 @@ export default {
 
   // Crons :
   //   */10 * * * *  → vérification adaptative (aube, journee, soir selon horaires de prière)
-  //   0 14 * * *    → rappel 16h Paris (UTC+2 été) — rappel quotidien actions
+  //   15 14 * * *   → rappel 16h15 Paris (UTC+2 été) — rappel quotidien actions
   async scheduled(event, env, ctx) {
-    if (event.cron === '0 14 * * *') {
+    if (event.cron === '15 14 * * *') {
       ctx.waitUntil(notifyAll(env, 'aprem'));
     } else {
       ctx.waitUntil(notifyAdaptive(env));
