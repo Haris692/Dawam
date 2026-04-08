@@ -297,6 +297,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .item-row.checked { background:rgba(59,109,17,.04); }
 .item-row.locked { opacity: 0.42; cursor: default; }
 .item-row.locked:active { background: none; }
+.item-row.static-row { cursor: default; }
+.item-row.static-row:active { background: none; }
 .item-check { width:22px;height:22px;border-radius:11px;flex-shrink:0;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--bg-card);position:relative; }
 .item-row.checked .item-check { background:var(--green);border-color:var(--green); }
 .item-check-icon { display:none; }
@@ -1295,11 +1297,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 // ═══ DATA ═══
 const PROGRAM = [
   {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[5],       why:"Le Prophète ﷺ ne l'abandonnait jamais — ni en voyage ni à la maison."},
-  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5],   why:"2 raka'at valent mieux que le monde entier et ce qu'il contient."},
-  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[2,3,4,5], why:"Récompense d'un pèlerinage et d'une ʿumra complète. Complète."},
-  {id:14, titleFr:"Invocation du lien spirituel",  emoji:"🔗", time:"À l'aube",          xp:15, cat:"aube",    paliers:[3,4,5],   why:"Unit les cœurs dans l'amour d'Allah à travers le temps."},
-  {id:5,  titleFr:"Lecture du Coran",              emoji:"📖", time:"À l'aube",          xp:25, cat:"aube",    paliers:[1,2,3,4,5], why:"Il viendra le Jour du Jugement en intercesseur pour ses compagnons."},
-  {id:6,  titleFr:"Sourates méritoires",           emoji:"✨", time:"À l'aube",          xp:20, cat:"aube",    paliers:[3,4,5],   why:"Al-Mulk protège du châtiment de la tombe chaque nuit."},
+  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[1,2,3,4,5], why:"2 raka'at valent mieux que le monde entier et ce qu'il contient."},
+  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[1,2,3,4,5], why:"Récompense d'un pèlerinage et d'une ʿumra complète. Complète."},
   {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4,5],     why:"Une maison au Paradis pour chaque jour où tu les accomplis."},
   {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4,5],     why:"« Renouvelez votre foi en répétant Lâ ilâha illâ Llâh. » — Ahmad"},
   {id:8,  titleFr:"Bénédictions sur le Prophète ﷺ",emoji:"💚", time:"Toute la journée",  xp:20, cat:"journee", paliers:[2,3,4,5], why:"Chaque bénédiction t'en vaut 10 d'Allah et efface 10 péchés."},
@@ -1629,7 +1628,7 @@ function renderResultContent(palier){
   if(!obEditMode){
     const steps=PROGRAM.filter(i=>obSelectedSteps.includes(i.id));
     html+=`<p class="ob-label" style="text-align:left;margin-bottom:10px">Ton programme · ${steps.length} étapes</p>`;
-    html+=steps.map(item=>`<div class="ob-result-step"><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div><span class="ob-result-step-xp">+${item.xp} XP</span></div>`).join("");
+    html+=steps.map(item=>`<div class="ob-result-step"><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div></div>`).join("");
     html+=`<button class="ob-edit-toggle" onclick="toggleResultEdit()">✏️ Modifier mon programme</button>`;
   } else {
     html+=`<p class="ob-label" style="text-align:left;margin-bottom:6px">Personnalise ton programme</p>`;
@@ -1639,7 +1638,7 @@ function renderResultContent(palier){
     const renderStep=item=>{
       const sel=obSelectedSteps.includes(item.id);
       const adv=!item.paliers.includes(palier);
-      return `<div class="ob-result-step edit-mode${sel?" selected":""}" onclick="toggleStep(${item.id})"><div class="ob-result-check">${sel?chk:""}</div><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div>${adv?`<span class="ob-step-badge">avancé</span>`:`<span class="ob-result-step-xp">+${item.xp} XP</span>`}</div>`;
+      return `<div class="ob-result-step edit-mode${sel?" selected":""}" onclick="toggleStep(${item.id})"><div class="ob-result-check">${sel?chk:""}</div><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div>${adv?`<span class="ob-step-badge">avancé</span>`:``}</div>`;
     };
     html+=proposed.map(renderStep).join("");
     if(advanced.length){html+=`<p class="ob-label" style="text-align:left;margin:14px 0 8px;color:var(--accent)">Étapes avancées</p>`;html+=advanced.map(renderStep).join("");}
@@ -1803,7 +1802,6 @@ function renderPath(){
         <div class="next-action-row">
           <div class="next-action-icon">${next.emoji}</div>
           <div style="flex:1"><div class="next-action-title">${next.titleFr}</div><div class="next-action-sub">${next.time}</div></div>
-          <span class="next-action-xp">+${next.xp} XP</span>
         </div>
         <button class="btn-primary" onclick="openGuided(${next.id})">Voir l'action →</button>
       </div>`;
@@ -1844,19 +1842,14 @@ function renderPath(){
 
     const itemsHtml = catItems.map(item => {
       const done = !!S.checklist[item.id];
-      if (isFut) return `<div class="item-row locked" onclick="showLockedHint('${cat}')">
-        <div class="item-check" style="background:transparent;border-color:var(--border)">${lockSvg}</div>
-        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div>${item.why?`<div class="item-why">${item.why}</div>`:''}</div>
-        <span class="item-xp" style="color:var(--text-light)">+${item.xp} XP</span>
+      if (isFut || isPast) return `<div class="item-row static-row">
+        <div class="item-text"><div class="item-title" style="opacity:.7">${item.emoji} ${item.titleFr}</div>${item.why?`<div class="item-why">${item.why}</div>`:''}</div>
+        ${isPast && done ? `<span style="font-size:16px">✓</span>` : isPast ? `<span class="missed-badge">Manqué</span>` : ``}
       </div>`;
-      const right = (isPast && !done)
-        ? `<span class="missed-badge">Manqué</span>`
-        : `<span class="item-xp"${isPast && !done ? ' style="opacity:.4"' : ''}>+${item.xp} XP</span>`;
       const rowClick = `openGuided(${item.id})`;
       return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
         <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div>${item.why?`<div class="item-why">${item.why}</div>`:''}</div>
-        ${right}
       </div>`;
     }).join('');
 
@@ -2049,17 +2042,6 @@ function animateItemComplete(itemId) {
     });
   }, 80);
 
-  let xpBadge = targetRow.querySelector('.item-xp-badge');
-  if (!xpBadge) {
-    const item = getActiveItems().find(i => i.id === itemId);
-    if (item) {
-      xpBadge = document.createElement('span');
-      xpBadge.className = 'item-xp-badge';
-      xpBadge.textContent = '+' + (item.xp || 15) + ' XP';
-      targetRow.appendChild(xpBadge);
-    }
-  }
-  if (xpBadge) setTimeout(() => xpBadge.classList.add('show'), 220);
 
   setTimeout(() => { targetRow.style.background = 'rgba(59,109,17,.04)'; }, 150);
 }
@@ -2354,7 +2336,7 @@ function openDetail(id){
     <div class="detail-hero">
       <span class="detail-hero-emoji">${item.emoji}</span>
       <div class="detail-hero-title">${item.titleFr}</div>
-      <div><div class="detail-hero-pill"><span>⏱ ${item.time} &nbsp;·&nbsp; +${item.xp} XP</span></div></div>
+      <div><div class="detail-hero-pill"><span>⏱ ${item.time}</span></div></div>
     </div>
     <div class="detail-body">
       ${det.why?`<p class="fade-up" style="font-size:14px;color:var(--text-secondary);line-height:1.75;text-align:center;padding:0 4px;animation-delay:.2s">${det.why}</p>`:""}
@@ -3152,7 +3134,6 @@ function openGuided(id){
   }
   _gTimerSec=flow.mode==='up'?0:(flow.duration||0);
   _gTimerTotal=flow.duration||0;
-  document.getElementById('guided-xp-tag').textContent='+'+item.xp+' XP';
   document.getElementById('guided-screen').classList.add('show');
   renderGuided();
 }
@@ -3318,12 +3299,16 @@ function renderGuidedDone(){
   document.getElementById('guided-body').innerHTML=`<div class="guided-done fade-up">
     <div class="guided-done-emoji">✨</div>
     <div class="guided-done-title">Accompli !</div>
-    <div class="guided-done-xp">+${item.xp} XP</div>
     <div class="guided-done-sub">${msgs[Math.floor(Math.random()*msgs.length)]}</div>
   </div>`;
   const cta=document.getElementById('guided-cta');
-  cta.textContent='Retour →';
-  cta.onclick=()=>closeGuided();
+  if(_gId===3&&!S.checklist[2]){
+    cta.textContent='Commencer la séance →';
+    cta.onclick=()=>{closeGuided();setTimeout(()=>openSeanceChoice(),450);};
+  }else{
+    cta.textContent='Retour →';
+    cta.onclick=()=>closeGuided();
+  }
 }
 
 function closeGuided(){
