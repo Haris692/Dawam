@@ -58,67 +58,91 @@ async function makeVapidJWT(endpoint, subject, privKey) {
   return `${input}.${b64url(sig)}`;
 }
 
+// ── HKDF manuel via HMAC-SHA-256 (RFC 5869) ──────────────────────────────
+async function hmacSha256(key, data) {
+  const k = await crypto.subtle.importKey(
+    'raw', key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  return new Uint8Array(await crypto.subtle.sign('HMAC', k, data));
+}
+
+// HKDF-Extract(salt, ikm) → PRK
+async function hkdfExtract(salt, ikm) {
+  return hmacSha256(salt, ikm);
+}
+
+// HKDF-Expand(PRK, info, length) → OKM
+async function hkdfExpand(prk, info, length) {
+  const N = Math.ceil(length / 32);
+  let T = new Uint8Array(0);
+  const okm = new Uint8Array(length);
+  let off = 0;
+  for (let i = 1; i <= N; i++) {
+    T = await hmacSha256(prk, concat(T, info, new Uint8Array([i])));
+    const n = Math.min(32, length - off);
+    okm.set(T.slice(0, n), off);
+    off += n;
+  }
+  return okm;
+}
+
 // ── Chiffrement payload RFC 8291 (aes128gcm) ──────────────────────────────
 async function encryptPayload(subscription, plaintext) {
   const { p256dh, auth } = subscription.keys;
   const enc = new TextEncoder();
-  const clientPublic = fromB64url(p256dh);
-  const authSecret   = fromB64url(auth);
 
-  const clientKey = await crypto.subtle.importKey(
-    'raw', clientPublic, { name: 'ECDH', namedCurve: 'P-256' }, false, []
-  );
+  const uaPublic   = fromB64url(p256dh); // 65 bytes (uncompressed P-256)
+  const authSecret = fromB64url(auth);   // 16 bytes
+
+  // Ephémère serveur ECDH
   const serverPair = await crypto.subtle.generateKey(
     { name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveBits']
   );
-  const serverPublic = new Uint8Array(
+  const asPublic = new Uint8Array(
     await crypto.subtle.exportKey('raw', serverPair.publicKey)
+  ); // 65 bytes
+
+  // Secret ECDH partagé
+  const uaKey = await crypto.subtle.importKey(
+    'raw', uaPublic, { name: 'ECDH', namedCurve: 'P-256' }, false, []
   );
-  const ecdhBits = await crypto.subtle.deriveBits(
-    { name: 'ECDH', public: clientKey }, serverPair.privateKey, 256
-  );
+  const ecdhSecret = new Uint8Array(
+    await crypto.subtle.deriveBits({ name: 'ECDH', public: uaKey }, serverPair.privateKey, 256)
+  ); // 32 bytes
 
   // RFC 8291 §3.3 : IKM
-  const ecdhKey = await crypto.subtle.importKey(
-    'raw', ecdhBits, { name: 'HKDF' }, false, ['deriveBits']
-  );
-  const keyInfo = concat(enc.encode('WebPush: info\x00'), clientPublic, serverPublic);
-  const ikmBits = await crypto.subtle.deriveBits(
-    { name: 'HKDF', hash: 'SHA-256', salt: authSecret, info: keyInfo },
-    ecdhKey, 256
-  );
+  // PRK_key = HKDF-Extract(auth_secret, ecdh_secret)
+  const prkKey  = await hkdfExtract(authSecret, ecdhSecret);
+  // key_info = "WebPush: info\0" || ua_public || as_public
+  const keyInfo = concat(enc.encode('WebPush: info\x00'), uaPublic, asPublic);
+  // IKM = HKDF-Expand(PRK_key, key_info, 32)
+  const ikm     = await hkdfExpand(prkKey, keyInfo, 32);
 
   // RFC 8188 : CEK + Nonce
-  const salt   = crypto.getRandomValues(new Uint8Array(16));
-  const ikmKey = await crypto.subtle.importKey(
-    'raw', ikmBits, { name: 'HKDF' }, false, ['deriveBits']
-  );
-  const cekBits = await crypto.subtle.deriveBits(
-    { name: 'HKDF', hash: 'SHA-256', salt, info: concat(enc.encode('Content-Encoding: aes128gcm\x00'), new Uint8Array([1])) },
-    ikmKey, 128
-  );
-  const nonceBits = await crypto.subtle.deriveBits(
-    { name: 'HKDF', hash: 'SHA-256', salt, info: concat(enc.encode('Content-Encoding: nonce\x00'), new Uint8Array([1])) },
-    ikmKey, 96
-  );
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  // PRK = HKDF-Extract(salt, IKM)
+  const prk  = await hkdfExtract(salt, ikm);
+  // CEK = HKDF-Expand(PRK, cek_info, 16)
+  const cek  = await hkdfExpand(prk, concat(enc.encode('Content-Encoding: aes128gcm\x00'), new Uint8Array([1])), 16);
+  // Nonce = HKDF-Expand(PRK, nonce_info, 12)
+  const nonce = await hkdfExpand(prk, concat(enc.encode('Content-Encoding: nonce\x00'), new Uint8Array([1])), 12);
 
-  const cekKey = await crypto.subtle.importKey(
-    'raw', cekBits, { name: 'AES-GCM' }, false, ['encrypt']
-  );
+  // Chiffrement AES-GCM
+  const cekKey = await crypto.subtle.importKey('raw', cek, { name: 'AES-GCM' }, false, ['encrypt']);
   const ciphertext = new Uint8Array(
     await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: nonceBits, tagLength: 128 },
+      { name: 'AES-GCM', iv: nonce, tagLength: 128 },
       cekKey,
-      concat(enc.encode(plaintext), new Uint8Array([2]))
+      concat(enc.encode(plaintext), new Uint8Array([2])) // 0x02 = last record delimiter
     )
   );
 
-  // En-tête aes128gcm
-  const header = new Uint8Array(21 + serverPublic.length);
+  // En-tête aes128gcm : salt(16) + rs(4) + idlen(1) + as_public(65)
+  const header = new Uint8Array(21 + asPublic.length);
   header.set(salt, 0);
   new DataView(header.buffer).setUint32(16, 4096, false);
-  header[20] = serverPublic.length;
-  header.set(serverPublic, 21);
+  header[20] = asPublic.length;
+  header.set(asPublic, 21);
 
   return concat(header, ciphertext);
 }
@@ -339,6 +363,184 @@ export default {
       const notifType = validTypes.includes(type) ? type : 'aube';
       await notifyAll(env, notifType);
       return json({ ok: true, type: notifType, message: 'Notifications envoyées' });
+    }
+
+    // Debug : POST /debug-push { token } — envoie à toutes les subs et retourne les statuts réels
+    if (pathname === '/debug-push' && request.method === 'POST') {
+      const { token } = await request.json().catch(() => ({}));
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+
+      const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
+      const subKeys = page.keys.filter(k =>
+        !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+      );
+
+      const privKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY, env.VAPID_PUBLIC_KEY);
+
+      const results = await Promise.all(subKeys.map(async ({ name }) => {
+        const raw = await env.SUBSCRIPTIONS.get(name);
+        if (!raw) return { id: name, error: 'empty' };
+        const sub = JSON.parse(raw);
+        const service = sub.endpoint?.includes('apple.com') ? 'Apple' : 'FCM/Android';
+
+        let pushStatus, pushBody, encryptError = null;
+        try {
+          const payload = JSON.stringify({ type: 'aube', title: 'Dawam 🌄', body: "La séance de l'aube t'attend — Coran, adhkar, constance." });
+          const body = await encryptPayload(sub, payload);
+          const jwt = await makeVapidJWT(sub.endpoint, env.VAPID_SUBJECT, privKey);
+          const res = await fetch(sub.endpoint, {
+            method: 'POST',
+            headers: {
+              'TTL': '86400',
+              'Authorization': `vapid t=${jwt},k=${env.VAPID_PUBLIC_KEY}`,
+              'Content-Type': 'application/octet-stream',
+              'Content-Encoding': 'aes128gcm',
+              'Content-Length': String(body.byteLength),
+            },
+            body,
+          });
+          pushStatus = res.status;
+          pushBody = await res.text();
+        } catch (e) {
+          encryptError = e.message;
+        }
+
+        return { id: name, service, city: sub.city, pushStatus, pushBody: pushBody?.slice(0, 200), encryptError };
+      }));
+
+      return json({ count: results.length, results });
+    }
+
+    // Quel type de notif pour cet endpoint en ce moment ?
+    // GET /notification-type?endpoint=URL_ENCODEE
+    if (pathname === '/notification-type' && request.method === 'GET') {
+      const endpoint = new URL(request.url).searchParams.get('endpoint');
+      if (!endpoint) return json({ type: 'default' });
+      const id = await subId(endpoint);
+      const raw = await env.SUBSCRIPTIONS.get(id);
+      if (!raw) return json({ type: 'default' });
+      const sub = JSON.parse(raw);
+      if (!sub.city) return json({ type: 'default' });
+      const pt = await getPrayerTimes(sub.city, env);
+      if (!pt) return json({ type: 'default' });
+      const type = typeForNow(pt.timings, pt.timezone) || 'default';
+      return json({ type, city: sub.city });
+    }
+
+    // Telemetrie SW : POST /push-log { type, rawText, hasData, ts }
+    if (pathname === '/push-log' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      await env.SUBSCRIPTIONS.put(`pushlog:${id}`, JSON.stringify(body), { expirationTtl: 3600 });
+      return json({ ok: true });
+    }
+
+    // Lire les logs SW : GET /push-log?token=xxx
+    if (pathname === '/push-log' && request.method === 'GET') {
+      const token = new URL(request.url).searchParams.get('token');
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+      const list = await env.SUBSCRIPTIONS.list({ prefix: 'pushlog:' });
+      const items = await Promise.all(list.keys.map(async ({ name }) => {
+        const raw = await env.SUBSCRIPTIONS.get(name);
+        return raw ? JSON.parse(raw) : null;
+      }));
+      return json({ count: items.length, logs: items.filter(Boolean).sort((a, b) => b.ts - a.ts) });
+    }
+
+    // Debug clés : GET /debug-keys?token=xxx — vérifie les longueurs des clés en KV
+    if (pathname === '/debug-keys' && request.method === 'GET') {
+      const token = new URL(request.url).searchParams.get('token');
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+
+      const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
+      const subKeys = page.keys.filter(k =>
+        !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+      );
+      const results = await Promise.all(subKeys.map(async ({ name }) => {
+        const raw = await env.SUBSCRIPTIONS.get(name);
+        if (!raw) return { id: name, error: 'empty' };
+        const sub = JSON.parse(raw);
+        const p256dh = sub.keys?.p256dh ? fromB64url(sub.keys.p256dh) : null;
+        const auth   = sub.keys?.auth   ? fromB64url(sub.keys.auth)   : null;
+        return {
+          id: name,
+          service: sub.endpoint?.includes('apple.com') ? 'Apple' : 'Other',
+          city: sub.city,
+          p256dhLength: p256dh?.length ?? 'missing',
+          p256dhFirstByte: p256dh ? '0x' + p256dh[0].toString(16) : 'missing',
+          authLength: auth?.length ?? 'missing',
+        };
+      }));
+      return json({ results });
+    }
+
+    // Ping sans payload : POST /ping-push { token } — test de livraison sans chiffrement
+    if (pathname === '/ping-push' && request.method === 'POST') {
+      const { token } = await request.json().catch(() => ({}));
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+
+      const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
+      const subKeys = page.keys.filter(k =>
+        !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+      );
+
+      const privKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY, env.VAPID_PUBLIC_KEY);
+
+      const results = await Promise.all(subKeys.map(async ({ name }) => {
+        const raw = await env.SUBSCRIPTIONS.get(name);
+        if (!raw) return { id: name, error: 'empty' };
+        const sub = JSON.parse(raw);
+        const service = sub.endpoint?.includes('apple.com') ? 'Apple' : 'FCM/Android';
+
+        let pushStatus, pushBody;
+        try {
+          const jwt = await makeVapidJWT(sub.endpoint, env.VAPID_SUBJECT, privKey);
+          const res = await fetch(sub.endpoint, {
+            method: 'POST',
+            headers: {
+              'TTL': '86400',
+              'Authorization': `vapid t=${jwt},k=${env.VAPID_PUBLIC_KEY}`,
+              'Content-Length': '0',
+            },
+          });
+          pushStatus = res.status;
+          pushBody = await res.text();
+        } catch (e) {
+          pushBody = e.message;
+        }
+
+        return { id: name, service, city: sub.city, pushStatus, pushBody: pushBody?.slice(0, 200) };
+      }));
+
+      return json({ count: results.length, results });
+    }
+
+    // Liste toutes les souscriptions actives
+    if (pathname === '/list-subs' && request.method === 'GET') {
+      const token = new URL(request.url).searchParams.get('token');
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+
+      const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
+      const subKeys = page.keys.filter(k =>
+        !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+      );
+      const subs = await Promise.all(subKeys.map(async ({ name }) => {
+        const raw = await env.SUBSCRIPTIONS.get(name);
+        if (!raw) return null;
+        const sub = JSON.parse(raw);
+        return {
+          id: name,
+          endpoint: sub.endpoint ? sub.endpoint.slice(0, 50) + '…' : 'missing',
+          service: sub.endpoint?.includes('apple.com') ? 'Apple' : sub.endpoint?.includes('googleapis') || sub.endpoint?.includes('fcm') ? 'FCM/Android' : 'Other',
+          city: sub.city || '(none)',
+          hasKeys: !!(sub.keys?.p256dh && sub.keys?.auth),
+        };
+      }));
+      return json({ count: subs.filter(Boolean).length, subs: subs.filter(Boolean) });
     }
 
     // Soumettre un avis utilisateur

@@ -1,4 +1,4 @@
-const CACHE = "dawam-v3";
+const CACHE = "dawam-v4";
 const ASSETS = [
   "./manifest.json",
   "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap"
@@ -48,22 +48,49 @@ const PUSH_MSGS = {
 };
 
 self.addEventListener("push", e => {
-  let type = "default";
-  if (e.data) {
-    try { type = e.data.text().trim(); } catch (_) {}
-  }
-  const msg = PUSH_MSGS[type] ?? PUSH_MSGS.default;
-  e.waitUntil(
-    self.registration.showNotification(msg.title, {
+  e.waitUntil((async () => {
+    let type = "default";
+
+    // 1. Essaie de lire le type depuis le payload (Android/Chrome)
+    if (e.data) {
+      try {
+        const text = e.data.text().trim();
+        try { type = JSON.parse(text).type || text; } catch (_) { type = text; }
+      } catch (_) {}
+    }
+
+    // 2. Si pas de payload (iOS) ou type inconnu → demande au serveur selon heure + ville
+    if (!PUSH_MSGS[type] || type === "default") {
+      try {
+        const sub = await self.registration.pushManager.getSubscription();
+        if (sub) {
+          const res = await fetch(
+            "https://dawam-push.mydawam.workers.dev/notification-type?endpoint=" +
+            encodeURIComponent(sub.endpoint)
+          );
+          const data = await res.json();
+          if (data.type && data.type !== "default") type = data.type;
+        }
+      } catch (_) {}
+    }
+
+    // 3. Telemetrie
+    fetch("https://dawam-push.mydawam.workers.dev/push-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, hasData: !!e.data, ts: Date.now() }),
+    }).catch(() => {});
+
+    const msg = PUSH_MSGS[type] ?? PUSH_MSGS.default;
+    await self.registration.showNotification(msg.title, {
       body: msg.body,
       icon: "./icon-192.png",
       badge: "./icon-192.png",
       vibrate: [200, 100, 200],
-      tag: "dawam-daily",
-      renotify: true,
+      tag: "dawam-" + type,
       data: { type },
-    })
-  );
+    });
+  })());
 });
 
 // Clic sur la notification → ouvre l'app
