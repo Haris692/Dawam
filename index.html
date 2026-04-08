@@ -227,6 +227,10 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* PATH */
 #path { background:var(--bg); }
 .path-hero { padding:52px 20px 24px;padding-top:max(52px,calc(44px + env(safe-area-inset-top))); }
+.notif-banner{display:flex;align-items:center;gap:10px;margin:0 16px 12px;padding:10px 14px;background:var(--bg-card);border:.5px solid var(--border);border-radius:14px;border-left:3px solid var(--accent);}
+.notif-banner-text{flex:1;font-size:13px;color:var(--text);line-height:1.4;}
+.notif-banner-btn{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-light);border:none;border-radius:20px;padding:6px 12px;cursor:pointer;white-space:nowrap;}
+.notif-banner-close{font-size:16px;color:var(--text-light);background:none;border:none;cursor:pointer;padding:0 2px;}
 .path-hero-chip { display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:var(--accent-light);border:.5px solid var(--border); }
 .path-hero-chip span { font-size:11px;font-weight:600;color:var(--accent-dark); }
 .path-hero-name { font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);margin-bottom:6px; }
@@ -1787,6 +1791,16 @@ function renderPath(){
 
   const body=document.getElementById("path-body");
   body.innerHTML="";
+
+  // Bandeau discret si notifs pas activées, prompt déjà vu, et bandeau pas fermé définitivement
+  if(S.notifAsked && !S.notifs?.pushSub && !S.notifBannerDismissed){
+    body.innerHTML+=`<div class="notif-banner fade-up">
+      <span style="font-size:20px">🔔</span>
+      <span class="notif-banner-text">Active les rappels pour rester constant.</span>
+      <button class="notif-banner-btn" onclick="activateNotifsFromPrompt()">Activer</button>
+      <button class="notif-banner-close" onclick="this.closest('.notif-banner').remove();S.notifBannerDismissed=true;save()">✕</button>
+    </div>`;
+  }
 
   // Ordre temporel et détection des sections futures (verrouillées)
   const catOrder=["qiyam","aube","journee","soir","nuit"];
@@ -3355,6 +3369,8 @@ function launchApp(){
 }
 function dismissNotifPrompt(){
   document.getElementById('notif-prompt').classList.remove('show');
+  S.notifAsked=true;save();
+  renderPathSmooth();
 }
 async function activateNotifsFromPrompt(){
   const btn=document.querySelector('#notif-prompt .btn-primary');
