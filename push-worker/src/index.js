@@ -312,7 +312,9 @@ async function notifyAdaptive(env) {
           // Ne pas envoyer deux fois le même type dans la journée
           if (await hasSent(env, name, type)) return;
 
-          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, type);
+          // iOS (Apple) ne déclenche pas le push event si payload chiffré → ping vide
+          const isApple = sub.endpoint?.includes('apple.com');
+          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type);
           if (res.status === 410 || res.status === 404) await env.SUBSCRIPTIONS.delete(name);
           else await markSent(env, name, type);
         })

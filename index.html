@@ -1674,6 +1674,8 @@ function finishOnboarding(){
   const notifs=obAns._pushSub?{pushSub:obAns._pushSub}:null;
   S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null,notifs};
   save();launchApp();track('launch');track('onboarding_complete');
+  // Proposer les notifications immédiatement après l'onboarding
+  setTimeout(()=>document.getElementById('notif-prompt')?.classList.add('show'),1200);
 }
 
 // ═══ PATH ═══
