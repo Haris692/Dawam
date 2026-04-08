@@ -609,6 +609,74 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .guided-done-title{font-size:24px;font-weight:700;color:var(--text);}
 .guided-done-xp{font-size:20px;color:var(--accent);font-weight:700;}
 .guided-done-sub{font-size:14px;color:var(--text-secondary);max-width:260px;line-height:1.6;}
+
+/* ═══ SÉANCE CHOICE ═══ */
+#seance-choice{position:fixed;inset:0;z-index:600;display:none;align-items:flex-end;background:var(--overlay);}
+#seance-choice.show{display:flex;animation:overlayFadeIn .2s ease;}
+.sc-sheet{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:430px;margin:0 auto;padding:0 0 max(20px,env(safe-area-inset-bottom));animation:slideUp .32s cubic-bezier(.2,1,.4,1);}
+.sc-handle{width:40px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 20px;}
+.sc-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);text-align:center;padding:0 20px 6px;}
+.sc-sub{font-size:14px;color:var(--text-secondary);text-align:center;padding:0 24px 20px;line-height:1.5;}
+.sc-btn{display:flex;align-items:center;gap:16px;width:calc(100% - 32px);margin:0 16px 10px;padding:16px 18px;border-radius:18px;border:1.5px solid var(--border);background:var(--bg-card);cursor:pointer;text-align:left;transition:all .2s;}
+.sc-btn:active{transform:scale(.98);opacity:.9;}
+.sc-btn-guided{border-color:var(--accent);background:var(--accent-light);}
+.sc-btn-icon{font-size:28px;flex-shrink:0;}
+.sc-btn-text{flex:1;}
+.sc-btn-title{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.sc-btn-desc{font-size:12px;color:var(--text-secondary);line-height:1.4;}
+.sc-btn-arrow{font-size:18px;color:var(--text-light);flex-shrink:0;}
+.sc-cancel{width:100%;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;font-family:var(--font-body);}
+
+/* ═══ SÉANCE GUIDÉE AUBE ═══ */
+#seance-aube{position:fixed;inset:0;z-index:600;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94);}
+#seance-aube.show{transform:translateY(0);}
+.sa-header{display:flex;align-items:center;justify-content:space-between;padding:max(20px,calc(16px + env(safe-area-inset-top))) 20px 10px;flex-shrink:0;}
+.sa-close{width:38px;height:38px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:16px;flex-shrink:0;}
+.sa-header-title{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);}
+.sa-phase-pill{font-size:11px;font-weight:700;color:var(--accent);padding:4px 12px;background:var(--accent-light);border-radius:100px;white-space:nowrap;}
+.sa-progress{height:3px;background:var(--border);margin:0 20px;border-radius:2px;flex-shrink:0;}
+.sa-progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .6s ease;}
+.sa-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px 8px;}
+.sa-footer{padding:10px 20px calc(16px + env(safe-area-inset-bottom));flex-shrink:0;display:flex;flex-direction:column;gap:6px;}
+.sa-card{background:var(--bg-card);border-radius:20px;border:.5px solid var(--border);padding:22px 20px;animation:stepIn .3s cubic-bezier(.2,1,.4,1) both;}
+.sa-card-counter{font-size:11px;font-weight:700;color:var(--text-light);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;text-align:center;}
+.sa-card-arabic{font-family:'Amiri',serif;font-size:24px;line-height:1.9;color:var(--text);text-align:right;direction:rtl;margin-bottom:14px;}
+.sa-card-phonetic{font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--accent-dark);line-height:1.65;margin-bottom:10px;}
+.sa-card-french{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.sa-card-repeat{display:inline-block;background:var(--accent-light);color:var(--accent);border-radius:20px;font-size:12px;font-weight:700;padding:3px 12px;margin-bottom:8px;}
+.sa-card-source{font-size:11px;color:var(--text-light);font-style:italic;}
+.sa-card-note{font-size:12px;color:var(--text-secondary);background:rgba(186,117,23,.07);border-radius:8px;padding:6px 10px;margin-top:8px;}
+.sa-card-tip{font-size:13px;color:var(--text-secondary);background:var(--bg);border-radius:12px;border-left:3px solid var(--accent);padding:12px 14px;margin-top:14px;line-height:1.5;}
+.sa-card-big-emoji{font-size:52px;text-align:center;margin-bottom:14px;}
+.sa-card-step-title{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);text-align:center;margin-bottom:10px;}
+.sa-card-desc{font-size:14px;color:var(--text-secondary);line-height:1.7;text-align:center;margin-bottom:14px;}
+.sa-card-verset-title{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.sa-card-ref{font-size:13px;color:var(--text-light);font-weight:400;}
+.sa-card-merit{font-size:13px;color:var(--accent);line-height:1.5;margin-bottom:14px;padding:8px 12px;background:var(--accent-light);border-radius:10px;}
+.sa-card-instruction{font-size:15px;color:var(--text);line-height:1.7;padding:14px;background:var(--bg);border-radius:12px;border:1px dashed var(--border);text-align:center;margin-top:4px;}
+.sa-card-hadith{font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-secondary);line-height:1.7;margin-top:16px;padding:14px 16px;background:var(--bg);border-radius:12px;border-left:3px solid var(--green);}
+.sa-card-sep{height:1px;background:var(--border);margin:14px 0;}
+.sa-verset-select{display:flex;flex-direction:column;gap:10px;padding-bottom:16px;}
+.sa-verset-select-title{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.sa-verset-select-sub{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:8px;}
+.sa-verset-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg-card);border-radius:14px;border:1.5px solid var(--border-light);cursor:pointer;transition:all .2s;}
+.sa-verset-item.selected{border-color:var(--accent);background:var(--accent-light);}
+.sa-verset-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;transition:all .2s;margin-top:2px;}
+.sa-verset-item.selected .sa-verset-check{background:var(--accent);border-color:var(--accent);}
+.sa-verset-item-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.sa-verset-item-ref{font-size:12px;color:var(--text-light);margin-bottom:3px;}
+.sa-verset-item-merit{font-size:12px;color:var(--text-secondary);line-height:1.4;}
+.sa-chourouk-block{text-align:center;padding:16px 0 10px;}
+.sa-chourouk-icon{font-size:52px;margin-bottom:8px;}
+.sa-chourouk-label{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;}
+.sa-chourouk-countdown{font-family:var(--font-display);font-size:40px;font-weight:700;color:var(--accent);margin:4px 0;}
+.sa-chourouk-time{font-size:13px;color:var(--text-light);}
+.sa-chourouk-desc{font-size:14px;color:var(--text-secondary);line-height:1.7;text-align:center;margin:12px 0 4px;}
+.sa-done-block{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;text-align:center;gap:14px;padding:20px 0;}
+.sa-done-emoji{font-size:72px;animation:guidedPop .5s cubic-bezier(.34,1.56,.64,1) both;}
+.sa-done-title{font-size:24px;font-weight:700;color:var(--text);}
+.sa-done-sub{font-size:14px;color:var(--text-secondary);max-width:260px;line-height:1.6;}
+.sa-skip-btn{background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-light);padding:6px;text-align:center;width:100%;}
 </style>
 </head>
 <body>
@@ -1158,6 +1226,47 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   </div>
 </div>
 
+<!-- SEANCE CHOICE -->
+<div id="seance-choice">
+  <div class="sc-sheet">
+    <div class="sc-handle"></div>
+    <div class="sc-title">Séance de l'aube 🌄</div>
+    <p class="sc-sub">Comment veux-tu commencer cette matinée ?</p>
+    <button class="sc-btn sc-btn-guided" onclick="closeSeanceChoice();openSeanceGuidee()">
+      <div class="sc-btn-icon">🌄</div>
+      <div class="sc-btn-text">
+        <div class="sc-btn-title">Séance guidée</div>
+        <div class="sc-btn-desc">Invocations · Versets méritoires · Du'a rabita · Chourouk</div>
+      </div>
+      <div class="sc-btn-arrow">→</div>
+    </button>
+    <button class="sc-btn" onclick="closeSeanceChoice();openAubeTimer()">
+      <div class="sc-btn-icon">⏱️</div>
+      <div class="sc-btn-text">
+        <div class="sc-btn-title">Programme minuté</div>
+        <div class="sc-btn-desc">Minuteur par étape — chourouk adaptatif</div>
+      </div>
+      <div class="sc-btn-arrow">→</div>
+    </button>
+    <button class="sc-cancel" onclick="closeSeanceChoice()">Annuler</button>
+  </div>
+</div>
+
+<!-- SEANCE GUIDÉE AUBE -->
+<div id="seance-aube">
+  <div class="sa-header">
+    <button class="sa-close" onclick="closeSeanceAube()">✕</button>
+    <div class="sa-header-title">Séance de l'aube</div>
+    <div class="sa-phase-pill" id="sa-phase-pill"></div>
+  </div>
+  <div class="sa-progress"><div class="sa-progress-fill" id="sa-progress-fill" style="width:0%"></div></div>
+  <div class="sa-body" id="sa-body"></div>
+  <div class="sa-footer" id="sa-footer">
+    <button class="btn-primary" id="sa-cta" onclick="seanceCta()">Suivant →</button>
+    <button class="sa-skip-btn" id="sa-skip" style="display:none" onclick="seanceSkip()">Passer cette étape</button>
+  </div>
+</div>
+
 <!-- DETAIL MODAL -->
 <div id="detail-modal">
   <div class="detail-sheet">
@@ -1272,7 +1381,7 @@ const DHIKR_LIST = [
 
 // ═══ STATE ═══
 const STORAGE_KEY = "dawam_pwa_v1";
-let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[],city:""},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[],customSteps:null,prayerTimes:null};
+let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[],city:""},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[],customSteps:null,prayerTimes:null,versetSelection:[],versetLastStep:0};
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S));}
 function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JSON.parse(r)};}catch{}}
 
@@ -2227,7 +2336,7 @@ function completeInvocItem(){
   setTimeout(()=>closeInvocPopup(),1600);
 }
 function openDetail(id){
-  if(id===2&&getCurrentCat()==="aube"){openAubeTimer();return;}
+  if(id===2&&getCurrentCat()==="aube"){openSeanceChoice();return;}
   const item=PROGRAM.find(i=>i.id===id);
   const det=ITEM_DETAILS[id];
   if(!item||!det)return;
@@ -2556,6 +2665,74 @@ const AUBE_STEPS=[
 ];
 let _aubeSteps=[],aubeTimerStep=0,aubeTimerInterval=null,aubeTimerEnd=null;
 
+// ═══ VERSETS MÉRITOIRES ═══
+const VERSETS_CATALOG=[
+  {id:'fatiha',title:'Al-Fātiḥa',ref:'[1]',merit:'La mère du Coran — récitée dans chaque prière.',
+    arabic:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾',
+    phonetic:'Bismillāhi r-raḥmāni r-raḥīm. Al-ḥamdu lillāhi rabbi l-ʿālamīn. Ar-raḥmāni r-raḥīm. Māliki yawmi d-dīn. Iyyāka naʿbudu wa iyyāka nastaʿīn. Ihdinā ṣ-ṣirāṭa l-mustaqīm. Ṣirāṭa lladhīna anʿamta ʿalayhim ghayri l-maghḍūbi ʿalayhim wa lā ḍ-ḍāllīn.',
+    french:'Au nom d\'Allah, le Tout Miséricordieux, le Très Miséricordieux. Louange à Allah, Seigneur des univers, le Tout Miséricordieux, le Très Miséricordieux, Maître du Jour de la rétribution. C\'est Toi que nous adorons et c\'est Toi dont nous implorons le secours. Guide-nous dans le droit chemin — le chemin de ceux que Tu as comblés de bienfaits, non pas de ceux qui ont encouru Ta colère, ni des égarés.'},
+  {id:'baqara_1_5',title:'Al-Baqara 1–5',ref:'[2:1-5]',merit:'Les premiers versets de la plus longue sourate — une lumière pour les pieux.',
+    arabic:'الم ﴿١﴾ ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ ﴿٢﴾ الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنفِقُونَ ﴿٣﴾ وَالَّذِينَ يُؤْمِنُونَ بِمَا أُنزِلَ إِلَيْكَ وَمَا أُنزِلَ مِن قَبْلِكَ وَبِالْآخِرَةِ هُمْ يُوقِنُونَ ﴿٤﴾ أُولَٰئِكَ عَلَىٰ هُدًى مِّن رَّبِّهِمْ ۖ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ ﴿٥﴾',
+    phonetic:'Alif Lām Mīm. Dhālika l-kitābu lā rayba fīh, hudan li-l-muttaqīn. Alladhīna yuʾminūna bi-l-ghaybi wa yuqīmūna ṣ-ṣalāta wa mimmā razaqnāhum yunfiqūn. Wa lladhīna yuʾminūna bi-mā unzila ilayka wa mā unzila min qablika wa bi-l-ākhirati hum yūqinūn. Ulāʾika ʿalā hudan min rabbihim wa ulāʾika humu l-mufliḥūn.',
+    french:'Alif Lam Mim. C\'est le Livre au sujet duquel il n\'y a aucun doute, c\'est un guide pour les pieux — ceux qui croient à l\'Invisible, établissent la prière et dépensent de ce que Nous leur avons attribué. Et ceux qui croient en ce qui t\'a été révélé et ce qui a été révélé avant toi, et qui ont certitude en la Vie future. Ceux-là sont sur un chemin directeur venant de leur Seigneur, et ce sont eux qui réussissent.'},
+  {id:'ayat_kursi',title:'Āyat al-Kursī',ref:'[2:255]',merit:'Récitée après chaque prière — protection absolue jusqu\'à la prochaine. — Nasa\'i',
+    arabic:'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ',
+    phonetic:'Allāhu lā ilāha illā Huw, al-Ḥayyu l-Qayyūm. Lā taʾkhudhuhu sinatun wa lā nawm. Lahu mā fi s-samāwāti wa mā fi l-arḍ. Man dhā lladhī yashfaʿu ʿindahu illā bi-idhnih. Yaʿlamu mā bayna aydīhim wa mā khalfahum wa lā yuḥīṭūna bi-shayʾin min ʿilmihi illā bi-mā shāʾ. Wasiʿa kursiyyuhu s-samāwāti wa l-arḍ wa lā yaʾūduhu ḥifẓuhumā wa Huwa l-ʿAliyyu l-ʿAẓīm.',
+    french:'Allah ! Nul dieu en dehors de Lui, le Vivant, le Subsistant. Ni somnolence ni sommeil ne Le saisissent. À Lui appartient ce qui est dans les cieux et sur la terre. Qui peut intercéder auprès de Lui sans Sa permission ? Il sait ce qui est devant eux et ce qui est derrière eux. Ils n\'embrassent de Sa science que ce qu\'Il veut. Son Trône s\'étend sur les cieux et la terre, dont la garde ne Lui coûte aucune peine. Et c\'est Lui le Très-Haut, l\'Immense.'},
+  {id:'baqara_285_286',title:'Al-Baqara 285–286',ref:'[2:285-286]',merit:'Ces deux versets suffisent à celui qui les récite le soir. — Bukhari',
+    arabic:'آمَنَ الرَّسُولُ بِمَا أُنزِلَ إِلَيْهِ مِن رَّبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِّن رُّسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ ﴿٢٨٥﴾ لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ ۖ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا ۚ أَنتَ مَوْلَانَا فَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ ﴿٢٨٦﴾',
+    phonetic:'Āmana r-rasūlu bi-mā unzila ilayhi min rabbih wal-muʾminūn. Kullun āmana billāhi wa malāʾikatihi wa kutubihi wa rusulihi lā nufarriqu bayna aḥadin min rusulihi wa qālū samiʿnā wa aṭaʿnā ghufranaka Rabbanā wa ilayka l-maṣīr. Lā yukallifu llāhu nafsan illā wusʿahā...',
+    french:'Le Messager croit en ce qui lui a été révélé de son Seigneur, et les croyants aussi. Chacun croit en Allah, en Ses anges, en Ses livres et en Ses messagers. Ils ont dit : Nous avons entendu et obéi. Accorde-nous Ton pardon, Seigneur, et c\'est vers Toi le retour. Allah n\'impose à aucune âme une charge supérieure à sa capacité. Seigneur, ne nous châtie pas si nous oublions ou si nous commettons une erreur. Seigneur, ne nous impose pas un fardeau comme Tu l\'as imposé à ceux avant nous. Seigneur, ne nous charge pas de ce que nous ne pouvons pas supporter. Efface nos fautes, pardonne-nous, aie pitié de nous. Tu es notre Maître — accorde-nous la victoire sur le peuple des mécréants.'},
+  {id:'kahf',title:'Al-Kahf',ref:'[18]',merit:'Récitée le vendredi — elle illumine entre les deux vendredis et protège du Dajjal.',longSura:true,instruction:'Lis la sourate Al-Kahf dans ton Muṣḥaf. Commence par Bismillāh. Lis lentement, avec présence du cœur.'},
+  {id:'yasin',title:'Yā-Sīn',ref:'[36]',merit:'Le cœur du Coran. Sa récitation vaut 10 Corans récités. — Tirmidhi',longSura:true,instruction:'Lis la sourate Yā-Sīn dans ton Muṣḥaf. Commence par Bismillāh.'},
+  {id:'waqia',title:'Al-Wāqi\'a',ref:'[56]',merit:'Celui qui la récite chaque nuit ne connaîtra jamais la misère. — Ibn Masʿūd',longSura:true,instruction:'Lis la sourate Al-Wāqiʿa dans ton Muṣḥaf. Commence par Bismillāh.'},
+  {id:'mulk',title:'Al-Mulk',ref:'[67]',merit:'Elle protège du châtiment de la tombe chaque nuit. — Tirmidhi',longSura:true,instruction:'Lis la sourate Al-Mulk dans ton Muṣḥaf. Commence par Bismillāh.'},
+  {id:'ikhlas_falaq_nas',title:'Al-Ikhlāṣ + Al-Falaq + An-Nās',ref:'[112–114]',merit:'×3 chacune au matin et au soir — protection contre tout mal. — Abu Dawud',repeat:3,
+    arabic:'قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ﴿٤﴾',
+    arabic2:'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِن شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾',
+    arabic3:'قُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾',
+    phonetic:'Qul Huwa llāhu Aḥad, Allāhu ṣ-Ṣamad, lam yalid wa lam yūlad, wa lam yakun lahu kufuwan aḥad. (×3) — Qul aʿūdhu bi-Rabbi l-falaq... (×3) — Qul aʿūdhu bi-Rabbi n-nās... (×3).',
+    french:'Al-Ikhlāṣ : Dis : Il est Allah, Unique. Allah, le Seul à qui on s\'adresse. Il n\'engendre pas et n\'est pas engendré. Et nul n\'est égal à Lui. (×3) — Al-Falaq : Dis : Je cherche refuge auprès du Seigneur de l\'aube naissante, contre le mal de ce qu\'Il a créé... (×3) — An-Nās : Dis : Je cherche refuge auprès du Seigneur des hommes, Roi des hommes, Dieu des hommes... (×3)'},
+  {id:'zalzala_asr_kafirun',title:'Az-Zalzala + Al-ʿAṣr + Al-Kāfirūn',ref:'[99·103·109]',merit:'Az-Zalzala ×4 vaut la moitié du Coran, Al-Kāfirūn ×4 le quart. — Tirmidhi',
+    arabic:'إِذَا زُلْزِلَتِ الْأَرْضُ زِلْزَالَهَا ﴿١﴾ وَأَخْرَجَتِ الْأَرْضُ أَثْقَالَهَا ﴿٢﴾ وَقَالَ الْإِنسَانُ مَا لَهَا ﴿٣﴾ يَوْمَئِذٍ تُحَدِّثُ أَخْبَارَهَا ﴿٤﴾ بِأَنَّ رَبَّكَ أَوْحَىٰ لَهَا ﴿٥﴾ يَوْمَئِذٍ يَصْدُرُ النَّاسُ أَشْتَاتًا لِّيُرَوْا أَعْمَالَهُمْ ﴿٦﴾ فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُ ﴿٧﴾ وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ شَرًّا يَرَهُ ﴿٨﴾',
+    arabic2:'وَالْعَصْرِ ﴿١﴾ إِنَّ الْإِنسَانَ لَفِي خُسْرٍ ﴿٢﴾ إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ ﴿٣﴾',
+    arabic3:'قُلْ يَا أَيُّهَا الْكَافِرُونَ ﴿١﴾ لَا أَعْبُدُ مَا تَعْبُدُونَ ﴿٢﴾ وَلَا أَنتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٣﴾ وَلَا أَنَا عَابِدٌ مَا عَبَدتُّمْ ﴿٤﴾ وَلَا أَنتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٥﴾ لَكُمْ دِينُكُمْ وَلِيَ دِينِ ﴿٦﴾',
+    phonetic:'Az-Zalzala (×4) : Idhā zulzilati l-arḍu zilzālahā... Quiconque fait le poids d\'un atome de bien le verra. — Al-ʿAṣr (×2) : Wa l-ʿaṣr... — Al-Kāfirūn (×4) : Qul yā ayyuha l-kāfirūn...',
+    french:'Az-Zalzala (×4) : Quand la terre sera secouée d\'un violent séisme, qu\'elle expulsera ses fardeaux... Quiconque fait le poids d\'un atome de bien le verra, et quiconque fait le poids d\'un atome de mal le verra. — Al-ʿAṣr (×2) : Par le Temps ! L\'être humain est en perdition, sauf ceux qui croient, accomplissent les bonnes œuvres et s\'exhortent à la vérité et à l\'endurance. — Al-Kāfirūn (×4) : Dis : Ô vous les mécréants ! Je n\'adore pas ce que vous adorez... À vous votre religion, à moi la mienne.'},
+];
+
+// ═══ DU'A RABITA ═══
+const DUA_RABITA_STEPS=[
+  {step:1,emoji:'📖',title:'Al-Fātiḥa',
+    desc:'Commence par la Fātiḥa — pour toi, pour tes proches, pour la Oumma.',
+    arabic:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾',
+    phonetic:'Bismillāhi r-raḥmāni r-raḥīm. Al-ḥamdu lillāhi rabbi l-ʿālamīn. Ar-raḥmāni r-raḥīm. Māliki yawmi d-dīn. Iyyāka naʿbudu wa iyyāka nastaʿīn. Ihdinā ṣ-ṣirāṭa l-mustaqīm. Ṣirāṭa lladhīna anʿamta ʿalayhim ghayri l-maghḍūbi ʿalayhim wa lā ḍ-ḍāllīn.',
+    french:'Récite avec l\'intention d\'offrir cette récitation à tes frères et sœurs en Islam.'},
+  {step:2,emoji:'💚',title:'Salawat sur le Prophète ﷺ',
+    desc:'Dix salawat — chacune t\'en vaut 10 d\'Allah.',
+    arabic:'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ النَّبِيِّ وَأَزْوَاجِهِ أُمَّهَاتِ الْمُؤْمِنِينَ وَذُرِّيَّتِهِ وَأَهْلِ بَيْتِهِ كَمَا صَلَّيْتَ عَلَى سَيِّدِنَا إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ',
+    phonetic:'Allāhumma ṣalli ʿalā Sayyidinā Muḥammadin n-nabiyyi wa azwājihi ummahāti l-muʾminīn wa dhurriyyatihi wa ahli baytihi kamā ṣallayta ʿalā Sayyidinā Ibrāhīm, innaka Ḥamīdun Majīd.',
+    french:'Ô Allah, prie sur notre maître Muhammad le prophète, ses épouses mères des croyants, sa descendance et les gens de sa maison, comme Tu as prié sur notre maître Ibrahim. Tu es certes Digne de louange, Glorieux.',repeat:10},
+  {step:3,emoji:'🤲',title:'Ta supplication personnelle',
+    desc:'Invoque Allah pour ceux que tu aimes — par leurs noms. Demande-Lui de les guider, de les préserver, de les réunir sur Son amour.',
+    tip:'Il n\'y a pas de mots imposés. Parle à Allah depuis ton cœur — en arabe, en français, dans ta langue. Il entend et comprend.'},
+  {step:4,emoji:'💚',title:'Salawat sur le Prophète ﷺ',
+    desc:'Encadre ta dua par les salawat — l\'invocation ainsi encadrée monte vers Allah et n\'est pas rejetée.',
+    arabic:'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ النَّبِيِّ وَأَزْوَاجِهِ أُمَّهَاتِ الْمُؤْمِنِينَ وَذُرِّيَّتِهِ وَأَهْلِ بَيْتِهِ كَمَا صَلَّيْتَ عَلَى سَيِّدِنَا إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ',
+    phonetic:'Allāhumma ṣalli ʿalā Sayyidinā Muḥammadin n-nabiyyi...',
+    french:'Répète 10 fois.',repeat:10},
+  {step:5,emoji:'📖',title:'Sourate Al-ʿAṣr',
+    desc:'Le Prophète ﷺ la récitait avec ses compagnons avant de se séparer — un rappel du temps qui passe et de la solidarité dans la foi.',
+    arabic:'وَالْعَصْرِ ﴿١﴾ إِنَّ الْإِنسَانَ لَفِي خُسْرٍ ﴿٢﴾ إِلَّا الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ ﴿٣﴾',
+    phonetic:'Wa l-ʿaṣr. Inna l-insāna lafī khusr. Illā lladhīna āmanū wa ʿamilū ṣ-ṣāliḥāti wa tawāṣaw bi-l-ḥaqqi wa tawāṣaw bi-ṣ-ṣabr.',
+    french:'Par le Temps ! L\'être humain est en perdition — sauf ceux qui croient, accomplissent les bonnes œuvres, s\'exhortent mutuellement à la vérité et s\'exhortent mutuellement à l\'endurance.'},
+  {step:6,emoji:'🌟',title:'Invocation finale',
+    desc:'Clôture ta séance par cette glorification extraite du Coran.',
+    arabic:'سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ ﴿١٨٠﴾ وَسَلَامٌ عَلَى الْمُرْسَلِينَ ﴿١٨١﴾ وَالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿١٨٢﴾',
+    phonetic:'Subḥāna Rabbika Rabbi l-ʿizzati ʿammā yaṣifūn, wa salāmun ʿalā l-mursalīn, wa l-ḥamdu lillāhi Rabbi l-ʿālamīn.',
+    french:'Gloire à Ton Seigneur, Seigneur de la Puissance, au-delà de ce qu\'ils décrivent ! Paix sur les Messagers ! Et louange à Allah, Seigneur des Univers !'},
+];
+
 function openAubeTimer(){
   const pt=S.prayerTimes;
   const steps=AUBE_STEPS.map(s=>({...s}));
@@ -2634,6 +2811,238 @@ function playAubeBeep(){
     gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
     osc.start(ctx.currentTime);osc.stop(ctx.currentTime+1.2);
   }catch{}
+}
+
+// ═══ SÉANCE DE L'AUBE ═══
+let _sa={phase:null,invocStep:0,versetStep:0,duaStep:0};
+
+function openSeanceChoice(){document.getElementById('seance-choice').classList.add('show');}
+function closeSeanceChoice(){document.getElementById('seance-choice').classList.remove('show');}
+
+function openSeanceGuidee(){
+  if(!S.versetSelection)S.versetSelection=[];
+  _sa={phase:'invocations',invocStep:0,versetStep:0,duaStep:0};
+  document.getElementById('seance-aube').classList.add('show');
+  renderSeancePhase();
+}
+
+function closeSeanceAube(){
+  document.getElementById('seance-aube').classList.remove('show');
+  setTimeout(()=>{document.getElementById('sa-body').innerHTML='';},420);
+}
+
+function seanceCta(){
+  if(_sa.phase==='invocations')seanceNextInvoc();
+  else if(_sa.phase==='versets_select')seanceConfirmVersets();
+  else if(_sa.phase==='versets_read')seanceNextVerset();
+  else if(_sa.phase==='dua_rabita')seanceNextDua();
+  else if(_sa.phase==='chourouk')seanceFinish();
+  else if(_sa.phase==='done')closeSeanceAube();
+}
+
+function seanceSkip(){
+  if(_sa.phase==='versets_read'){_sa.phase='versets_select';renderSeancePhase();}
+  else if(_sa.phase==='chourouk')seanceFinish();
+}
+
+function seanceNextInvoc(){
+  _sa.invocStep++;
+  if(_sa.invocStep>=ADHKAR.matin.length){
+    if(!S.versetSelection||S.versetSelection.length===0)_sa.phase='versets_select';
+    else{_sa.versetStep=Math.min(S.versetLastStep||0,S.versetSelection.length-1);_sa.phase='versets_read';}
+  }
+  renderSeancePhase();
+}
+
+function seanceConfirmVersets(){
+  if(!S.versetSelection||S.versetSelection.length===0){showToast('Sélectionne au moins un verset pour continuer.');return;}
+  _sa.versetStep=0;S.versetLastStep=0;save();
+  _sa.phase='versets_read';renderSeancePhase();
+}
+
+function seanceNextVerset(){
+  _sa.versetStep++;
+  const sel=S.versetSelection||[];
+  if(_sa.versetStep>=sel.length){S.versetLastStep=0;_sa.phase='dua_rabita';_sa.duaStep=0;}
+  else{S.versetLastStep=_sa.versetStep;}
+  save();renderSeancePhase();
+}
+
+function seanceNextDua(){
+  _sa.duaStep++;
+  if(_sa.duaStep>=DUA_RABITA_STEPS.length)_sa.phase='chourouk';
+  renderSeancePhase();
+}
+
+function seanceFinish(){
+  if(!S.checklist[2])toggleItem(2);
+  _sa.phase='done';renderSeancePhase();
+}
+
+function toggleVersetSel(id){
+  if(!S.versetSelection)S.versetSelection=[];
+  const idx=S.versetSelection.indexOf(id);
+  if(idx>=0)S.versetSelection.splice(idx,1);else S.versetSelection.push(id);
+  save();renderSeancePhase();
+}
+
+function renderSeancePhase(){
+  const body=document.getElementById('sa-body');
+  const cta=document.getElementById('sa-cta');
+  const skip=document.getElementById('sa-skip');
+  const pill=document.getElementById('sa-phase-pill');
+  const fill=document.getElementById('sa-progress-fill');
+  skip.style.display='none';
+
+  if(_sa.phase==='invocations'){
+    const invocs=ADHKAR.matin;
+    const i=_sa.invocStep;
+    const inv=invocs[i];
+    const isLast=i>=invocs.length-1;
+    fill.style.width=Math.round(i/invocs.length*25)+'%';
+    pill.textContent='Invocations';
+    const palierLow=S.palier<=2;
+    body.innerHTML=`<div class="sa-card">
+      <div class="sa-card-counter">${i+1} / ${invocs.length}</div>
+      ${inv.repeat>1?`<div class="sa-card-repeat">× ${inv.repeat}</div>`:''}
+      <div class="sa-card-arabic">${inv.arabic}</div>
+      <div class="sa-card-phonetic">${inv.phonetic}</div>
+      <div class="sa-card-french">${inv.french}</div>
+      ${inv.source?`<div class="sa-card-source">${inv.source}</div>`:''}
+      ${inv.note?`<div class="sa-card-note">📍 ${inv.note}</div>`:''}
+      ${palierLow&&i===0?`<div class="sa-card-tip">💡 Lis chaque invocation au moins une fois — la constance prime sur la quantité.</div>`:''}
+    </div>`;
+    cta.textContent=isLast?'Terminer les invocations →':'Suivant →';
+  }
+  else if(_sa.phase==='versets_select'){
+    fill.style.width='25%';
+    pill.textContent='Versets méritoires';
+    const sel=S.versetSelection||[];
+    body.innerHTML=`<div class="sa-verset-select">
+      <div class="sa-verset-select-title">Quels versets lis-tu le matin ?</div>
+      <p class="sa-verset-select-sub">L'app mémorise ta sélection et te permettra de reprendre là où tu t'es arrêté.</p>
+      ${VERSETS_CATALOG.map(v=>`<div class="sa-verset-item${sel.includes(v.id)?' selected':''}" onclick="toggleVersetSel('${v.id}')">
+        <div class="sa-verset-check">${sel.includes(v.id)?'✓':''}</div>
+        <div>
+          <div class="sa-verset-item-title">${v.title}</div>
+          <div class="sa-verset-item-ref">${v.ref}</div>
+          <div class="sa-verset-item-merit">${v.merit}</div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+    const n=sel.length;
+    cta.textContent=n>0?`Commencer (${n} sélectionné${n>1?'s':''}) →`:'Sélectionne tes versets →';
+  }
+  else if(_sa.phase==='versets_read'){
+    const sel=S.versetSelection||[];
+    const i=_sa.versetStep;
+    if(i>=sel.length){seanceNextVerset();return;}
+    const v=VERSETS_CATALOG.find(x=>x.id===sel[i]);
+    if(!v){seanceNextVerset();return;}
+    const isLast=i>=sel.length-1;
+    fill.style.width=(25+Math.round(i/sel.length*25))+'%';
+    pill.textContent='Versets méritoires';
+    let inner='';
+    if(v.longSura){
+      inner=`<div class="sa-card-verset-title">${v.title} <span class="sa-card-ref">${v.ref}</span></div>
+        <div class="sa-card-merit">🌟 ${v.merit}</div>
+        <div class="sa-card-instruction">${v.instruction}</div>`;
+    }else if(v.arabic2){
+      inner=`<div class="sa-card-verset-title">${v.title} <span class="sa-card-ref">${v.ref}</span></div>
+        <div class="sa-card-merit">🌟 ${v.merit}</div>
+        ${v.repeat?`<div class="sa-card-repeat">× ${v.repeat} chacune</div>`:''}
+        <div class="sa-card-arabic">${v.arabic}</div>
+        <div class="sa-card-sep"></div>
+        <div class="sa-card-arabic">${v.arabic2}</div>
+        ${v.arabic3?`<div class="sa-card-sep"></div><div class="sa-card-arabic">${v.arabic3}</div>`:''}
+        <div class="sa-card-phonetic">${v.phonetic}</div>
+        <div class="sa-card-french">${v.french}</div>`;
+    }else{
+      inner=`<div class="sa-card-verset-title">${v.title} <span class="sa-card-ref">${v.ref}</span></div>
+        <div class="sa-card-merit">🌟 ${v.merit}</div>
+        <div class="sa-card-arabic">${v.arabic}</div>
+        <div class="sa-card-phonetic">${v.phonetic}</div>
+        <div class="sa-card-french">${v.french}</div>`;
+    }
+    body.innerHTML=`<div class="sa-card"><div class="sa-card-counter">Verset ${i+1} / ${sel.length}</div>${inner}</div>`;
+    skip.style.display='block';skip.textContent='Modifier ma sélection';
+    cta.textContent=isLast?'Terminer les versets →':'Suivant →';
+  }
+  else if(_sa.phase==='dua_rabita'){
+    const i=_sa.duaStep;
+    const step=DUA_RABITA_STEPS[i];
+    const isLast=i>=DUA_RABITA_STEPS.length-1;
+    fill.style.width=(50+Math.round(i/DUA_RABITA_STEPS.length*25))+'%';
+    pill.textContent="Du'a rabita";
+    body.innerHTML=`<div class="sa-card">
+      <div class="sa-card-counter">Étape ${i+1} / ${DUA_RABITA_STEPS.length}</div>
+      <div class="sa-card-big-emoji">${step.emoji}</div>
+      <div class="sa-card-step-title">${step.title}</div>
+      <div class="sa-card-desc">${step.desc}</div>
+      ${step.arabic?`<div class="sa-card-arabic">${step.arabic}</div>`:''}
+      ${step.phonetic?`<div class="sa-card-phonetic">${step.phonetic}</div>`:''}
+      ${step.french?`<div class="sa-card-french">${step.french}</div>`:''}
+      ${step.repeat?`<div class="sa-card-repeat">× ${step.repeat}</div>`:''}
+      ${step.tip?`<div class="sa-card-tip">💡 ${step.tip}</div>`:''}
+    </div>`;
+    cta.textContent=isLast?"Terminer le Du'a rabita →":"C'est fait →";
+  }
+  else if(_sa.phase==='chourouk'){
+    fill.style.width='75%';
+    pill.textContent='Chourouk';
+    const pt=S.prayerTimes;
+    let chouroukHtml='';
+    if(pt&&pt.Sunrise){
+      const now=new Date();
+      const cur=now.getHours()*60+now.getMinutes();
+      const sunrise=parseTime(pt.Sunrise);
+      const diff=sunrise-cur;
+      if(diff>15){
+        const h=Math.floor(diff/60),m=diff%60;
+        chouroukHtml=`<div class="sa-chourouk-block">
+          <div class="sa-chourouk-icon">🌅</div>
+          <div class="sa-chourouk-label">Chourouk dans</div>
+          <div class="sa-chourouk-countdown">${h>0?h+'h ':''} ${m} min</div>
+          <div class="sa-chourouk-time">${pt.Sunrise}</div>
+        </div>
+        <p class="sa-chourouk-desc">Reste en dhikr ou récitation jusqu'au lever du soleil. Attends encore 10–15 min après, puis prie tes 2 raka'at.</p>`;
+      }else if(diff>-45){
+        chouroukHtml=`<div class="sa-chourouk-block">
+          <div class="sa-chourouk-icon">☀️</div>
+          <div class="sa-chourouk-label">${diff>0?'Lever du soleil imminent — dans '+diff+' min':"C'est l'heure du Chourouk"}</div>
+        </div>
+        <p class="sa-chourouk-desc">Prie maintenant tes 2 raka'at du Chourouk. Récompense égale à un pèlerinage et une ʿumra complète, complète, complète. ﷺ</p>`;
+      }else{
+        chouroukHtml=`<div class="sa-chourouk-block">
+          <div class="sa-chourouk-icon">☀️</div>
+          <div class="sa-chourouk-label">Chourouk passé</div>
+        </div>
+        <p class="sa-chourouk-desc">Le moment idéal est passé — tu peux quand même prier 2 raka'at nafl pour clôturer ta séance. L'intention sincère compte.</p>`;
+      }
+    }else{
+      chouroukHtml=`<div class="sa-chourouk-block">
+        <div class="sa-chourouk-icon">☀️</div>
+        <div class="sa-chourouk-label">Prière du Chourouk</div>
+      </div>
+      <p class="sa-chourouk-desc">10 à 15 min après le lever du soleil — prie 2 raka'at. Récompense d'un pèlerinage et d'une ʿumra complète.</p>`;
+    }
+    body.innerHTML=`<div class="sa-card">${chouroukHtml}
+      <div class="sa-card-hadith">« Celui qui prie le Fajr en communauté, puis reste assis à faire dhikr jusqu'au lever du soleil, puis prie 2 raka'at, aura la récompense d'un ḥajj et d'une ʿumra — complète, complète, complète. »<br><small>At-Tirmidhī — Ḥasan</small></div>
+    </div>`;
+    skip.style.display='block';skip.textContent='Terminer sans le Chourouk';
+    cta.textContent="J'ai fait mes 2 raka'at ✓";
+  }
+  else if(_sa.phase==='done'){
+    fill.style.width='100%';
+    pill.textContent='';
+    const msgs=['Que Allah l\'accepte de toi.','Barakallahu fik.','Petit mais constant — c\'est le secret.','Les anges sont témoins de ta constance.','Continue ainsi — chaque jour compte.'];
+    body.innerHTML=`<div class="sa-done-block">
+      <div class="sa-done-emoji">✨</div>
+      <div class="sa-done-title">Séance accomplie</div>
+      <div class="sa-done-sub">${msgs[Math.floor(Math.random()*msgs.length)]}</div>
+    </div>`;
+    cta.textContent='Retour →';
+  }
 }
 
 // ═══ GUIDED ═══
