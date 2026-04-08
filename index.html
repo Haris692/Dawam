@@ -1802,6 +1802,16 @@ function renderPath(){
     </div>`;
   }
 
+  // Carte feedback après 3 jours d'utilisation
+  if(S.totalDays>=3 && !S.feedbackDone && !S.feedbackNudgeDismissed){
+    body.innerHTML+=`<div class="notif-banner fade-up" style="border-left-color:var(--green)">
+      <span style="font-size:20px">💬</span>
+      <span class="notif-banner-text">3 jours avec Dawam — ton avis nous aide à améliorer l'app.</span>
+      <button class="notif-banner-btn" style="background:rgba(59,109,17,.1);color:var(--green)" onclick="S.feedbackNudgeDismissed=true;save();showFeedbackModal()">Donner mon avis</button>
+      <button class="notif-banner-close" onclick="this.closest('.notif-banner').remove();S.feedbackNudgeDismissed=true;save()">✕</button>
+    </div>`;
+  }
+
   // Ordre temporel et détection des sections futures (verrouillées)
   const catOrder=["qiyam","aube","journee","soir","nuit"];
   const curIdx=catOrder.indexOf(curCat);
@@ -2576,6 +2586,7 @@ async function submitFeedback(){
     });
     const emojis={1:'🤲',2:'💚',3:'🌟'};
     const msgs={1:'Merci pour ton honnêteté — chaque retour aide à améliorer Dawam.',2:'Jazak Allah khayran !',3:'Alhamdulillah ! Que Allah te bénisse dans ta constance.'};
+    S.feedbackDone=true;save();
     document.getElementById('fb-content').innerHTML=`<div class="fb-sent"><div class="fb-sent-emoji">${emojis[fbRating]}</div><div class="fb-sent-msg">${msgs[fbRating]}</div></div><button class="btn-primary" style="margin-top:16px" onclick="closeFeedbackModal()">Fermer</button>`;
   }catch(e){
     btn.disabled=false;btn.textContent='Envoyer';
