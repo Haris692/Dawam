@@ -224,16 +224,16 @@ function localMinutes(timezone) {
 }
 
 // Retourne le type de notif à envoyer maintenant, ou null
-// Fenêtres : aube = [Fajr, Fajr+20[  |  matin = 10h00-10h20  |  aprem = 15h00-15h20  |  nuit = [Isha, Isha+20[
+// Fenêtres : aube = [Fajr, Fajr+20[  |  journee = [Dhuhr, Dhuhr+20[  |  soir = [Isha, Isha+20[
 function typeForNow(timings, timezone) {
-  const now  = localMinutes(timezone);
-  const fajr = toMin(timings.Fajr);
-  const isha = toMin(timings.Isha);
+  const now   = localMinutes(timezone);
+  const fajr  = toMin(timings.Fajr);
+  const dhuhr = toMin(timings.Dhuhr);
+  const isha  = toMin(timings.Isha);
 
-  if (now >= fajr     && now < fajr + 20) return 'aube';
-  if (now >= 600      && now < 620)       return 'matin';   // 10h00–10h20
-  if (now >= 900      && now < 920)       return 'aprem';   // 15h00–15h20
-  if (now >= isha     && now < isha + 20) return 'nuit';
+  if (now >= fajr  && now < fajr  + 20) return 'aube';
+  if (now >= dhuhr && now < dhuhr + 20) return 'journee';
+  if (now >= isha  && now < isha  + 20) return 'soir';
   return null;
 }
 
@@ -360,7 +360,7 @@ export default {
         await notifyAdaptive(env);
         return json({ ok: true, type: 'adaptive', message: 'Envoi adaptatif lancé' });
       }
-      const validTypes = ['aube', 'matin', 'aprem', 'nuit'];
+      const validTypes = ['aube', 'journee', 'soir'];
       const notifType = validTypes.includes(type) ? type : 'aube';
       await notifyAll(env, notifType);
       return json({ ok: true, type: notifType, message: 'Notifications envoyées' });

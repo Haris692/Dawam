@@ -27,19 +27,15 @@ self.addEventListener("message", e => {
 const PUSH_MSGS = {
   aube: {
     title: "Dawam 🌄",
-    body: "La séance de l'aube t'attend — Coran, adhkar, constance.",
+    body: "Ta séance de l'aube t'attend — Coran, adhkar du matin, constance.",
   },
-  matin: {
+  journee: {
     title: "Dawam ☀️",
-    body: "Un rappel de milieu de matinée — bénédictions sur le Prophète ﷺ.",
+    body: "Ta séance de la journée t'attend — maintiens ta constance.",
   },
-  aprem: {
-    title: "Dawam 🕌",
-    body: "L'après-midi avance — maintiens ta constance, petit mais régulier.",
-  },
-  nuit: {
+  soir: {
     title: "Dawam 🌙",
-    body: "Avant de dormir — les convenances du sommeil t'attendent.",
+    body: "Ta séance du soir t'attend — adhkar, actes avant le sommeil.",
   },
   default: {
     title: "Dawam 📿",
