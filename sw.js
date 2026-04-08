@@ -25,17 +25,17 @@ self.addEventListener("message", e => {
 
 // ── Push notification reçue du serveur ────────────────────────────────────
 const PUSH_MSGS = {
-  qiyam: {
-    title: "Dawam 🌙",
-    body: "L'heure du Witr approche. Lève-toi et commence ta journée avec Allah.",
-  },
   aube: {
     title: "Dawam 🌄",
     body: "La séance de l'aube t'attend — Coran, adhkar, constance.",
   },
-  journee: {
+  matin: {
     title: "Dawam ☀️",
-    body: "Rappel de journée : bénédictions sur le Prophète ﷺ et garde du temps.",
+    body: "Un rappel de milieu de matinée — bénédictions sur le Prophète ﷺ.",
+  },
+  aprem: {
+    title: "Dawam 🕌",
+    body: "L'après-midi avance — maintiens ta constance, petit mais régulier.",
   },
   nuit: {
     title: "Dawam 🌙",

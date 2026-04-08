@@ -224,15 +224,16 @@ function localMinutes(timezone) {
 }
 
 // Retourne le type de notif à envoyer maintenant, ou null
-// Fenêtres : qiyam = [Fajr-35, Fajr-5[  |  aube = [Fajr, Fajr+20[  |  nuit = [Isha, Isha+20[
+// Fenêtres : aube = [Fajr, Fajr+20[  |  matin = 10h00-10h20  |  aprem = 15h00-15h20  |  nuit = [Isha, Isha+20[
 function typeForNow(timings, timezone) {
-  const now   = localMinutes(timezone);
-  const fajr  = toMin(timings.Fajr);
-  const isha  = toMin(timings.Isha);
+  const now  = localMinutes(timezone);
+  const fajr = toMin(timings.Fajr);
+  const isha = toMin(timings.Isha);
 
-  if (now >= fajr - 35 && now < fajr - 5)  return 'qiyam';
-  if (now >= fajr       && now < fajr + 20) return 'aube';
-  if (now >= isha       && now < isha + 20) return 'nuit';
+  if (now >= fajr     && now < fajr + 20) return 'aube';
+  if (now >= 600      && now < 620)       return 'matin';   // 10h00–10h20
+  if (now >= 900      && now < 920)       return 'aprem';   // 15h00–15h20
+  if (now >= isha     && now < isha + 20) return 'nuit';
   return null;
 }
 
@@ -351,7 +352,7 @@ export default {
     }
 
     // Test manuel : POST /send-test { token, type? }
-    // type = "qiyam" | "aube" | "journee" | "nuit" | "adaptive"
+    // type = "aube" | "matin" | "aprem" | "nuit" | "adaptive"
     if (pathname === '/send-test' && request.method === 'POST') {
       const { token, type = 'aube' } = await request.json().catch(() => ({}));
       if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
@@ -359,7 +360,7 @@ export default {
         await notifyAdaptive(env);
         return json({ ok: true, type: 'adaptive', message: 'Envoi adaptatif lancé' });
       }
-      const validTypes = ['qiyam', 'aube', 'journee', 'nuit'];
+      const validTypes = ['aube', 'matin', 'aprem', 'nuit'];
       const notifType = validTypes.includes(type) ? type : 'aube';
       await notifyAll(env, notifType);
       return json({ ok: true, type: notifType, message: 'Notifications envoyées' });
@@ -690,10 +691,6 @@ export default {
   //   */10 * * * *  → vérification adaptative (qiyam / aube / nuit selon horaires de prière)
   //   0 10 * * *    → journée fixe (12h Paris)
   async scheduled(event, env, ctx) {
-    if (event.cron === '0 10 * * *') {
-      ctx.waitUntil(notifyAll(env, 'journee'));
-    } else {
-      ctx.waitUntil(notifyAdaptive(env));
-    }
+    ctx.waitUntil(notifyAdaptive(env));
   },
 };

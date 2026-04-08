@@ -13,8 +13,7 @@ id = "011a83c71e714515b11cbf69cc490b13"
 # Modifie selon ton fuseau horaire cible
 [triggers]
 crons = [
-  "*/10 * * * *",  # Adaptatif — vérifie les horaires de prière toutes les 10 min
-  "0 10 * * *"     # Journée fixe — 12h Paris (10h UTC)
+  "*/10 * * * *"   # Adaptatif — vérifie toutes les 10 min (aube, matin, aprem, nuit)
 ]
 
 # Variables publiques (les secrets VAPID sont dans wrangler secret)
