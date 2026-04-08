@@ -277,7 +277,10 @@ async function notifyAll(env, type) {
           const raw = await env.SUBSCRIPTIONS.get(name);
           if (!raw) return;
           const sub = JSON.parse(raw);
-          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, type);
+          if (await hasSent(env, name, type)) return;
+          // iOS (Apple) ne déclenche pas le push event si payload chiffré → ping vide
+          const isApple = sub.endpoint?.includes('apple.com');
+          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type);
           if (res.status === 410 || res.status === 404) await env.SUBSCRIPTIONS.delete(name);
           else await markSent(env, name, type);
         })
@@ -690,9 +693,13 @@ export default {
   },
 
   // Crons :
-  //   */10 * * * *  → vérification adaptative (qiyam / aube / nuit selon horaires de prière)
-  //   0 10 * * *    → journée fixe (12h Paris)
+  //   */10 * * * *  → vérification adaptative (aube, journee, soir selon horaires de prière)
+  //   0 14 * * *    → rappel 16h Paris (UTC+2 été) — rappel quotidien actions
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(notifyAdaptive(env));
+    if (event.cron === '0 14 * * *') {
+      ctx.waitUntil(notifyAll(env, 'aprem'));
+    } else {
+      ctx.waitUntil(notifyAdaptive(env));
+    }
   },
 };

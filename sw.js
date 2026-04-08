@@ -37,6 +37,10 @@ const PUSH_MSGS = {
     title: "Dawam 🌙",
     body: "Ta séance du soir t'attend — adhkar, actes avant le sommeil.",
   },
+  aprem: {
+    title: "Dawam ⏰",
+    body: "Tes actions du jour t'attendent — quelques minutes suffisent.",
+  },
   default: {
     title: "Dawam 📿",
     body: "Ton programme spirituel t'attend. Petit, mais constant.",

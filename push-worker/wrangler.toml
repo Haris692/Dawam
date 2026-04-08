@@ -13,7 +13,8 @@ id = "011a83c71e714515b11cbf69cc490b13"
 # Modifie selon ton fuseau horaire cible
 [triggers]
 crons = [
-  "*/10 * * * *"   # Adaptatif — vérifie toutes les 10 min (aube, matin, aprem, nuit)
+  "*/10 * * * *",  # Adaptatif — vérifie toutes les 10 min (aube, journee, soir)
+  "0 14 * * *"     # Rappel 16h Paris (UTC+2 été) — rappel quotidien actions
 ]
 
 # Variables publiques (les secrets VAPID sont dans wrangler secret)
