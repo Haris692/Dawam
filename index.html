@@ -1301,7 +1301,6 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 // ═══ DATA ═══
 const PROGRAM = [
   {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[5],       why:"Le Prophète ﷺ ne l'abandonnait jamais — ni en voyage ni à la maison."},
-  {id:3,  titleFr:"Prière du matin",               emoji:"🌅", time:"À l'aube",          xp:15, cat:"aube",    paliers:[1,2,3,4,5], why:"2 raka'at valent mieux que le monde entier et ce qu'il contient."},
   {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[1,2,3,4,5], why:"Récompense d'un pèlerinage et d'une ʿumra complète. Complète."},
   {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4,5],     why:"Une maison au Paradis pour chaque jour où tu les accomplis."},
   {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4,5],     why:"« Renouvelez votre foi en répétant Lâ ilâha illâ Llâh. » — Ahmad"},
@@ -1715,38 +1714,46 @@ const PRAYER_META = {
   maghrib:{id:103,titleFr:"Maghrib",   emoji:"🌇",time:"Au coucher du soleil",xp:20,cat:"soir",   ar:"المغرب"},
   isha:   {id:104,titleFr:"Isha",      emoji:"🌙",time:"En soirée",          xp:20,cat:"nuit",    ar:"العشاء"},
 };
-const PRAYER_FLOWS = {
-  100:{ type:'steps', steps:[
-    {emoji:'💧',title:'Fais le wudu',desc:'Prépare-toi intérieurement. Les ablutions sont le début de la prière.',tip:'Commence par bismillah et finis par la shahada.'},
-    {emoji:'🌅',title:'Sunna de Fajr — 2 raka\'at',desc:'Ces 2 raka\'at sont plus chères au Prophète ﷺ que le monde entier.',tip:'« Les 2 raka\'at de l\'aube valent mieux que le monde et ce qu\'il contient. » — Muslim'},
-    {emoji:'🤲',title:'Fajr — 2 raka\'at fard',desc:'Avec présence du cœur. Lis lentement, sens chaque verset.',arabic:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',phonetic:'Bismillāhi r-raḥmāni r-raḥīm'},
-    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
-  ]},
-  101:{ type:'steps', steps:[
-    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
-    {emoji:'☀️',title:'Sunna avant — 4 raka\'at',desc:'2+2 raka\'at avant Dhuhr. Le Prophète ﷺ ne les abandonnait presque jamais.',tip:'« Celui qui maintient les 4 raka\'at avant et après Dhuhr, Allah lui interdit le feu. » — At-Tirmidhī'},
-    {emoji:'🤲',title:'Dhuhr — 4 raka\'at fard',desc:'4 raka\'at avec présence et recueillement.'},
-    {emoji:'🕌',title:'Sunna après — 2 raka\'at',desc:'2 raka\'at après Dhuhr. Complète ta prière.'},
-    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
-  ]},
-  102:{ type:'steps', steps:[
-    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
-    {emoji:'🌤️',title:'Asr — 4 raka\'at fard',desc:'Prends le temps de bien les accomplir. L\'Asr est une prière de haute valeur.',tip:'« Celui qui rate l\'Asr — c\'est comme s\'il avait perdu sa famille et ses biens. » — Al-Bukhāri'},
-    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
-  ]},
-  103:{ type:'steps', steps:[
-    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
-    {emoji:'🌇',title:'Maghrib — 3 raka\'at fard',desc:'Prie dès l\'entrée du temps. Le Prophète ﷺ se hâtait pour Maghrib.',tip:'« Priez Maghrib à l\'entrée de son temps, car c\'est là que les étoiles commencent à apparaître. » — Ahmad'},
-    {emoji:'🕌',title:'Sunna après — 2 raka\'at',desc:'2 raka\'at de Sunna après Maghrib. Ou 6 raka\'at d\'Awwābīn si tu veux plus.'},
-    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
-  ]},
-  104:{ type:'steps', steps:[
-    {emoji:'💧',title:'Fais le wudu',desc:'Si tu n\'es pas déjà en état de pureté rituelle.'},
-    {emoji:'🌙',title:'Isha — 4 raka\'at fard',desc:'La dernière prière de la journée. Termine-la avec présence.',tip:'« Celui qui prie Isha en jamaʿa, c\'est comme s\'il avait prié la moitié de la nuit. » — Muslim'},
-    {emoji:'🕌',title:'Sunna après — 2 raka\'at',desc:'2 raka\'at après Isha. Puis le Witr si tu ne le fais pas plus tard.'},
-    {emoji:'📿',title:'Adhkar après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'},
-  ]},
-};
+function getPrayerFlow(id){
+  const p=S.palier||1;
+  const invocations={emoji:'📿',title:'Invocations après la prière',desc:'Subhanallah ×33, Alhamdulillah ×33, Allahu Akbar ×34.',arabic:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',phonetic:'Subḥānallāh · Alḥamdulillāh · Allāhu Akbar'};
+  const ablutions={emoji:'💧',title:'Fais les ablutions',desc:'Prépare-toi intérieurement. Les ablutions sont le début de la prière.'};
+  if(id===100){
+    const steps=[ablutions];
+    if(p>=3)steps.push({emoji:'🌅',title:'Sunna de Fajr — 2 raka\'at',desc:'Ces 2 raka\'at sont plus chères au Prophète ﷺ que le monde entier.',tip:'« Les 2 raka\'at de l\'aube valent mieux que le monde et ce qu\'il contient. » — Muslim'});
+    steps.push({emoji:'🤲',title:'Fajr — 2 raka\'at obligatoires',desc:'Avec présence du cœur. Lis lentement, sens chaque verset.'});
+    steps.push(invocations);
+    return{type:'steps',steps};
+  }
+  if(id===101){
+    const steps=[ablutions];
+    if(p>=4)steps.push({emoji:'☀️',title:'Prière volontaire avant — 4 raka\'at',desc:'2+2 raka\'at avant Dhuhr. Le Prophète ﷺ ne les abandonnait presque jamais.',tip:'« Celui qui maintient les 4 raka\'at avant et après Dhuhr, Allah lui interdit le feu. » — At-Tirmidhī'});
+    steps.push({emoji:'🤲',title:'Dhuhr — 4 raka\'at obligatoires',desc:'4 raka\'at avec présence et recueillement.'});
+    if(p>=3)steps.push({emoji:'🕌',title:'Prière volontaire après — 2 raka\'at',desc:'2 raka\'at après Dhuhr. Complète ta prière.'});
+    steps.push(invocations);
+    return{type:'steps',steps};
+  }
+  if(id===102){
+    return{type:'steps',steps:[
+      ablutions,
+      {emoji:'🌤️',title:'Asr — 4 raka\'at obligatoires',desc:'Prends le temps de bien les accomplir. L\'Asr est une prière de haute valeur.',tip:'« Celui qui rate l\'Asr — c\'est comme s\'il avait perdu sa famille et ses biens. » — Al-Bukhāri'},
+      invocations,
+    ]};
+  }
+  if(id===103){
+    const steps=[ablutions,{emoji:'🌇',title:'Maghrib — 3 raka\'at obligatoires',desc:'Prie dès l\'entrée du temps. Le Prophète ﷺ se hâtait pour Maghrib.',tip:'« Priez Maghrib à l\'entrée de son temps, car c\'est là que les étoiles commencent à apparaître. » — Ahmad'}];
+    if(p>=3)steps.push({emoji:'🕌',title:'Prière volontaire après — 2 raka\'at',desc:'2 raka\'at après Maghrib. Ou 6 si tu veux plus.'});
+    steps.push(invocations);
+    return{type:'steps',steps};
+  }
+  if(id===104){
+    const steps=[ablutions,{emoji:'🌙',title:'Isha — 4 raka\'at obligatoires',desc:'La dernière prière de la journée. Termine-la avec présence.',tip:'« Celui qui prie Isha en groupe, c\'est comme s\'il avait prié la moitié de la nuit. » — Muslim'}];
+    if(p>=3)steps.push({emoji:'🕌',title:'Prière volontaire après — 2 raka\'at',desc:'2 raka\'at après Isha. Puis le Witr si tu ne le fais pas plus tard.'});
+    steps.push(invocations);
+    return{type:'steps',steps};
+  }
+  return null;
+}
 function getPrayerItems(){
   const prayers=S.profile?.prayers||[];
   return prayers.map(p=>PRAYER_META[p]).filter(Boolean);
@@ -3058,7 +3065,7 @@ function renderSeancePhase(){
 const GUIDED_FLOWS = {
   1:{ type:'steps', steps:[
     {emoji:'⏰',title:'Réveille-toi',desc:'Commence par dire Alhamdulillah. La nuit appartient à ceux qui la saisissent.',tip:'Si c\'est difficile de te lever — pose ton alarme loin du lit. Le premier pas est le plus courageux.'},
-    {emoji:'💧',title:'Fais le wudu',desc:'Prends ton temps. Les ablutions préparent l\'extérieur pour préparer l\'intérieur.'},
+    {emoji:'💧',title:'Fais les ablutions',desc:'Prends ton temps. Les ablutions préparent l\'extérieur pour préparer l\'intérieur.'},
     {emoji:'🤲',title:'2 raka\'at légères pour commencer',desc:'C\'est la Sunna d\'ouvrir la prière de nuit. Courtes, pour réveiller le corps et le cœur.',tip:'Pour les débutants : ces 2 raka\'at + Witr suffisent. Augmente progressivement.'},
     {emoji:'📿',title:'Continue 2 par 2',desc:'Autant que tu peux — 2, 4, 6, 8 raka\'at. Chaque paire compte.'},
     {emoji:'🌙',title:'Termine par le Witr',desc:'1 raka\'a minimum. Le Prophète ﷺ ne l\'abandonnait jamais — ni en voyage ni à la maison.',arabic:'اللَّهُمَّ إِنَّا نَسْتَعِينُكَ',phonetic:'Allāhumma innā nasta\'īnuk'},
@@ -3066,19 +3073,19 @@ const GUIDED_FLOWS = {
   ]},
   2:{ type:'steps', steps:[
     {emoji:'🧘',title:'Reste assis après Fajr',desc:'Ne te lève pas encore. Reste sur ton tapis, mains posées, cœur présent.',tip:'« Celui qui reste assis jusqu\'au lever du soleil aura la récompense d\'un pèlerinage complet. » — At-Tirmidhī'},
-    {emoji:'📿',title:'Invocations du matin',desc:'Récite les adhkar du matin à voix basse. Istighfar, puis les invocations habituelles.'},
+    {emoji:'📿',title:'Invocations du matin',desc:'Récite les invocations du matin à voix basse. Demande de pardon, puis les invocations habituelles.'},
     {emoji:'📖',title:'Versets méritoires',desc:'Al-Fātiḥa, Āyat al-Kursī, les 3 dernières sourates. Ces versets sont ton bouclier du matin.'},
     {emoji:'🔗',title:'Du\'a ar-Rābiṭa',desc:'Invoque pour tes frères et sœurs en Islam. En silence, intérieurement. La sincérité prime.',tip:'Invoque par leurs noms si tu peux. Cette invocation relie les cœurs dans l\'amour d\'Allah.'},
     {emoji:'☀️',title:'Attends le lever du soleil',desc:'Puis prie 2 à 8 raka\'at du Chourouk — récompense égale à un pèlerinage, complète, complète.'},
   ]},
   3:{ type:'steps', steps:[
     {emoji:'🕌',title:'2 raka\'at sunna avant Fajr',desc:'Ces 2 raka\'at ne s\'abandonnent jamais. Plus aimées du Prophète ﷺ que le monde entier.',tip:'« Les 2 raka\'at de l\'aube valent mieux que le monde et ce qu\'il contient. » — Muslim'},
-    {emoji:'🤲',title:'Prière du Fajr — 2 raka\'at fard',desc:'Avec présence du cœur. Pense à ce que tu récites, verset par verset.'},
+    {emoji:'🤲',title:'Fajr — 2 raka\'at obligatoires',desc:'Avec présence du cœur. Pense à ce que tu récites, verset par verset.'},
     {emoji:'☀️',title:'Prière du Chourouk',desc:'10 à 15 min après le lever du soleil — 2 à 8 raka\'at. C\'est là que la journée prend racine.'},
   ]},
   4:{ type:'checklist', title:'Les rawatib que tu fais aujourd\'hui', items:[
     '2 raka\'at sunna avant le Fajr',
-    '2 raka\'at après le wudu (sunna de Bilāl)',
+    '2 raka\'at après les ablutions (sunna de Bilāl)',
     '4 raka\'at avant le Dhuhr + 2 après',
     '2 raka\'at avant le \'Asr',
     '2 raka\'at avant le Maghrib + 6 après (Awwābīn)',
@@ -3113,7 +3120,7 @@ const GUIDED_FLOWS = {
   9:{ type:'steps', steps:[
     {emoji:'📋',title:'Bilan de ta journée',desc:'Qu\'as-tu accompli ? Qu\'as-tu manqué ? Sois honnête, sans sévérité excessive.',tip:'Al-Hassan al-Basri : « Que chaque croyant se tienne des comptes plus sévèrement que ne le ferait un associé avare. »'},
     {emoji:'🤲',title:'Renouvelle ta tawba',desc:'Demande sincèrement pardon pour les manquements. Allah est Tawwāb — Il se retourne vers celui qui revient vers Lui.'},
-    {emoji:'💧',title:'Fais le wudu',desc:'Pour dormir en état de pureté. L\'ange prie pour toi toute la nuit.',tip:'« Celui qui dort en état de pureté — un ange l\'accompagne et dit : Ô Allah, pardonne à Ton serviteur. » — Ibn Ḥibbān'},
+    {emoji:'💧',title:'Fais les ablutions',desc:'Pour dormir en état de pureté. L\'ange prie pour toi toute la nuit.',tip:'« Celui qui dort en état de pureté — un ange l\'accompagne et dit : Ô Allah, pardonne à Ton serviteur. » — Ibn Ḥibbān'},
     {emoji:'📿',title:'Invocations du sommeil',desc:'Āyat al-Kursī, les 3 dernières sourates, la supplication du sommeil. Fais-les à voix basse.'},
     {emoji:'🌙',title:'Dors sur le côté droit',desc:'Et que ta dernière pensée consciente soit une confidence adressée à ton Seigneur. Remets-toi à Lui.'},
   ]},
@@ -3149,7 +3156,7 @@ let _gId=null,_gStep=0,_gChecked=new Set(),_gCount=0,_gTimerSec=0,_gTimerTotal=0
 
 function openGuided(id){
   const item=PROGRAM.find(p=>p.id===id)||getPrayerItems().find(p=>p.id===id);
-  const flow=GUIDED_FLOWS[id]||PRAYER_FLOWS[id];
+  const flow=GUIDED_FLOWS[id]||getPrayerFlow(id);
   if(!item||!flow){openDetail(id);return;}
   _gId=id;_gStep=0;_gChecked=new Set();_gCount=0;_gSession=0;_gRunning=false;
   if(_gInterval){clearInterval(_gInterval);_gInterval=null;}
@@ -3166,7 +3173,7 @@ function openGuided(id){
 }
 
 function renderGuided(){
-  const flow=GUIDED_FLOWS[_gId]||PRAYER_FLOWS[_gId]; if(!flow)return;
+  const flow=GUIDED_FLOWS[_gId]||getPrayerFlow(_gId); if(!flow)return;
   const body=document.getElementById('guided-body');
   const cta=document.getElementById('guided-cta');
   const dots=document.getElementById('guided-dots');
@@ -3260,7 +3267,7 @@ function guidedSkip(){
 }
 
 function guidedTap(){
-  const flow=GUIDED_FLOWS[_gId]||PRAYER_FLOWS[_gId]; if(!flow||flow.type!=='counter')return;
+  const flow=GUIDED_FLOWS[_gId]||getPrayerFlow(_gId); if(!flow||flow.type!=='counter')return;
   _gCount++;
   const valEl=document.getElementById('guided-count-val'); if(valEl)valEl.textContent=_gCount;
   const C=2*Math.PI*66,pct=Math.min(_gCount/flow.target,1);
@@ -3279,7 +3286,7 @@ function guidedCheckItem(i){
 }
 
 function guidedTimerStart(){
-  const flow=GUIDED_FLOWS[_gId]||PRAYER_FLOWS[_gId]; if(!flow)return;
+  const flow=GUIDED_FLOWS[_gId]||getPrayerFlow(_gId); if(!flow)return;
   _gRunning=true;
   _gInterval=setInterval(()=>{
     if(flow.mode==='up'){
@@ -3329,7 +3336,7 @@ function renderGuidedDone(){
     <div class="guided-done-sub">${msgs[Math.floor(Math.random()*msgs.length)]}</div>
   </div>`;
   const cta=document.getElementById('guided-cta');
-  if(_gId===3&&!S.checklist[2]){
+  if((_gId===3||_gId===100)&&!S.checklist[2]){
     cta.textContent='Commencer la séance →';
     cta.onclick=()=>{closeGuided();setTimeout(()=>openSeanceChoice(),450);};
   }else{
