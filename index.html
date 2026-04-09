@@ -2367,7 +2367,7 @@ function completeInvocItem(){
   setTimeout(()=>closeInvocPopup(),1600);
 }
 function openDetail(id){
-  if(id===2&&getCurrentCat()==="aube"){openSeanceChoice();return;}
+  if(id===2&&getCurrentCat()==="aube"){openSeanceGuidee();return;}
   const item=PROGRAM.find(i=>i.id===id);
   const det=ITEM_DETAILS[id];
   if(!item||!det)return;
@@ -3396,7 +3396,7 @@ function renderGuidedDone(){
   const cta=document.getElementById('guided-cta');
   if((_gId===3||_gId===100)&&!S.checklist[2]){
     cta.textContent='Commencer la séance →';
-    cta.onclick=()=>{closeGuided();setTimeout(()=>openSeanceChoice(),450);};
+    cta.onclick=()=>{closeGuided();setTimeout(()=>openSeanceGuidee(),450);};
   }else{
     cta.textContent='Retour →';
     cta.onclick=()=>closeGuided();
