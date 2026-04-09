@@ -640,8 +640,23 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .sa-close{width:38px;height:38px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:16px;flex-shrink:0;}
 .sa-header-title{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);}
 .sa-phase-pill{font-size:11px;font-weight:700;color:var(--accent);padding:4px 12px;background:var(--accent-light);border-radius:100px;white-space:nowrap;}
-.sa-progress{height:3px;background:var(--border);margin:0 20px;border-radius:2px;flex-shrink:0;}
+.sa-stepper{display:flex;align-items:flex-start;padding:10px 16px 6px;flex-shrink:0;}
+.sa-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;}
+.sa-step:not(:last-child)::after{content:'';position:absolute;top:13px;left:calc(50% + 14px);right:calc(-50% + 14px);height:1.5px;background:var(--border);z-index:0;transition:background .4s;}
+.sa-step.done:not(:last-child)::after{background:var(--green);}
+.sa-step-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .35s;z-index:1;position:relative;}
+.sa-step.active .sa-step-dot{border-color:var(--accent);background:var(--accent-light);transform:scale(1.15);box-shadow:0 0 0 4px rgba(186,117,23,.12);}
+.sa-step.done .sa-step-dot{border-color:var(--green);background:var(--green);font-size:11px;}
+.sa-step-label{font-size:9px;font-weight:700;color:var(--text-light);text-align:center;text-transform:uppercase;letter-spacing:.4px;}
+.sa-step.active .sa-step-label{color:var(--accent);}
+.sa-step.done .sa-step-label{color:var(--green);}
+.sa-progress{height:2px;background:var(--border);margin:0 20px;border-radius:2px;flex-shrink:0;}
 .sa-progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .6s ease;}
+@keyframes phaseIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.sa-phase-transition{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;animation:phaseIn .4s cubic-bezier(.2,1,.4,1) both;}
+.sa-phase-transition-emoji{font-size:52px;margin-bottom:16px;}
+.sa-phase-transition-title{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;text-align:center;}
+.sa-phase-transition-sub{font-size:14px;color:var(--text-secondary);text-align:center;line-height:1.6;}
 .sa-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px 8px;}
 .sa-footer{padding:10px 20px calc(16px + env(safe-area-inset-bottom));flex-shrink:0;display:flex;flex-direction:column;gap:6px;}
 .sa-card{background:var(--bg-card);border-radius:20px;border:.5px solid var(--border);padding:22px 20px;animation:stepIn .3s cubic-bezier(.2,1,.4,1) both;}
@@ -1263,8 +1278,9 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="sa-header">
     <button class="sa-close" onclick="closeSeanceAube()">✕</button>
     <div class="sa-header-title">Séance de l'aube</div>
-    <div class="sa-phase-pill" id="sa-phase-pill"></div>
+    <div style="width:38px"></div>
   </div>
+  <div class="sa-stepper" id="sa-stepper"></div>
   <div class="sa-progress"><div class="sa-progress-fill" id="sa-progress-fill" style="width:0%"></div></div>
   <div class="sa-body" id="sa-body"></div>
   <div class="sa-footer" id="sa-footer">
@@ -2838,6 +2854,7 @@ function closeSeanceChoice(){document.getElementById('seance-choice').classList.
 function openSeanceGuidee(){
   if(!S.versetSelection)S.versetSelection=[];
   _sa={phase:'invocations',invocStep:0,versetStep:0,duaStep:0};
+  _saLastPhase=null;
   document.getElementById('seance-aube').classList.add('show');
   renderSeancePhase();
 }
@@ -2902,11 +2919,56 @@ function toggleVersetSel(id){
   save();renderSeancePhase();
 }
 
+const SA_PHASES=[
+  {key:'invocations',emoji:'📿',label:'Invocations',intro:'Les invocations du matin',sub:'Récite-les une par une, avec présence du cœur.'},
+  {key:'versets',emoji:'📖',label:'Versets',intro:'Versets méritoires',sub:'Les versets qui protègent et illuminent la journée.'},
+  {key:'dua',emoji:'💚',label:"Du'a",intro:"Du'a ar-Rābiṭa",sub:'Invoque pour tes frères et sœurs dans l\'amour d\'Allah.'},
+  {key:'chourouk',emoji:'☀️',label:'Chourouk',intro:'Attente du Chourouk',sub:'Reste assis jusqu\'au lever du soleil — récompense d\'un pèlerinage.'},
+];
+function phaseKey(phase){
+  if(phase==='versets_select'||phase==='versets_read')return'versets';
+  if(phase==='dua_rabita')return'dua';
+  return phase;
+}
+function renderSaStepper(){
+  const cur=phaseKey(_sa.phase);
+  const curIdx=SA_PHASES.findIndex(p=>p.key===cur);
+  document.getElementById('sa-stepper').innerHTML=SA_PHASES.map((p,i)=>{
+    const state=i<curIdx?'done':i===curIdx?'active':'';
+    return`<div class="sa-step${state?' '+state:''}">
+      <div class="sa-step-dot">${i<curIdx?'✓':p.emoji}</div>
+      <div class="sa-step-label">${p.label}</div>
+    </div>`;
+  }).join('');
+}
+let _saLastPhase=null;
 function renderSeancePhase(){
   const body=document.getElementById('sa-body');
   const cta=document.getElementById('sa-cta');
   const skip=document.getElementById('sa-skip');
-  const pill=document.getElementById('sa-phase-pill');
+  const fill=document.getElementById('sa-progress-fill');
+  skip.style.display='none';
+  const curKey=phaseKey(_sa.phase);
+  const phaseChanged=_saLastPhase!==null&&phaseKey(_saLastPhase)!==curKey;
+  _saLastPhase=_sa.phase;
+  renderSaStepper();
+  if(phaseChanged){
+    const meta=SA_PHASES.find(p=>p.key===curKey);
+    body.innerHTML=`<div class="sa-phase-transition">
+      <div class="sa-phase-transition-emoji">${meta.emoji}</div>
+      <div class="sa-phase-transition-title">${meta.intro}</div>
+      <div class="sa-phase-transition-sub">${meta.sub}</div>
+    </div>`;
+    cta.textContent='Commencer →';
+    cta.onclick=()=>{cta.onclick=()=>seanceCta();renderSeancePhaseContent();};
+    return;
+  }
+  renderSeancePhaseContent();
+}
+function renderSeancePhaseContent(){
+  const body=document.getElementById('sa-body');
+  const cta=document.getElementById('sa-cta');
+  const skip=document.getElementById('sa-skip');
   const fill=document.getElementById('sa-progress-fill');
   skip.style.display='none';
 
@@ -2916,7 +2978,6 @@ function renderSeancePhase(){
     const inv=invocs[i];
     const isLast=i>=invocs.length-1;
     fill.style.width=Math.round(i/invocs.length*25)+'%';
-    pill.textContent='Invocations';
     const palierLow=S.palier<=2;
     body.innerHTML=`<div class="sa-card">
       <div class="sa-card-counter">${i+1} / ${invocs.length}</div>
@@ -2932,7 +2993,6 @@ function renderSeancePhase(){
   }
   else if(_sa.phase==='versets_select'){
     fill.style.width='25%';
-    pill.textContent='Versets méritoires';
     const sel=S.versetSelection||[];
     body.innerHTML=`<div class="sa-verset-select">
       <div class="sa-verset-select-title">Quels versets lis-tu le matin ?</div>
@@ -2957,7 +3017,6 @@ function renderSeancePhase(){
     if(!v){seanceNextVerset();return;}
     const isLast=i>=sel.length-1;
     fill.style.width=(25+Math.round(i/sel.length*25))+'%';
-    pill.textContent='Versets méritoires';
     let inner='';
     if(v.longSura){
       inner=`<div class="sa-card-verset-title">${v.title} <span class="sa-card-ref">${v.ref}</span></div>
@@ -2989,7 +3048,6 @@ function renderSeancePhase(){
     const step=DUA_RABITA_STEPS[i];
     const isLast=i>=DUA_RABITA_STEPS.length-1;
     fill.style.width=(50+Math.round(i/DUA_RABITA_STEPS.length*25))+'%';
-    pill.textContent="Du'a rabita";
     body.innerHTML=`<div class="sa-card">
       <div class="sa-card-counter">Étape ${i+1} / ${DUA_RABITA_STEPS.length}</div>
       <div class="sa-card-big-emoji">${step.emoji}</div>
