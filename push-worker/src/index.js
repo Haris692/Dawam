@@ -148,11 +148,13 @@ async function encryptPayload(subscription, plaintext) {
 }
 
 // ── Envoi d'un push ────────────────────────────────────────────────────────
-async function sendPush(subscription, privKey, vapidPublicKey, vapidSubject, type) {
+async function sendPush(subscription, privKey, vapidPublicKey, vapidSubject, type, palier) {
   const jwt = await makeVapidJWT(subscription.endpoint, vapidSubject, privKey);
 
   if (type && subscription.keys?.p256dh && subscription.keys?.auth) {
-    const body = await encryptPayload(subscription, type);
+    const msg = getMsg(type, palier || subscription.palier || 1);
+    const payload = JSON.stringify({ type, title: msg.title, body: msg.body });
+    const body = await encryptPayload(subscription, payload);
     return fetch(subscription.endpoint, {
       method: 'POST',
       headers: {
@@ -237,6 +239,43 @@ function typeForNow(timings, timezone) {
   return null;
 }
 
+// ── Messages personnalisés par type × palier ───────────────────────────────
+// tier: 1 = palier 1-2, 2 = palier 3-4, 3 = palier 5
+function getTier(palier) {
+  if (palier >= 5) return 3;
+  if (palier >= 3) return 2;
+  return 1;
+}
+
+const NOTIF_MSGS = {
+  aube: [
+    { title: 'Dawam 🌄', body: "Ta séance de l'aube t'attend — prends 5 minutes, c'est tout." },
+    { title: 'Dawam 🌄', body: "Ta séance de l'aube t'attend — Coran, invocations, constance." },
+    { title: 'Dawam 🌄', body: "Fajr est passé — séance de l'aube, wird coranique, du'a t'attendent." },
+  ],
+  journee: [
+    { title: 'Dawam ☀️', body: "N'oublie pas tes actions du jour — quelques minutes suffisent." },
+    { title: 'Dawam ☀️', body: "Ta séance de la journée t'attend — maintiens ta constance." },
+    { title: 'Dawam ☀️', body: "Salawat, témoignage d'unicité, prières volontaires — ta journée spirituelle t'attend." },
+  ],
+  soir: [
+    { title: 'Dawam 🌙', body: "Les invocations du soir te protègent cette nuit — prends un moment." },
+    { title: 'Dawam 🌙', body: "Ta séance du soir t'attend — invocations, actes avant le sommeil." },
+    { title: 'Dawam 🌙', body: "Invocations du soir, bilan, versets protecteurs — ta séance du soir t'attend." },
+  ],
+  aprem: [
+    { title: 'Dawam ⏰', body: "Tes actions du jour t'attendent — quelques minutes suffisent." },
+    { title: 'Dawam ⏰', body: "Tes actions du jour t'attendent — quelques minutes suffisent." },
+    { title: 'Dawam ⏰', body: "As-tu accompli tes actions essentielles aujourd'hui ? Il reste encore du temps." },
+  ],
+};
+
+function getMsg(type, palier) {
+  const msgs = NOTIF_MSGS[type];
+  if (!msgs) return { title: 'Dawam 📿', body: 'Ton programme spirituel t\'attend.' };
+  return msgs[getTier(palier) - 1];
+}
+
 // ── Anti-doublon quotidien via KV ──────────────────────────────────────────
 function todayUTC() {
   const d = new Date();
@@ -280,7 +319,7 @@ async function notifyAll(env, type) {
           if (await hasSent(env, name, type)) return;
           // iOS (Apple) ne déclenche pas le push event si payload chiffré → ping vide
           const isApple = sub.endpoint?.includes('apple.com');
-          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type);
+          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type, sub.palier || 1);
           if (res.status === 410 || res.status === 404) await env.SUBSCRIPTIONS.delete(name);
           else await markSent(env, name, type);
         })
@@ -317,7 +356,7 @@ async function notifyAdaptive(env) {
 
           // iOS (Apple) ne déclenche pas le push event si payload chiffré → ping vide
           const isApple = sub.endpoint?.includes('apple.com');
-          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type);
+          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type, sub.palier || 1);
           if (res.status === 410 || res.status === 404) await env.SUBSCRIPTIONS.delete(name);
           else await markSent(env, name, type);
         })
@@ -341,8 +380,8 @@ export default {
       const body = await request.json();
       if (!body?.endpoint || !body?.keys) return json({ error: 'invalid' }, 400);
       const id = await subId(body.endpoint);
-      // Stocker endpoint + keys + city
-      const sub = { endpoint: body.endpoint, keys: body.keys, city: body.city || '' };
+      // Stocker endpoint + keys + city + palier
+      const sub = { endpoint: body.endpoint, keys: body.keys, city: body.city || '', palier: body.palier || 1 };
       await env.SUBSCRIPTIONS.put(id, JSON.stringify(sub));
       return json({ ok: true });
     }
@@ -431,7 +470,8 @@ export default {
       const pt = await getPrayerTimes(sub.city, env);
       if (!pt) return json({ type: 'default' });
       const type = typeForNow(pt.timings, pt.timezone) || 'default';
-      return json({ type, city: sub.city });
+      const msg = type !== 'default' ? getMsg(type, sub.palier || 1) : null;
+      return json({ type, city: sub.city, ...(msg ? { title: msg.title, body: msg.body } : {}) });
     }
 
     // Telemetrie SW : POST /push-log { type, rawText, hasData, ts }

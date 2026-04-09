@@ -50,12 +50,18 @@ const PUSH_MSGS = {
 self.addEventListener("push", e => {
   e.waitUntil((async () => {
     let type = "default";
+    let customTitle = null, customBody = null;
 
     // 1. Essaie de lire le type depuis le payload (Android/Chrome)
     if (e.data) {
       try {
         const text = e.data.text().trim();
-        try { type = JSON.parse(text).type || text; } catch (_) { type = text; }
+        try {
+          const parsed = JSON.parse(text);
+          type = parsed.type || text;
+          if (parsed.title) customTitle = parsed.title;
+          if (parsed.body) customBody = parsed.body;
+        } catch (_) { type = text; }
       } catch (_) {}
     }
 
@@ -69,7 +75,11 @@ self.addEventListener("push", e => {
             encodeURIComponent(sub.endpoint)
           );
           const data = await res.json();
-          if (data.type && data.type !== "default") type = data.type;
+          if (data.type && data.type !== "default") {
+            type = data.type;
+            if (data.title) customTitle = data.title;
+            if (data.body) customBody = data.body;
+          }
         }
       } catch (_) {}
     }
@@ -81,9 +91,11 @@ self.addEventListener("push", e => {
       body: JSON.stringify({ type, hasData: !!e.data, ts: Date.now() }),
     }).catch(() => {});
 
-    const msg = PUSH_MSGS[type] ?? PUSH_MSGS.default;
-    await self.registration.showNotification(msg.title, {
-      body: msg.body,
+    const fallback = PUSH_MSGS[type] ?? PUSH_MSGS.default;
+    const title = customTitle || fallback.title;
+    const body = customBody || fallback.body;
+    await self.registration.showNotification(title, {
+      body,
       icon: "./icon-192.png",
       badge: "./icon-192.png",
       vibrate: [200, 100, 200],
