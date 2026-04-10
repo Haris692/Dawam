@@ -699,10 +699,66 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .sa-done-title{font-size:24px;font-weight:700;color:var(--text);}
 .sa-done-sub{font-size:14px;color:var(--text-secondary);max-width:260px;line-height:1.6;}
 .sa-skip-btn{background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-light);padding:6px;text-align:center;width:100%;}
+
+/* ── AUTH ── */
+#auth{background:var(--bg);justify-content:center;align-items:center;padding:32px 24px 24px;overflow-y:auto;}
+.auth-logo{font-family:var(--font-display);font-size:44px;font-weight:700;color:var(--accent);letter-spacing:-1px;text-align:center;margin-bottom:4px;}
+.auth-tagline{font-family:var(--font-display);font-size:14px;font-style:italic;color:var(--text-secondary);text-align:center;margin-bottom:28px;}
+.auth-card{background:var(--bg-card);border-radius:20px;border:.5px solid var(--border);padding:24px 20px;width:100%;box-shadow:var(--shadow);}
+.auth-title{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);text-align:center;margin-bottom:6px;}
+.auth-sub{font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:20px;line-height:1.5;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-family:var(--font-body);font-size:15px;font-weight:600;color:#3c3c3c;transition:all .15s;margin-bottom:16px;}
+.btn-google:active{opacity:.8;transform:scale(.98);}
+.auth-sep{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.auth-sep-line{flex:1;height:1px;background:var(--border);}
+.auth-sep-text{font-size:12px;color:var(--text-light);font-weight:500;}
+.auth-input{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:var(--font-body);font-size:15px;color:var(--text);outline:none;margin-bottom:10px;transition:border-color .2s;-webkit-appearance:none;}
+.auth-input:focus{border-color:var(--accent);}
+.auth-toggle{text-align:center;margin-top:14px;font-size:13px;color:var(--text-secondary);}
+.auth-toggle span{color:var(--accent);font-weight:600;cursor:pointer;}
+.auth-error{font-size:13px;color:#b02020;text-align:center;margin-top:8px;min-height:18px;line-height:1.4;}
+.auth-forgot{font-size:12px;color:var(--text-light);text-align:right;cursor:pointer;margin-top:-4px;margin-bottom:12px;display:block;}
 </style>
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
 <body>
 <div id="app">
+
+<!-- AUTH -->
+<div class="screen active" id="auth">
+  <p class="auth-logo">Dawam</p>
+  <p class="auth-tagline">Petit, mais constant.</p>
+  <div class="auth-card">
+    <h2 class="auth-title" id="auth-title">Bon retour 🤲</h2>
+    <p class="auth-sub">Connecte-toi pour continuer ton chemin spirituel.</p>
+
+    <div id="auth-google-block">
+      <button class="btn-google" onclick="authGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continuer avec Google
+      </button>
+      <div class="auth-sep">
+        <div class="auth-sep-line"></div>
+        <span class="auth-sep-text">ou</span>
+        <div class="auth-sep-line"></div>
+      </div>
+    </div>
+
+    <input class="auth-input" id="auth-email" type="email" placeholder="Adresse email" autocomplete="email">
+    <input class="auth-input" id="auth-password" type="password" placeholder="Mot de passe" autocomplete="current-password">
+    <span class="auth-forgot" id="auth-forgot" onclick="authForgotPassword()">Mot de passe oublié ?</span>
+    <div id="auth-confirm-wrap" style="display:none">
+      <input class="auth-input" id="auth-confirm" type="password" placeholder="Confirmer le mot de passe">
+    </div>
+    <button class="btn-primary" id="auth-submit-btn" onclick="authEmail()">Se connecter</button>
+    <p class="auth-error" id="auth-error"></p>
+    <div class="auth-toggle">
+      <span id="auth-mode-toggle" onclick="toggleAuthMode()">Pas encore de compte ? Créer un compte</span>
+    </div>
+  </div>
+</div>
 
 <!-- UPDATE BANNER -->
 <div id="update-banner" style="display:none"></div>
@@ -715,7 +771,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 </div>
 
 <!-- SPLASH -->
-<div class="screen active" id="splash">
+<div class="screen" id="splash">
   <p class="splash-logo">Dawam</p>
   <p class="splash-tagline">Petit, mais constant.</p>
   <div class="splash-sep"></div>
@@ -1164,6 +1220,11 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
         <div style="flex:1"><div class="danger-text">Recommencer l'onboarding</div><div style="font-size:11px;color:#b02020;opacity:.6;margin-top:1px">Efface toutes tes données</div></div>
         <span class="danger-arrow">›</span>
       </div>
+      <div class="danger-item" onclick="signOutUser()">
+        <div class="danger-icon">🚪</div>
+        <div style="flex:1"><div class="danger-text">Se déconnecter</div><div style="font-size:11px;color:#b02020;opacity:.6;margin-top:1px">Retour à l'écran de connexion</div></div>
+        <span class="danger-arrow">›</span>
+      </div>
     </div>
 
     <div class="dawam-footer">Dawam · Petit, mais constant.</div>
@@ -1320,6 +1381,102 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 </div>
 
 <script>
+// ═══ FIREBASE AUTH ═══
+const _fbConfig = {
+  apiKey: "AIzaSyD1R9sIG79FLny3OxCD8OkLamQDlWoaDXo",
+  authDomain: "mydawam-27a70.firebaseapp.com",
+  projectId: "mydawam-27a70",
+  storageBucket: "mydawam-27a70.firebasestorage.app",
+  messagingSenderId: "1095852433935",
+  appId: "1:1095852433935:web:efd5cfa6fff3efb4e9b97a"
+};
+firebase.initializeApp(_fbConfig);
+const _auth = firebase.auth();
+// Persist auth across TWA/PWA restarts
+_auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+let _authMode = 'login';
+const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+// Masquer le bouton Google sur iOS (pas de compte Apple pour l'instant)
+if (_isIOS) document.getElementById('auth-google-block').style.display = 'none';
+
+function toggleAuthMode() {
+  _authMode = _authMode === 'login' ? 'register' : 'login';
+  const isReg = _authMode === 'register';
+  document.getElementById('auth-confirm-wrap').style.display = isReg ? 'block' : 'none';
+  document.getElementById('auth-submit-btn').textContent = isReg ? 'Créer mon compte' : 'Se connecter';
+  document.getElementById('auth-mode-toggle').textContent = isReg ? 'Déjà un compte ? Se connecter' : 'Pas encore de compte ? Créer un compte';
+  document.getElementById('auth-title').textContent = isReg ? 'Créer un compte 🌱' : 'Bon retour 🤲';
+  document.getElementById('auth-forgot').style.display = isReg ? 'none' : 'block';
+  document.getElementById('auth-error').textContent = '';
+}
+
+function _setAuthError(msg) { document.getElementById('auth-error').textContent = msg; }
+
+async function authGoogle() {
+  _setAuthError('');
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await _auth.signInWithPopup(provider);
+  } catch (e) {
+    if (e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request') {
+      try { await _auth.signInWithRedirect(provider); } catch(e2) { _setAuthError('Connexion Google impossible.'); }
+    } else if (e.code !== 'auth/popup-closed-by-user') {
+      _setAuthError('Erreur Google : ' + (e.message || e.code));
+    }
+  }
+}
+
+async function authEmail() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  if (!email || !password) { _setAuthError('Remplis tous les champs.'); return; }
+  const btn = document.getElementById('auth-submit-btn');
+  btn.disabled = true; btn.textContent = '...';
+  _setAuthError('');
+  try {
+    if (_authMode === 'register') {
+      const confirm = document.getElementById('auth-confirm').value;
+      if (password !== confirm) { _setAuthError('Les mots de passe ne correspondent pas.'); btn.disabled=false;btn.textContent='Créer mon compte'; return; }
+      if (password.length < 6) { _setAuthError('Mot de passe trop court (6 min).'); btn.disabled=false;btn.textContent='Créer mon compte'; return; }
+      await _auth.createUserWithEmailAndPassword(email, password);
+    } else {
+      await _auth.signInWithEmailAndPassword(email, password);
+    }
+  } catch (e) {
+    const msgs = {
+      'auth/invalid-email':'Email invalide.',
+      'auth/user-not-found':'Aucun compte avec cet email.',
+      'auth/wrong-password':'Mot de passe incorrect.',
+      'auth/invalid-credential':'Email ou mot de passe incorrect.',
+      'auth/email-already-in-use':'Cet email est déjà utilisé.',
+      'auth/too-many-requests':'Trop de tentatives, réessaie plus tard.',
+      'auth/weak-password':'Mot de passe trop faible.',
+    };
+    _setAuthError(msgs[e.code] || 'Erreur : ' + e.message);
+    btn.disabled = false;
+    btn.textContent = _authMode === 'register' ? 'Créer mon compte' : 'Se connecter';
+  }
+}
+
+async function authForgotPassword() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) { _setAuthError('Entre ton email d\'abord.'); return; }
+  try {
+    await _auth.sendPasswordResetEmail(email);
+    _setAuthError('');
+    showToast('Email de réinitialisation envoyé ✓');
+  } catch (e) {
+    _setAuthError('Email introuvable ou invalide.');
+  }
+}
+
+function signOutUser() {
+  if (!confirm('Se déconnecter de Dawam ?')) return;
+  _auth.signOut().catch(() => showToast('Erreur lors de la déconnexion.'));
+  // Navigation handled by onAuthStateChanged
+}
+
 // ═══ DATA ═══
 const PROGRAM = [
   {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[5],       why:"Le Prophète ﷺ ne l'abandonnait jamais — ni en voyage ni à la maison."},
@@ -3432,6 +3589,8 @@ function closeGuided(){
 
 // ═══ ANALYTICS ═══
 function getUid() {
+  const user = _auth.currentUser;
+  if (user) return user.uid;
   let uid = localStorage.getItem('_dawam_uid');
   if (!uid) { uid = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('_dawam_uid', uid); }
   return uid;
@@ -3488,8 +3647,27 @@ async function activateNotifsFromPrompt(){
 
 // Notifications push — à configurer ultérieurement
 
+// ═══ INIT ═══
 load();
-if(S.name){launchApp();track('launch');}else{showScreen("splash");}
+// Handle redirect result (TWA fallback for Google Sign-In)
+_auth.getRedirectResult().catch(e => {
+  if (e.code && e.code !== 'auth/no-current-user') _setAuthError('Connexion Google impossible.');
+});
+// Auth gate — everything starts here
+_auth.onAuthStateChanged(user => {
+  if (!user) {
+    showScreen('auth');
+    document.getElementById('bottom-nav').classList.remove('visible');
+  } else {
+    S._uid = user.uid;
+    if (S.name) {
+      launchApp();
+      track('launch');
+    } else {
+      showScreen('splash');
+    }
+  }
+});
 </script>
 <!-- Overlay journée complète -->
 <div id="dawam-completion-overlay">
