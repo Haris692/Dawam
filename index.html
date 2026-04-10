@@ -3720,26 +3720,28 @@ function _hideLoader() {
   }, delay);
 }
 
-// Traite le résultat du redirect Google (mobile/TWA)
-_auth.getRedirectResult().catch(e => {
-  if (e.code && e.code !== 'auth/no-current-user') _setAuthError('Connexion Google impossible.');
-});
-
-// Auth gate — unique point d'entrée de l'app
-_auth.onAuthStateChanged(user => {
-  _hideLoader();
-  if (!user) {
-    showScreen('auth');
-  } else {
-    S._uid = user.uid;
-    if (S.name) {
-      launchApp();
-      track('launch');
-    } else {
-      showScreen('splash');
-    }
-  }
-});
+// Auth gate — enregistré APRÈS que getRedirectResult() soit résolu
+// pour éviter que onAuthStateChanged(null) s'exécute avant le retour Google
+_auth.getRedirectResult()
+  .catch(e => {
+    if (e.code && e.code !== 'auth/no-current-user') _setAuthError('Connexion Google impossible.');
+  })
+  .finally(() => {
+    _auth.onAuthStateChanged(user => {
+      _hideLoader();
+      if (!user) {
+        showScreen('auth');
+      } else {
+        S._uid = user.uid;
+        if (S.name) {
+          launchApp();
+          track('launch');
+        } else {
+          showScreen('splash');
+        }
+      }
+    });
+  });
 </script>
 <!-- Overlay journée complète -->
 <div id="dawam-completion-overlay">
