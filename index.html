@@ -701,14 +701,14 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .sa-skip-btn{background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-light);padding:6px;text-align:center;width:100%;}
 
 /* ── AUTH LOADER ── */
-#auth-loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:20px;transition:opacity .35s ease;}
+#auth-loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .38s ease;}
 #auth-loader.hiding{opacity:0;pointer-events:none;}
-.auth-loader-logo{font-family:var(--font-display);font-size:48px;font-weight:700;color:var(--accent);letter-spacing:-1px;}
-.auth-loader-dots{display:flex;gap:8px;}
-.auth-loader-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.3;animation:dotPulse 1.2s ease-in-out infinite;}
-.auth-loader-dots span:nth-child(2){animation-delay:.2s;}
-.auth-loader-dots span:nth-child(3){animation-delay:.4s;}
-@keyframes dotPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+.al-ring{stroke:#3B6D11;}
+.al-ring2{stroke:rgba(59,109,17,.22);}
+.al-dot{fill:#3B6D11;}
+.al-star{fill:#BA7517;}
+.al-letter{font-family:var(--font-display);font-size:38px;font-weight:700;color:var(--text);letter-spacing:-1px;}
+.al-tag{font-family:var(--font-display);font-size:12px;font-style:italic;color:rgba(61,42,10,.45);}
 /* ── AUTH ── */
 #auth{background:var(--bg);justify-content:center;align-items:center;padding:32px 24px 24px;overflow-y:auto;}
 .auth-logo{font-family:var(--font-display);font-size:44px;font-weight:700;color:var(--accent);letter-spacing:-1px;text-align:center;margin-bottom:4px;}
@@ -731,14 +731,33 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 <body>
 <div id="app">
 
 <!-- LOADER (couvre tout pendant la vérification Firebase) -->
 <div id="auth-loader">
-  <p class="auth-loader-logo">Dawam</p>
-  <div class="auth-loader-dots"><span></span><span></span><span></span></div>
+  <svg id="al-svg" width="130" height="130" viewBox="0 0 130 130" style="margin-bottom:22px">
+    <defs>
+      <filter id="al-glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <circle id="al-ring"  cx="65" cy="65" r="52" fill="none" class="al-ring"  stroke-width="1.2" stroke-dasharray="326" stroke-dashoffset="326" stroke-linecap="round" filter="url(#al-glow)"/>
+    <circle id="al-ring2" cx="65" cy="65" r="42" fill="none" class="al-ring2" stroke-width=".6"  stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round"/>
+    <text id="al-star" x="65" y="73" text-anchor="middle" font-size="34" class="al-star" font-family="serif" opacity="0" filter="url(#al-glow)">✦</text>
+    <circle id="al-dot1" cx="65"  cy="10"  r="2.5" class="al-dot" opacity="0"/>
+    <circle id="al-dot2" cx="120" cy="65"  r="2.5" class="al-dot" opacity="0"/>
+    <circle id="al-dot3" cx="65"  cy="120" r="2.5" class="al-dot" opacity="0"/>
+    <circle id="al-dot4" cx="10"  cy="65"  r="2.5" class="al-dot" opacity="0"/>
+  </svg>
+  <div id="al-name" style="display:flex;gap:1px;margin-bottom:8px">
+    <span class="al-l al-letter">D</span>
+    <span class="al-l al-letter">a</span>
+    <span class="al-l al-letter">w</span>
+    <span class="al-l al-letter">a</span>
+    <span class="al-l al-letter">m</span>
+  </div>
+  <p id="al-tag" class="al-tag" style="opacity:0">Petit, mais constant.</p>
 </div>
 
 <!-- AUTH -->
@@ -3670,6 +3689,24 @@ async function activateNotifsFromPrompt(){
 
 // ═══ INIT ═══
 load();
+
+// ── Loader GSAP ──
+(function _playLoader() {
+  gsap.set('#al-ring',  { strokeDashoffset: 326 });
+  gsap.set('#al-ring2', { strokeDashoffset: 264 });
+  gsap.set('#al-star',  { opacity: 0, scale: .4, transformOrigin: 'center' });
+  gsap.set('.al-l',     { opacity: 0, y: 18 });
+  gsap.set('#al-tag',   { opacity: 0, y: 6 });
+  gsap.set(['#al-dot1','#al-dot2','#al-dot3','#al-dot4'], { opacity: 0, scale: 0, transformOrigin: 'center' });
+  const tl = gsap.timeline();
+  tl.to('#al-ring',  { strokeDashoffset: 0, duration: .9, ease: 'power2.inOut' })
+    .to('#al-ring2', { strokeDashoffset: 0, duration: .6, ease: 'power2.out' }, '-=.5')
+    .to(['#al-dot1','#al-dot2','#al-dot3','#al-dot4'], { opacity: 1, scale: 1, duration: .3, stagger: .08, ease: 'back.out(3)' }, '-=.3')
+    .to('#al-star',  { opacity: 1, scale: 1, duration: .45, ease: 'back.out(2.5)', transformOrigin: '50% 50%' }, '-=.15')
+    .to('.al-l',     { opacity: 1, y: 0, duration: .35, stagger: .07, ease: 'back.out(1.8)' }, '-=.1')
+    .to('#al-tag',   { opacity: 1, y: 0, duration: .4 }, '-=.05')
+    .to('#al-svg',   { rotation: 8, duration: 2, ease: 'power1.inOut', yoyo: true, repeat: 1 }, '-=.8');
+})();
 
 function _hideLoader() {
   const loader = document.getElementById('auth-loader');
