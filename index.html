@@ -766,7 +766,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <p class="auth-tagline">Petit, mais constant.</p>
   <div class="auth-card">
     <h2 class="auth-title" id="auth-title">Bon retour 🤲</h2>
-    <p class="auth-sub">Connecte-toi pour continuer ton chemin spirituel.</p>
+    <p class="auth-sub" id="auth-sub">Connecte-toi pour continuer ton chemin spirituel.</p>
 
     <div id="auth-google-block">
       <button class="btn-google" onclick="authGoogle()">
@@ -1447,6 +1447,20 @@ function toggleAuthMode() {
 
 function _setAuthError(msg) { document.getElementById('auth-error').textContent = msg; }
 
+function _setAuthContext(ctx) {
+  const title = document.getElementById('auth-title');
+  const sub   = document.getElementById('auth-sub');
+  if (ctx === 'save') {
+    title.textContent = 'Sauvegarde ton parcours 🌱';
+    sub.textContent   = 'Crée un compte gratuit pour ne pas perdre ton programme.';
+    // Pré-sélectionner le mode inscription
+    if (typeof _authMode !== 'undefined' && _authMode !== 'register') toggleAuthMode();
+  } else {
+    title.textContent = 'Bon retour 🤲';
+    sub.textContent   = 'Connecte-toi pour continuer ton chemin spirituel.';
+  }
+}
+
 async function authGoogle() {
   _setAuthError('');
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -1895,9 +1909,15 @@ function finishOnboarding(){
   localStorage.removeItem(STORAGE_KEY);
   const notifs=obAns._pushSub?{pushSub:obAns._pushSub}:null;
   S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null,notifs};
-  save();launchApp();track('launch');track('onboarding_complete');
-  // Proposer les notifications immédiatement après l'onboarding
-  setTimeout(()=>document.getElementById('notif-prompt')?.classList.add('show'),1200);
+  save();track('onboarding_complete');
+  if (_auth.currentUser) {
+    launchApp(); track('launch');
+    setTimeout(()=>document.getElementById('notif-prompt')?.classList.add('show'),1200);
+  } else {
+    // Onboarding terminé sans compte → inviter à s'inscrire pour sauvegarder
+    _setAuthContext('save');
+    showScreen('auth');
+  }
 }
 
 // ═══ PATH ═══
@@ -3740,7 +3760,14 @@ _auth.getRedirectResult()
     _auth.onAuthStateChanged(user => {
       _hideLoader();
       if (!user) {
-        showScreen('auth');
+        // Pas de compte : si onboarding déjà fait → demander de se connecter
+        // sinon → laisser faire l'onboarding librement
+        if (S.name) {
+          _setAuthContext('save');
+          showScreen('auth');
+        } else {
+          showScreen('splash');
+        }
       } else {
         S._uid = user.uid;
         if (S.name) {
