@@ -2481,16 +2481,38 @@ function showToast(msg){const t=document.getElementById("toast");t.textContent=m
 function showLockedHint(cat){const msgs={qiyam:"Disponible la nuit (dernier tiers)",aube:"Disponible après le Fajr",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible avant de dormir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 async function resetApp() {
   if (!confirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données et supprimera ton compte.')) return;
-  try {
-    const user = _auth.currentUser;
-    localStorage.removeItem(STORAGE_KEY);
-    if (user) await user.delete();
-  } catch (e) {
-    // Si delete() échoue (session trop ancienne), on déconnecte simplement
-    await _auth.signOut().catch(() => {});
-    location.reload();
-    return;
+  const user = _auth.currentUser;
+  if (user) {
+    try {
+      await user.delete();
+    } catch (e) {
+      if (e.code === 'auth/requires-recent-login') {
+        // Ré-authentification nécessaire avant de supprimer
+        try {
+          const providerData = user.providerData;
+          const isGoogle = providerData.some(p => p.providerId === 'google.com');
+          if (isGoogle) {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await _auth.currentUser.reauthenticateWithPopup(provider);
+          } else {
+            // Email/password : demander le mot de passe
+            const pwd = prompt('Pour confirmer la suppression, entre ton mot de passe :');
+            if (!pwd) return;
+            const cred = firebase.auth.EmailAuthProvider.credential(user.email, pwd);
+            await _auth.currentUser.reauthenticateWithCredential(cred);
+          }
+          await _auth.currentUser.delete();
+        } catch (e2) {
+          showToast('Suppression annulée ou impossible.');
+          return;
+        }
+      } else {
+        showToast('Erreur lors de la suppression du compte.');
+        return;
+      }
+    }
   }
+  localStorage.removeItem(STORAGE_KEY);
   location.reload();
 }
 
