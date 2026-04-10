@@ -2481,39 +2481,12 @@ function showToast(msg){const t=document.getElementById("toast");t.textContent=m
 function showLockedHint(cat){const msgs={qiyam:"Disponible la nuit (dernier tiers)",aube:"Disponible après le Fajr",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible avant de dormir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 async function resetApp() {
   if (!confirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données et supprimera ton compte.')) return;
-  const user = _auth.currentUser;
-  if (user) {
-    try {
-      await user.delete();
-    } catch (e) {
-      if (e.code === 'auth/requires-recent-login') {
-        // Ré-authentification nécessaire avant de supprimer
-        try {
-          const providerData = user.providerData;
-          const isGoogle = providerData.some(p => p.providerId === 'google.com');
-          if (isGoogle) {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            await _auth.currentUser.reauthenticateWithPopup(provider);
-          } else {
-            // Email/password : demander le mot de passe
-            const pwd = prompt('Pour confirmer la suppression, entre ton mot de passe :');
-            if (!pwd) return;
-            const cred = firebase.auth.EmailAuthProvider.credential(user.email, pwd);
-            await _auth.currentUser.reauthenticateWithCredential(cred);
-          }
-          await _auth.currentUser.delete();
-        } catch (e2) {
-          showToast('Suppression annulée ou impossible.');
-          return;
-        }
-      } else {
-        showToast('Erreur lors de la suppression du compte.');
-        return;
-      }
-    }
-  }
+  // On marque la suppression en attente, puis on déconnecte.
+  // À la reconnexion, le compte sera supprimé (session fraîche = delete autorisé).
+  sessionStorage.setItem('dawam_pending_reset', '1');
   localStorage.removeItem(STORAGE_KEY);
-  location.reload();
+  await _auth.signOut().catch(() => {});
+  // onAuthStateChanged va afficher l'écran auth avec message
 }
 
 // ═══ ITEM DETAILS ═══
@@ -3782,15 +3755,26 @@ _auth.getRedirectResult()
     _auth.onAuthStateChanged(user => {
       _hideLoader();
       if (!user) {
-        // Pas de compte : si onboarding déjà fait → demander de se connecter
-        // sinon → laisser faire l'onboarding librement
-        if (S.name) {
+        if (sessionStorage.getItem('dawam_pending_reset') === '1') {
+          // Reset en attente : reconnexion nécessaire pour supprimer le compte
+          showScreen('auth');
+          document.getElementById('auth-title').textContent = 'Confirme la suppression 🗑️';
+          document.getElementById('auth-sub').textContent = 'Reconnecte-toi pour supprimer définitivement ton compte.';
+        } else if (S.name) {
           _setAuthContext('save');
           showScreen('auth');
         } else {
           showScreen('splash');
         }
       } else {
+        // Reconnexion après reset → supprimer le compte (session fraîche)
+        if (sessionStorage.getItem('dawam_pending_reset') === '1') {
+          sessionStorage.removeItem('dawam_pending_reset');
+          user.delete()
+            .then(() => { localStorage.removeItem(STORAGE_KEY); location.reload(); })
+            .catch(() => { location.reload(); });
+          return;
+        }
         S._uid = user.uid;
         if (S.name) {
           launchApp();
