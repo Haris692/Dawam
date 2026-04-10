@@ -1914,9 +1914,10 @@ function finishOnboarding(){
     launchApp(); track('launch');
     setTimeout(()=>document.getElementById('notif-prompt')?.classList.add('show'),1200);
   } else {
-    // Onboarding terminé sans compte → inviter à s'inscrire pour sauvegarder
-    _setAuthContext('save');
-    showScreen('auth');
+    // Onboarding terminé sans compte → reload propre pour que signInWithPopup
+    // fonctionne dans TWA (l'état Firebase est réinitialisé à chaque chargement)
+    // Les données sont déjà en localStorage, onAuthStateChanged affichera l'écran auth
+    location.reload();
   }
 }
 
