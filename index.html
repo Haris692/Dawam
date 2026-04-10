@@ -1450,19 +1450,16 @@ function _setAuthError(msg) { document.getElementById('auth-error').textContent 
 async function authGoogle() {
   _setAuthError('');
   const provider = new firebase.auth.GoogleAuthProvider();
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isMobile) {
-    // Redirect obligatoire sur mobile/TWA — popup non fiable
-    try { await _auth.signInWithRedirect(provider); }
-    catch(e) { _setAuthError('Connexion Google impossible.'); }
-  } else {
-    try { await _auth.signInWithPopup(provider); }
-    catch (e) {
-      if (e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request') {
-        try { await _auth.signInWithRedirect(provider); } catch(e2) { _setAuthError('Connexion Google impossible.'); }
-      } else if (e.code !== 'auth/popup-closed-by-user') {
-        _setAuthError('Erreur Google : ' + (e.message || e.code));
-      }
+  // signInWithPopup partout — signInWithRedirect échoue dans TWA
+  // (sessionStorage non partagée entre TWA WebView et Chrome Custom Tabs)
+  try {
+    await _auth.signInWithPopup(provider);
+  } catch (e) {
+    if (e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request') {
+      // Fallback redirect si popup bloquée (navigateur strict)
+      try { await _auth.signInWithRedirect(provider); } catch(e2) { _setAuthError('Connexion Google impossible.'); }
+    } else if (e.code !== 'auth/popup-closed-by-user') {
+      _setAuthError('Erreur Google : ' + (e.message || e.code));
     }
   }
 }
