@@ -3691,6 +3691,8 @@ async function activateNotifsFromPrompt(){
 load();
 
 // ── Loader GSAP ──
+const _loaderStart = Date.now();
+const _LOADER_MIN = 2200; // ms minimum d'affichage
 (function _playLoader() {
   gsap.set('#al-ring',  { strokeDashoffset: 326 });
   gsap.set('#al-ring2', { strokeDashoffset: 264 });
@@ -3709,9 +3711,13 @@ load();
 })();
 
 function _hideLoader() {
-  const loader = document.getElementById('auth-loader');
-  loader.classList.add('hiding');
-  setTimeout(() => loader.style.display = 'none', 380);
+  const elapsed = Date.now() - _loaderStart;
+  const delay = Math.max(0, _LOADER_MIN - elapsed);
+  setTimeout(() => {
+    const loader = document.getElementById('auth-loader');
+    loader.classList.add('hiding');
+    setTimeout(() => loader.style.display = 'none', 380);
+  }, delay);
 }
 
 // Traite le résultat du redirect Google (mobile/TWA)
