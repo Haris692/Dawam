@@ -2480,13 +2480,33 @@ function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").for
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
 function showLockedHint(cat){const msgs={qiyam:"Disponible la nuit (dernier tiers)",aube:"Disponible après le Fajr",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible avant de dormir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 async function resetApp() {
-  if (!confirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données et supprimera ton compte.')) return;
-  // On marque la suppression en attente, puis on déconnecte.
-  // À la reconnexion, le compte sera supprimé (session fraîche = delete autorisé).
-  sessionStorage.setItem('dawam_pending_reset', '1');
+  if (!confirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données.')) return;
+  const user = _auth.currentUser;
+  if (user) {
+    try {
+      await user.delete();
+    } catch (e) {
+      if (e.code === 'auth/requires-recent-login') {
+        // Session trop ancienne : ré-auth Google si possible, sinon juste déco
+        const isGoogle = user.providerData.some(p => p.providerId === 'google.com');
+        if (isGoogle) {
+          try {
+            await user.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
+            await _auth.currentUser.delete();
+          } catch (_) {
+            // Popup annulée ou autre erreur → déconnexion simple
+            await _auth.signOut().catch(() => {});
+          }
+        } else {
+          await _auth.signOut().catch(() => {});
+        }
+      } else {
+        await _auth.signOut().catch(() => {});
+      }
+    }
+  }
   localStorage.removeItem(STORAGE_KEY);
-  await _auth.signOut().catch(() => {});
-  // onAuthStateChanged va afficher l'écran auth avec message
+  location.reload();
 }
 
 // ═══ ITEM DETAILS ═══
@@ -3755,26 +3775,13 @@ _auth.getRedirectResult()
     _auth.onAuthStateChanged(user => {
       _hideLoader();
       if (!user) {
-        if (sessionStorage.getItem('dawam_pending_reset') === '1') {
-          // Reset en attente : reconnexion nécessaire pour supprimer le compte
-          showScreen('auth');
-          document.getElementById('auth-title').textContent = 'Confirme la suppression 🗑️';
-          document.getElementById('auth-sub').textContent = 'Reconnecte-toi pour supprimer définitivement ton compte.';
-        } else if (S.name) {
+        if (S.name) {
           _setAuthContext('save');
           showScreen('auth');
         } else {
           showScreen('splash');
         }
       } else {
-        // Reconnexion après reset → supprimer le compte (session fraîche)
-        if (sessionStorage.getItem('dawam_pending_reset') === '1') {
-          sessionStorage.removeItem('dawam_pending_reset');
-          user.delete()
-            .then(() => { localStorage.removeItem(STORAGE_KEY); location.reload(); })
-            .catch(() => { location.reload(); });
-          return;
-        }
         S._uid = user.uid;
         if (S.name) {
           launchApp();
