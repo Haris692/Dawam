@@ -225,21 +225,28 @@ function localMinutes(timezone) {
   return h * 60 + m;
 }
 
-// Retourne le type de notif à envoyer maintenant, ou null
-// Fenêtres : aube = [Fajr, Fajr+20[  |  journee = [Dhuhr, Dhuhr+20[  |  soir = [Isha, Isha+20[
-function typeForNow(timings, timezone) {
-  const now   = localMinutes(timezone);
-  const fajr  = toMin(timings.Fajr);
-  const dhuhr = toMin(timings.Dhuhr);
-  const isha  = toMin(timings.Isha);
+// Correspondance prière → clé timings aladhan
+const PRAYER_KEY = {
+  Fajr: 'Fajr', Dhuhr: 'Dhuhr', Asr: 'Asr', Maghrib: 'Maghrib', Isha: 'Isha',
+};
 
-  if (now >= fajr  && now < fajr  + 20) return 'aube';
-  if (now >= dhuhr && now < dhuhr + 20) return 'journee';
-  if (now >= isha  && now < isha  + 20) return 'soir';
-  return null;
+// Retourne les notifs à envoyer maintenant pour cet utilisateur.
+// Fenêtre : [prière + 10 min, prière + 30 min[ — uniquement pour les prières choisies.
+// Fallback si pas de prières → fenêtres classiques Fajr/Dhuhr/Isha.
+function typesForNow(timings, timezone, prayers) {
+  const now = localMinutes(timezone);
+  const active = prayers?.length ? prayers : ['Fajr', 'Dhuhr', 'Isha'];
+  const result = [];
+  for (const p of active) {
+    const key = PRAYER_KEY[p];
+    if (!key || !timings[key]) continue;
+    const t = toMin(timings[key]);
+    if (now >= t + 10 && now < t + 30) result.push(p);
+  }
+  return result;
 }
 
-// ── Messages personnalisés par type × palier ───────────────────────────────
+// ── Messages personnalisés par prière × palier ────────────────────────────
 // tier: 1 = palier 1-2, 2 = palier 3-4, 3 = palier 5
 function getTier(palier) {
   if (palier >= 5) return 3;
@@ -248,26 +255,35 @@ function getTier(palier) {
 }
 
 const NOTIF_MSGS = {
-  aube: [
-    { title: 'Dawam 🌄', body: "Ta séance de l'aube t'attend — prends 5 minutes, c'est tout." },
-    { title: 'Dawam 🌄', body: "Ta séance de l'aube t'attend — Coran, invocations, constance." },
+  Fajr: [
+    { title: 'Dawam 🌄', body: "Fajr accompli — viens valider ta prière et ton wird du matin." },
     { title: 'Dawam 🌄', body: "Fajr est passé — séance de l'aube, wird coranique, du'a t'attendent." },
+    { title: 'Dawam 🌄', body: "Belle constance — valide Fajr et commence ta journée avec Dawam." },
   ],
-  journee: [
-    { title: 'Dawam ☀️', body: "N'oublie pas tes actions du jour — quelques minutes suffisent." },
-    { title: 'Dawam ☀️', body: "Ta séance de la journée t'attend — maintiens ta constance." },
-    { title: 'Dawam ☀️', body: "Salawat, témoignage d'unicité, prières volontaires — ta journée spirituelle t'attend." },
+  Dhuhr: [
+    { title: 'Dawam ☀️', body: "Dhuhr accompli — viens cocher ta prière dans Dawam." },
+    { title: 'Dawam ☀️', body: "Après Dhuhr, prends 2 minutes pour valider tes actions du jour." },
+    { title: 'Dawam ☀️', body: "Dhuhr accompli — salawat, dhikr, constance t'attendent." },
   ],
-  soir: [
-    { title: 'Dawam 🌙', body: "Les invocations du soir te protègent cette nuit — prends un moment." },
-    { title: 'Dawam 🌙', body: "Ta séance du soir t'attend — invocations, actes avant le sommeil." },
-    { title: 'Dawam 🌙', body: "Invocations du soir, bilan, versets protecteurs — ta séance du soir t'attend." },
+  Asr: [
+    { title: 'Dawam 🌤️', body: "Asr accompli — viens valider ta prière dans Dawam." },
+    { title: 'Dawam 🌤️', body: "Après Asr, un instant pour cocher tes actions du jour ?" },
+    { title: 'Dawam 🌤️', body: "Asr accompli — ta constance grandit chaque jour." },
   ],
-  aprem: [
-    { title: 'Dawam ⏰', body: "Tes actions du jour t'attendent — quelques minutes suffisent." },
-    { title: 'Dawam ⏰', body: "Tes actions du jour t'attendent — quelques minutes suffisent." },
-    { title: 'Dawam ⏰', body: "As-tu accompli tes actions essentielles aujourd'hui ? Il reste encore du temps." },
+  Maghrib: [
+    { title: 'Dawam 🌇', body: "Maghrib accompli — viens valider ta prière dans Dawam." },
+    { title: 'Dawam 🌇', body: "Après Maghrib, prends un moment pour tes actions du soir." },
+    { title: 'Dawam 🌇', body: "Maghrib accompli — adhkar du soir, bilan du jour t'attendent." },
   ],
+  Isha: [
+    { title: 'Dawam 🌙', body: "Isha accompli — viens valider et lire tes invocations du soir." },
+    { title: 'Dawam 🌙', body: "Après Isha, les invocations du soir te protègent cette nuit." },
+    { title: 'Dawam 🌙', body: "Isha accompli — bilan, adhkar du soir, witr t'attendent." },
+  ],
+  // Fallback legacy
+  aube:    [{ title: 'Dawam 🌄', body: "Ta séance de l'aube t'attend." }],
+  journee: [{ title: 'Dawam ☀️', body: "N'oublie pas tes actions du jour." }],
+  soir:    [{ title: 'Dawam 🌙', body: "Les invocations du soir te protègent cette nuit." }],
 };
 
 function getMsg(type, palier) {
@@ -327,7 +343,7 @@ async function notifyAll(env, type) {
   } while (cursor);
 }
 
-// ── Envoi adaptatif basé sur les horaires de prière ───────────────────────
+// ── Envoi adaptatif basé sur les prières choisies par l'utilisateur ──────
 async function notifyAdaptive(env) {
   const privKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY, env.VAPID_PUBLIC_KEY);
   let cursor;
@@ -342,23 +358,27 @@ async function notifyAdaptive(env) {
           if (!raw) return;
           const sub = JSON.parse(raw);
 
-          // Pas de ville → pas de notif adaptative
           if (!sub.city) return;
 
           const pt = await getPrayerTimes(sub.city, env);
           if (!pt) return;
 
-          const type = typeForNow(pt.timings, pt.timezone);
-          if (!type) return;
+          // Prières choisies par l'utilisateur (ex: ["Fajr","Dhuhr","Maghrib"])
+          const types = typesForNow(pt.timings, pt.timezone, sub.prayers || []);
+          if (!types.length) return;
 
-          // Ne pas envoyer deux fois le même type dans la journée
-          if (await hasSent(env, name, type)) return;
-
-          // iOS (Apple) ne déclenche pas le push event si payload chiffré → ping vide
           const isApple = sub.endpoint?.includes('apple.com');
-          const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type, sub.palier || 1);
-          if (res.status === 410 || res.status === 404) await env.SUBSCRIPTIONS.delete(name);
-          else await markSent(env, name, type);
+
+          for (const type of types) {
+            // Anti-doublon : une seule notif par prière par jour
+            if (await hasSent(env, name, type)) continue;
+            const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type, sub.palier || 1);
+            if (res.status === 410 || res.status === 404) {
+              await env.SUBSCRIPTIONS.delete(name);
+              break;
+            }
+            await markSent(env, name, type);
+          }
         })
     );
   } while (cursor);
@@ -381,7 +401,7 @@ export default {
       if (!body?.endpoint || !body?.keys) return json({ error: 'invalid' }, 400);
       const id = await subId(body.endpoint);
       // Stocker endpoint + keys + city + palier
-      const sub = { endpoint: body.endpoint, keys: body.keys, city: body.city || '', palier: body.palier || 1 };
+      const sub = { endpoint: body.endpoint, keys: body.keys, city: body.city || '', palier: body.palier || 1, prayers: body.prayers || [] };
       await env.SUBSCRIPTIONS.put(id, JSON.stringify(sub));
       return json({ ok: true });
     }

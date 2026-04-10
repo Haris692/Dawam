@@ -2871,7 +2871,7 @@ async function toggleNotifs() {
     await fetch(`${PUSH_WORKER}/subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...sub.toJSON(), city: S.profile?.city || '', fajrOffset: S.profile?.fajrOffset ?? 15, palier: S.palier || 1 }),
+      body: JSON.stringify({ ...sub.toJSON(), city: S.profile?.city || '', fajrOffset: S.profile?.fajrOffset ?? 15, palier: S.palier || 1, prayers: S.profile?.prayers || [] }),
     });
     S.notifs = { pushSub: sub.endpoint };
     save();
@@ -3722,7 +3722,7 @@ async function activateNotifsFromPrompt(){
     const perm=await Notification.requestPermission();
     if(perm!=='granted')throw new Error('denied');
     const sub=await subscribePush();
-    await fetch(`${PUSH_WORKER}/subscribe`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sub.toJSON(),city:S.profile?.city||'',fajrOffset:S.profile?.fajrOffset??15,palier:S.palier||1})});
+    await fetch(`${PUSH_WORKER}/subscribe`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sub.toJSON(),city:S.profile?.city||'',fajrOffset:S.profile?.fajrOffset??15,palier:S.palier||1,prayers:S.profile?.prayers||[]})});
     S.notifs={pushSub:sub.endpoint};save();
     showToast('Rappels activés ✓');
   }catch(e){
