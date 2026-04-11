@@ -410,6 +410,68 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .day-row.is-today .day-row-count { color:var(--accent); }
 .day-row.no-data .day-row-count { opacity:.35; }
 .dawam-footer { text-align:center;padding:24px 16px;font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-light); }
+/* ═══ GROUPES ═══ */
+#groupes { background:var(--bg); }
+.grp-header { padding:52px 20px 16px;padding-top:max(52px,calc(44px + env(safe-area-inset-top))); }
+.grp-title { font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);margin-bottom:4px; }
+.grp-sub { font-size:13px;color:var(--text-secondary); }
+.grp-body { padding:0 16px 100px;display:flex;flex-direction:column;gap:14px; }
+.grp-empty-hero { text-align:center;padding:28px 16px 20px; }
+.grp-empty-icon { font-size:52px;margin-bottom:10px;display:block; }
+.grp-empty-title { font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px; }
+.grp-empty-desc { font-size:13px;color:var(--text-secondary);line-height:1.6;max-width:280px;margin:0 auto 20px; }
+.grp-join-code-wrap { display:flex;gap:8px; }
+.grp-join-input { flex:1;padding:14px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg-card);font-family:var(--font-body);font-size:18px;font-weight:700;color:var(--text);outline:none;letter-spacing:4px;text-transform:uppercase;transition:border-color .2s;-webkit-appearance:none;box-sizing:border-box; }
+.grp-join-input:focus { border-color:var(--accent); }
+.grp-join-input::placeholder { letter-spacing:1px;font-size:13px;font-weight:400; }
+.grp-join-btn { padding:14px 18px;border-radius:12px;border:none;background:var(--accent);color:#fff8e8;font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .15s,transform .1s; }
+.grp-join-btn:active { opacity:.85;transform:scale(.97); }
+.grp-card { background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border);padding:20px;box-shadow:var(--shadow); }
+.grp-card-top { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px; }
+.grp-dhikr-label { font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px; }
+.grp-dhikr-ar { font-size:18px;color:var(--accent);direction:rtl;font-family:'Amiri',serif; }
+.grp-code-badge { display:inline-flex;align-items:center;gap:5px;background:var(--accent-light);border:.5px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--accent-dark);letter-spacing:2px;cursor:pointer;flex-shrink:0; }
+.grp-counter-wrap { display:flex;flex-direction:column;align-items:center;padding:20px 0 16px; }
+.grp-counter-val { font-family:var(--font-display);font-size:68px;font-weight:700;color:var(--text);line-height:1; }
+.grp-counter-target { font-size:13px;color:var(--text-secondary);margin-top:4px; }
+.grp-progress-bar { height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px; }
+.grp-progress-fill { height:100%;background:var(--accent);border-radius:3px;transition:width .5s cubic-bezier(.34,1.2,.64,1); }
+.grp-progress-pct { font-size:11px;font-weight:600;color:var(--accent);text-align:right;margin-bottom:14px; }
+.grp-tap-btn { width:100%;padding:20px;border-radius:16px;border:2px solid var(--accent);background:var(--accent-light);color:var(--accent);font-family:var(--font-display);font-size:17px;font-weight:700;cursor:pointer;transition:transform .1s,background .15s;display:flex;align-items:center;justify-content:center;gap:10px; }
+.grp-tap-btn:active { transform:scale(.96);background:rgba(186,117,23,.2); }
+.grp-members-title { font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px; }
+.grp-members-list { display:flex;flex-direction:column;gap:8px; }
+.grp-member-row { display:flex;align-items:center;gap:10px; }
+.grp-member-avatar { width:32px;height:32px;border-radius:16px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff8e8;flex-shrink:0; }
+.grp-member-name { font-size:14px;font-weight:500;color:var(--text);flex:1; }
+.grp-member-badge { font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px; }
+.grp-completed-hero { text-align:center;padding:20px 0 12px; }
+.grp-completed-emoji { font-size:64px;display:block;margin-bottom:10px;animation:scaleIn .5s cubic-bezier(.34,1.56,.64,1) both; }
+.grp-completed-title { font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px; }
+.grp-completed-sub { font-size:13px;color:var(--text-secondary);line-height:1.6; }
+.grp-skeleton { background:var(--border-light);border-radius:var(--radius);animation:pulse 1.8s ease-in-out infinite; }
+#grp-create-modal { display:none;position:fixed;inset:0;z-index:300;background:var(--overlay);align-items:flex-end;backdrop-filter:blur(2px); }
+#grp-create-modal.show { display:flex; }
+.grp-create-sheet { background:var(--bg);border-radius:28px 28px 0 0;width:100%;max-height:90vh;overflow-y:auto;animation:fadeUp .4s cubic-bezier(.22,1,.36,1);padding:0 0 max(24px,env(safe-area-inset-bottom)); }
+.grp-sheet-handle { width:36px;height:4px;border-radius:2px;background:var(--border);margin:14px auto 0; }
+.grp-sheet-title { font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);padding:18px 20px 4px; }
+.grp-sheet-sub { font-size:13px;color:var(--text-secondary);padding:0 20px 14px;line-height:1.5; }
+.grp-sheet-section { padding:0 20px 14px; }
+.grp-sheet-label { font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px; }
+.grp-dhikr-options { display:flex;flex-direction:column;gap:8px; }
+.grp-dhikr-opt { display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
+.grp-dhikr-opt.selected { border-color:var(--accent);background:var(--accent-light); }
+.grp-dhikr-opt-ar { font-size:19px;color:var(--accent);direction:rtl;font-family:'Amiri',serif; }
+.grp-dhikr-opt-label { flex:1;font-size:14px;font-weight:600;color:var(--text); }
+.grp-dhikr-opt-chk { width:20px;height:20px;border-radius:10px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s; }
+.grp-dhikr-opt.selected .grp-dhikr-opt-chk { border-color:var(--accent);background:var(--accent); }
+.grp-target-row { display:flex;align-items:center;gap:14px; }
+.grp-target-display { font-family:var(--font-display);font-size:38px;font-weight:700;color:var(--accent);min-width:90px;text-align:center; }
+.grp-target-slider { flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer; }
+.grp-target-slider::-webkit-slider-thumb { -webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(186,117,23,.35); }
+.grp-sheet-actions { padding:14px 20px 0;display:flex;flex-direction:column;gap:8px; }
+@keyframes grpCountTick { 0%{transform:scale(1)} 40%{transform:scale(1.22);color:var(--accent)} 100%{transform:scale(1)} }
+.grp-counter-val.tick { animation:grpCountTick .28s cubic-bezier(.34,1.56,.64,1) forwards; }
 /* Edit profil sheet */
 #edit-profil-modal { display:none;position:fixed;inset:0;z-index:300;background:var(--overlay);align-items:flex-end;backdrop-filter:blur(2px); }
 #edit-profil-modal.show { display:flex; }
@@ -731,6 +793,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 <body>
@@ -1283,6 +1346,70 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   </div>
 </div>
 
+<!-- GROUPES -->
+<div class="screen" id="groupes">
+  <div class="grp-header">
+    <div class="grp-title">Groupes</div>
+    <div class="grp-sub">Dhikr collectif, en temps réel</div>
+  </div>
+  <div class="grp-body" id="grp-body">
+    <div class="grp-skeleton" style="height:180px;border-radius:var(--radius)"></div>
+    <div class="grp-skeleton" style="height:80px;border-radius:var(--radius);margin-top:4px"></div>
+  </div>
+</div>
+
+<!-- MODAL CRÉATION GROUPE -->
+<div id="grp-create-modal" onclick="if(event.target===this)closeGrpCreate()">
+  <div class="grp-create-sheet">
+    <div class="grp-sheet-handle"></div>
+    <div class="grp-sheet-title">Créer un groupe</div>
+    <div class="grp-sheet-sub">Choisis un dhikr collectif et fixez un objectif ensemble.</div>
+    <div class="grp-sheet-section">
+      <div class="grp-sheet-label">Type de dhikr</div>
+      <div class="grp-dhikr-options" id="grp-dhikr-options">
+        <div class="grp-dhikr-opt selected" data-key="subhan" onclick="selectGrpDhikr(this)">
+          <span class="grp-dhikr-opt-ar">سُبْحَانَ ٱللَّٰهِ</span>
+          <span class="grp-dhikr-opt-label">Sous-han Allah</span>
+          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="grp-dhikr-opt" data-key="alhamd" onclick="selectGrpDhikr(this)">
+          <span class="grp-dhikr-opt-ar">ٱلْحَمْدُ لِلَّٰهِ</span>
+          <span class="grp-dhikr-opt-label">Alhamdulillah</span>
+          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="grp-dhikr-opt" data-key="allahu" onclick="selectGrpDhikr(this)">
+          <span class="grp-dhikr-opt-ar">ٱللَّٰهُ أَكْبَرُ</span>
+          <span class="grp-dhikr-opt-label">Allahu Akbar</span>
+          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="grp-dhikr-opt" data-key="astaghfir" onclick="selectGrpDhikr(this)">
+          <span class="grp-dhikr-opt-ar">أَسْتَغْفِرُ ٱللَّٰهَ</span>
+          <span class="grp-dhikr-opt-label">Astaghfirullah</span>
+          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="grp-dhikr-opt" data-key="salawat" onclick="selectGrpDhikr(this)">
+          <span class="grp-dhikr-opt-ar">صَلَّىٰ ٱللَّٰهُ عَلَيْهِ</span>
+          <span class="grp-dhikr-opt-label">Salawat sur le Prophète ﷺ</span>
+          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="grp-sheet-section">
+      <div class="grp-sheet-label">Objectif collectif</div>
+      <div class="grp-target-row">
+        <div class="grp-target-display" id="grp-target-display">1 000</div>
+        <input class="grp-target-slider" type="range" min="1" max="100" value="10"
+               id="grp-target-slider" oninput="updateGrpTarget(this.value)">
+      </div>
+      <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:4px">De 100 à 10 000 — glisse le curseur</div>
+    </div>
+    <div class="grp-sheet-actions">
+      <button class="btn-primary" id="grp-create-btn" onclick="submitCreateGroup()">Créer le groupe</button>
+      <button class="btn-secondary" onclick="closeGrpCreate()">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav id="bottom-nav">
   <button class="nav-tab active" onclick="showTab('path',this)" id="tab-path">
@@ -1292,6 +1419,15 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <button class="nav-tab" onclick="showTab('invocations',this)" id="tab-invocations">
     <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-width="1.8"/><path d="M8 12h8M12 8v8" stroke-width="1.8" stroke-linecap="round"/></svg>
     <span>Invocations</span>
+  </button>
+  <button class="nav-tab" onclick="showTab('groupes',this)" id="tab-groupes">
+    <svg viewBox="0 0 24 24" fill="none">
+      <circle cx="9" cy="7" r="3" stroke-width="1.8"/>
+      <path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M16 3.13a4 4 0 010 7.75" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M21 21v-2a4 4 0 00-3-3.85" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <span>Groupes</span>
   </button>
   <button class="nav-tab" onclick="showTab('profil',this)" id="tab-profil">
     <svg viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1426,6 +1562,7 @@ const _fbConfig = {
 };
 firebase.initializeApp(_fbConfig);
 const _auth = firebase.auth();
+const _db = firebase.firestore();
 // Persist auth across TWA/PWA restarts
 _auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
@@ -2476,9 +2613,334 @@ function saveProfilEdit(){
 document.getElementById('edit-profil-modal').addEventListener('click',function(e){if(e.target===this)closeProfilEdit();});
 
 // ═══ NAV ═══
-function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","invocations","profil"].includes(id));}
-function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();if(id==="invocations")renderInvocations();}
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","invocations","groupes","profil"].includes(id));}
+function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();if(id==="invocations")renderInvocations();if(id==="groupes")renderGroupes();}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
+
+// ═══ GROUPES ═══
+const GRP_DHIKR = {
+  subhan:    { ar:'سُبْحَانَ ٱللَّٰهِ',    label:'Sous-han Allah' },
+  alhamd:    { ar:'ٱلْحَمْدُ لِلَّٰهِ',    label:'Alhamdulillah' },
+  allahu:    { ar:'ٱللَّٰهُ أَكْبَرُ',     label:'Allahu Akbar' },
+  astaghfir: { ar:'أَسْتَغْفِرُ ٱللَّٰهَ', label:'Astaghfirullah' },
+  salawat:   { ar:'صَلَّىٰ ٱللَّٰهُ عَلَيْهِ', label:'Salawat sur le Prophète ﷺ' },
+};
+let _groupState  = undefined; // undefined=chargement | null=sans groupe | objet=groupe actif
+let _groupId     = null;
+let _groupUnsub  = null;
+let _grpSelectedDhikr = 'subhan';
+let _grpTargetVal = 1000;
+
+function _fmtN(n){ return n.toLocaleString('fr-FR'); }
+
+function _genGroupCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+}
+
+function _subscribeGroup(groupId){
+  if(_groupUnsub){_groupUnsub();_groupUnsub=null;}
+  _groupId=groupId;
+  _groupUnsub=_db.collection('groups').doc(groupId).onSnapshot(snap=>{
+    if(!snap.exists){
+      _groupState=null;_groupId=null;
+      localStorage.removeItem('dawam_groupId');
+      renderGroupes();return;
+    }
+    const prev=_groupState;
+    _groupState={id:groupId,...snap.data()};
+    if(prev&&!prev.completedAt&&_groupState.completedAt) _triggerGroupCompletion();
+    renderGroupes();
+  },err=>{
+    console.error('[Groupes]',err);
+    showToast('Erreur de connexion au groupe.');
+  });
+}
+
+async function initGroupes(){
+  const savedId=localStorage.getItem('dawam_groupId');
+  if(savedId){
+    try{
+      const snap=await _db.collection('groups').doc(savedId).get();
+      const uid=_auth.currentUser?.uid;
+      if(snap.exists&&uid&&snap.data().members.includes(uid)){
+        _subscribeGroup(savedId);return;
+      }
+    }catch(_){}
+    localStorage.removeItem('dawam_groupId');
+  }
+  _groupState=null;
+  renderGroupes();
+}
+
+function _checkGroupInviteUrl(){
+  const params=new URLSearchParams(window.location.search);
+  const code=params.get('group');
+  if(code&&code.length===6){
+    window.history.replaceState({},'',window.location.pathname);
+    if(_groupState===null){
+      _promptJoinByCode(code.toUpperCase());
+    }else if(_groupState){
+      showToast('Tu es déjà dans un groupe.');
+    }
+  }
+}
+
+function renderGroupes(){
+  const body=document.getElementById('grp-body');
+  if(!body)return;
+  if(_groupState===undefined){
+    body.innerHTML=`<div class="grp-skeleton" style="height:200px;border-radius:var(--radius)"></div><div class="grp-skeleton" style="height:80px;border-radius:var(--radius);margin-top:4px"></div>`;
+    return;
+  }
+  if(!_auth.currentUser){
+    body.innerHTML=`<div class="grp-empty-hero"><span class="grp-empty-icon">🤝</span><div class="grp-empty-title">Connexion requise</div><div class="grp-empty-desc">Connecte-toi pour créer ou rejoindre un groupe.</div><button class="btn-primary" onclick="showScreen('auth')">Se connecter</button></div>`;
+    return;
+  }
+  if(_groupState===null){
+    body.innerHTML=`
+      <div class="grp-empty-hero">
+        <span class="grp-empty-icon">🤝</span>
+        <div class="grp-empty-title">Dhikr collectif</div>
+        <div class="grp-empty-desc">Unissez vos intentions. Chaque membre contribue au même compteur, en temps réel.</div>
+      </div>
+      <button class="btn-primary" onclick="openGrpCreate()">Créer un groupe</button>
+      <div style="display:flex;align-items:center;gap:10px;margin:4px 0">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <span style="font-size:12px;color:var(--text-light);font-weight:500">ou rejoindre</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+      <div class="grp-join-code-wrap">
+        <input class="grp-join-input" id="grp-code-input" type="text" maxlength="6" placeholder="Code (ex : A3F7Z2)"
+               oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')joinGroupByCode()">
+        <button class="grp-join-btn" onclick="joinGroupByCode()">Rejoindre</button>
+      </div>`;
+    return;
+  }
+  const g=_groupState;
+  const uid=_auth.currentUser?.uid;
+  const isAdmin=g.adminUid===uid;
+  const isCompleted=!!g.completedAt;
+  const pct=Math.min(100,Math.round(g.count/g.target*100));
+  const dhikr=GRP_DHIKR[g.dhikrType]||{ar:'',label:g.dhikrLabel||''};
+  const membersHTML=Object.entries(g.memberNames||{}).map(([muid,mname])=>{
+    const initials=mname.trim().slice(0,2).toUpperCase();
+    const isMe=muid===uid;
+    const isAdm=muid===g.adminUid;
+    return `<div class="grp-member-row"><div class="grp-member-avatar" style="${isMe?'background:var(--green)':''}">${initials}</div><span class="grp-member-name">${mname}${isMe?' (toi)':''}</span>${isAdm?'<span class="grp-member-badge">admin</span>':''}</div>`;
+  }).join('');
+  if(isCompleted){
+    body.innerHTML=`
+      <div class="grp-card">
+        <div class="grp-completed-hero">
+          <span class="grp-completed-emoji">🌟</span>
+          <div class="grp-completed-title">Ma sha Allah !</div>
+          <div class="grp-completed-sub">Objectif atteint — ${_fmtN(g.target)} ${dhikr.label}.</div>
+        </div>
+        <div style="font-size:22px;text-align:center;direction:rtl;color:var(--accent);margin:8px 0 14px">${dhikr.ar}</div>
+        <div class="grp-progress-bar"><div class="grp-progress-fill" style="width:100%;background:var(--green)"></div></div>
+        <div class="grp-progress-pct" style="color:var(--green)">100% — ${_fmtN(g.count)} récitations</div>
+      </div>
+      <div class="grp-card">
+        <div class="grp-members-title">Participants</div>
+        <div class="grp-members-list">${membersHTML}</div>
+      </div>
+      <button class="btn-secondary" onclick="${isAdmin?'deleteGroup()':'leaveGroup()'}" style="color:${isAdmin?'#b02020':'var(--text-light)'}">
+        ${isAdmin?'Supprimer le groupe':'Quitter le groupe'}
+      </button>`;
+    return;
+  }
+  body.innerHTML=`
+    <div class="grp-card">
+      <div class="grp-card-top">
+        <div>
+          <div class="grp-dhikr-label">${dhikr.label}</div>
+          <div class="grp-dhikr-ar">${dhikr.ar}</div>
+        </div>
+        <div class="grp-code-badge" onclick="copyGroupCode('${g.code}')" title="Copier le code">📋 ${g.code}</div>
+      </div>
+      <div class="grp-counter-wrap">
+        <div class="grp-counter-val" id="grp-counter-val">${_fmtN(g.count)}</div>
+        <div class="grp-counter-target">sur ${_fmtN(g.target)}</div>
+      </div>
+      <div class="grp-progress-bar"><div class="grp-progress-fill" style="width:${pct}%"></div></div>
+      <div class="grp-progress-pct">${pct}%</div>
+      <button class="grp-tap-btn" id="grp-tap-btn" onclick="tapDhikr()">📿 +1 — Taper</button>
+    </div>
+    <div class="grp-card">
+      <div class="grp-members-title">${g.members.length} participant${g.members.length>1?'s':''}</div>
+      <div class="grp-members-list">${membersHTML}</div>
+    </div>
+    ${isAdmin?`<button class="btn-primary" onclick="shareGroup('${g.code}')">Inviter des frères / sœurs</button>`:''}
+    <button class="btn-secondary" onclick="${isAdmin?'deleteGroup()':'leaveGroup()'}" style="color:var(--text-light)">
+      ${isAdmin?'Supprimer le groupe':'Quitter le groupe'}
+    </button>`;
+}
+
+async function tapDhikr(){
+  if(!_groupId||!_groupState||_groupState.completedAt)return;
+  const btn=document.getElementById('grp-tap-btn');
+  if(btn){btn.disabled=true;setTimeout(()=>btn&&(btn.disabled=false),500);}
+  const valEl=document.getElementById('grp-counter-val');
+  if(valEl){valEl.classList.remove('tick');void valEl.offsetWidth;valEl.classList.add('tick');setTimeout(()=>valEl?.classList.remove('tick'),300);}
+  const newCount=_groupState.count+1;
+  const isGoal=newCount>=_groupState.target;
+  try{
+    const update={count:firebase.firestore.FieldValue.increment(1)};
+    if(isGoal)update.completedAt=firebase.firestore.FieldValue.serverTimestamp();
+    await _db.collection('groups').doc(_groupId).update(update);
+  }catch(e){showToast('Erreur — réessaie.');console.error('[tapDhikr]',e);}
+}
+
+function copyGroupCode(code){
+  navigator.clipboard?.writeText(code).then(()=>showToast(`Code "${code}" copié !`)).catch(()=>showToast(`Code : ${code}`));
+}
+
+function shareGroup(code){
+  const url=`${location.origin}${location.pathname}?group=${code}`;
+  const text=`Rejoins notre groupe de dhikr collectif sur Dawam ! Code : ${code}`;
+  if(navigator.share){navigator.share({title:'Dawam — Groupe dhikr',text,url}).catch(()=>{});}
+  else{navigator.clipboard?.writeText(url).then(()=>showToast('Lien copié !')).catch(()=>showToast(`Partage : ${url}`));}
+}
+
+async function joinGroupByCode(){
+  const input=document.getElementById('grp-code-input');
+  const code=(input?.value||'').trim().toUpperCase();
+  if(code.length!==6){showToast('Code à 6 caractères requis.');return;}
+  await _promptJoinByCode(code);
+}
+
+async function _promptJoinByCode(code){
+  if(_groupState&&_groupState!==null){showToast("Tu es déjà dans un groupe. Quitte-le d'abord.");return;}
+  const uid=_auth.currentUser?.uid;
+  if(!uid){showToast('Connecte-toi d\'abord.');return;}
+  showToast('Recherche du groupe…');
+  try{
+    const codeSnap=await _db.collection('groupCodes').doc(code).get();
+    if(!codeSnap.exists){showToast('Code invalide ou expiré.');return;}
+    const groupId=codeSnap.data().groupId;
+    const groupSnap=await _db.collection('groups').doc(groupId).get();
+    if(!groupSnap.exists){showToast("Ce groupe n'existe plus.");return;}
+    const g=groupSnap.data();
+    if(g.completedAt){showToast('Cet objectif est déjà atteint !');return;}
+    if(g.members.length>=20){showToast('Ce groupe est complet (20 membres max).');return;}
+    if(g.members.includes(uid)){
+      localStorage.setItem('dawam_groupId',groupId);
+      _subscribeGroup(groupId);return;
+    }
+    const myName=S.name||'Anonyme';
+    await _db.collection('groups').doc(groupId).update({
+      members:firebase.firestore.FieldValue.arrayUnion(uid),
+      [`memberNames.${uid}`]:myName,
+    });
+    localStorage.setItem('dawam_groupId',groupId);
+    _subscribeGroup(groupId);
+    showToast('Tu as rejoint le groupe !');
+  }catch(e){showToast('Erreur lors de la connexion au groupe.');console.error('[joinGroup]',e);}
+}
+
+function openGrpCreate(){
+  if(_groupState&&_groupState!==null){showToast('Tu es déjà dans un groupe.');return;}
+  document.getElementById('grp-create-modal').classList.add('show');
+}
+function closeGrpCreate(){document.getElementById('grp-create-modal').classList.remove('show');}
+function selectGrpDhikr(el){
+  document.querySelectorAll('.grp-dhikr-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  _grpSelectedDhikr=el.dataset.key;
+}
+function updateGrpTarget(val){
+  _grpTargetVal=Math.round(val*100);
+  document.getElementById('grp-target-display').textContent=_fmtN(_grpTargetVal);
+}
+
+async function submitCreateGroup(){
+  const uid=_auth.currentUser?.uid;
+  if(!uid){showToast('Connecte-toi d\'abord.');return;}
+  if(_groupState&&_groupState!==null){showToast('Tu es déjà dans un groupe.');return;}
+  const btn=document.getElementById('grp-create-btn');
+  btn.disabled=true;btn.textContent='Création…';
+  const code=_genGroupCode();
+  const dhikr=GRP_DHIKR[_grpSelectedDhikr];
+  const myName=S.name||'Anonyme';
+  try{
+    const codeSnap=await _db.collection('groupCodes').doc(code).get();
+    if(codeSnap.exists){btn.disabled=false;btn.textContent='Créer le groupe';return submitCreateGroup();}
+    const groupRef=_db.collection('groups').doc();
+    const groupId=groupRef.id;
+    const batch=_db.batch();
+    batch.set(groupRef,{
+      code,adminUid:uid,adminName:myName,
+      members:[uid],memberNames:{[uid]:myName},
+      dhikrType:_grpSelectedDhikr,dhikrLabel:dhikr.label,dhikrAr:dhikr.ar,
+      target:_grpTargetVal,count:0,completedAt:null,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    batch.set(_db.collection('groupCodes').doc(code),{groupId});
+    await batch.commit();
+    localStorage.setItem('dawam_groupId',groupId);
+    closeGrpCreate();
+    _subscribeGroup(groupId);
+    showToast('Groupe créé ! Code : '+code);
+  }catch(e){showToast('Erreur lors de la création.');console.error('[createGroup]',e);btn.disabled=false;btn.textContent='Créer le groupe';}
+}
+
+async function leaveGroup(){
+  if(!confirm('Quitter ce groupe ?'))return;
+  const uid=_auth.currentUser?.uid;
+  if(!uid||!_groupId)return;
+  try{
+    await _db.collection('groups').doc(_groupId).update({
+      members:firebase.firestore.FieldValue.arrayRemove(uid),
+      [`memberNames.${uid}`]:firebase.firestore.FieldValue.delete(),
+    });
+    if(_groupUnsub){_groupUnsub();_groupUnsub=null;}
+    _groupState=null;_groupId=null;
+    localStorage.removeItem('dawam_groupId');
+    renderGroupes();showToast('Tu as quitté le groupe.');
+  }catch(e){showToast('Erreur lors de la sortie du groupe.');}
+}
+
+async function deleteGroup(){
+  if(!confirm('Supprimer le groupe définitivement ?\nTous les membres seront exclus.'))return;
+  const uid=_auth.currentUser?.uid;
+  if(!uid||!_groupId||!_groupState)return;
+  if(_groupState.adminUid!==uid){showToast("Seul l'admin peut supprimer.");return;}
+  try{
+    const batch=_db.batch();
+    batch.delete(_db.collection('groups').doc(_groupId));
+    batch.delete(_db.collection('groupCodes').doc(_groupState.code));
+    await batch.commit();
+    if(_groupUnsub){_groupUnsub();_groupUnsub=null;}
+    _groupState=null;_groupId=null;
+    localStorage.removeItem('dawam_groupId');
+    renderGroupes();showToast('Groupe supprimé.');
+  }catch(e){showToast('Erreur lors de la suppression.');}
+}
+
+function _triggerGroupCompletion(){
+  const overlay=document.getElementById('dawam-completion-overlay');
+  if(!overlay)return;
+  const msg=document.getElementById('dawam-completion-msg');
+  if(msg){
+    msg.querySelector('h2').textContent='Ma sha Allah !';
+    msg.querySelector('p').textContent='Objectif collectif atteint — barakAllahu fikum.';
+  }
+  const star=document.getElementById('dawam-center-star');
+  overlay.classList.add('show');
+  if(star)star.classList.add('fire');
+  if(msg)msg.classList.add('fire');
+  ['dcp1','dcp2','dcp3','dcp4','dcp5','dcp6'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el){el.classList.remove('fire-a','fire-b','fire-c','fire-d','fire-e','fire-f');void el.offsetWidth;el.classList.add(['fire-a','fire-b','fire-c','fire-d','fire-e','fire-f'][i]);}
+  });
+  setTimeout(()=>{
+    overlay.classList.remove('show');
+    if(star)star.classList.remove('fire');
+    if(msg)msg.classList.remove('fire');
+  },3200);
+}
+
 function showLockedHint(cat){const msgs={qiyam:"Disponible la nuit (dernier tiers)",aube:"Disponible après le Fajr",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible avant de dormir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 async function resetApp() {
   if (!confirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données.')) return;
@@ -3708,6 +4170,8 @@ function launchApp(){
       if(first)showToast(`Commence maintenant → ${first.emoji} ${first.titleFr}`);
     },900);
   }
+  // Groupes : charger le groupe actif + détecter lien d'invitation
+  initGroupes().then(()=>_checkGroupInviteUrl());
 }
 function dismissNotifPrompt(){
   document.getElementById('notif-prompt').classList.remove('show');

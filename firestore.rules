@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Groupes : lecture réservée aux membres, création/mise à jour contrôlées
+    match /groups/{groupId} {
+      allow read: if request.auth != null
+        && request.auth.uid in resource.data.members;
+
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.adminUid
+        && request.resource.data.members.size() == 1
+        && request.resource.data.members[0] == request.auth.uid
+        && request.resource.data.count == 0
+        && request.resource.data.target >= 100
+        && request.resource.data.target <= 10000;
+
+      allow update: if request.auth != null && (
+        // Membre existant qui incrémente le compteur (count seul, ou count+completedAt)
+        (request.auth.uid in resource.data.members
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['count', 'completedAt']))
+        ||
+        // Nouvel utilisateur qui rejoint (members + memberNames uniquement)
+        (!(request.auth.uid in resource.data.members)
+          && request.resource.data.members.size() == resource.data.members.size() + 1
+          && request.resource.data.members.size() <= 20
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members', 'memberNames']))
+        ||
+        // Admin peut tout modifier
+        request.auth.uid == resource.data.adminUid
+      );
+
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.adminUid;
+    }
+
+    // Codes d'invitation : tout utilisateur authentifié peut lire et créer
+    match /groupCodes/{code} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+  }
+}
