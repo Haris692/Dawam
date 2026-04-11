@@ -2784,10 +2784,9 @@ function copyGroupCode(code){
 }
 
 function shareGroup(code){
-  const url=`${location.origin}${location.pathname}?group=${code}`;
-  const text=`Rejoins notre groupe de dhikr collectif sur Dawam ! Code : ${code}`;
-  if(navigator.share){navigator.share({title:'Dawam — Groupe dhikr',text,url}).catch(()=>{});}
-  else{navigator.clipboard?.writeText(url).then(()=>showToast('Lien copié !')).catch(()=>showToast(`Partage : ${url}`));}
+  const text=`Rejoins notre groupe de dhikr collectif sur Dawam !\nCode d'invitation : ${code}`;
+  if(navigator.share){navigator.share({title:'Dawam — Groupe dhikr',text}).catch(()=>{});}
+  else{navigator.clipboard?.writeText(text).then(()=>showToast('Code copié !')).catch(()=>showToast(`Code : ${code}`));}
 }
 
 async function joinGroupByCode(){
