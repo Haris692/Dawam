@@ -2777,9 +2777,9 @@ function renderGroupes(){
     <div class="grp-card">
       <div class="grp-members-title">${g.members.length} participant${g.members.length>1?'s':''}</div>
       <div class="grp-members-list">${membersHTML}</div>
-      <div class="grp-qiyam-section">${qiyamHTML}</div>
     </div>
-    ${isAdmin?`<button class="btn-primary" onclick="shareGroup('${g.code}')">Inviter des frères / sœurs</button>`:''}
+    <div class="grp-card">${qiyamHTML}</div>
+    ${isAdmin?'<button class="btn-primary" onclick="shareGroup(\''+g.code+'\')">Inviter des frères / sœurs</button>':''}
     <button class="btn-secondary" onclick="${isAdmin?'deleteGroup()':'leaveGroup()'}" style="color:var(--text-light)">
       ${isAdmin?'Supprimer le groupe':'Quitter le groupe'}
     </button>`;
