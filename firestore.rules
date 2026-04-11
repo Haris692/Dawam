@@ -2,10 +2,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Groupes : lecture réservée aux membres, création/mise à jour contrôlées
+    // Groupes : lecture ouverte à tout utilisateur authentifié (nécessaire pour rejoindre)
     match /groups/{groupId} {
-      allow read: if request.auth != null
-        && request.auth.uid in resource.data.members;
+      allow read: if request.auth != null;
 
       allow create: if request.auth != null
         && request.auth.uid == request.resource.data.adminUid
@@ -16,15 +15,29 @@ service cloud.firestore {
         && request.resource.data.target <= 10000;
 
       allow update: if request.auth != null && (
-        // Membre existant qui incrémente le compteur (count seul, ou count+completedAt)
+        // Membre existant qui incrémente le compteur
         (request.auth.uid in resource.data.members
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['count', 'completedAt']))
         ||
-        // Nouvel utilisateur qui rejoint (members + memberNames uniquement)
+        // Nouvel utilisateur qui rejoint
         (!(request.auth.uid in resource.data.members)
           && request.resource.data.members.size() == resource.data.members.size() + 1
           && request.resource.data.members.size() <= 20
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members', 'memberNames']))
+        ||
+        // Membre qui quitte (se retire de members + memberNames)
+        (request.auth.uid in resource.data.members
+          && !(request.auth.uid in request.resource.data.members)
+          && request.resource.data.members.size() == resource.data.members.size() - 1
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members', 'memberNames']))
+        ||
+        // Membre qui coche son Qiyam (champ qiyam uniquement)
+        (request.auth.uid in resource.data.members
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['qiyam']))
+        ||
+        // Admin met à jour la cible Qiyam semaine
+        (request.auth.uid == resource.data.adminUid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['qiyamWeekTarget']))
         ||
         // Admin peut tout modifier
         request.auth.uid == resource.data.adminUid

@@ -472,6 +472,24 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .grp-sheet-actions { padding:14px 20px 0;display:flex;flex-direction:column;gap:8px; }
 @keyframes grpCountTick { 0%{transform:scale(1)} 40%{transform:scale(1.22);color:var(--accent)} 100%{transform:scale(1)} }
 .grp-counter-val.tick { animation:grpCountTick .28s cubic-bezier(.34,1.56,.64,1) forwards; }
+.grp-qiyam-section { margin-top:4px; }
+.grp-qiyam-title { font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;align-items:center;gap:6px; }
+.grp-qiyam-list { display:flex;flex-direction:column;gap:8px;margin-bottom:14px; }
+.grp-qiyam-row { display:flex;align-items:center;gap:10px; }
+.grp-qiyam-avatar { width:32px;height:32px;border-radius:16px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text-secondary);flex-shrink:0;transition:all .4s; }
+.grp-qiyam-avatar.done { background:var(--green);color:#fff; }
+.grp-qiyam-name { flex:1;font-size:14px;font-weight:500;color:var(--text-secondary);transition:color .4s; }
+.grp-qiyam-name.done { color:var(--green);font-weight:600; }
+.grp-qiyam-meta { display:flex;align-items:center;gap:6px; }
+.grp-qiyam-time { font-size:11px;color:var(--text-light); }
+.grp-qiyam-streak { font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-light);padding:2px 7px;border-radius:10px; }
+.grp-qiyam-btn { width:100%;padding:14px;border-radius:14px;border:1.5px dashed var(--border);background:transparent;color:var(--text-secondary);font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px; }
+.grp-qiyam-btn:active { background:var(--green-light);border-color:var(--green);color:var(--green); }
+.grp-qiyam-done-msg { text-align:center;font-size:13px;color:var(--green);font-weight:600;padding:10px 0 2px; }
+.grp-week-bar { height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:4px; }
+.grp-week-fill { height:100%;background:var(--green);border-radius:3px;transition:width .5s ease; }
+.grp-week-legend { display:flex;justify-content:space-between;font-size:11px;color:var(--text-light); }
+.grp-week-target-btn { font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font-body);padding:0;text-decoration:underline; }
 /* Edit profil sheet */
 #edit-profil-modal { display:none;position:fixed;inset:0;z-index:300;background:var(--overlay);align-items:flex-end;backdrop-filter:blur(2px); }
 #edit-profil-modal.show { display:flex; }
@@ -2710,12 +2728,14 @@ function renderGroupes(){
   const isCompleted=!!g.completedAt;
   const pct=Math.min(100,Math.round(g.count/g.target*100));
   const dhikr=GRP_DHIKR[g.dhikrType]||{ar:'',label:g.dhikrLabel||''};
+  const today=_grpToday();
   const membersHTML=Object.entries(g.memberNames||{}).map(([muid,mname])=>{
     const initials=mname.trim().slice(0,2).toUpperCase();
     const isMe=muid===uid;
     const isAdm=muid===g.adminUid;
     return `<div class="grp-member-row"><div class="grp-member-avatar" style="${isMe?'background:var(--green)':''}">${initials}</div><span class="grp-member-name">${mname}${isMe?' (toi)':''}</span>${isAdm?'<span class="grp-member-badge">admin</span>':''}</div>`;
   }).join('');
+  const qiyamHTML=_renderQiyamSection(g,uid,today);
   if(isCompleted){
     body.innerHTML=`
       <div class="grp-card">
@@ -2757,11 +2777,121 @@ function renderGroupes(){
     <div class="grp-card">
       <div class="grp-members-title">${g.members.length} participant${g.members.length>1?'s':''}</div>
       <div class="grp-members-list">${membersHTML}</div>
+      <div class="grp-qiyam-section">${qiyamHTML}</div>
     </div>
     ${isAdmin?`<button class="btn-primary" onclick="shareGroup('${g.code}')">Inviter des frères / sœurs</button>`:''}
     <button class="btn-secondary" onclick="${isAdmin?'deleteGroup()':'leaveGroup()'}" style="color:var(--text-light)">
       ${isAdmin?'Supprimer le groupe':'Quitter le groupe'}
     </button>`;
+}
+
+// ── Qiyam al-Layl ────────────────────────────────────────────────────────────
+
+function _grpToday(){
+  return new Date().toISOString().slice(0,10); // "2026-04-11"
+}
+
+function _grpWeekStart(){
+  const d=new Date();
+  const day=d.getDay(); // 0=dim
+  const diff=(day===0?-6:1-day);
+  const mon=new Date(d);mon.setDate(d.getDate()+diff);
+  return mon.toISOString().slice(0,10); // "2026-04-07" (lundi)
+}
+
+function _renderQiyamSection(g, uid, today){
+  const weekStart=_grpWeekStart();
+  const qiyam=g.qiyam||{};
+  const myQ=qiyam[uid]||{};
+  const doneToday=myQ.lastDate===today;
+
+  // Liste des membres avec statut qiyam
+  const rows=Object.entries(g.memberNames||{}).map(([muid,mname])=>{
+    const q=qiyam[muid]||{};
+    const done=q.lastDate===today;
+    const initials=mname.trim().slice(0,2).toUpperCase();
+    const weekCount=(q.weekDates||[]).filter(d=>d>=weekStart).length;
+    const streak=q.streak||0;
+    return `<div class="grp-qiyam-row">
+      <div class="grp-qiyam-avatar${done?' done':''}">${done?'🌙':initials}</div>
+      <span class="grp-qiyam-name${done?' done':''}">${mname}${muid===uid?' (toi)':''}</span>
+      <div class="grp-qiyam-meta">
+        ${done&&q.checkedAt?`<span class="grp-qiyam-time">${q.checkedAt}</span>`:''}
+        ${streak>1?`<span class="grp-qiyam-streak">🔥${streak}j</span>`:''}
+        ${weekCount>0&&!done?`<span class="grp-qiyam-streak" style="background:var(--bg);color:var(--text-light)">${weekCount}/sem</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Bouton ou message pour l'utilisateur courant
+  const myAction=doneToday
+    ?`<div class="grp-qiyam-done-msg">✓ Fait à ${myQ.checkedAt} — barakAllahu fik</div>`
+    :`<button class="grp-qiyam-btn" onclick="checkQiyam()">🌙 J'ai fait le Qiyam cette nuit</button>`;
+
+  // Défi semaine
+  let weekChallenge='';
+  if(g.qiyamWeekTarget){
+    const totalWeek=Object.values(qiyam).reduce((sum,q)=>{
+      return sum+(q.weekDates||[]).filter(d=>d>=weekStart).length;
+    },0);
+    const maxTotal=g.members.length*(g.qiyamWeekTarget||0);
+    const pct=Math.min(100,Math.round(totalWeek/maxTotal*100));
+    weekChallenge=`<div style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px">Défi semaine — ${g.qiyamWeekTarget} Qiyam chacun</span>
+        ${g.adminUid===uid?`<button class="grp-week-target-btn" onclick="openQiyamTargetEdit()">modifier</button>`:''}
+      </div>
+      <div class="grp-week-bar"><div class="grp-week-fill" style="width:${pct}%"></div></div>
+      <div class="grp-week-legend"><span>${totalWeek} / ${maxTotal} Qiyam collectifs</span><span>${pct}%</span></div>
+    </div>`;
+  } else if(g.adminUid===uid){
+    weekChallenge=`<div style="margin-top:10px;text-align:center">
+      <button class="grp-week-target-btn" onclick="openQiyamTargetEdit()">+ Créer un défi Qiyam cette semaine</button>
+    </div>`;
+  }
+
+  return `<div style="padding-top:14px;border-top:.5px solid var(--border);margin-top:10px">
+    <div class="grp-qiyam-title">🌙 Qiyam al-Layl — cette nuit</div>
+    <div class="grp-qiyam-list">${rows}</div>
+    ${myAction}
+    ${weekChallenge}
+  </div>`;
+}
+
+async function checkQiyam(){
+  const uid=_auth.currentUser?.uid;
+  if(!uid||!_groupId||!_groupState)return;
+  const today=_grpToday();
+  const existing=(_groupState.qiyam||{})[uid]||{};
+  if(existing.lastDate===today){showToast('Déjà coché pour cette nuit !');return;}
+  const now=new Date();
+  const timeStr=`${String(now.getHours()).padStart(2,'0')}h${String(now.getMinutes()).padStart(2,'0')}`;
+  // Calcul streak
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yStr=yesterday.toISOString().slice(0,10);
+  const prevStreak=existing.streak||0;
+  const newStreak=(existing.lastDate===yStr)?prevStreak+1:1;
+  // Calcul semaine
+  const weekStart=_grpWeekStart();
+  const prevWeekDates=(existing.weekDates||[]).filter(d=>d>=weekStart);
+  const weekDates=[...prevWeekDates,today];
+  try{
+    await _db.collection('groups').doc(_groupId).update({
+      [`qiyam.${uid}`]:{lastDate:today,checkedAt:timeStr,streak:newStreak,weekDates},
+    });
+    showToast(`🌙 Qiyam enregistré — ${timeStr}`);
+  }catch(e){showToast('Erreur lors de l\'enregistrement.');console.error('[checkQiyam]',e);}
+}
+
+function openQiyamTargetEdit(){
+  const current=_groupState?.qiyamWeekTarget||5;
+  const val=prompt(`Objectif Qiyam par membre cette semaine (1-7) :`,current);
+  if(val===null)return;
+  const n=parseInt(val,10);
+  if(isNaN(n)||n<1||n>7){showToast('Valeur invalide (1-7).');return;}
+  _db.collection('groups').doc(_groupId).update({qiyamWeekTarget:n})
+    .then(()=>showToast(`Défi mis à jour : ${n} Qiyam cette semaine`))
+    .catch(()=>showToast('Erreur lors de la mise à jour.'));
 }
 
 async function tapDhikr(){
