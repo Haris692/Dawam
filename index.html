@@ -2673,19 +2673,6 @@ async function initGroupes(){
   renderGroupes();
 }
 
-function _checkGroupInviteUrl(){
-  const params=new URLSearchParams(window.location.search);
-  const code=params.get('group');
-  if(code&&code.length===6){
-    window.history.replaceState({},'',window.location.pathname);
-    if(_groupState===null){
-      _promptJoinByCode(code.toUpperCase());
-    }else if(_groupState){
-      showToast('Tu es déjà dans un groupe.');
-    }
-  }
-}
-
 function renderGroupes(){
   const body=document.getElementById('grp-body');
   if(!body)return;
@@ -4170,8 +4157,8 @@ function launchApp(){
       if(first)showToast(`Commence maintenant → ${first.emoji} ${first.titleFr}`);
     },900);
   }
-  // Groupes : charger le groupe actif + détecter lien d'invitation
-  initGroupes().then(()=>_checkGroupInviteUrl());
+  // Groupes : charger le groupe actif
+  initGroupes();
 }
 function dismissNotifPrompt(){
   document.getElementById('notif-prompt').classList.remove('show');
