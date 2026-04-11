@@ -9,10 +9,7 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.auth.uid == request.resource.data.adminUid
         && request.resource.data.members.size() == 1
-        && request.resource.data.members[0] == request.auth.uid
-        && request.resource.data.count == 0
-        && request.resource.data.target >= 100
-        && request.resource.data.target <= 10000;
+        && request.resource.data.members[0] == request.auth.uid;
 
       allow update: if request.auth != null && (
         // Membre existant qui incrémente le compteur
