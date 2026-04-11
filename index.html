@@ -470,6 +470,11 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .grp-target-slider { flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer; }
 .grp-target-slider::-webkit-slider-thumb { -webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(186,117,23,.35); }
 .grp-sheet-actions { padding:14px 20px 0;display:flex;flex-direction:column;gap:8px; }
+.grp-type-selector { display:flex;gap:10px;padding:0 20px 16px; }
+.grp-type-btn { flex:1;padding:16px 10px;border-radius:14px;border:1.5px solid var(--border);background:var(--bg-card);cursor:pointer;text-align:center;transition:all .2s;font-family:var(--font-body); }
+.grp-type-btn.selected { border-color:var(--accent);background:var(--accent-light); }
+.grp-type-btn-icon { font-size:28px;display:block;margin-bottom:6px; }
+.grp-type-btn-label { font-size:13px;font-weight:600;color:var(--text); }
 @keyframes grpCountTick { 0%{transform:scale(1)} 40%{transform:scale(1.22);color:var(--accent)} 100%{transform:scale(1)} }
 .grp-counter-val.tick { animation:grpCountTick .28s cubic-bezier(.34,1.56,.64,1) forwards; }
 .grp-qiyam-section { margin-top:4px; }
@@ -1381,45 +1386,72 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="grp-create-sheet">
     <div class="grp-sheet-handle"></div>
     <div class="grp-sheet-title">Créer un groupe</div>
-    <div class="grp-sheet-sub">Choisis un dhikr collectif et fixez un objectif ensemble.</div>
-    <div class="grp-sheet-section">
-      <div class="grp-sheet-label">Type de dhikr</div>
-      <div class="grp-dhikr-options" id="grp-dhikr-options">
-        <div class="grp-dhikr-opt selected" data-key="subhan" onclick="selectGrpDhikr(this)">
-          <span class="grp-dhikr-opt-ar">سُبْحَانَ ٱللَّٰهِ</span>
-          <span class="grp-dhikr-opt-label">Sous-han Allah</span>
-          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="grp-sheet-sub">Choisis le type de groupe.</div>
+    <!-- Sélecteur type -->
+    <div class="grp-type-selector">
+      <button class="grp-type-btn selected" id="grp-type-dhikr" onclick="selectGrpGroupType('dhikr')">
+        <span class="grp-type-btn-icon">📿</span>
+        <span class="grp-type-btn-label">Dhikr collectif</span>
+      </button>
+      <button class="grp-type-btn" id="grp-type-qiyam" onclick="selectGrpGroupType('qiyam')">
+        <span class="grp-type-btn-icon">🌙</span>
+        <span class="grp-type-btn-label">Qiyam al-Layl</span>
+      </button>
+    </div>
+    <!-- Section Dhikr -->
+    <div id="grp-dhikr-create-section">
+      <div class="grp-sheet-section">
+        <div class="grp-sheet-label">Type de dhikr</div>
+        <div class="grp-dhikr-options" id="grp-dhikr-options">
+          <div class="grp-dhikr-opt selected" data-key="subhan" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">سُبْحَانَ ٱللَّٰهِ</span>
+            <span class="grp-dhikr-opt-label">Sous-han Allah</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="alhamd" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">ٱلْحَمْدُ لِلَّٰهِ</span>
+            <span class="grp-dhikr-opt-label">Alhamdulillah</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="allahu" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">ٱللَّٰهُ أَكْبَرُ</span>
+            <span class="grp-dhikr-opt-label">Allahu Akbar</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="astaghfir" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">أَسْتَغْفِرُ ٱللَّٰهَ</span>
+            <span class="grp-dhikr-opt-label">Astaghfirullah</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="salawat" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">صَلَّىٰ ٱللَّٰهُ عَلَيْهِ</span>
+            <span class="grp-dhikr-opt-label">Salawat sur le Prophète ﷺ</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
         </div>
-        <div class="grp-dhikr-opt" data-key="alhamd" onclick="selectGrpDhikr(this)">
-          <span class="grp-dhikr-opt-ar">ٱلْحَمْدُ لِلَّٰهِ</span>
-          <span class="grp-dhikr-opt-label">Alhamdulillah</span>
-          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="grp-sheet-section">
+        <div class="grp-sheet-label">Objectif collectif</div>
+        <div class="grp-target-row">
+          <div class="grp-target-display" id="grp-target-display">1 000</div>
+          <input class="grp-target-slider" type="range" min="1" max="100" value="10"
+                 id="grp-target-slider" oninput="updateGrpTarget(this.value)">
         </div>
-        <div class="grp-dhikr-opt" data-key="allahu" onclick="selectGrpDhikr(this)">
-          <span class="grp-dhikr-opt-ar">ٱللَّٰهُ أَكْبَرُ</span>
-          <span class="grp-dhikr-opt-label">Allahu Akbar</span>
-          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="grp-dhikr-opt" data-key="astaghfir" onclick="selectGrpDhikr(this)">
-          <span class="grp-dhikr-opt-ar">أَسْتَغْفِرُ ٱللَّٰهَ</span>
-          <span class="grp-dhikr-opt-label">Astaghfirullah</span>
-          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="grp-dhikr-opt" data-key="salawat" onclick="selectGrpDhikr(this)">
-          <span class="grp-dhikr-opt-ar">صَلَّىٰ ٱللَّٰهُ عَلَيْهِ</span>
-          <span class="grp-dhikr-opt-label">Salawat sur le Prophète ﷺ</span>
-          <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
+        <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:4px">De 100 à 10 000 — glisse le curseur</div>
       </div>
     </div>
-    <div class="grp-sheet-section">
-      <div class="grp-sheet-label">Objectif collectif</div>
-      <div class="grp-target-row">
-        <div class="grp-target-display" id="grp-target-display">1 000</div>
-        <input class="grp-target-slider" type="range" min="1" max="100" value="10"
-               id="grp-target-slider" oninput="updateGrpTarget(this.value)">
+    <!-- Section Qiyam -->
+    <div id="grp-qiyam-create-section" style="display:none">
+      <div class="grp-sheet-section">
+        <div class="grp-sheet-label">Défi semaine (optionnel)</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:12px">Fixe un nombre de Qiyam à accomplir chacun cette semaine.</div>
+        <div class="grp-target-row">
+          <div class="grp-target-display" id="grp-qiyam-target-display">—</div>
+          <input class="grp-target-slider" type="range" min="0" max="7" value="0"
+                 id="grp-qiyam-target-slider" oninput="updateGrpQiyamTarget(this.value)">
+        </div>
+        <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:4px">0 = pas de défi cette semaine</div>
       </div>
-      <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:4px">De 100 à 10 000 — glisse le curseur</div>
     </div>
     <div class="grp-sheet-actions">
       <button class="btn-primary" id="grp-create-btn" onclick="submitCreateGroup()">Créer le groupe</button>
@@ -2648,6 +2680,8 @@ let _groupId     = null;
 let _groupUnsub  = null;
 let _grpSelectedDhikr = 'subhan';
 let _grpTargetVal = 1000;
+let _grpGroupType = 'dhikr';
+let _grpQiyamWeekTarget = 0;
 
 function _fmtN(n){ return n.toLocaleString('fr-FR'); }
 
@@ -2735,7 +2769,7 @@ function renderGroupes(){
     const isAdm=muid===g.adminUid;
     return `<div class="grp-member-row"><div class="grp-member-avatar" style="${isMe?'background:var(--green)':''}">${initials}</div><span class="grp-member-name">${mname}${isMe?' (toi)':''}</span>${isAdm?'<span class="grp-member-badge">admin</span>':''}</div>`;
   }).join('');
-  const qiyamHTML=_renderQiyamSection(g,uid,today);
+  const qiyamHTML=g.groupType==='qiyam'?_renderQiyamSection(g,uid,today):'';
   if(isCompleted){
     body.innerHTML=`
       <div class="grp-card">
@@ -2757,7 +2791,8 @@ function renderGroupes(){
       </button>`;
     return;
   }
-  body.innerHTML=`
+  const isDhikrGroup=g.groupType!=='qiyam';
+  const mainCard=isDhikrGroup?`
     <div class="grp-card">
       <div class="grp-card-top">
         <div>
@@ -2773,13 +2808,21 @@ function renderGroupes(){
       <div class="grp-progress-bar"><div class="grp-progress-fill" style="width:${pct}%"></div></div>
       <div class="grp-progress-pct">${pct}%</div>
       <button class="grp-tap-btn" id="grp-tap-btn" onclick="tapDhikr()">📿 +1 — Taper</button>
-    </div>
+    </div>`:`
+    <div class="grp-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text)">🌙 Qiyam al-Layl</div>
+        <div class="grp-code-badge" onclick="copyGroupCode('${g.code}')" title="Copier le code">📋 ${g.code}</div>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary)">Prière de la nuit — qui est debout ?</div>
+    </div>`;
+  body.innerHTML=mainCard+`
     <div class="grp-card">
       <div class="grp-members-title">${g.members.length} participant${g.members.length>1?'s':''}</div>
       <div class="grp-members-list">${membersHTML}</div>
     </div>
-    <div class="grp-card">${qiyamHTML}</div>
-    ${isAdmin?'<button class="btn-primary" onclick="shareGroup(\''+g.code+'\')">Inviter des frères / sœurs</button>':''}
+    ${qiyamHTML?'<div class="grp-card">'+qiyamHTML+'</div>':''}
+    `+(isAdmin?'<button class="btn-primary" onclick="shareGroup(\''+g.code+'\')">Inviter des frères / sœurs</button>':'')+`
     <button class="btn-secondary" onclick="${isAdmin?'deleteGroup()':'leaveGroup()'}" style="color:var(--text-light)">
       ${isAdmin?'Supprimer le groupe':'Quitter le groupe'}
     </button>`;
@@ -2957,9 +3000,22 @@ async function _promptJoinByCode(code){
 
 function openGrpCreate(){
   if(_groupState&&_groupState!==null){showToast('Tu es déjà dans un groupe.');return;}
+  // Reset
+  _grpGroupType='dhikr';
+  document.getElementById('grp-type-dhikr').classList.add('selected');
+  document.getElementById('grp-type-qiyam').classList.remove('selected');
+  document.getElementById('grp-dhikr-create-section').style.display='';
+  document.getElementById('grp-qiyam-create-section').style.display='none';
   document.getElementById('grp-create-modal').classList.add('show');
 }
 function closeGrpCreate(){document.getElementById('grp-create-modal').classList.remove('show');}
+function selectGrpGroupType(type){
+  _grpGroupType=type;
+  document.getElementById('grp-type-dhikr').classList.toggle('selected',type==='dhikr');
+  document.getElementById('grp-type-qiyam').classList.toggle('selected',type==='qiyam');
+  document.getElementById('grp-dhikr-create-section').style.display=type==='dhikr'?'':'none';
+  document.getElementById('grp-qiyam-create-section').style.display=type==='qiyam'?'':'none';
+}
 function selectGrpDhikr(el){
   document.querySelectorAll('.grp-dhikr-opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
@@ -2969,6 +3025,10 @@ function updateGrpTarget(val){
   _grpTargetVal=Math.round(val*100);
   document.getElementById('grp-target-display').textContent=_fmtN(_grpTargetVal);
 }
+function updateGrpQiyamTarget(val){
+  _grpQiyamWeekTarget=parseInt(val,10);
+  document.getElementById('grp-qiyam-target-display').textContent=_grpQiyamWeekTarget>0?_grpQiyamWeekTarget+'j':'—';
+}
 
 async function submitCreateGroup(){
   const uid=_auth.currentUser?.uid;
@@ -2977,7 +3037,6 @@ async function submitCreateGroup(){
   const btn=document.getElementById('grp-create-btn');
   btn.disabled=true;btn.textContent='Création…';
   const code=_genGroupCode();
-  const dhikr=GRP_DHIKR[_grpSelectedDhikr];
   const myName=S.name||'Anonyme';
   try{
     const codeSnap=await _db.collection('groupCodes').doc(code).get();
@@ -2985,13 +3044,19 @@ async function submitCreateGroup(){
     const groupRef=_db.collection('groups').doc();
     const groupId=groupRef.id;
     const batch=_db.batch();
-    batch.set(groupRef,{
+    const baseData={
       code,adminUid:uid,adminName:myName,
       members:[uid],memberNames:{[uid]:myName},
-      dhikrType:_grpSelectedDhikr,dhikrLabel:dhikr.label,dhikrAr:dhikr.ar,
-      target:_grpTargetVal,count:0,completedAt:null,
+      groupType:_grpGroupType,
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-    });
+    };
+    if(_grpGroupType==='dhikr'){
+      const dhikr=GRP_DHIKR[_grpSelectedDhikr];
+      Object.assign(baseData,{dhikrType:_grpSelectedDhikr,dhikrLabel:dhikr.label,dhikrAr:dhikr.ar,target:_grpTargetVal,count:0,completedAt:null});
+    } else {
+      Object.assign(baseData,{qiyamWeekTarget:_grpQiyamWeekTarget>0?_grpQiyamWeekTarget:null,qiyam:{}});
+    }
+    batch.set(groupRef,baseData);
     batch.set(_db.collection('groupCodes').doc(code),{groupId});
     await batch.commit();
     localStorage.setItem('dawam_groupId',groupId);
