@@ -50,12 +50,20 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         print("[APNs] Échec enregistrement: \(error)")
-        // Informe le JS que l'enregistrement a échoué
+        #if targetEnvironment(simulator)
+        // Le simulateur ne supporte pas APNs → on simule un token pour que l'UI s'active
+        NotificationCenter.default.post(
+            name: .apnsTokenReceived,
+            object: nil,
+            userInfo: ["token": "simulator-token"]
+        )
+        #else
         NotificationCenter.default.post(
             name: .apnsTokenReceived,
             object: nil,
             userInfo: ["token": ""]
         )
+        #endif
     }
 
     // Notification reçue quand l'app est au premier plan
