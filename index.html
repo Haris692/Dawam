@@ -3473,6 +3473,18 @@ async function subscribePush() {
 }
 
 async function toggleNotifs() {
+  if (window.isNativeIOSApp) {
+    const isOn = !!(S.notifs?.pushSub);
+    if (isOn) {
+      S.notifs = { pushSub: null };
+      save();
+      renderNotifToggle();
+      showToast("Rappels désactivés");
+      return;
+    }
+    window.webkit.messageHandlers.requestNotifPermission.postMessage({});
+    return;
+  }
   if (!('Notification' in window) || !('PushManager' in window)) {
     showToast("Notifications non supportées sur ce navigateur");
     return;
@@ -3599,7 +3611,7 @@ async function submitFeedback(){
 let deferredPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;});
 function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
-function isInStandaloneMode(){return window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;}
+function isInStandaloneMode(){return window.isNativeIOSApp||window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;}
 function showInstallBanner(){
   if(isInStandaloneMode())return;
   if(localStorage.getItem("install_dismissed"))return;
@@ -4362,6 +4374,10 @@ function dismissNotifPrompt(){
 async function activateNotifsFromPrompt(){
   const btn=document.querySelector('#notif-prompt .btn-primary');
   btn.textContent='Activation…';btn.disabled=true;
+  if(window.isNativeIOSApp){
+    window.webkit.messageHandlers.requestNotifPermission.postMessage({});
+    return;
+  }
   try{
     if(!('Notification' in window)||!('PushManager' in window))throw new Error('unsupported');
     const perm=await Notification.requestPermission();
@@ -4375,6 +4391,22 @@ async function activateNotifsFromPrompt(){
   }
   dismissNotifPrompt();
 }
+
+// Callback appelé par Swift après demande de permission APNs
+window.nativeNotifResult = function(granted, apnsToken) {
+  const btn = document.querySelector('#notif-prompt .btn-primary');
+  if (btn) { btn.textContent = 'Activer les rappels'; btn.disabled = false; }
+  if (!granted) {
+    showToast('Permission refusée — active-la dans Réglages > Dawam');
+    dismissNotifPrompt();
+    return;
+  }
+  S.notifs = { pushSub: 'apns:' + apnsToken };
+  save();
+  renderNotifToggle();
+  showToast('Rappels activés ✓');
+  dismissNotifPrompt();
+};
 
 // Notifications push — à configurer ultérieurement
 
