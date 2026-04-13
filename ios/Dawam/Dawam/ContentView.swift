@@ -27,6 +27,8 @@ struct DawamWebView: UIViewRepresentable {
 
         // Bridge pour les demandes de permission de notification
         config.userContentController.add(context.coordinator, name: "requestNotifPermission")
+        // Bridge pour les dialogs de confirmation (confirm() remplacé en JS)
+        config.userContentController.add(context.coordinator, name: "showConfirm")
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
@@ -84,6 +86,10 @@ struct DawamWebView: UIViewRepresentable {
             _ userContentController: WKUserContentController,
             didReceive message: WKScriptMessage
         ) {
+            if message.name == "showConfirm", let body = message.body as? [String: Any] {
+                handleShowConfirm(body)
+                return
+            }
             guard message.name == "requestNotifPermission" else { return }
 
             UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
@@ -124,9 +130,7 @@ struct DawamWebView: UIViewRepresentable {
             initiatedByFrame frame: WKFrameInfo,
             completionHandler: @escaping () -> Void
         ) {
-            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completionHandler() })
-            topViewController()?.present(alert, animated: true)
+            presentAlert(message: message, confirm: false) { _ in completionHandler() }
         }
 
         func webView(
@@ -135,18 +139,35 @@ struct DawamWebView: UIViewRepresentable {
             initiatedByFrame frame: WKFrameInfo,
             completionHandler: @escaping (Bool) -> Void
         ) {
-            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Annuler", style: .cancel) { _ in completionHandler(false) })
-            alert.addAction(UIAlertAction(title: "Confirmer", style: .destructive) { _ in completionHandler(true) })
-            topViewController()?.present(alert, animated: true)
+            presentAlert(message: message, confirm: true) { completionHandler($0) }
         }
 
-        private func topViewController() -> UIViewController? {
-            UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .flatMap { $0.windows }
-                .first { $0.isKeyWindow }?
-                .rootViewController
+        // Bridge JS → Swift pour confirm() : webkit.messageHandlers.showConfirm.postMessage({message, ok, cancel})
+        func handleShowConfirm(_ body: [String: Any]) {
+            let message  = body["message"]  as? String ?? ""
+            let cbOk     = body["ok"]       as? String ?? ""
+            let cbCancel = body["cancel"]   as? String ?? ""
+            presentAlert(message: message, confirm: true) { [weak self] confirmed in
+                self?.callJS(confirmed ? cbOk : cbCancel)
+            }
+        }
+
+        private func presentAlert(message: String, confirm: Bool, completion: @escaping (Bool) -> Void) {
+            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            if confirm {
+                alert.addAction(UIAlertAction(title: "Annuler", style: .cancel)     { _ in completion(false) })
+                alert.addAction(UIAlertAction(title: "Confirmer", style: .destructive) { _ in completion(true) })
+            } else {
+                alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completion(true) })
+            }
+            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let root  = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+                completion(false)
+                return
+            }
+            var top = root
+            while let presented = top.presentedViewController { top = presented }
+            top.present(alert, animated: true)
         }
 
         // Reçoit le token APNs depuis AppDelegate via NotificationCenter

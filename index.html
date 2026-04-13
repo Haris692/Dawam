@@ -3124,7 +3124,8 @@ function _triggerGroupCompletion(){
 
 function showLockedHint(cat){const msgs={qiyam:"Disponible la nuit (dernier tiers)",aube:"Disponible après le Fajr",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible avant de dormir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 async function resetApp() {
-  if (!confirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données.')) return;
+  const confirmed = await nativeConfirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données.');
+  if (!confirmed) return;
   const user = _auth.currentUser;
   if (user) {
     try {
@@ -4390,6 +4391,22 @@ async function activateNotifsFromPrompt(){
     showToast(e.message==='denied'?'Permission refusée':'Notifications non disponibles');
   }
   dismissNotifPrompt();
+}
+
+// confirm() universel : bridge Swift sur iOS natif, confirm() standard ailleurs
+function nativeConfirm(message) {
+  if (window.isNativeIOSApp) {
+    return new Promise(resolve => {
+      const id = '_confirm_' + Date.now();
+      window[id] = resolve;
+      window.webkit.messageHandlers.showConfirm.postMessage({
+        message,
+        ok:     `window['${id}'](true)`,
+        cancel: `window['${id}'](false)`,
+      });
+    });
+  }
+  return Promise.resolve(confirm(message));
 }
 
 // Callback appelé par Swift après demande de permission APNs
