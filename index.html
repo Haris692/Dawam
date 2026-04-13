@@ -1665,7 +1665,11 @@ function _setAuthContext(ctx) {
 async function authApple() {
   _setAuthError('');
   if (window.isNativeIOSApp) {
-    window.webkit.messageHandlers.signInWithApple.postMessage({});
+    try {
+      window.webkit.messageHandlers.signInWithApple.postMessage({});
+    } catch(e) {
+      _setAuthError('Mise à jour requise — relance l\'app depuis TestFlight.');
+    }
   }
 }
 
