@@ -543,10 +543,42 @@ export default {
       if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
       if (deviceToken) {
         const msg = getMsg('Fajr', 1);
-        const res = await sendAPNs(deviceToken, msg.title, msg.body, env);
-        const status = res.status;
-        const body   = await res.text();
-        return json({ ok: status === 200, status, body: body.slice(0, 300) });
+        // Importe la clé et génère le JWT
+        let privKey, jwt, keyImportError = null;
+        try {
+          privKey = await importAPNsKey(env.APNS_PRIVATE_KEY);
+          jwt = await makeAPNsJWT(env.APNS_KEY_ID, env.APNS_TEAM_ID, privKey);
+        } catch (e) {
+          keyImportError = e.message;
+        }
+        // Décode le JWT pour debug (header + payload seulement)
+        const jwtParts = jwt ? jwt.split('.') : [];
+        const jwtDebug = jwtParts.length === 3 ? {
+          header:  JSON.parse(atob(jwtParts[0].replace(/-/g,'+').replace(/_/g,'/'))),
+          payload: JSON.parse(atob(jwtParts[1].replace(/-/g,'+').replace(/_/g,'/'))),
+        } : null;
+
+        if (keyImportError) return json({ error: 'key import failed', detail: keyImportError });
+
+        const body = JSON.stringify({ aps: { alert: { title: msg.title, body: msg.body }, sound: 'default', badge: 1 } });
+        const headers = {
+          'authorization': `bearer ${jwt}`,
+          'apns-topic': env.APNS_BUNDLE_ID,
+          'apns-push-type': 'alert',
+          'apns-priority': '10',
+          'content-type': 'application/json',
+        };
+        const [resProd, resSandbox] = await Promise.all([
+          fetch(`https://api.push.apple.com/3/device/${deviceToken}`, { method: 'POST', headers, body }),
+          fetch(`https://api.sandbox.push.apple.com/3/device/${deviceToken}`, { method: 'POST', headers, body }),
+        ]);
+        const [bodyProd, bodySandbox] = await Promise.all([resProd.text(), resSandbox.text()]);
+        return json({
+          jwtDebug,
+          topic: env.APNS_BUNDLE_ID,
+          production: { status: resProd.status, body: bodyProd },
+          sandbox:    { status: resSandbox.status, body: bodySandbox },
+        });
       }
       await notifyApnsAll(env, 'Fajr');
       return json({ ok: true, message: 'APNs test envoyé à tous les abonnés' });

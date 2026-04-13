@@ -20,7 +20,7 @@ crons = [
 # Variables publiques (les secrets VAPID + APNS_PRIVATE_KEY sont dans wrangler secret)
 [vars]
 VAPID_SUBJECT    = "mailto:harisgarrigos692@gmail.com"
-APNS_KEY_ID      = "633SZ4KW4F"
+APNS_KEY_ID      = "F58Y5NA79N"
 APNS_TEAM_ID     = "54R885C537"
 APNS_BUNDLE_ID   = "com.mydawam.app"
-APNS_SANDBOX     = "true"
+APNS_SANDBOX     = "false"
