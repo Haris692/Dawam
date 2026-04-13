@@ -1,6 +1,8 @@
 import SwiftUI
 import WebKit
 import UserNotifications
+import AuthenticationServices
+import CryptoKit
 
 // MARK: - WKWebView wrapper
 struct DawamWebView: UIViewRepresentable {
@@ -29,6 +31,8 @@ struct DawamWebView: UIViewRepresentable {
         config.userContentController.add(context.coordinator, name: "requestNotifPermission")
         // Bridge pour les dialogs de confirmation (confirm() remplacé en JS)
         config.userContentController.add(context.coordinator, name: "showConfirm")
+        // Bridge pour Sign in with Apple
+        config.userContentController.add(context.coordinator, name: "signInWithApple")
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
@@ -62,9 +66,11 @@ struct DawamWebView: UIViewRepresentable {
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 
     // MARK: - Coordinator (navigation + script message delegate)
-    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKUIDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKUIDelegate,
+                       ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
         var parent: DawamWebView
         weak var webView: WKWebView?
+        var currentNonce: String?
 
         init(_ parent: DawamWebView) {
             self.parent = parent
@@ -88,6 +94,10 @@ struct DawamWebView: UIViewRepresentable {
         ) {
             if message.name == "showConfirm", let body = message.body as? [String: Any] {
                 handleShowConfirm(body)
+                return
+            }
+            if message.name == "signInWithApple" {
+                handleSignInWithApple()
                 return
             }
             guard message.name == "requestNotifPermission" else { return }
@@ -120,6 +130,71 @@ struct DawamWebView: UIViewRepresentable {
                     }
                 }
             }
+        }
+
+        // MARK: Sign in with Apple
+
+        func handleSignInWithApple() {
+            let nonce = randomNonceString()
+            currentNonce = nonce
+            let request = ASAuthorizationAppleIDProvider().createRequest()
+            request.requestedScopes = [.fullName, .email]
+            request.nonce = sha256(nonce)
+
+            let controller = ASAuthorizationController(authorizationRequests: [request])
+            controller.delegate = self
+            controller.presentationContextProvider = self
+            controller.performRequests()
+        }
+
+        func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = scene.windows.first(where: { $0.isKeyWindow }) else {
+                return UIWindow()
+            }
+            return window
+        }
+
+        func authorizationController(controller: ASAuthorizationController,
+                                     didCompleteWithAuthorization authorization: ASAuthorization) {
+            guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let nonce = currentNonce,
+                  let tokenData = credential.identityToken,
+                  let idToken = String(data: tokenData, encoding: .utf8) else {
+                callJS("window.appleSignInError('Token manquant')")
+                return
+            }
+            let givenName  = credential.fullName?.givenName  ?? ""
+            let familyName = credential.fullName?.familyName ?? ""
+            let fullName   = [givenName, familyName].filter { !$0.isEmpty }.joined(separator: " ")
+
+            // Échappe les caractères pour éviter une injection JS
+            let safeToken    = idToken.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "'", with: "\\'")
+            let safeNonce    = nonce.replacingOccurrences(of: "'", with: "")
+            let safeName     = fullName.replacingOccurrences(of: "'", with: "")
+            callJS("window.appleSignInResult('\(safeToken)', '\(safeNonce)', '\(safeName)')")
+        }
+
+        func authorizationController(controller: ASAuthorizationController,
+                                     didCompleteWithError error: Error) {
+            // Ignore les annulations volontaires
+            if let authError = error as? ASAuthorizationError, authError.code == .canceled { return }
+            callJS("window.appleSignInError('Connexion Apple impossible')")
+        }
+
+        // MARK: Nonce helpers
+
+        private func randomNonceString(length: Int = 32) -> String {
+            var randomBytes = [UInt8](repeating: 0, count: length)
+            _ = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+            let charset = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+            return String(randomBytes.map { charset[Int($0) % charset.count] })
+        }
+
+        private func sha256(_ input: String) -> String {
+            let data = Data(input.utf8)
+            let hash = SHA256.hash(data: data)
+            return hash.compactMap { String(format: "%02x", $0) }.joined()
         }
 
         // MARK: WKUIDelegate — permet à confirm() et alert() de fonctionner
@@ -177,7 +252,6 @@ struct DawamWebView: UIViewRepresentable {
                 if token.isEmpty {
                     self.callJS("window.nativeNotifResult(false, null)")
                 } else {
-                    // Échappe le token pour éviter toute injection
                     let safe = token.replacingOccurrences(of: "'", with: "")
                     self.callJS("window.nativeNotifResult(true, '\(safe)')")
                 }
