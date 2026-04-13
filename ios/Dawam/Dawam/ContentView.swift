@@ -30,6 +30,7 @@ struct DawamWebView: UIViewRepresentable {
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
+        webView.uiDelegate = context.coordinator   // nécessaire pour confirm() / alert()
         webView.scrollView.bounces = false
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.isOpaque = false
@@ -59,7 +60,7 @@ struct DawamWebView: UIViewRepresentable {
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 
     // MARK: - Coordinator (navigation + script message delegate)
-    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKUIDelegate {
         var parent: DawamWebView
         weak var webView: WKWebView?
 
@@ -85,18 +86,67 @@ struct DawamWebView: UIViewRepresentable {
         ) {
             guard message.name == "requestNotifPermission" else { return }
 
-            UNUserNotificationCenter.current().requestAuthorization(
-                options: [.alert, .sound, .badge]
-            ) { granted, _ in
+            UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
                 DispatchQueue.main.async {
-                    if granted {
+                    switch settings.authorizationStatus {
+                    case .denied:
+                        // Déjà refusé → ouvre les Réglages iOS directement
+                        self?.callJS("window.nativeNotifResult(false, null)")
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    case .authorized, .provisional:
+                        // Déjà autorisé → enregistre directement
                         UIApplication.shared.registerForRemoteNotifications()
-                        // Le token arrivera via didReceiveAPNsToken
-                    } else {
-                        self.callJS("window.nativeNotifResult(false, null)")
+                    default:
+                        // Pas encore demandé → affiche la dialog système
+                        UNUserNotificationCenter.current().requestAuthorization(
+                            options: [.alert, .sound, .badge]
+                        ) { granted, _ in
+                            DispatchQueue.main.async {
+                                if granted {
+                                    UIApplication.shared.registerForRemoteNotifications()
+                                } else {
+                                    self?.callJS("window.nativeNotifResult(false, null)")
+                                }
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        // MARK: WKUIDelegate — permet à confirm() et alert() de fonctionner
+
+        func webView(
+            _ webView: WKWebView,
+            runJavaScriptAlertPanelWithMessage message: String,
+            initiatedByFrame frame: WKFrameInfo,
+            completionHandler: @escaping () -> Void
+        ) {
+            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completionHandler() })
+            topViewController()?.present(alert, animated: true)
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            runJavaScriptConfirmPanelWithMessage message: String,
+            initiatedByFrame frame: WKFrameInfo,
+            completionHandler: @escaping (Bool) -> Void
+        ) {
+            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Annuler", style: .cancel) { _ in completionHandler(false) })
+            alert.addAction(UIAlertAction(title: "Confirmer", style: .destructive) { _ in completionHandler(true) })
+            topViewController()?.present(alert, animated: true)
+        }
+
+        private func topViewController() -> UIViewController? {
+            UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap { $0.windows }
+                .first { $0.isKeyWindow }?
+                .rootViewController
         }
 
         // Reçoit le token APNs depuis AppDelegate via NotificationCenter
