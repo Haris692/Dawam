@@ -17,6 +17,10 @@ crons = [
   "15 14 * * *"    # Rappel 16h15 Paris (UTC+2 été) — rappel quotidien actions
 ]
 
-# Variables publiques (les secrets VAPID sont dans wrangler secret)
+# Variables publiques (les secrets VAPID + APNS_PRIVATE_KEY sont dans wrangler secret)
 [vars]
-VAPID_SUBJECT = "mailto:harisgarrigos692@gmail.com"
+VAPID_SUBJECT    = "mailto:harisgarrigos692@gmail.com"
+APNS_KEY_ID      = "633SZ4KW4F"
+APNS_TEAM_ID     = "54R885C537"
+APNS_BUNDLE_ID   = "com.mydawam.app"
+APNS_SANDBOX     = "true"

@@ -4423,9 +4423,20 @@ window.nativeNotifResult = function(granted, apnsToken) {
   renderNotifToggle();
   showToast('Rappels activés ✓');
   dismissNotifPrompt();
+  // Enregistre le token APNs sur le serveur
+  if (apnsToken && apnsToken !== 'simulator-token') {
+    fetch(PUSH_WORKER + '/subscribe-apns', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        deviceToken: apnsToken,
+        city:    S.profile?.city    || '',
+        palier:  S.palier           || 1,
+        prayers: S.profile?.prayers || [],
+      }),
+    }).catch(() => {});
+  }
 };
-
-// Notifications push — à configurer ultérieurement
 
 // ═══ INIT ═══
 load();

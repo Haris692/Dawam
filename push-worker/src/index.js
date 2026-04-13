@@ -184,6 +184,104 @@ async function subId(endpoint) {
   return b64url(buf).slice(0, 32);
 }
 
+// ── APNs (iOS natif / TestFlight) ──────────────────────────────────────────
+
+async function importAPNsKey(pem) {
+  const pemBody = pem
+    .replace('-----BEGIN PRIVATE KEY-----', '')
+    .replace('-----END PRIVATE KEY-----', '')
+    .replace(/\s+/g, '');
+  const der = Uint8Array.from(atob(pemBody), c => c.charCodeAt(0));
+  return crypto.subtle.importKey(
+    'pkcs8', der,
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    false, ['sign']
+  );
+}
+
+async function makeAPNsJWT(keyId, teamId, privateKey) {
+  const enc = new TextEncoder();
+  const now = Math.floor(Date.now() / 1000);
+  const header  = b64url(enc.encode(JSON.stringify({ alg: 'ES256', kid: keyId })));
+  const payload = b64url(enc.encode(JSON.stringify({ iss: teamId, iat: now })));
+  const input   = `${header}.${payload}`;
+  const sig = await crypto.subtle.sign(
+    { name: 'ECDSA', hash: 'SHA-256' },
+    privateKey,
+    enc.encode(input)
+  );
+  return `${input}.${b64url(sig)}`;
+}
+
+async function sendAPNs(deviceToken, title, body, env) {
+  const privKey = await importAPNsKey(env.APNS_PRIVATE_KEY);
+  const jwt     = await makeAPNsJWT(env.APNS_KEY_ID, env.APNS_TEAM_ID, privKey);
+  const sandbox = env.APNS_SANDBOX !== 'false';
+  const host    = sandbox ? 'api.sandbox.push.apple.com' : 'api.push.apple.com';
+  return fetch(`https://${host}/3/device/${deviceToken}`, {
+    method: 'POST',
+    headers: {
+      'authorization':   `bearer ${jwt}`,
+      'apns-topic':      env.APNS_BUNDLE_ID,
+      'apns-push-type':  'alert',
+      'apns-priority':   '10',
+      'content-type':    'application/json',
+    },
+    body: JSON.stringify({
+      aps: { alert: { title, body }, sound: 'default', badge: 1 },
+    }),
+  });
+}
+
+// Notifie tous les abonnés APNs avec un type fixe
+async function notifyApnsAll(env, type) {
+  let cursor;
+  do {
+    const page = await env.SUBSCRIPTIONS.list({ prefix: 'apns:', cursor, limit: 100 });
+    cursor = page.cursor;
+    await Promise.allSettled(page.keys.map(async ({ name }) => {
+      const raw = await env.SUBSCRIPTIONS.get(name);
+      if (!raw) return;
+      const sub = JSON.parse(raw);
+      if (!sub.deviceToken) return;
+      if (await hasSent(env, name, type)) return;
+      const msg = getMsg(type, sub.palier || 1);
+      const res = await sendAPNs(sub.deviceToken, msg.title, msg.body, env);
+      if (res.status === 410 || res.status === 400) await env.SUBSCRIPTIONS.delete(name);
+      else await markSent(env, name, type);
+    }));
+  } while (cursor);
+}
+
+// Notifie les abonnés APNs de manière adaptative (basée sur les horaires de prière)
+async function notifyApnsAdaptive(env) {
+  let cursor;
+  do {
+    const page = await env.SUBSCRIPTIONS.list({ prefix: 'apns:', cursor, limit: 100 });
+    cursor = page.cursor;
+    await Promise.allSettled(page.keys.map(async ({ name }) => {
+      const raw = await env.SUBSCRIPTIONS.get(name);
+      if (!raw) return;
+      const sub = JSON.parse(raw);
+      if (!sub.deviceToken || !sub.city) return;
+      const pt = await getPrayerTimes(sub.city, env);
+      if (!pt) return;
+      const types = typesForNow(pt.timings, pt.timezone, sub.prayers || []);
+      if (!types.length) return;
+      for (const type of types) {
+        if (await hasSent(env, name, type)) continue;
+        const msg = getMsg(type, sub.palier || 1);
+        const res = await sendAPNs(sub.deviceToken, msg.title, msg.body, env);
+        if (res.status === 410 || res.status === 400) {
+          await env.SUBSCRIPTIONS.delete(name);
+          break;
+        }
+        await markSent(env, name, type);
+      }
+    }));
+  } while (cursor);
+}
+
 // ── Horaires de prière ─────────────────────────────────────────────────────
 // Fetch + cache par ville × jour (TTL 12h) dans le KV SUBSCRIPTIONS
 async function getPrayerTimes(city, env) {
@@ -327,14 +425,15 @@ async function notifyAll(env, type) {
     cursor = page.cursor;
     await Promise.allSettled(
       page.keys
-        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:'))
+        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:') && !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('apns:'))
         .map(async ({ name }) => {
           const raw = await env.SUBSCRIPTIONS.get(name);
           if (!raw) return;
           const sub = JSON.parse(raw);
+          if (!sub.endpoint) return;
           if (await hasSent(env, name, type)) return;
           // iOS (Apple) ne déclenche pas le push event si payload chiffré → ping vide
-          const isApple = sub.endpoint?.includes('apple.com');
+          const isApple = sub.endpoint.includes('apple.com');
           const res = await sendPush(sub, privKey, env.VAPID_PUBLIC_KEY, env.VAPID_SUBJECT, isApple ? null : type, sub.palier || 1);
           if (res.status === 410 || res.status === 404) await env.SUBSCRIPTIONS.delete(name);
           else await markSent(env, name, type);
@@ -352,13 +451,13 @@ async function notifyAdaptive(env) {
     cursor = page.cursor;
     await Promise.allSettled(
       page.keys
-        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:'))
+        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:') && !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('apns:'))
         .map(async ({ name }) => {
           const raw = await env.SUBSCRIPTIONS.get(name);
           if (!raw) return;
           const sub = JSON.parse(raw);
 
-          if (!sub.city) return;
+          if (!sub.endpoint || !sub.city) return;
 
           const pt = await getPrayerTimes(sub.city, env);
           if (!pt) return;
@@ -413,6 +512,44 @@ export default {
       const id = await subId(endpoint);
       await env.SUBSCRIPTIONS.delete(id);
       return json({ ok: true });
+    }
+
+    // Enregistrer un token APNs (iOS natif)
+    if (pathname === '/subscribe-apns' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      if (!body?.deviceToken) return json({ error: 'missing deviceToken' }, 400);
+      const key = 'apns:' + body.deviceToken;
+      const sub = {
+        deviceToken: body.deviceToken,
+        city: body.city || '',
+        palier: body.palier || 1,
+        prayers: body.prayers || [],
+      };
+      await env.SUBSCRIPTIONS.put(key, JSON.stringify(sub));
+      return json({ ok: true });
+    }
+
+    // Supprimer un token APNs
+    if (pathname === '/unsubscribe-apns' && request.method === 'POST') {
+      const { deviceToken } = await request.json().catch(() => ({}));
+      if (!deviceToken) return json({ error: 'missing deviceToken' }, 400);
+      await env.SUBSCRIPTIONS.delete('apns:' + deviceToken);
+      return json({ ok: true });
+    }
+
+    // Test APNs : POST /send-test-apns { token, deviceToken? }
+    if (pathname === '/send-test-apns' && request.method === 'POST') {
+      const { token, deviceToken } = await request.json().catch(() => ({}));
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+      if (deviceToken) {
+        const msg = getMsg('Fajr', 1);
+        const res = await sendAPNs(deviceToken, msg.title, msg.body, env);
+        const status = res.status;
+        const body   = await res.text();
+        return json({ ok: status === 200, status, body: body.slice(0, 300) });
+      }
+      await notifyApnsAll(env, 'Fajr');
+      return json({ ok: true, message: 'APNs test envoyé à tous les abonnés' });
     }
 
     // Test manuel : POST /send-test { token, type? }
@@ -489,7 +626,8 @@ export default {
       if (!sub.city) return json({ type: 'default' });
       const pt = await getPrayerTimes(sub.city, env);
       if (!pt) return json({ type: 'default' });
-      const type = typeForNow(pt.timings, pt.timezone) || 'default';
+      const types = typesForNow(pt.timings, pt.timezone, sub.prayers || []);
+      const type = types[0] || 'default';
       const msg = type !== 'default' ? getMsg(type, sub.palier || 1) : null;
       return json({ type, city: sub.city, ...(msg ? { title: msg.title, body: msg.body } : {}) });
     }
@@ -757,9 +895,15 @@ export default {
   //   15 14 * * *   → rappel 16h15 Paris (UTC+2 été) — rappel quotidien actions
   async scheduled(event, env, ctx) {
     if (event.cron === '15 14 * * *') {
-      ctx.waitUntil(notifyAll(env, 'aprem'));
+      ctx.waitUntil(Promise.all([
+        notifyAll(env, 'aprem'),
+        notifyApnsAll(env, 'aprem'),
+      ]));
     } else {
-      ctx.waitUntil(notifyAdaptive(env));
+      ctx.waitUntil(Promise.all([
+        notifyAdaptive(env),
+        notifyApnsAdaptive(env),
+      ]));
     }
   },
 };
