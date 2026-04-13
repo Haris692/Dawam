@@ -70,9 +70,39 @@
   <h2>6. Droits</h2>
   <p>
     Vous pouvez supprimer toutes vos données locales en désinstallant l'application.
-    Pour toute question, contactez-nous à :
-    <a href="mailto:haris.c@hotmail.fr">haris.c@hotmail.fr</a>
+    Pour toute question, contactez-nous via le formulaire ci-dessous.
   </p>
+
+  <h2>Contact & Support</h2>
+  <p>Une question, un problème ou une suggestion ? Écris-nous :</p>
+  <form id="contact-form" style="margin-top:1rem;">
+    <input type="text" id="c-name" placeholder="Votre nom" required
+      style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid #d4b483;background:#fff;font-size:0.95rem;color:#3D2A0A;margin-bottom:10px;box-sizing:border-box;outline:none;font-family:inherit;">
+    <input type="email" id="c-email" placeholder="Votre email" required
+      style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid #d4b483;background:#fff;font-size:0.95rem;color:#3D2A0A;margin-bottom:10px;box-sizing:border-box;outline:none;font-family:inherit;">
+    <textarea id="c-msg" placeholder="Votre message" rows="4" required
+      style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid #d4b483;background:#fff;font-size:0.95rem;color:#3D2A0A;margin-bottom:10px;box-sizing:border-box;outline:none;font-family:inherit;resize:vertical;"></textarea>
+    <button type="submit"
+      style="background:#BA7517;color:#fff;border:none;border-radius:10px;padding:13px 28px;font-size:0.97rem;font-weight:600;cursor:pointer;font-family:inherit;width:100%;">
+      Envoyer
+    </button>
+    <p id="c-status" style="margin-top:10px;font-size:0.9rem;text-align:center;min-height:20px;"></p>
+  </form>
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name  = document.getElementById('c-name').value.trim();
+      const email = document.getElementById('c-email').value.trim();
+      const msg   = document.getElementById('c-msg').value.trim();
+      const status = document.getElementById('c-status');
+      const mailto = 'mailto:mydawam.app@gmail.com'
+        + '?subject=' + encodeURIComponent('[Dawam Support] Message de ' + name)
+        + '&body='    + encodeURIComponent('De : ' + name + ' <' + email + '>\n\n' + msg);
+      window.location.href = mailto;
+      status.style.color = '#3B6D11';
+      status.textContent = 'Votre client mail s\'est ouvert. Merci !';
+    });
+  </script>
 
   <h2>7. Modifications</h2>
   <p>
