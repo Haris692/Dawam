@@ -27,19 +27,7 @@ struct DawamWebView: UIViewRepresentable {
         )
         config.userContentController.addUserScript(nativeFlag)
 
-        // Injecte la vraie valeur de la safe area top (Dynamic Island / notch)
-        // env(safe-area-inset-top) n'est pas fiable avec contentInsetAdjustmentBehavior = .never
-        let safeTop = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first?.windows.first?.safeAreaInsets.top ?? 0
-        let safeAreaScript = WKUserScript(
-            source: "document.documentElement.style.setProperty('--sat', '\(safeTop)px');",
-            injectionTime: .atDocumentStart,
-            forMainFrameOnly: true
-        )
-        config.userContentController.addUserScript(safeAreaScript)
-
-        // Bridge pour les demandes de permission de notification
+// Bridge pour les demandes de permission de notification
         config.userContentController.add(context.coordinator, name: "requestNotifPermission")
         // Bridge pour les dialogs de confirmation (confirm() remplacé en JS)
         config.userContentController.add(context.coordinator, name: "showConfirm")

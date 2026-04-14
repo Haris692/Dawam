@@ -3,6 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+// Détecte la safe area top (Dynamic Island / notch) pour WKWebView iOS natif.
+// env(safe-area-inset-top) peut retourner 0 avec contentInsetAdjustmentBehavior=.never,
+// donc on lit la valeur via le DOM ou on la déduit des dimensions écran.
+(function(){
+  var sat = 0;
+  // Tentative via env() : crée un élément temporaire et lit sa valeur calculée
+  try {
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;pointer-events:none;visibility:hidden;padding-top:env(safe-area-inset-top)';
+    document.documentElement.appendChild(el);
+    sat = parseFloat(getComputedStyle(el).paddingTop) || 0;
+    el.parentNode.removeChild(el);
+  } catch(e) {}
+  // Si env() a retourné 0 sur iOS natif → estimation par dimensions écran
+  if (sat === 0 && navigator.userAgent.indexOf('iPhone') !== -1) {
+    var h = window.screen.height; // CSS pixels portrait
+    if      (h >= 932) sat = 59; // 14 Pro Max / 15 Plus / 15 Pro Max
+    else if (h >= 926) sat = 47; // 12 Pro Max / 13 Pro Max / 14 Plus
+    else if (h >= 852) sat = 59; // 14 Pro / 15 / 15 Pro
+    else if (h >= 844) sat = 47; // 12 / 13 / 14
+    else if (h >= 812) sat = 50; // 12 mini / 13 mini
+    else               sat = 20; // SE (barre de statut uniquement)
+  }
+  document.documentElement.style.setProperty('--sat', sat + 'px');
+})();
+</script>
 <meta name="theme-color" content="#f5ede0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
