@@ -3831,6 +3831,12 @@ if("serviceWorker" in navigator){
       if(reg.waiting&&navigator.serviceWorker.controller){
         doUpdate(reg.waiting);
       }
+      // iOS natif : vérifie les mises à jour du SW à chaque retour au premier plan
+      if(window.isNativeIOSApp){
+        document.addEventListener('visibilitychange',()=>{
+          if(!document.hidden) reg.update();
+        });
+      }
     }).catch(()=>{});
     // Recharger quand le nouveau SW prend le contrôle
     let _refreshing=false;
