@@ -310,7 +310,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* PALIER MOONS */
 .palier-moons { display:inline-flex;align-items:center;gap:2px; }
 /* ITEM WHY */
-.item-why { font-size:11px;color:var(--accent-dark);font-style:italic;margin-top:2px;opacity:.7;line-height:1.35; }
+.item-why { font-size:11px;color:var(--accent-dark);font-style:italic;margin-top:4px;padding-left:34px;opacity:.75;line-height:1.35;cursor:pointer;display:flex;align-items:baseline;gap:4px; }
+.item-why-icon { font-style:normal;font-size:10px;opacity:.6;flex-shrink:0; }
 .item-row.checked .item-why { color:var(--text-light);opacity:.5; }
 .section-sep { font-size:10px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.6px;padding:0 2px; }
 .section-block { background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow); }
@@ -327,14 +328,16 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .path-group-label.past { opacity:.55; }
 .missed-badge { font-size:10px;font-weight:600;color:var(--text-light);flex-shrink:0; }
 .section-items { display:flex;flex-direction:column; }
-.item-row { display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;border-bottom:.5px solid var(--border-light);transition:background .15s;user-select:none;position:relative; }
+.item-row { display:flex;flex-direction:column;padding:11px 16px;cursor:default;border-bottom:.5px solid var(--border-light);transition:background .15s;user-select:none;position:relative; }
 .item-row:last-child { border-bottom:none; }
-.item-row:active { background:rgba(186,117,23,.06); }
+.item-row:active { background:none; }
 .item-row.checked { background:rgba(59,109,17,.04); }
-.item-row.locked { opacity: 0.42; cursor: default; }
-.item-row.locked:active { background: none; }
-.item-row.static-row { cursor: default; }
-.item-row.static-row:active { background: none; }
+.item-row.locked { opacity:0.42;cursor:default; }
+.item-row.locked:active { background:none; }
+.item-row.static-row { cursor:default; }
+.item-row.static-row:active { background:none; }
+.item-row-main { display:flex;align-items:center;gap:12px;cursor:pointer;border-radius:6px;transition:background .12s; }
+.item-row-main:active { background:rgba(186,117,23,.06); }
 .item-check { width:22px;height:22px;border-radius:11px;flex-shrink:0;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--bg-card);position:relative; }
 .item-row.checked .item-check { background:var(--green);border-color:var(--green); }
 .item-check-icon { display:none; }
@@ -2487,9 +2490,12 @@ function renderPath(){
         ${isPast && done ? `<span style="font-size:16px">✓</span>` : isPast ? `<span class="missed-badge">Manqué</span>` : ``}
       </div>`;
       const rowClick = `openGuided(${item.id})`;
-      return `<div class="item-row${done ? ' checked' : ''}" onclick="${rowClick}">
-        <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div>${item.why?`<div class="item-why">${item.why}</div>`:''}</div>
+      return `<div class="item-row${done ? ' checked' : ''}">
+        <div class="item-row-main" onclick="${rowClick}">
+          <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
+        </div>
+        ${item.why?`<div class="item-why" onclick="showItemInfo(${item.id})"><span class="item-why-icon">ⓘ</span>${item.why}</div>`:''}
       </div>`;
     }).join('');
 
@@ -3568,6 +3574,21 @@ function openDetail(id){
   document.getElementById("detail-modal").classList.add("show");
 }
 function closeDetail(){document.getElementById("detail-modal").classList.remove("show");}
+function showItemInfo(id){
+  const item=getActiveItems().find(i=>i.id===id);
+  if(!item)return;
+  const det=ITEM_DETAILS[id];
+  const desc=(det&&det.why)||item.why||'';
+  document.getElementById('detail-content').innerHTML=`
+    <div style="text-align:center;padding:8px 0 20px">
+      <div style="font-size:52px;margin-bottom:12px">${item.emoji}</div>
+      <div style="font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.3">${item.titleFr}</div>
+      ${desc?`<p style="font-size:14px;color:var(--text-secondary);line-height:1.75;padding:0 4px">${desc}</p>`:''}
+    </div>
+    <button class="btn-secondary" onclick="closeDetail()" style="margin-top:4px">Fermer</button>
+  `;
+  document.getElementById('detail-modal').classList.add('show');
+}
 document.getElementById("detail-modal").addEventListener("click",function(e){if(e.target===this)closeDetail();});
 
 // ═══ THEMES ═══
