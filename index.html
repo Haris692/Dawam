@@ -841,6 +841,12 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .auth-toggle span{color:var(--accent);font-weight:600;cursor:pointer;}
 .auth-error{font-size:13px;color:#b02020;text-align:center;margin-top:8px;min-height:18px;line-height:1.4;}
 .auth-forgot{font-size:12px;color:var(--text-light);text-align:right;cursor:pointer;margin-top:-4px;margin-bottom:12px;display:block;}
+.auth-verify-icon{font-size:44px;text-align:center;margin-bottom:12px;}
+.auth-verify-title{font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--text);text-align:center;margin-bottom:8px;}
+.auth-verify-desc{font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:20px;line-height:1.6;}
+.auth-verify-desc strong{color:var(--text);font-weight:600;}
+.auth-verify-resend{background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-light);padding:8px;width:100%;text-align:center;margin-top:4px;}
+.auth-verify-resend:active{opacity:.6;}
 </style>
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -917,6 +923,16 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <p class="auth-error" id="auth-error"></p>
     <div class="auth-toggle">
       <span id="auth-mode-toggle" onclick="toggleAuthMode()">Pas encore de compte ? Créer un compte</span>
+    </div>
+
+    <!-- État : vérification email en attente -->
+    <div id="auth-verify-block" style="display:none">
+      <p class="auth-verify-icon">📧</p>
+      <p class="auth-verify-title">Vérifie ton email</p>
+      <p class="auth-verify-desc">Un lien de confirmation a été envoyé à<br><strong id="auth-verify-addr"></strong><br>Clique dessus pour activer ton compte.</p>
+      <button class="btn-primary" onclick="checkEmailVerified()">J'ai cliqué sur le lien ✓</button>
+      <button class="auth-verify-resend" onclick="resendVerificationEmail()">Renvoyer l'email</button>
+      <p class="auth-error" id="auth-verify-error"></p>
     </div>
   </div>
 </div>
@@ -1741,6 +1757,69 @@ async function authGoogle() {
   }
 }
 
+let _pendingVerifyEmail = null; // Email en attente de vérification
+
+function _showVerifyBlock(email) {
+  _pendingVerifyEmail = email;
+  document.getElementById('auth-verify-addr').textContent = email;
+  // Masque le formulaire, affiche le bloc vérification
+  ['auth-title','auth-sub','auth-apple-block','auth-google-block',
+   'auth-email','auth-password','auth-forgot','auth-confirm-wrap',
+   'auth-submit-btn','auth-error'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.querySelector('.auth-toggle').style.display = 'none';
+  document.getElementById('auth-verify-block').style.display = 'block';
+}
+
+function _hideVerifyBlock() {
+  _pendingVerifyEmail = null;
+  document.getElementById('auth-verify-block').style.display = 'none';
+  document.getElementById('auth-verify-error').textContent = '';
+  // Restaure le formulaire
+  ['auth-title','auth-sub','auth-email','auth-password',
+   'auth-forgot','auth-submit-btn','auth-error'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = '';
+  });
+  document.querySelector('.auth-toggle').style.display = '';
+  // Rétablit la visibilité des blocs Apple/Google selon la plateforme
+  if (!_isIOS) document.getElementById('auth-google-block').style.display = '';
+  if (window.isNativeIOSApp) document.getElementById('auth-apple-block').style.display = '';
+}
+
+async function checkEmailVerified() {
+  const btn = document.querySelector('#auth-verify-block .btn-primary');
+  btn.disabled = true; btn.textContent = '...';
+  document.getElementById('auth-verify-error').textContent = '';
+  // L'utilisateur a été déconnecté après inscription.
+  // On lui montre à nouveau le formulaire de connexion pour qu'il se reconnecte —
+  // onAuthStateChanged détectera alors que emailVerified = true et lancera l'app.
+  _hideVerifyBlock();
+  if (_authMode !== 'login') toggleAuthMode();
+  document.getElementById('auth-email').value = _pendingVerifyEmail || '';
+  _pendingVerifyEmail = null;
+  document.getElementById('auth-password').focus();
+  showToast('Entre ton mot de passe pour te connecter ✓');
+  btn.disabled = false; btn.textContent = 'J\'ai cliqué sur le lien ✓';
+}
+
+async function resendVerificationEmail() {
+  const btn = document.querySelector('.auth-verify-resend');
+  btn.disabled = true;
+  document.getElementById('auth-verify-error').textContent = '';
+  try {
+    if (_auth.currentUser) {
+      await _auth.currentUser.sendEmailVerification();
+    }
+    showToast('Email renvoyé ✓');
+  } catch(e) {
+    document.getElementById('auth-verify-error').textContent = 'Impossible de renvoyer l\'email.';
+  }
+  setTimeout(() => { btn.disabled = false; }, 30000); // anti-spam 30s
+}
+
 async function authEmail() {
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
@@ -1753,9 +1832,22 @@ async function authEmail() {
       const confirm = document.getElementById('auth-confirm').value;
       if (password !== confirm) { _setAuthError('Les mots de passe ne correspondent pas.'); btn.disabled=false;btn.textContent='Créer mon compte'; return; }
       if (password.length < 6) { _setAuthError('Mot de passe trop court (6 min).'); btn.disabled=false;btn.textContent='Créer mon compte'; return; }
-      await _auth.createUserWithEmailAndPassword(email, password);
+      const cred = await _auth.createUserWithEmailAndPassword(email, password);
+      await cred.user.sendEmailVerification();
+      _showVerifyBlock(email);
+      // Déconnecte l'utilisateur — il doit d'abord vérifier son email
+      await _auth.signOut();
+      return;
     } else {
-      await _auth.signInWithEmailAndPassword(email, password);
+      const cred = await _auth.signInWithEmailAndPassword(email, password);
+      if (!cred.user.emailVerified) {
+        // Compte non vérifié : renvoie un email et déconnecte
+        await cred.user.sendEmailVerification();
+        _showVerifyBlock(email);
+        await _auth.signOut();
+        return;
+      }
+      // Vérifié → onAuthStateChanged gère la suite
     }
   } catch (e) {
     const msgs = {
@@ -4557,6 +4649,11 @@ _auth.getRedirectResult()
     _auth.onAuthStateChanged(user => {
       _hideLoader();
       if (!user) {
+        if (_pendingVerifyEmail) {
+          // Inscription en attente de vérification — reste sur l'écran auth avec le bloc vérification
+          showScreen('auth');
+          return;
+        }
         if (S.name) {
           _setAuthContext('save');
           showScreen('auth');
@@ -4564,6 +4661,13 @@ _auth.getRedirectResult()
           showScreen('splash');
         }
       } else {
+        // Vérifie l'email pour les comptes email/password
+        const isEmailProvider = user.providerData.some(p => p.providerId === 'password');
+        if (isEmailProvider && !user.emailVerified) {
+          _pendingVerifyEmail = _pendingVerifyEmail || user.email;
+          _auth.signOut(); // déclenche un nouveau onAuthStateChanged(null)
+          return;
+        }
         S._uid = user.uid;
         if (S.name) {
           launchApp();
