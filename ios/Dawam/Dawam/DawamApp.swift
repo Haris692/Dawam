@@ -66,6 +66,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         #endif
     }
 
+    // Efface le badge quand l'app passe au premier plan
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        UNUserNotificationCenter.current().setBadgeCount(0, withCompletionHandler: nil)
+    }
+
     // Notification reçue quand l'app est au premier plan
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,

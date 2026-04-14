@@ -3779,6 +3779,21 @@ async function submitFeedback(){
 // ═══ PWA INSTALL ═══
 let deferredPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;});
+
+// iOS natif — efface le badge quand l'app revient au premier plan
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden && window.isNativeIOSApp && S.notifs?.pushSub?.startsWith('apns:')) {
+    const token = S.notifs.pushSub.replace('apns:', '');
+    if (token && token !== 'simulator-token') {
+      fetch(PUSH_WORKER + '/clear-badge-apns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceToken: token }),
+      }).catch(() => {});
+    }
+  }
+});
+
 function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
 function isInStandaloneMode(){return window.isNativeIOSApp||window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;}
 function showInstallBanner(){
