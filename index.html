@@ -1652,7 +1652,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <!-- GUIDED SCREEN -->
 <div id="guided-screen">
   <div class="guided-header">
-    <button class="guided-back" onclick="closeGuided()">←</button>
+    <div style="width:38px"></div>
     <div class="guided-dots" id="guided-dots"></div>
     <div class="guided-xp-tag" id="guided-xp-tag"></div>
   </div>
@@ -1660,6 +1660,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="guided-footer">
     <button class="btn-primary" id="guided-cta">Commencer</button>
     <button id="guided-skip" onclick="guidedSkip()" style="display:none;width:100%;margin-top:10px;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;opacity:.7;">Terminer ✓</button>
+    <button onclick="closeGuided()" style="width:100%;margin-top:8px;padding:12px;background:none;border:none;color:var(--text-light);font-family:var(--font-body);font-size:14px;cursor:pointer;">Quitter</button>
   </div>
 </div>
 
