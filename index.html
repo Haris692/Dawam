@@ -3780,23 +3780,30 @@ async function submitFeedback(){
 let deferredPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;});
 
-// iOS natif — efface le badge quand l'app repasse en arrière-plan
-// Délai 2s pour ignorer les masquages transitoires (rechargement SW, etc.)
-document.addEventListener('visibilitychange', function() {
-  if (document.hidden && window.isNativeIOSApp && S.notifs?.pushSub?.startsWith('apns:')) {
-    const token = S.notifs.pushSub.replace('apns:', '');
-    if (token && token !== 'simulator-token') {
-      setTimeout(function() {
-        if (!document.hidden) return; // l'app est revenue au premier plan → pas un vrai arrière-plan
-        fetch(PUSH_WORKER + '/clear-badge-apns', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ deviceToken: token }),
-        }).catch(() => {});
-      }, 2000);
-    }
+// iOS natif — efface le badge quand l'app repasse en arrière-plan ou est quittée
+(function() {
+  function clearIOSBadge() {
+    if (!window.isNativeIOSApp) return;
+    const sub = S.notifs?.pushSub;
+    if (!sub?.startsWith('apns:')) return;
+    const token = sub.replace('apns:', '');
+    if (!token || token === 'simulator-token') return;
+    const url  = PUSH_WORKER + '/clear-badge-apns';
+    const blob = new Blob([JSON.stringify({ deviceToken: token })], { type: 'application/json' });
+    // sendBeacon : fiable même si la page est détruite (force-quit)
+    if (navigator.sendBeacon) { navigator.sendBeacon(url, blob); return; }
+    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceToken: token }) }).catch(() => {});
   }
-});
+
+  // Arrière-plan (app minimisée) — délai 2s pour ignorer les rechargements SW transitoires
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) return;
+    setTimeout(function() { if (document.hidden) clearIOSBadge(); }, 2000);
+  });
+
+  // Force-quit (page détruite) — sendBeacon envoie même après destruction
+  window.addEventListener('pagehide', clearIOSBadge);
+})();
 
 function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
 function isInStandaloneMode(){return window.isNativeIOSApp||window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;}
