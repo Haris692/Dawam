@@ -333,7 +333,9 @@ const PRAYER_KEY = {
 // Fallback si pas de prières → fenêtres classiques Fajr/Dhuhr/Isha.
 function typesForNow(timings, timezone, prayers) {
   const now = localMinutes(timezone);
-  const active = prayers?.length ? prayers : ['Fajr', 'Dhuhr', 'Isha'];
+  // Normalize prayer names to capitalized (PWA stores lowercase: "fajr" → "Fajr")
+  const normalize = p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+  const active = prayers?.length ? prayers.map(normalize) : ['Fajr', 'Dhuhr', 'Isha'];
   const result = [];
   for (const p of active) {
     const key = PRAYER_KEY[p];
@@ -354,34 +356,35 @@ function getTier(palier) {
 
 const NOTIF_MSGS = {
   Fajr: [
-    { title: 'Dawam 🌄', body: "Fajr accompli — viens valider ta prière et ton wird du matin." },
-    { title: 'Dawam 🌄', body: "Fajr est passé — séance de l'aube, wird coranique, du'a t'attendent." },
-    { title: 'Dawam 🌄', body: "Belle constance — valide Fajr et commence ta journée avec Dawam." },
+    { title: 'Dawam 🌄', body: "N'oublie pas tes actes du matin avant de commencer ta journée" },
+    { title: 'Dawam 🌄', body: "Tes actes du matin t'attendent — démarre bien ta journée" },
+    { title: 'Dawam 🌄', body: "Le matin passe vite — valide tes actes avant de te lancer" },
   ],
   Dhuhr: [
-    { title: 'Dawam ☀️', body: "Dhuhr accompli — viens cocher ta prière dans Dawam." },
-    { title: 'Dawam ☀️', body: "Après Dhuhr, prends 2 minutes pour valider tes actions du jour." },
-    { title: 'Dawam ☀️', body: "Dhuhr accompli — salawat, dhikr, constance t'attendent." },
+    { title: 'Dawam ☀️', body: "Pause de midi — pense à valider tes actes du jour" },
+    { title: 'Dawam ☀️', body: "Ta journée avance — n'oublie pas tes actes dans Dawam" },
+    { title: 'Dawam ☀️', body: "Mi-journée, le bon moment pour cocher tes actes" },
   ],
   Asr: [
-    { title: 'Dawam 🌤️', body: "Asr accompli — viens valider ta prière dans Dawam." },
-    { title: 'Dawam 🌤️', body: "Après Asr, un instant pour cocher tes actions du jour ?" },
-    { title: 'Dawam 🌤️', body: "Asr accompli — ta constance grandit chaque jour." },
+    { title: 'Dawam 🌤️', body: "L'après-midi touche à sa fin — tes actes t'attendent" },
+    { title: 'Dawam 🌤️', body: "Avant que la journée file — valide tes actes dans Dawam" },
+    { title: 'Dawam 🌤️', body: "Il reste du temps — fais le point sur tes actes du jour" },
   ],
   Maghrib: [
-    { title: 'Dawam 🌇', body: "Maghrib accompli — viens valider ta prière dans Dawam." },
-    { title: 'Dawam 🌇', body: "Après Maghrib, prends un moment pour tes actions du soir." },
-    { title: 'Dawam 🌇', body: "Maghrib accompli — adhkar du soir, bilan du jour t'attendent." },
+    { title: 'Dawam 🌇', body: "Le soir arrive — pense à tes actes du soir dans Dawam" },
+    { title: 'Dawam 🌇', body: "N'oublie pas tes actes du soir avant la nuit" },
+    { title: 'Dawam 🌇', body: "Le soir est là — valide tes actes et prépare ta nuit" },
   ],
   Isha: [
-    { title: 'Dawam 🌙', body: "Isha accompli — viens valider et lire tes invocations du soir." },
-    { title: 'Dawam 🌙', body: "Après Isha, les invocations du soir te protègent cette nuit." },
-    { title: 'Dawam 🌙', body: "Isha accompli — bilan, adhkar du soir, witr t'attendent." },
+    { title: 'Dawam 🌙', body: "Avant de dormir — tes invocations du soir t'attendent" },
+    { title: 'Dawam 🌙', body: "Ferme ta journée avec Dawam — tes actes du soir sont là" },
+    { title: 'Dawam 🌙', body: "La nuit commence — valide tes derniers actes du jour" },
   ],
   // Fallback legacy
-  aube:    [{ title: 'Dawam 🌄', body: "Ta séance de l'aube t'attend." }],
-  journee: [{ title: 'Dawam ☀️', body: "N'oublie pas tes actions du jour." }],
-  soir:    [{ title: 'Dawam 🌙', body: "Les invocations du soir te protègent cette nuit." }],
+  aube:    [{ title: 'Dawam 🌄', body: "N'oublie pas tes actes du matin avant de commencer ta journée" }],
+  journee: [{ title: 'Dawam ☀️', body: "Des actes t'attendent dans Dawam — prends 2 min" }],
+  soir:    [{ title: 'Dawam 🌙', body: "Avant de dormir — tes invocations du soir t'attendent" }],
+  aprem:   [{ title: 'Dawam 📿', body: "Des actes t'attendent dans Dawam — prends 2 min" }],
 };
 
 function getMsg(type, palier) {
