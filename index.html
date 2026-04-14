@@ -3781,16 +3781,19 @@ let deferredPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;});
 
 // iOS natif — efface le badge quand l'app repasse en arrière-plan
-// (le badge reste visible pendant toute la session, puis disparaît quand l'utilisateur quitte)
+// Délai 2s pour ignorer les masquages transitoires (rechargement SW, etc.)
 document.addEventListener('visibilitychange', function() {
   if (document.hidden && window.isNativeIOSApp && S.notifs?.pushSub?.startsWith('apns:')) {
     const token = S.notifs.pushSub.replace('apns:', '');
     if (token && token !== 'simulator-token') {
-      fetch(PUSH_WORKER + '/clear-badge-apns', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceToken: token }),
-      }).catch(() => {});
+      setTimeout(function() {
+        if (!document.hidden) return; // l'app est revenue au premier plan → pas un vrai arrière-plan
+        fetch(PUSH_WORKER + '/clear-badge-apns', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deviceToken: token }),
+        }).catch(() => {});
+      }, 2000);
     }
   }
 });
