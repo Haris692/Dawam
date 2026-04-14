@@ -126,9 +126,10 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* BOTTOM NAV */
 #bottom-nav { display:none;flex-direction:row;background:rgba(245,237,224,.72);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border-top:.5px solid rgba(186,117,23,.12);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:100;box-shadow:0 -1px 0 rgba(255,255,255,.6) inset; }
 #bottom-nav.visible { display:flex; }
-.nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:opacity .15s; }
-.nav-tab svg { width:22px;height:22px;stroke-width:1.8; }
-.nav-tab span { font-size:10px;font-weight:500;color:var(--text-light); }
+#nav-indicator { position:absolute;left:6px;top:5px;height:46px;width:calc(25% - 12px);border-radius:16px;background:linear-gradient(160deg,rgba(255,252,245,0.90) 0%,rgba(250,238,218,0.72) 100%);backdrop-filter:blur(18px) saturate(2.2) brightness(1.06);-webkit-backdrop-filter:blur(18px) saturate(2.2) brightness(1.06);box-shadow:0 1px 0 rgba(255,255,255,0.95) inset,0 -0.5px 0 rgba(186,117,23,0.10) inset,0 5px 20px rgba(186,117,23,0.16),0 0 0 0.5px rgba(255,248,230,0.6);border:0.5px solid rgba(255,255,255,0.60);pointer-events:none;transform:translateX(0);transition:transform 0.44s cubic-bezier(0.34,1.48,0.64,1);will-change:transform;z-index:0; }
+.nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:opacity .15s;position:relative;z-index:1; }
+.nav-tab svg { width:22px;height:22px;stroke-width:1.8;transition:stroke .25s; }
+.nav-tab span { font-size:10px;font-weight:500;color:var(--text-light);transition:color .25s; }
 .nav-tab.active svg { stroke:var(--accent); }
 .nav-tab.active span { color:var(--accent); }
 .nav-tab:not(.active) svg { stroke:var(--text-light); }
@@ -1519,6 +1520,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 
 <!-- BOTTOM NAV -->
 <nav id="bottom-nav">
+  <div id="nav-indicator"></div>
   <button class="nav-tab active" onclick="showTab('path',this)" id="tab-path">
     <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Accueil</span>
@@ -2832,7 +2834,7 @@ document.getElementById('edit-profil-modal').addEventListener('click',function(e
 
 // ═══ NAV ═══
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","invocations","groupes","profil"].includes(id));}
-function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");if(id==="path")renderPath();if(id==="profil")renderProfil();if(id==="invocations")renderInvocations();if(id==="groupes")renderGroupes();}
+function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");const _tabIds=['tab-path','tab-invocations','tab-groupes','tab-profil'];const _idx=_tabIds.indexOf(el.id);const _ind=document.getElementById('nav-indicator');if(_ind&&_idx>=0){const _nav=document.getElementById('bottom-nav');_ind.style.transform='translateX('+(_idx*(_nav.offsetWidth/4))+'px)';}if(id==="path")renderPath();if(id==="profil")renderProfil();if(id==="invocations")renderInvocations();if(id==="groupes")renderGroupes();}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
 
 // ═══ GROUPES ═══
