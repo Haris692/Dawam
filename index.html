@@ -3812,7 +3812,8 @@ async function submitFeedback(){
 let deferredPrompt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;});
 
-// iOS natif — efface le badge quand l'app repasse en arrière-plan ou est quittée
+// iOS natif — efface le badge au premier plan (ouverture app)
+// Le natif Swift gère aussi l'appel APNs via applicationDidBecomeActive (plus fiable)
 (function() {
   function clearIOSBadge() {
     if (!window.isNativeIOSApp) return;
@@ -3821,20 +3822,14 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPro
     const token = sub.replace('apns:', '');
     if (!token || token === 'simulator-token') return;
     const url  = PUSH_WORKER + '/clear-badge-apns';
-    const blob = new Blob([JSON.stringify({ deviceToken: token })], { type: 'application/json' });
-    // sendBeacon : fiable même si la page est détruite (force-quit)
-    if (navigator.sendBeacon) { navigator.sendBeacon(url, blob); return; }
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceToken: token }) }).catch(() => {});
   }
 
-  // Arrière-plan (app minimisée) — délai 2s pour ignorer les rechargements SW transitoires
+  // Foreground (retour au premier plan) — efface immédiatement
   document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) return;
-    setTimeout(function() { if (document.hidden) clearIOSBadge(); }, 2000);
+    if (document.hidden) return;
+    clearIOSBadge();
   });
-
-  // Force-quit (page détruite) — sendBeacon envoie même après destruction
-  window.addEventListener('pagehide', clearIOSBadge);
 })();
 
 function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
