@@ -784,6 +784,50 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .guided-done-xp{font-size:20px;color:var(--accent);font-weight:700;}
 .guided-done-sub{font-size:14px;color:var(--text-secondary);max-width:260px;line-height:1.6;}
 
+/* ═══ SÉANCE DHIKR ═══ */
+.seance-launch-btn{display:flex;align-items:center;gap:14px;padding:16px;background:var(--accent-light);border-radius:14px;border:.5px solid var(--border);cursor:pointer;margin-bottom:16px;-webkit-tap-highlight-color:transparent;}
+.seance-launch-btn:active{opacity:.75;}
+.seance-launch-info{flex:1;}
+.seance-launch-title{font-size:14px;font-weight:600;color:var(--text);}
+.seance-launch-sub{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+/* config modal */
+#seance-dhikr-modal{display:none;position:fixed;inset:0;z-index:400;background:var(--overlay);align-items:flex-end;backdrop-filter:blur(2px);}
+#seance-dhikr-modal.show{display:flex;}
+#seance-dhikr-sheet{background:var(--bg);border-radius:22px 22px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding:20px 20px calc(20px + env(safe-area-inset-bottom));}
+.sdm-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px;}
+.sdm-title{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.sdm-sub{font-size:12px;color:var(--text-secondary);margin-bottom:20px;}
+.sdm-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:.5px solid var(--border-light);}
+.sdm-row:last-of-type{border-bottom:none;}
+.sdm-info{flex:1;min-width:0;}
+.sdm-row-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.sdm-row-arabic{font-family:'Amiri',serif;font-size:14px;direction:rtl;color:var(--accent);line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sdm-stepper{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sdm-btn{width:32px;height:32px;border-radius:50%;background:var(--bg-card);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--accent);font-weight:600;line-height:1;-webkit-tap-highlight-color:transparent;}
+.sdm-btn:active{background:var(--accent-light);}
+.sdm-val{font-size:14px;font-weight:700;color:var(--text);min-width:46px;text-align:center;}
+.sdm-total{display:flex;justify-content:space-between;align-items:center;margin:16px 0 14px;padding:12px 14px;background:var(--bg-card);border-radius:12px;border:.5px solid var(--border);}
+.sdm-total-label{font-size:13px;color:var(--text-secondary);}
+.sdm-total-val{font-size:15px;font-weight:700;color:var(--accent);}
+/* session screen */
+#seance-dhikr-screen{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94);}
+#seance-dhikr-screen.show{transform:translateY(0);}
+.sds-header{display:flex;align-items:center;justify-content:space-between;padding:calc(16px + var(--sat,0px)) 20px 8px;flex-shrink:0;}
+.sds-dots{display:flex;gap:8px;}
+.sds-dot{width:8px;height:8px;border-radius:4px;background:var(--border);transition:all .3s;}
+.sds-dot.active{width:22px;background:var(--accent);}
+.sds-dot.done{background:var(--green);}
+.sds-timer-top{font-size:13px;font-weight:600;color:var(--text-light);letter-spacing:.04em;min-width:40px;text-align:right;}
+.sds-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 28px;text-align:center;overflow-y:auto;}
+.sds-step-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:18px;}
+.sds-arabic{font-family:'Amiri',serif;font-size:clamp(20px,5.5vw,30px);direction:rtl;color:var(--text);line-height:1.9;margin-bottom:8px;}
+.sds-phonetic{font-size:13px;color:var(--accent);font-style:italic;margin-bottom:6px;}
+.sds-french{font-size:13px;color:var(--text-secondary);line-height:1.6;max-width:300px;margin-bottom:24px;}
+.sds-countdown{font-size:64px;font-weight:700;color:var(--text);letter-spacing:-2px;line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums;transition:color .3s;}
+.sds-countdown.urgent{color:var(--accent);}
+.sds-bar{width:100%;height:5px;background:var(--border-light);border-radius:100px;overflow:hidden;}
+.sds-fill{height:100%;background:var(--accent);border-radius:100px;transition:width 1s linear;}
+.sds-footer{padding:12px 24px calc(16px + env(safe-area-inset-bottom));flex-shrink:0;}
 /* ═══ SÉANCE GUIDÉE AUBE ═══ */
 #seance-aube{position:fixed;inset:0;z-index:600;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94);}
 #seance-aube.show{transform:translateY(0);}
@@ -1683,6 +1727,34 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="guided-footer">
     <button class="btn-primary" id="guided-cta">Commencer</button>
     <button id="guided-skip" onclick="guidedSkip()" style="display:none;width:100%;margin-top:10px;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;opacity:.7;">Terminer ✓</button>
+  </div>
+</div>
+
+<!-- CONFIG SÉANCE DHIKR -->
+<div id="seance-dhikr-modal">
+  <div id="seance-dhikr-sheet">
+    <div class="sdm-handle"></div>
+    <div class="sdm-title">Séance de dhikr</div>
+    <div class="sdm-sub">Définis la durée pour chaque invocation</div>
+    <div id="sdm-rows"></div>
+    <div class="sdm-total">
+      <span class="sdm-total-label">Durée totale</span>
+      <span class="sdm-total-val" id="sdm-total">15 min</span>
+    </div>
+    <button class="btn-primary" onclick="startSeanceDhikr()">▶ Commencer la séance</button>
+  </div>
+</div>
+
+<!-- SESSION SÉANCE DHIKR -->
+<div id="seance-dhikr-screen">
+  <div class="sds-header">
+    <button class="guided-back" onclick="closeSeanceDhikr()">←</button>
+    <div class="sds-dots" id="sds-dots"></div>
+    <div class="sds-timer-top" id="sds-timer-top"></div>
+  </div>
+  <div class="sds-body" id="sds-body"></div>
+  <div class="sds-footer">
+    <button class="btn-primary" id="sds-cta">Suivant →</button>
   </div>
 </div>
 
@@ -2678,7 +2750,14 @@ function renderInvocContent() {
   const el = document.getElementById('invoc-content');
   if (!el) return;
   if (_invocTab === 'dhikr') {
-    el.innerHTML = DHIKR_LIST.map(d => `
+    el.innerHTML = `<div class="seance-launch-btn" onclick="openSeanceDhikr()">
+      <span style="font-size:24px">📿</span>
+      <div class="seance-launch-info">
+        <div class="seance-launch-title">Lancer une séance guidée</div>
+        <div class="seance-launch-sub">Définis ta durée par invocation</div>
+      </div>
+      <span style="color:var(--accent);font-size:20px;font-weight:300">›</span>
+    </div>` + DHIKR_LIST.map(d => `
       <div class="invoc-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <span style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text)">${d.title}</span>
@@ -4654,6 +4733,106 @@ function closeGuided(){
   document.getElementById('guided-screen').classList.remove('show');
   setTimeout(()=>{document.getElementById('guided-body').innerHTML='';_gId=null;renderPath();},420);
 }
+
+// ═══ SÉANCE DHIKR ═══
+const _SD_EMOJIS=['📿','💚','✨'];
+let _sdTimes=[5,5,5],_sdStep=0,_sdSec=0,_sdTotal=0,_sdInterval=null;
+
+function openSeanceDhikr(){
+  _sdTimes=[5,5,5];
+  renderSdmRows();
+  document.getElementById('seance-dhikr-modal').classList.add('show');
+}
+function closeSdmModal(){
+  document.getElementById('seance-dhikr-modal').classList.remove('show');
+}
+function renderSdmRows(){
+  document.getElementById('sdm-rows').innerHTML=DHIKR_LIST.map((d,i)=>`
+    <div class="sdm-row">
+      <div class="sdm-info">
+        <div class="sdm-row-title">${_SD_EMOJIS[i]} ${d.title.split('—')[0].trim()}</div>
+        <div class="sdm-row-arabic">${d.arabic}</div>
+      </div>
+      <div class="sdm-stepper">
+        <div class="sdm-btn" onclick="sdmAdjust(${i},-1)">−</div>
+        <div class="sdm-val" id="sdm-val-${i}">${_sdTimes[i]} min</div>
+        <div class="sdm-btn" onclick="sdmAdjust(${i},1)">+</div>
+      </div>
+    </div>`).join('');
+  updateSdmTotal();
+}
+function sdmAdjust(i,delta){
+  _sdTimes[i]=Math.max(1,Math.min(30,_sdTimes[i]+delta));
+  document.getElementById('sdm-val-'+i).textContent=_sdTimes[i]+' min';
+  updateSdmTotal();
+}
+function updateSdmTotal(){
+  document.getElementById('sdm-total').textContent=_sdTimes.reduce((a,b)=>a+b,0)+' min';
+}
+function startSeanceDhikr(){
+  closeSdmModal();
+  _sdStep=0;
+  setTimeout(()=>{document.getElementById('seance-dhikr-screen').classList.add('show');renderSeanceStep();},320);
+}
+function renderSeanceStep(){
+  if(_sdStep>=DHIKR_LIST.length){renderSeanceDone();return;}
+  const d=DHIKR_LIST[_sdStep];
+  _sdSec=_sdTimes[_sdStep]*60;_sdTotal=_sdSec;
+  // dots
+  document.getElementById('sds-dots').innerHTML=DHIKR_LIST.map((_,i)=>
+    `<div class="sds-dot${i<_sdStep?' done':i===_sdStep?' active':''}"></div>`).join('');
+  // body
+  document.getElementById('sds-body').innerHTML=`
+    <div class="sds-step-label">${_SD_EMOJIS[_sdStep]} · ${_sdStep+1} / ${DHIKR_LIST.length}</div>
+    <div class="sds-arabic">${d.arabic}</div>
+    <div class="sds-phonetic">${d.phonetic}</div>
+    <div class="sds-french">${d.french}</div>
+    <div class="sds-countdown" id="sds-countdown">${fmtSds(_sdSec)}</div>
+    <div class="sds-bar"><div class="sds-fill" id="sds-fill" style="width:100%"></div></div>`;
+  // cta
+  const isLast=_sdStep===DHIKR_LIST.length-1;
+  const cta=document.getElementById('sds-cta');
+  cta.textContent=isLast?'Terminer ✓':'Passer au suivant →';
+  cta.onclick=()=>{clearInterval(_sdInterval);_sdStep++;renderSeanceStep();};
+  // timer
+  if(_sdInterval)clearInterval(_sdInterval);
+  _sdInterval=setInterval(()=>{
+    _sdSec--;
+    const cd=document.getElementById('sds-countdown');
+    const fill=document.getElementById('sds-fill');
+    if(!cd){clearInterval(_sdInterval);return;}
+    cd.textContent=fmtSds(_sdSec);
+    cd.classList.toggle('urgent',_sdSec<=10&&_sdSec>0);
+    if(fill)fill.style.width=((_sdSec/_sdTotal)*100).toFixed(1)+'%';
+    document.getElementById('sds-timer-top').textContent=fmtSds(_sdSec);
+    if(_sdSec<=0){
+      clearInterval(_sdInterval);
+      if(navigator.vibrate)navigator.vibrate([80,40,80]);
+      _sdStep++;
+      setTimeout(()=>renderSeanceStep(),500);
+    }
+  },1000);
+}
+function renderSeanceDone(){
+  if(_sdInterval){clearInterval(_sdInterval);_sdInterval=null;}
+  document.getElementById('sds-dots').innerHTML=DHIKR_LIST.map(()=>`<div class="sds-dot done"></div>`).join('');
+  document.getElementById('sds-timer-top').textContent='';
+  document.getElementById('sds-body').innerHTML=`
+    <div class="guided-done">
+      <div class="guided-done-emoji">📿</div>
+      <div class="guided-done-title">Séance accomplie</div>
+      <div class="guided-done-sub">barakAllahu fik — que cette assise soit agréée.</div>
+    </div>`;
+  const cta=document.getElementById('sds-cta');
+  cta.textContent='Fermer';
+  cta.onclick=()=>closeSeanceDhikr();
+}
+function closeSeanceDhikr(){
+  if(_sdInterval){clearInterval(_sdInterval);_sdInterval=null;}
+  document.getElementById('seance-dhikr-screen').classList.remove('show');
+}
+function fmtSds(s){const m=Math.floor(Math.max(s,0)/60),sec=Math.max(s,0)%60;return m+':'+(sec+'').padStart(2,'0');}
+document.getElementById('seance-dhikr-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSdmModal();});
 
 // ═══ ANALYTICS ═══
 function getUid() {
