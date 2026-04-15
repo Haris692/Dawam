@@ -23,7 +23,7 @@
     if      (h >= 932) sat = 59; // 14 Pro Max / 15 Plus / 15 Pro Max
     else if (h >= 926) sat = 47; // 12 Pro Max / 13 Pro Max / 14 Plus
     else if (h >= 852) sat = 59; // 14 Pro / 15 / 15 Pro
-    else if (h >= 844) sat = 47; // 12 / 13 / 14
+    else if (h >= 844) sat = 47; // 12 / 12 / 14
     else if (h >= 812) sat = 50; // 12 mini / 13 mini
     else               sat = 20; // SE (barre de statut uniquement)
   }
@@ -1027,7 +1027,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <div style="width:44px"></div>
-      <span class="ob-counter">1 / 13</span>
+      <span class="ob-counter">1 / 12</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
@@ -1041,7 +1041,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <input class="ob-name-input" type="text" placeholder="Ton prénom…" id="name-input" oninput="checkNameInput()" autocomplete="given-name">
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">2 / 13</span>
+      <span class="ob-counter">2 / 12</span>
       <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -1060,7 +1060,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">3 / 13</span>
+      <span class="ob-counter">3 / 12</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
@@ -1095,7 +1095,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">4 / 13</span>
+      <span class="ob-counter">4 / 12</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
@@ -1114,7 +1114,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="ob-coran-sub" id="coran-sub" style="display:none"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">5 / 13</span>
+      <span class="ob-counter">5 / 12</span>
       <button class="ob-next" id="q2-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -1133,7 +1133,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">6 / 13</span>
+      <span class="ob-counter">6 / 12</span>
       <button class="ob-next" id="q3-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -1153,7 +1153,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">7 / 13</span>
+      <span class="ob-counter">7 / 12</span>
       <button class="ob-next" id="q4-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -1173,7 +1173,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">8 / 13</span>
+      <span class="ob-counter">8 / 12</span>
       <button class="ob-next" id="q5-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
@@ -1193,37 +1193,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">9 / 13</span>
+      <span class="ob-counter">9 / 12</span>
       <button class="ob-next" id="q6-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 9: Social proof (interstitiel) -->
+  <!-- Page 9: Ville -->
   <div class="ob-page" data-page="9">
     <div class="ob-dots" id="dots-9"></div>
-    <div class="ob-emoji-circle">🌍</div>
-    <p class="ob-label">Tu n'es pas seul</p>
-    <h1 class="ob-title">Des milliers sur ce chemin</h1>
-    <div class="ob-social-stat">
-      <div class="ob-social-number">10 000+</div>
-      <div class="ob-social-label">musulmans suivent leur programme quotidien<br>avec Dawam chaque jour</div>
-    </div>
-    <div class="ob-social-quote">
-      <div class="ob-social-quote-text">"J'ai essayé beaucoup d'apps — Dawam est la seule où j'ai tenu plus de 3 semaines. Le programme est petit, mais il est là tous les jours."</div>
-      <div class="ob-social-quote-name">— Khalid, 28 ans · Paris</div>
-    </div>
-    <div class="ob-social-quote">
-      <div class="ob-social-quote-text">"Ce que j'aime c'est qu'on ne te juge pas si tu rates une journée. On repart simplement le lendemain."</div>
-      <div class="ob-social-quote-name">— Nadia, 34 ans · Lyon</div>
-    </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">10 / 13</span>
-      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Continuer →</button>
-    </div>
-  </div>
-  <!-- Page 10: Ville -->
-  <div class="ob-page" data-page="10">
-    <div class="ob-dots" id="dots-10"></div>
     <div class="ob-emoji-circle">🏙️</div>
     <p class="ob-label">Horaires de prière</p>
     <h1 class="ob-title">Ta ville</h1>
@@ -1234,13 +1210,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">11 / 13</span>
+      <span class="ob-counter">10 / 12</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
-  <!-- Page 11: Thème -->
-  <div class="ob-page" data-page="11">
-    <div class="ob-dots" id="dots-11"></div>
+  <!-- Page 10: Thème -->
+  <div class="ob-page" data-page="10">
+    <div class="ob-dots" id="dots-10"></div>
     <div class="ob-emoji-circle">🎨</div>
     <p class="ob-label">Personnalise</p>
     <h1 class="ob-title">Choisis ton thème</h1>
@@ -1248,13 +1224,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div id="ob-theme-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">12 / 13</span>
+      <span class="ob-counter">11 / 12</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
-  <!-- Page 12: Engagement -->
-  <div class="ob-page" data-page="12">
-    <div class="ob-dots" id="dots-12"></div>
+  <!-- Page 11: Engagement -->
+  <div class="ob-page" data-page="11">
+    <div class="ob-dots" id="dots-11"></div>
     <div class="ob-emoji-circle">📅</div>
     <p class="ob-label">Engagement</p>
     <h1 class="ob-title">Quand veux-tu pratiquer ?</h1>
@@ -1280,13 +1256,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="ob-pledge" id="ob-pledge">✊ Je m'engage à pratiquer chaque jour à ce moment.</div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">13 / 13</span>
+      <span class="ob-counter">12 / 12</span>
       <button class="ob-next" id="q-commit-next" style="background:var(--green)" onclick="obNext()" disabled>Prendre cet engagement →</button>
     </div>
   </div>
-  <!-- Page 13: Programme proposé -->
-  <div class="ob-page" data-page="13">
-    <div class="ob-dots" id="dots-13"></div>
+  <!-- Page 12: Programme proposé -->
+  <div class="ob-page" data-page="12">
+    <div class="ob-dots" id="dots-12"></div>
     <p class="ob-label" style="text-align:center;margin-bottom:6px">Ton programme</p>
     <h1 class="ob-title" style="margin-bottom:16px">Voici ton point de départ</h1>
     <div id="result-content"></div>
@@ -1986,7 +1962,7 @@ function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JS
 
 // ═══ ONBOARDING ═══
 let obPage=0, obAns={};
-const OB_N=14;
+const OB_N=13;
 function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
 function goToOnboarding() {
   const splash = document.getElementById('splash');
@@ -2038,8 +2014,8 @@ function renderObPage(n, goBack=false){
   p.classList.add("active");
   void p.offsetWidth; // force reflow → animation repart proprement
   p.classList.add(goBack?"ob-slide-back":"ob-slide-in");
-  if(n===13)renderResultPage();
-  if(n===11)renderObThemeGrid();
+  if(n===12)renderResultPage();
+  if(n===10)renderObThemeGrid();
 }
 function obNext(){
   if(obPage===2){const c=obAns.salatCount??0;obPage=(c===0||c===5)?4:3;}
