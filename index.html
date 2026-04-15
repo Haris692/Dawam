@@ -285,18 +285,17 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .prog-mix-next { font-size:11px;color:var(--accent-dark);margin-top:7px;display:flex;align-items:center;gap:5px; }
 .prog-mix-next::before { content:'●';font-size:7px;color:var(--accent);animation:pulse 2s ease-in-out infinite; }
 .prog-mix-periods { display:flex;gap:7px;margin-bottom:12px; }
-.pcard { flex:1;background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:8px 8px 7px;text-align:center; }
-.pcard.active { background:var(--accent);border-color:var(--accent); }
-.pcard.done { background:var(--green-light);border-color:rgba(59,109,17,.2); }
+.pcard { flex:1;background:linear-gradient(145deg,rgba(255,255,255,.45) 0%,rgba(255,248,232,.22) 100%);backdrop-filter:blur(8px) saturate(1.3);-webkit-backdrop-filter:blur(8px) saturate(1.3);border:.75px solid rgba(255,255,255,.55);border-radius:14px;padding:8px 8px 7px;text-align:center;box-shadow:0 1.5px 0 rgba(255,255,255,.9) inset,0 4px 12px rgba(186,117,23,.08);cursor:pointer;transition:transform .15s cubic-bezier(.34,1.4,.64,1),box-shadow .15s;-webkit-tap-highlight-color:transparent; }
+.pcard:active { transform:scale(.93); }
+.pcard.active { background:linear-gradient(145deg,rgba(255,255,255,.75) 0%,rgba(255,248,232,.42) 45%,rgba(255,240,215,.55) 100%);backdrop-filter:blur(8px) saturate(1.3) brightness(1.04);-webkit-backdrop-filter:blur(8px) saturate(1.3) brightness(1.04);box-shadow:0 2.5px 0 rgba(255,255,255,.98) inset,0 -1px 0 rgba(186,117,23,.18) inset,1.5px 0 0 rgba(255,255,255,.68) inset,-1.5px 0 0 rgba(255,255,255,.68) inset,0 10px 32px rgba(186,117,23,.22),0 3px 8px rgba(186,117,23,.14),0 0 0 .75px rgba(255,255,255,.55);border:.75px solid rgba(255,255,255,.65); }
+.pcard.done { background:linear-gradient(145deg,rgba(255,255,255,.55) 0%,rgba(234,243,222,.45) 100%);border:.75px solid rgba(255,255,255,.55);box-shadow:0 1.5px 0 rgba(255,255,255,.9) inset,0 4px 12px rgba(59,109,17,.1); }
 .pcard-emoji { font-size:16px;margin-bottom:2px; }
 .pcard-frac { font-size:11px;font-weight:600;color:var(--text-secondary); }
-.pcard.active .pcard-frac { color:rgba(255,248,232,.9); }
+.pcard.active .pcard-frac { color:var(--accent-dark); }
 .pcard.done .pcard-frac { color:var(--green); }
-.pcard-bar { height:3px;background:rgba(186,117,23,.12);border-radius:2px;margin-top:5px;overflow:hidden; }
-.pcard.active .pcard-bar { background:rgba(255,255,255,.2); }
-.pcard.done .pcard-bar { background:rgba(59,109,17,.15); }
-.pcard-fill { height:100%;border-radius:2px;background:var(--text-light);transition:width .4s ease; }
-.pcard.active .pcard-fill { background:#fff8e8; }
+.pcard-bar { height:3px;background:rgba(186,117,23,.1);border-radius:2px;margin-top:5px;overflow:hidden; }
+.pcard.done .pcard-bar { background:rgba(59,109,17,.12); }
+.pcard-fill { height:100%;border-radius:2px;background:var(--accent);transition:width .4s ease; }
 .pcard.done .pcard-fill { background:var(--green); }
 .path-pills { display:flex;gap:8px; }
 .path-pill-constance { display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(59,109,17,.1); }
@@ -2428,7 +2427,7 @@ function updateProgRing(checked,total,pct,allDone,curCat,items){
     const catIdx=catOrder.indexOf(cat);
     const statusCls=catIdx<curIdx?(cd===ci.length?'done':'missed'):cat===curCat?'active':'';
     const sec=SECTIONS[cat];
-    return `<div class="pcard ${statusCls}"><div class="pcard-emoji">${sec.emoji}</div><div class="pcard-frac">${cd}/${ci.length}</div><div class="pcard-bar"><div class="pcard-fill" style="width:${cp}%"></div></div></div>`;
+    return `<div class="pcard ${statusCls}" onclick="scrollToSection('${cat}')"><div class="pcard-emoji">${sec.emoji}</div><div class="pcard-frac">${cd}/${ci.length}</div><div class="pcard-bar"><div class="pcard-fill" style="width:${cp}%"></div></div></div>`;
   }).join('');
 }
 function renderPath(){
@@ -2548,7 +2547,7 @@ function renderPath(){
       : isCur ? `<span class="section-current-badge">● Maintenant</span>` : '';
     const doneBadge = allSecDone ? `<span class="section-header-badge" style="color:var(--green)">✓ ${secChecked}/${catItems.length}</span>` : `<span class="section-header-badge">${secChecked}/${catItems.length}</span>`;
 
-    return `<div class="section-block${isPast ? ' past-block' : ''} fade-up" style="animation-delay:${.1+si*.03}s">
+    return `<div id="section-${cat}" class="section-block${isPast ? ' past-block' : ''} fade-up" style="animation-delay:${.1+si*.03}s">
       <div class="section-header" onclick="toggleSection(this)">
         <div class="section-header-left"><span class="section-header-emoji">${sec.emoji}</span><span class="section-header-label">${sec.label}</span></div>
         <div style="display:flex;align-items:center;gap:6px">${badgeRight}${doneBadge}</div>
@@ -2582,6 +2581,17 @@ function renderPath(){
 }
 
 function toggleSection(h){const items=h.nextElementSibling;const hidden=items.style.display==="none";items.style.display=hidden?"flex":"none";if(hidden)items.style.flexDirection="column";}
+function scrollToSection(cat){
+  const el=document.getElementById('section-'+cat);
+  if(!el)return;
+  // Si la section est repliée (passé), on la déplie d'abord
+  const itemsDiv=el.querySelector('.section-items');
+  if(itemsDiv&&itemsDiv.style.display==='none'){itemsDiv.style.display='flex';itemsDiv.style.flexDirection='column';}
+  const screen=document.getElementById('path');
+  if(!screen)return;
+  const offset=el.getBoundingClientRect().top - screen.getBoundingClientRect().top + screen.scrollTop - 12;
+  screen.scrollTo({top:offset,behavior:'smooth'});
+}
 
 function patchAfterToggle(id) {
   // Met à jour le row en place sans toucher au DOM global
