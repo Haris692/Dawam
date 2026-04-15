@@ -2461,17 +2461,16 @@ function renderPath(){
 
     const itemsHtml = catItems.map(item => {
       const done = !!S.checklist[item.id];
-      if (isFut || isPast) return `<div class="item-row static-row">
+      if (isFut || isPast) return `<div class="item-row" onclick="openItemPreview(${item.id})" style="cursor:pointer">
         <div class="item-text"><div class="item-title" style="opacity:.7">${item.emoji} ${item.titleFr}</div>${item.why?`<div class="item-why">${item.why}</div>`:''}</div>
-        ${isPast && done ? `<span style="font-size:16px">✓</span>` : isPast ? `<span class="missed-badge">Manqué</span>` : ``}
+        ${isPast && done ? `<span style="font-size:16px">✓</span>` : isPast ? `<span class="missed-badge">Manqué</span>` : `<span style="font-size:13px;color:var(--text-light);flex-shrink:0">›</span>`}
       </div>`;
-      const rowClick = `openGuided(${item.id})`;
-      return `<div class="item-row${done ? ' checked' : ''}">
-        <div class="item-row-main" onclick="${rowClick}">
+      return `<div class="item-row${done ? ' checked' : ''}" onclick="openItemPreview(${item.id})" style="cursor:pointer">
+        <div class="item-row-main">
           <div class="item-check"><svg class="item-check-icon" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <div class="item-text"><div class="item-title">${item.emoji} ${item.titleFr}</div><div class="item-sub">${item.time}</div></div>
         </div>
-        ${item.why?`<div class="item-why" onclick="showItemInfo(${item.id})"><span class="item-why-icon">ⓘ</span>${item.why}</div>`:''}
+        ${item.why?`<div class="item-why"><span class="item-why-icon">ⓘ</span>${item.why}</div>`:''}
       </div>`;
     }).join('');
 
@@ -3566,6 +3565,33 @@ function showItemInfo(id){
   document.getElementById('detail-modal').classList.add('show');
 }
 document.getElementById("detail-modal").addEventListener("click",function(e){if(e.target===this)closeDetail();});
+function openItemPreview(id){
+  const item=PROGRAM.find(i=>i.id===id)||getPrayerItems().find(i=>i.id===id);
+  if(!item)return;
+  const det=ITEM_DETAILS[id];
+  const why=(det&&det.why)||item.why||'';
+  const stepsHtml=det&&det.steps?det.steps.map((s,i)=>`
+    <div class="detail-step-row fade-up" style="animation-delay:${.3+i*.06}s">
+      <div class="detail-step-left"><div class="detail-step-num">${i+1}</div><div class="detail-step-line"></div></div>
+      <div class="detail-step-text">${s}</div>
+    </div>`).join(''):'';
+  document.getElementById('detail-content').innerHTML=`
+    <div class="detail-hero">
+      <span class="detail-hero-emoji">${item.emoji}</span>
+      <div class="detail-hero-title">${item.titleFr}</div>
+      <div><div class="detail-hero-pill"><span>⏱ ${item.time}</span></div></div>
+    </div>
+    <div class="detail-body">
+      ${why?`<p class="fade-up" style="font-size:14px;color:var(--text-secondary);line-height:1.75;text-align:center;padding:0 4px;animation-delay:.2s">${why}</p>`:''}
+      ${det&&det.hadith?`<div class="detail-quote"><span class="detail-quote-marks">❝</span><div class="detail-quote-text">${det.hadith.text}</div><div class="detail-quote-source">— ${det.hadith.source}</div></div><div class="detail-divider"></div>`:''}
+      ${det&&det.steps?`<div class="detail-section-label fade-up" style="animation-delay:.28s">Comment procéder</div><div class="detail-timeline">${stepsHtml}</div>`:''}
+      ${det&&det.note?`<div class="detail-tip fade-up"><span class="detail-tip-icon">💡</span><div class="detail-tip-text">${det.note}</div></div>`:''}
+      <div class="detail-cta fade-up" style="animation-delay:.4s">
+        <button class="btn-secondary" onclick="closeDetail()">Fermer</button>
+      </div>
+    </div>`;
+  document.getElementById('detail-modal').classList.add('show');
+}
 
 // ═══ THEMES ═══
 const THEMES = {
