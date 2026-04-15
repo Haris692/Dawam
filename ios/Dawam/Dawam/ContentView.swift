@@ -59,7 +59,7 @@ struct DawamWebView: UIViewRepresentable {
         context.coordinator.webView = webView
 
         let url = URL(string: "https://haris692.github.io/Dawam/")!
-        webView.load(URLRequest(url: url))
+        webView.load(URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30))
         return webView
     }
 
@@ -292,7 +292,8 @@ struct DawamWebView: UIViewRepresentable {
 
 // MARK: - Vue principale
 struct ContentView: View {
-    @State private var isLoaded = false
+    // Splash natif supprimé — la PWA gère son propre écran de chargement
+    @State private var isLoaded = true
 
     // Couleur de fond Dawam
     let dawamBg = Color(red: 0.961, green: 0.929, blue: 0.878) // #F5EDE0
@@ -303,13 +304,6 @@ struct ContentView: View {
 
             DawamWebView(isLoaded: $isLoaded)
                 .ignoresSafeArea()
-                .opacity(isLoaded ? 1 : 0)
-
-            // Splash natif pendant le chargement
-            if !isLoaded {
-                SplashView()
-                    .transition(.opacity)
-            }
         }
     }
 }
