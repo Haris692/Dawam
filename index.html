@@ -273,6 +273,31 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .path-prog-right { font-size:12px;color:var(--text-secondary); }
 .path-prog-bar { height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:14px; }
 .path-prog-fill { height:100%;background:var(--accent);border-radius:3px;transition:width .6s cubic-bezier(.34,1.2,.64,1); }
+/* ── Mix A+D : anneau + cards période ── */
+.prog-mix-row { display:flex;align-items:center;gap:16px;margin-bottom:12px; }
+.prog-mix-ring { position:relative;flex-shrink:0; }
+.prog-mix-ring svg { display:block; }
+.prog-mix-ring-center { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center; }
+.prog-mix-pct { font-size:15px;font-weight:700;color:var(--text);line-height:1; }
+.prog-mix-info { flex:1;min-width:0; }
+.prog-mix-count { font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text);line-height:1.2; }
+.prog-mix-sub { font-size:11px;color:var(--text-secondary);margin-top:3px; }
+.prog-mix-next { font-size:11px;color:var(--accent-dark);margin-top:7px;display:flex;align-items:center;gap:5px; }
+.prog-mix-next::before { content:'●';font-size:7px;color:var(--accent);animation:pulse 2s ease-in-out infinite; }
+.prog-mix-periods { display:flex;gap:7px;margin-bottom:12px; }
+.pcard { flex:1;background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:8px 8px 7px;text-align:center; }
+.pcard.active { background:var(--accent);border-color:var(--accent); }
+.pcard.done { background:var(--green-light);border-color:rgba(59,109,17,.2); }
+.pcard-emoji { font-size:16px;margin-bottom:2px; }
+.pcard-frac { font-size:11px;font-weight:600;color:var(--text-secondary); }
+.pcard.active .pcard-frac { color:rgba(255,248,232,.9); }
+.pcard.done .pcard-frac { color:var(--green); }
+.pcard-bar { height:3px;background:rgba(186,117,23,.12);border-radius:2px;margin-top:5px;overflow:hidden; }
+.pcard.active .pcard-bar { background:rgba(255,255,255,.2); }
+.pcard.done .pcard-bar { background:rgba(59,109,17,.15); }
+.pcard-fill { height:100%;border-radius:2px;background:var(--text-light);transition:width .4s ease; }
+.pcard.active .pcard-fill { background:#fff8e8; }
+.pcard.done .pcard-fill { background:var(--green); }
 .path-pills { display:flex;gap:8px; }
 .path-pill-constance { display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(59,109,17,.1); }
 .path-pill-dot { width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite; }
@@ -1291,12 +1316,26 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="path-hero-name" id="hero-name">Bonjour</div>
     <div class="path-hero-motiv" id="hero-motiv"></div>
     <div class="path-hero-sep"></div>
-    <div class="path-prog-row">
-      <span class="path-prog-label" id="prog-label">0 / 0 objectifs</span>
-      <span class="path-prog-right" id="prog-right">Commence par une étape</span>
+    <div class="prog-mix-row">
+      <div class="prog-mix-ring">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="28" fill="none" stroke="var(--border)" stroke-width="6"/>
+          <circle id="prog-ring-arc" cx="36" cy="36" r="28" fill="none" stroke="var(--accent)" stroke-width="6"
+            stroke-dasharray="175.9" stroke-dashoffset="175.9"
+            stroke-linecap="round" transform="rotate(-90 36 36)"
+            style="transition:stroke-dashoffset .6s cubic-bezier(.34,1.2,.64,1)"/>
+        </svg>
+        <div class="prog-mix-ring-center">
+          <div class="prog-mix-pct" id="prog-ring-pct">0%</div>
+        </div>
+      </div>
+      <div class="prog-mix-info">
+        <div class="prog-mix-count" id="prog-label">0 / 0 objectifs</div>
+        <div class="prog-mix-sub" id="prog-right">Commence par une étape</div>
+        <div class="prog-mix-next" id="prog-next-label" style="display:none"></div>
+      </div>
     </div>
-    <div class="path-prog-bar"><div class="path-prog-fill" id="prog-fill" style="width:0%"></div></div>
-    <div id="prog-remaining" style="display:none;flex-wrap:wrap;gap:6px;margin:10px 0 4px"></div>
+    <div class="prog-mix-periods" id="prog-period-row"></div>
     <div class="path-pills">
       <div class="path-pill-constance"><div class="path-pill-dot"></div><span class="path-pill-text" id="pill-constance">Semaine 1</span></div>
       <div class="path-hero-chip"><span id="hero-chip">🌱 Débutant</span></div>
@@ -2357,6 +2396,41 @@ function checkNewDay(){
   S.lastDate=today;save();
 }
 
+function updateProgRing(checked,total,pct,allDone,curCat,items){
+  const C=175.9; // 2*π*28
+  const arc=document.getElementById('prog-ring-arc');
+  if(arc){
+    arc.style.strokeDashoffset=(C*(1-(allDone?1:pct/100))).toFixed(1);
+    arc.style.stroke=allDone?'var(--green)':'var(--accent)';
+  }
+  const pctEl=document.getElementById('prog-ring-pct');
+  if(pctEl) pctEl.textContent=allDone?'✓':`${pct}%`;
+
+  // Prochaine action
+  const catOrder=['qiyam','aube','journee','soir','nuit'];
+  const curIdx=catOrder.indexOf(curCat);
+  const futCats=catOrder.slice(curIdx+1);
+  const nextItem=items.find(i=>!S.checklist[i.id]&&!futCats.includes(i.cat));
+  const nextEl=document.getElementById('prog-next-label');
+  if(nextEl){
+    if(allDone||!nextItem){nextEl.style.display='none';nextEl.textContent='';}
+    else{nextEl.style.display='flex';nextEl.textContent=(nextItem.cat===curCat?'Maintenant':'Prochaine étape')+' · '+nextItem.titleFr;}
+  }
+
+  // Cards période
+  const periodEl=document.getElementById('prog-period-row');
+  if(!periodEl)return;
+  const activeCats=catOrder.filter(c=>items.some(i=>i.cat===c));
+  periodEl.innerHTML=activeCats.map(cat=>{
+    const ci=items.filter(i=>i.cat===cat);
+    const cd=ci.filter(i=>S.checklist[i.id]).length;
+    const cp=ci.length>0?Math.round(cd/ci.length*100):0;
+    const catIdx=catOrder.indexOf(cat);
+    const statusCls=catIdx<curIdx?(cd===ci.length?'done':'missed'):cat===curCat?'active':'';
+    const sec=SECTIONS[cat];
+    return `<div class="pcard ${statusCls}"><div class="pcard-emoji">${sec.emoji}</div><div class="pcard-frac">${cd}/${ci.length}</div><div class="pcard-bar"><div class="pcard-fill" style="width:${cp}%"></div></div></div>`;
+  }).join('');
+}
 function renderPath(){
   checkNewDay();
   const items=getActiveItems();
@@ -2373,14 +2447,8 @@ function renderPath(){
   document.getElementById("hero-motiv").textContent=MOTIVS[Math.floor(Math.random()*MOTIVS.length)];
   document.getElementById("prog-label").textContent=allDone?"Journée complète !": `${checked} / ${total} objectifs`;
   document.getElementById("prog-right").textContent=allDone?"Ma sha Allah 🌟":`${pct}% accompli`;
-  document.getElementById("prog-fill").style.width=Math.max(pct,1)+"%";
   document.getElementById("pill-constance").textContent=`Semaine ${S.weekNumber} · ${pi.name}`;
-  const remEl=document.getElementById("prog-remaining");
-  if(allDone){remEl.style.display='none';}else{
-    const rem=items.filter(i=>!S.checklist[i.id]).slice(0,4);
-    remEl.style.display='flex';
-    remEl.innerHTML=rem.map(i=>`<span style="background:var(--bg-card);border:.5px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:500;color:var(--text-secondary)">${i.emoji} ${i.titleFr}</span>`).join('')+(items.filter(i=>!S.checklist[i.id]).length>4?`<span style="font-size:11px;color:var(--text-light);padding:4px 6px">+${items.filter(i=>!S.checklist[i.id]).length-4}</span>`:'');
-  }
+  updateProgRing(checked,total,pct,allDone,curCat,items);
 
   const body=document.getElementById("path-body");
   body.innerHTML="";
@@ -2538,7 +2606,7 @@ function patchAfterToggle(id) {
   const allDone = checked === total && total > 0;
   document.getElementById('prog-label').textContent = allDone ? 'Journée complète !' : `${checked} / ${total} objectifs`;
   document.getElementById('prog-right').textContent = allDone ? 'Ma sha Allah 🌟' : `${pct}% accompli`;
-  document.getElementById('prog-fill').style.width = Math.max(pct, 1) + '%';
+  updateProgRing(checked, total, pct, allDone, getCurrentCat(), items);
 }
 
 function renderPathSmooth() {
