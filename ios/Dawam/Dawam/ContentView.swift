@@ -148,11 +148,20 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                  let window = scene.windows.first(where: { $0.isKeyWindow }) else {
-                return UIWindow()
+            let windowScenes = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+            let activeScene = windowScenes.first(where: { $0.activationState == .foregroundActive })
+                ?? windowScenes.first
+            if let window = activeScene?.keyWindow
+                ?? activeScene?.windows.first(where: { $0.isKeyWindow })
+                ?? activeScene?.windows.first {
+                return window
             }
-            return window
+            // Fallback : cherche dans toutes les scènes
+            for scene in windowScenes {
+                if let w = scene.keyWindow ?? scene.windows.first { return w }
+            }
+            return UIWindow()
         }
 
         func authorizationController(controller: ASAuthorizationController,
@@ -168,11 +177,14 @@ struct DawamWebView: UIViewRepresentable {
             let familyName = credential.fullName?.familyName ?? ""
             let fullName   = [givenName, familyName].filter { !$0.isEmpty }.joined(separator: " ")
 
-            // Échappe les caractères pour éviter une injection JS
-            let safeToken    = idToken.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "'", with: "\\'")
-            let safeNonce    = nonce.replacingOccurrences(of: "'", with: "")
-            let safeName     = fullName.replacingOccurrences(of: "'", with: "")
-            callJS("window.appleSignInResult('\(safeToken)', '\(safeNonce)', '\(safeName)')")
+            // JSON encoding évite tout problème d'échappement (nonce intact = SHA256 correct)
+            let payload: [String: String] = ["idToken": idToken, "nonce": nonce, "fullName": fullName]
+            guard let data = try? JSONSerialization.data(withJSONObject: payload),
+                  let json = String(data: data, encoding: .utf8) else {
+                callJS("window.appleSignInError('Erreur encodage payload')")
+                return
+            }
+            callJS("window.appleSignInResult(\(json))")
         }
 
         func authorizationController(controller: ASAuthorizationController,

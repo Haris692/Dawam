@@ -1822,8 +1822,10 @@ async function authApple() {
   }
 }
 
-window.appleSignInResult = async function(idToken, nonce, fullName) {
+window.appleSignInResult = async function(payload) {
   try {
+    // payload est un objet JSON passé depuis Swift (encodage fiable, nonce intact)
+    const { idToken, nonce, fullName } = (typeof payload === 'string') ? JSON.parse(payload) : payload;
     const provider = new firebase.auth.OAuthProvider('apple.com');
     const credential = provider.credential({ idToken, rawNonce: nonce });
     const result = await _auth.signInWithCredential(credential);
