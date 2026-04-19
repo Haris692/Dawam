@@ -148,20 +148,10 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-            let windowScenes = UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-            let activeScene = windowScenes.first(where: { $0.activationState == .foregroundActive })
-                ?? windowScenes.first
-            if let window = activeScene?.keyWindow
-                ?? activeScene?.windows.first(where: { $0.isKeyWindow })
-                ?? activeScene?.windows.first {
-                return window
-            }
-            // Fallback : cherche dans toutes les scènes
-            for scene in windowScenes {
-                if let w = scene.keyWindow ?? scene.windows.first { return w }
-            }
-            return UIWindow()
+            if let window = webView?.window { return window }
+            let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+            let active = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first
+            return active?.windows.first(where: { $0.isKeyWindow }) ?? active?.windows.first ?? UIWindow()
         }
 
         func authorizationController(controller: ASAuthorizationController,
