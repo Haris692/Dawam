@@ -1465,8 +1465,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="profil-section-title fade-up" style="animation-delay:.35s">Zone sensible</div>
     <div class="danger-zone fade-up" style="animation-delay:.4s">
       <div class="danger-item" onclick="resetApp()">
-        <div class="danger-icon">🔄</div>
-        <div style="flex:1"><div class="danger-text">Recommencer l'onboarding</div><div style="font-size:11px;color:#b02020;opacity:.6;margin-top:1px">Efface toutes tes données</div></div>
+        <div class="danger-icon">🗑️</div>
+        <div style="flex:1"><div class="danger-text">Supprimer mon compte</div><div style="font-size:11px;color:#b02020;opacity:.6;margin-top:1px">Supprime définitivement ton compte et tes données</div></div>
         <span class="danger-arrow">›</span>
       </div>
       <div class="danger-item" onclick="signOutUser()">
@@ -3445,7 +3445,7 @@ function _triggerGroupCompletion(){
 
 function showLockedHint(cat){const msgs={qiyam:"Disponible la nuit (dernier tiers)",aube:"Disponible après le Fajr",journee:"Disponible dans la journée",soir:"Disponible ce soir",nuit:"Disponible avant de dormir"};showToast((msgs[cat]||"Disponible plus tard")+" 🔒");}
 async function resetApp() {
-  const confirmed = await nativeConfirm('Recommencer depuis le début ?\n\nCela effacera toutes tes données.');
+  const confirmed = await nativeConfirm('Supprimer ton compte ?\n\nCette action est irréversible. Toutes tes données seront effacées définitivement.');
   if (!confirmed) return;
   const user = _auth.currentUser;
   if (user) {
