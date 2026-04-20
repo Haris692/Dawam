@@ -1342,8 +1342,30 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div id="result-content"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
+      <span class="ob-counter">Presque…</span>
+      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
+    </div>
+  </div>
+  <!-- Page 13: Notifications -->
+  <div class="ob-page" data-page="13">
+    <div class="ob-dots" id="dots-13"></div>
+    <div class="ob-emoji-circle">🔔</div>
+    <p class="ob-label">Dernière étape</p>
+    <h1 class="ob-title">Active tes rappels</h1>
+    <p class="ob-desc">Reçois une notification après chaque prière — calée sur tes horaires — pour ne jamais oublier tes actes.</p>
+    <div class="ob-features">
+      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(186,117,23,.1)">🌅</div><span class="ob-feature-text">Rappel après le Fajr</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(74,144,217,.1)">☀️</div><span class="ob-feature-text">Rappel à midi et l'après-midi</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(59,109,17,.1)">🌙</div><span class="ob-feature-text">Rappel le soir avant de dormir</span></div>
+    </div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:16px">
+      <button class="btn-primary" id="ob-notif-btn" onclick="obNotifActivateAndFinish()">Activer les rappels 🔔</button>
+      <button onclick="obSkipNotifAndFinish()" style="width:100%;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;">Pas maintenant →</button>
+    </div>
+    <div class="ob-bottom" style="padding-top:0">
+      <button class="ob-back" onclick="obBack()">←</button>
       <span class="ob-counter">Étape finale</span>
-      <button class="ob-next" style="background:var(--green)" onclick="finishOnboarding()">Commencer →</button>
+      <div style="width:44px"></div>
     </div>
   </div>
 </div>
@@ -2080,7 +2102,7 @@ function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JS
 
 // ═══ ONBOARDING ═══
 let obPage=0, obAns={};
-const OB_N=13;
+const OB_N=14;
 function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
 function goToOnboarding() {
   const splash = document.getElementById('splash');
@@ -2365,12 +2387,18 @@ function finishOnboarding(){
   const selSorted=[...obSelectedSteps].sort((a,b)=>a-b);
   const isCustom=obSelectedSteps.length>0&&JSON.stringify(selSorted)!==JSON.stringify(defaultIds);
   localStorage.removeItem(STORAGE_KEY);
-  const notifs=obAns._pushSub?{pushSub:obAns._pushSub}:null;
+  let notifs=obAns._pushSub?{pushSub:obAns._pushSub}:null;
+  if(!notifs&&obAns._apnsToken){notifs={pushSub:'apns:'+obAns._apnsToken};}
   S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null,notifs};
+  S.notifAsked=true;
   save();track('onboarding_complete');
+  if(obAns._apnsToken&&obAns._apnsToken!=='simulator-token'){
+    fetch(PUSH_WORKER+'/subscribe-apns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({deviceToken:obAns._apnsToken,city:profile.city||'',palier:palier||1,prayers:profile.prayers||[]})}).catch(()=>{});
+  }
   if (_auth.currentUser) {
     launchApp(); track('launch');
-    setTimeout(()=>document.getElementById('notif-prompt')?.classList.add('show'),1200);
+    // Ne pas re-afficher le prompt si les notifs ont été gérées dans l'onboarding
+    if(!S.notifs) setTimeout(()=>document.getElementById('notif-prompt')?.classList.add('show'),1200);
   } else {
     // Onboarding terminé sans compte → reload propre pour que signInWithPopup
     // fonctionne dans TWA (l'état Firebase est réinitialisé à chaque chargement)
@@ -4918,7 +4946,49 @@ function nativeConfirm(message) {
 }
 
 // Callback appelé par Swift après demande de permission APNs
+async function obNotifActivateAndFinish() {
+  const btn = document.getElementById('ob-notif-btn');
+  if (btn) { btn.textContent = 'Activation…'; btn.disabled = true; }
+  if (window.isNativeIOSApp) {
+    window._obNotifPending = true;
+    window.webkit.messageHandlers.requestNotifPermission.postMessage({});
+    return; // nativeNotifResult prendra le relais
+  }
+  try {
+    if (!('Notification' in window) || !('PushManager' in window)) throw new Error('unsupported');
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') throw new Error('denied');
+    const sub = await subscribePush();
+    await fetch(`${PUSH_WORKER}/subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...sub.toJSON(), city: obAns.city || '', fajrOffset: obAns.fajrOffset ?? 15, palier: calcPalier(obAns), prayers: obAns.prayers || [] }),
+    });
+    obAns._pushSub = sub.endpoint;
+    showToast('Rappels activés ✓');
+  } catch (e) {
+    if (e.message === 'denied') showToast('Tu pourras activer ça depuis ton profil');
+  }
+  finishOnboarding();
+}
+
+function obSkipNotifAndFinish() {
+  finishOnboarding();
+}
+
 window.nativeNotifResult = function(granted, apnsToken) {
+  // Contexte onboarding
+  if (window._obNotifPending) {
+    window._obNotifPending = false;
+    if (granted && apnsToken) {
+      obAns._apnsToken = apnsToken;
+      showToast('Rappels activés ✓');
+    } else {
+      showToast('Tu pourras activer ça depuis ton profil');
+    }
+    finishOnboarding();
+    return;
+  }
   const btn = document.querySelector('#notif-prompt .btn-primary');
   if (btn) { btn.textContent = 'Activer les rappels'; btn.disabled = false; }
   if (!granted) {
