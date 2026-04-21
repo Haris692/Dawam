@@ -4873,18 +4873,28 @@ function getUid() {
   return uid;
 }
 function track(event) {
+  const payload = { event, uid: getUid() };
+  if (event === 'heartbeat') {
+    payload.name = S.name || '';
+    payload.ua = navigator.userAgent;
+  }
   fetch(`${PUSH_WORKER}/track`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ event, uid: getUid() }),
+    body: JSON.stringify(payload),
   }).catch(() => {});
 }
 
 // ═══ INIT ═══
+let _heartbeatInterval = null;
 function launchApp(){
   loadTheme();
   showScreen("path");
   document.getElementById("bottom-nav").classList.add("visible");
+  if (!_heartbeatInterval) {
+    track('heartbeat');
+    _heartbeatInterval = setInterval(() => track('heartbeat'), 5 * 60 * 1000);
+  }
   document.getElementById("tab-path").classList.add("active");
   renderPath();
   if(S.profile&&S.profile.city){
