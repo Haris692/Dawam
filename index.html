@@ -4911,6 +4911,13 @@ function launchApp(){
   }
   // Groupes : charger le groupe actif
   initGroupes();
+  // Re-enregistre silencieusement le token APNs (iOS peut en changer après réinstall/restore)
+  if (window.isNativeIOSApp && S.notifs?.pushSub?.startsWith('apns:')) {
+    setTimeout(() => {
+      window._silentApnsReregister = true;
+      window.webkit.messageHandlers.requestNotifPermission.postMessage({});
+    }, 2000);
+  }
 }
 function dismissNotifPrompt(){
   document.getElementById('notif-prompt').classList.remove('show');
@@ -4986,6 +4993,25 @@ function obSkipNotifAndFinish() {
 }
 
 window.nativeNotifResult = function(granted, apnsToken) {
+  // Re-enregistrement silencieux au lancement
+  if (window._silentApnsReregister) {
+    window._silentApnsReregister = false;
+    if (granted && apnsToken && apnsToken !== 'simulator-token') {
+      S.notifs = { pushSub: 'apns:' + apnsToken };
+      save();
+      fetch(PUSH_WORKER + '/subscribe-apns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deviceToken: apnsToken,
+          city:    S.profile?.city    || '',
+          palier:  S.palier           || 1,
+          prayers: S.profile?.prayers || [],
+        }),
+      }).catch(() => {});
+    }
+    return;
+  }
   // Contexte onboarding
   if (window._obNotifPending) {
     window._obNotifPending = false;
