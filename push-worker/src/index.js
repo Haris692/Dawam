@@ -428,7 +428,7 @@ async function notifyAll(env, type) {
     cursor = page.cursor;
     await Promise.allSettled(
       page.keys
-        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:') && !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('apns:'))
+        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:') && !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('apns:') && !k.name.startsWith('presence:'))
         .map(async ({ name }) => {
           const raw = await env.SUBSCRIPTIONS.get(name);
           if (!raw) return;
@@ -454,7 +454,7 @@ async function notifyAdaptive(env) {
     cursor = page.cursor;
     await Promise.allSettled(
       page.keys
-        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:') && !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('apns:'))
+        .filter(k => !k.name.startsWith('sent:') && !k.name.startsWith('pt:') && !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('apns:') && !k.name.startsWith('presence:'))
         .map(async ({ name }) => {
           const raw = await env.SUBSCRIPTIONS.get(name);
           if (!raw) return;
@@ -529,6 +529,28 @@ export default {
         prayers: body.prayers || [],
       };
       await env.SUBSCRIPTIONS.put(key, JSON.stringify(sub));
+      return json({ ok: true });
+    }
+
+    // Effacer le badge iOS (appelé quand l'app revient au premier plan)
+    if (pathname === '/clear-badge-apns' && request.method === 'POST') {
+      const { deviceToken } = await request.json().catch(() => ({}));
+      if (!deviceToken) return json({ error: 'missing deviceToken' }, 400);
+      const privKey = await importAPNsKey(env.APNS_PRIVATE_KEY);
+      const jwt     = await makeAPNsJWT(env.APNS_KEY_ID, env.APNS_TEAM_ID, privKey);
+      const sandbox = env.APNS_SANDBOX !== 'false';
+      const host    = sandbox ? 'api.sandbox.push.apple.com' : 'api.push.apple.com';
+      await fetch(`https://${host}/3/device/${deviceToken}`, {
+        method: 'POST',
+        headers: {
+          'authorization':  `bearer ${jwt}`,
+          'apns-topic':     env.APNS_BUNDLE_ID,
+          'apns-push-type': 'alert',
+          'apns-priority':  '10',
+          'content-type':   'application/json',
+        },
+        body: JSON.stringify({ aps: { badge: 0 } }),
+      });
       return json({ ok: true });
     }
 
@@ -610,7 +632,7 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
       );
 
       const privKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY, env.VAPID_PUBLIC_KEY);
@@ -671,7 +693,7 @@ export default {
     if (pathname === '/push-log' && request.method === 'POST') {
       const body = await request.json().catch(() => ({}));
       const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-      await env.SUBSCRIPTIONS.put(`pushlog:${id}`, JSON.stringify(body), { expirationTtl: 3600 });
+      await env.SUBSCRIPTIONS.put(`pushlog:${id}`, JSON.stringify(body), { expirationTtl: 86400 });
       return json({ ok: true });
     }
 
@@ -695,7 +717,7 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
       );
       const results = await Promise.all(subKeys.map(async ({ name }) => {
         const raw = await env.SUBSCRIPTIONS.get(name);
@@ -723,7 +745,7 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
       );
 
       const privKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY, env.VAPID_PUBLIC_KEY);
@@ -765,7 +787,7 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:')
+        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
       );
       const subs = await Promise.all(subKeys.map(async ({ name }) => {
         const raw = await env.SUBSCRIPTIONS.get(name);
@@ -846,11 +868,20 @@ export default {
     }
 
     // ── Analytics : track event ──────────────────────────────────────────────
-    // POST /track  { event: "launch" | "onboarding_complete", uid? }
+    // POST /track  { event: "launch" | "onboarding_complete" | "heartbeat", uid? }
     if (pathname === '/track' && request.method === 'POST') {
-      const { event, uid } = await request.json().catch(() => ({}));
-      const allowed = ['launch', 'onboarding_complete'];
+      const { event, uid, name, ua } = await request.json().catch(() => ({}));
+      const allowed = ['launch', 'onboarding_complete', 'heartbeat'];
       if (!allowed.includes(event)) return json({ error: 'unknown event' }, 400);
+
+      // Heartbeat : marque l'utilisateur comme actif pendant 15 min
+      if (event === 'heartbeat') {
+        if (uid) {
+          const data = { uid: uid.slice(0, 32), ua: (ua || '').slice(0, 200), ts: Date.now() };
+          await env.SUBSCRIPTIONS.put(`presence:${uid.slice(0, 32)}`, JSON.stringify(data), { expirationTtl: 900 });
+        }
+        return json({ ok: true });
+      }
 
       const today = todayUTC();
 
@@ -874,10 +905,20 @@ export default {
     }
 
     // ── Analytics : stats (protégé) ──────────────────────────────────────────
-    // GET /stats?token=xxx
+    // GET /stats?token=xxx[&refresh=1 pour forcer le recalcul]
     if (pathname === '/stats' && request.method === 'GET') {
-      const token = new URL(request.url).searchParams.get('token');
+      const url   = new URL(request.url);
+      const token = url.searchParams.get('token');
       if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+
+      const forceRefresh = url.searchParams.get('refresh') === '1';
+      const CACHE_KEY = 'stats:cache:latest';
+      const CACHE_TTL = 300; // 5 minutes
+
+      if (!forceRefresh) {
+        const cached = await env.SUBSCRIPTIONS.get(CACHE_KEY);
+        if (cached) return json(JSON.parse(cached));
+      }
 
       const today = todayUTC();
       const [
@@ -889,6 +930,10 @@ export default {
         env.SUBSCRIPTIONS.get(`stats:day:${today}:launch`),
         env.SUBSCRIPTIONS.get(`stats:day:${today}:onboarding_complete`),
       ]);
+
+      // Utilisateurs actifs maintenant (heartbeat < 15 min)
+      const presenceList = await env.SUBSCRIPTIONS.list({ prefix: 'presence:' });
+      const activeNow = presenceList.keys.length;
 
       // Utilisateurs uniques du jour (compter les clés uniq:today:*)
       const uniqList = await env.SUBSCRIPTIONS.list({ prefix: `stats:uniq:${today}:` });
@@ -907,7 +952,8 @@ export default {
         days.push({ date: ds, launch: parseInt(l||'0'), onboarding: parseInt(o||'0') });
       }
 
-      return json({
+      const result = {
+        active_now: activeNow,
         total: {
           launches:   parseInt(totalLaunch  || '0'),
           onboardings: parseInt(totalOnboard || '0'),
@@ -919,7 +965,24 @@ export default {
           unique_onboardings: uniqOnboard,
         },
         last7days: days,
-      });
+      };
+
+      await env.SUBSCRIPTIONS.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL });
+      return json(result);
+    }
+
+    // ── Présence : liste des utilisateurs actifs (heartbeat < 15 min) ──────────
+    // GET /presence?token=xxx
+    if (pathname === '/presence' && request.method === 'GET') {
+      const token = new URL(request.url).searchParams.get('token');
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+      const list = await env.SUBSCRIPTIONS.list({ prefix: 'presence:' });
+      const users = await Promise.all(list.keys.map(async ({ name }) => {
+        const raw = await env.SUBSCRIPTIONS.get(name);
+        return raw ? JSON.parse(raw) : null;
+      }));
+      const sorted = users.filter(Boolean).sort((a, b) => b.ts - a.ts);
+      return json({ count: sorted.length, users: sorted });
     }
 
     return new Response('Dawam Push Service 🌙', { headers: CORS });

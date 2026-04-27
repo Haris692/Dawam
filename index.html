@@ -640,6 +640,14 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 #about-modal.show { display:flex; }
 #feedback-modal { display:none;position:fixed;inset:0;z-index:300;background:var(--overlay);align-items:flex-end; }
 #feedback-modal.show { display:flex; }
+#battery-modal { display:none;position:fixed;inset:0;z-index:300;background:var(--overlay);align-items:flex-end; }
+#battery-modal.show { display:flex; }
+.battery-sheet { background:var(--bg);border-radius:24px 24px 0 0;width:100%;padding:24px 24px 40px;animation:fadeUp .35s ease;display:flex;flex-direction:column;gap:12px; }
+.battery-icon { font-size:36px;text-align:center; }
+.battery-title { font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--text);text-align:center; }
+.battery-body { font-size:14px;color:var(--text-secondary);line-height:1.6; }
+.battery-steps { font-size:14px;color:var(--text);line-height:1.8;padding-left:20px;margin:0; }
+.battery-steps li { margin-bottom:4px; }
 .fb-sheet { background:var(--bg);border-radius:24px 24px 0 0;width:100%;padding:0;animation:fadeUp .35s ease; }
 .fb-content { padding:20px 24px 40px;display:flex;flex-direction:column;gap:16px; }
 .fb-title { font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text); }
@@ -1709,6 +1717,25 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="fb-sheet">
     <div class="about-handle"></div>
     <div class="fb-content" id="fb-content"></div>
+  </div>
+</div>
+
+<!-- BATTERY OPTIMIZATION MODAL -->
+<div id="battery-modal" onclick="if(event.target===this)closeBatteryModal()">
+  <div class="battery-sheet">
+    <div class="about-handle"></div>
+    <div class="battery-icon">🔋</div>
+    <div class="battery-title">Active les notifications en arrière-plan</div>
+    <div class="battery-body">
+      Sur Android, l'optimisation batterie peut bloquer les rappels de prière. Pour les recevoir fiablement :
+    </div>
+    <ol class="battery-steps">
+      <li>Va dans <strong>Paramètres</strong> de ton téléphone</li>
+      <li>Cherche <strong>Applications</strong> → <strong>Dawam</strong></li>
+      <li>Ouvre <strong>Batterie</strong> (ou Consommation d'énergie)</li>
+      <li>Sélectionne <strong>Aucune restriction</strong> ou <strong>Non optimisée</strong></li>
+    </ol>
+    <button class="btn-primary" onclick="closeBatteryModal()" style="width:100%;margin-top:8px">Compris</button>
   </div>
 </div>
 
@@ -3941,6 +3968,7 @@ async function toggleNotifs() {
     save();
     renderNotifToggle();
     showToast("Rappels activés ✓ — tu recevras une notif chaque matin");
+    maybeShowBatteryTip();
   } catch (e) {
     showToast("Erreur — vérifie que l'app est installée");
     console.error(e);
@@ -3969,6 +3997,19 @@ function toggleDarkMode(){
 // ═══ ABOUT ═══
 function showAbout(){document.getElementById("about-modal").classList.add("show");}
 function closeAbout(){document.getElementById("about-modal").classList.remove("show");}
+
+function showBatteryModal(){document.getElementById('battery-modal').classList.add('show');}
+function closeBatteryModal(){
+  document.getElementById('battery-modal').classList.remove('show');
+  localStorage.setItem('dawam_battery_tip_shown','1');
+}
+function maybeShowBatteryTip(){
+  const isAndroid = /android/i.test(navigator.userAgent);
+  if(!isAndroid) return;
+  if(localStorage.getItem('dawam_battery_tip_shown')) return;
+  setTimeout(showBatteryModal, 1200);
+}
+
 document.getElementById("about-modal").addEventListener("click",function(e){if(e.target===this)closeAbout();});
 
 // ═══ FEEDBACK ═══
@@ -4939,6 +4980,7 @@ async function activateNotifsFromPrompt(){
     await fetch(`${PUSH_WORKER}/subscribe`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...sub.toJSON(),city:S.profile?.city||'',fajrOffset:S.profile?.fajrOffset??15,palier:S.palier||1,prayers:S.profile?.prayers||[]})});
     S.notifs={pushSub:sub.endpoint};save();
     showToast('Rappels activés ✓');
+    maybeShowBatteryTip();
   }catch(e){
     showToast(e.message==='denied'?'Permission refusée':'Notifications non disponibles');
   }
