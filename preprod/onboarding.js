@@ -11,7 +11,7 @@ let ob3 = {
 };
 
 const OB3 = {
-  GR:'#3B6D11', GD:'#BA7517', BG:'#EDE8DA', CA:'#F5EFE3',
+  GR:'#3B6D11', GD:'#BA7517', BG:'#f5ede0', CA:'#faeeda',
   TX:'#2C1A0E', MU:'#7A5C3E'
 };
 
@@ -65,7 +65,7 @@ function ob3Dots() {
   return h + '</div>';
 }
 
-function ob3Ec(e, s=72) {
+function ob3Ec(e, s=Math.min(72, Math.round((window.innerWidth || 375) * 0.18))) {
   return `<div class="ob3-ec" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.47)}px">${e}</div>`;
 }
 function ob3Gl(c) { return `<p class="ob3-gl">${c}</p>`; }
