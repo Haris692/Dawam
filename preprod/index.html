@@ -651,7 +651,25 @@
 <script src="onboarding.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(console.error);
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      const doUpdate = (sw) => { sw.postMessage('skipWaiting'); };
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) doUpdate(nw);
+        });
+      });
+      if (reg.waiting && navigator.serviceWorker.controller) doUpdate(reg.waiting);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) reg.update();
+      });
+    }).catch(() => {});
+    let _refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!_refreshing) { _refreshing = true; location.reload(); }
+    });
+  });
 }
 </script>
 </body>
