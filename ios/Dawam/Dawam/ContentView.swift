@@ -58,7 +58,11 @@ struct DawamWebView: UIViewRepresentable {
         // Stocke la référence pour les callbacks Swift → JS
         context.coordinator.webView = webView
 
+        #if PREPROD
+        let url = URL(string: "https://haris692.github.io/Dawam/preprod/")!
+        #else
         let url = URL(string: "https://haris692.github.io/Dawam/")!
+        #endif
         webView.load(URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30))
         return webView
     }
@@ -71,6 +75,7 @@ struct DawamWebView: UIViewRepresentable {
         var parent: DawamWebView
         weak var webView: WKWebView?
         var currentNonce: String?
+        private var isAppleSignInInProgress = false
 
         init(_ parent: DawamWebView) {
             self.parent = parent
@@ -135,6 +140,8 @@ struct DawamWebView: UIViewRepresentable {
         // MARK: Sign in with Apple
 
         func handleSignInWithApple() {
+            guard !isAppleSignInInProgress else { return }
+            isAppleSignInInProgress = true
             let nonce = randomNonceString()
             currentNonce = nonce
             let request = ASAuthorizationAppleIDProvider().createRequest()
@@ -156,6 +163,10 @@ struct DawamWebView: UIViewRepresentable {
 
         func authorizationController(controller: ASAuthorizationController,
                                      didCompleteWithAuthorization authorization: ASAuthorization) {
+            defer {
+                currentNonce = nil
+                isAppleSignInInProgress = false
+            }
             guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
                   let nonce = currentNonce,
                   let tokenData = credential.identityToken,
@@ -179,6 +190,8 @@ struct DawamWebView: UIViewRepresentable {
 
         func authorizationController(controller: ASAuthorizationController,
                                      didCompleteWithError error: Error) {
+            currentNonce = nil
+            isAppleSignInInProgress = false
             // Ignore les annulations volontaires
             if let authError = error as? ASAuthorizationError, authError.code == .canceled { return }
             callJS("window.appleSignInError('Connexion Apple impossible')")

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+// Détecte la safe area top (Dynamic Island / notch) pour WKWebView iOS natif.
+// env(safe-area-inset-top) peut retourner 0 avec contentInsetAdjustmentBehavior=.never,
+// donc on lit la valeur via le DOM ou on la déduit des dimensions écran.
+(function(){
+  var sat = 0;
+  // Tentative via env() : crée un élément temporaire et lit sa valeur calculée
+  try {
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;pointer-events:none;visibility:hidden;padding-top:env(safe-area-inset-top)';
+    document.documentElement.appendChild(el);
+    sat = parseFloat(getComputedStyle(el).paddingTop) || 0;
+    el.parentNode.removeChild(el);
+  } catch(e) {}
+  // Si env() a retourné 0 sur iOS natif → estimation par dimensions écran
+  if (sat === 0 && navigator.userAgent.indexOf('iPhone') !== -1) {
+    var h = window.screen.height; // CSS pixels portrait
+    if      (h >= 932) sat = 59; // 14 Pro Max / 15 Plus / 15 Pro Max
+    else if (h >= 926) sat = 47; // 12 Pro Max / 13 Pro Max / 14 Plus
+    else if (h >= 852) sat = 59; // 14 Pro / 15 / 15 Pro
+    else if (h >= 844) sat = 47; // 12 / 12 / 14
+    else if (h >= 812) sat = 50; // 12 mini / 13 mini
+    else               sat = 20; // SE (barre de statut uniquement)
+  }
+  document.documentElement.style.setProperty('--sat', sat + 'px');
+})();
+</script>
+<meta name="theme-color" content="#faf8f3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dawam">
+<meta name="description" content="Dawam — Petit, mais constant. Ton compagnon spirituel quotidien.">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Dawam — Petit, mais constant.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="themes.css">
+<!-- PREPROD : Firebase stub (aucune connexion réseau, aucune auth) -->
+<script src="firebase-stub.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+<!-- LOADER (couvre tout pendant la vérification Firebase) -->
+<div id="auth-loader">
+  <svg id="al-svg" width="130" height="130" viewBox="0 0 130 130" style="margin-bottom:22px">
+    <defs>
+      <filter id="al-glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <circle id="al-ring"  cx="65" cy="65" r="52" fill="none" class="al-ring"  stroke-width="1.2" stroke-dasharray="326" stroke-dashoffset="326" stroke-linecap="round" filter="url(#al-glow)"/>
+    <circle id="al-ring2" cx="65" cy="65" r="42" fill="none" class="al-ring2" stroke-width=".6"  stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round"/>
+    <text id="al-star" x="65" y="73" text-anchor="middle" font-size="34" class="al-star" font-family="serif" opacity="0" filter="url(#al-glow)">✦</text>
+    <circle id="al-dot1" cx="65"  cy="10"  r="2.5" class="al-dot" opacity="0"/>
+    <circle id="al-dot2" cx="120" cy="65"  r="2.5" class="al-dot" opacity="0"/>
+    <circle id="al-dot3" cx="65"  cy="120" r="2.5" class="al-dot" opacity="0"/>
+    <circle id="al-dot4" cx="10"  cy="65"  r="2.5" class="al-dot" opacity="0"/>
+  </svg>
+  <div id="al-name" style="display:flex;gap:1px;margin-bottom:8px">
+    <span class="al-l al-letter">D</span>
+    <span class="al-l al-letter">a</span>
+    <span class="al-l al-letter">w</span>
+    <span class="al-l al-letter">a</span>
+    <span class="al-l al-letter">m</span>
+  </div>
+  <p id="al-tag" class="al-tag" style="opacity:0">Petit, mais constant.</p>
+</div>
+
+<!-- AUTH -->
+<div class="screen" id="auth">
+  <p class="auth-logo">Dawam</p>
+  <p class="auth-tagline">Petit, mais constant.</p>
+  <div class="auth-card">
+    <h2 class="auth-title" id="auth-title">Bon retour 🤲</h2>
+    <p class="auth-sub" id="auth-sub">Connecte-toi pour continuer ton chemin spirituel.</p>
+
+    <div id="auth-apple-block" style="display:none">
+      <button class="btn-apple" onclick="authApple()">
+        <svg width="18" height="22" viewBox="0 0 814 1000" fill="white"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-167.9-107.8C92.1 776.5-.5 665.3-.5 557.1c0-197.5 100.2-310.9 219.3-310.9 55.3 0 101.3 37.5 135.2 37.5 32.2 0 82.8-39.5 148.5-39.5 22.6 0 108.2 1.9 167.3 73.5zm-236.9-116.1c28.4-33.8 48.3-81.1 48.3-128.4 0-6.4-.6-12.9-1.9-18 0-.6-.6-1.3-1.3-1.3-45.1 1.9-98.4 30.3-130.7 68.1-26.5 29.6-50.8 76.3-50.8 124.3 0 7.1 1.3 14.2 1.9 16.5.6.6 1.9 1.3 3.2 1.3 41.4 0 96.3-26.5 131.3-62.5z"/></svg>
+        Continuer avec Apple
+      </button>
+      <div class="auth-sep">
+        <div class="auth-sep-line"></div>
+        <span class="auth-sep-text">ou</span>
+        <div class="auth-sep-line"></div>
+      </div>
+    </div>
+
+    <div id="auth-google-block">
+      <button class="btn-google" onclick="authGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continuer avec Google
+      </button>
+      <div class="auth-sep">
+        <div class="auth-sep-line"></div>
+        <span class="auth-sep-text">ou</span>
+        <div class="auth-sep-line"></div>
+      </div>
+    </div>
+
+    <input class="auth-input" id="auth-email" type="email" placeholder="Adresse email" autocomplete="email">
+    <input class="auth-input" id="auth-password" type="password" placeholder="Mot de passe" autocomplete="current-password">
+    <span class="auth-forgot" id="auth-forgot" onclick="authForgotPassword()">Mot de passe oublié ?</span>
+    <div id="auth-confirm-wrap" style="display:none">
+      <input class="auth-input" id="auth-confirm" type="password" placeholder="Confirmer le mot de passe">
+    </div>
+    <button class="btn-primary" id="auth-submit-btn" onclick="authEmail()">Se connecter</button>
+    <p class="auth-error" id="auth-error"></p>
+    <div class="auth-toggle">
+      <span id="auth-mode-toggle" onclick="toggleAuthMode()">Pas encore de compte ? Créer un compte</span>
+    </div>
+
+    <!-- État : vérification email en attente -->
+    <div id="auth-verify-block" style="display:none">
+      <p class="auth-verify-icon">📧</p>
+      <p class="auth-verify-title">Vérifie ton email</p>
+      <p class="auth-verify-desc">Un lien de confirmation a été envoyé à<br><strong id="auth-verify-addr"></strong><br>Clique dessus pour activer ton compte.</p>
+      <button class="btn-primary" onclick="checkEmailVerified()">J'ai cliqué sur le lien ✓</button>
+      <button class="auth-verify-resend" onclick="resendVerificationEmail()">Renvoyer l'email</button>
+      <p class="auth-error" id="auth-verify-error"></p>
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE BANNER -->
+<div id="update-banner" style="display:none"></div>
+
+<!-- INSTALL BANNER (iOS) -->
+<div id="install-banner">
+  <p>Installe Dawam sur ton écran d'accueil pour l'utiliser hors-ligne.</p>
+  <button onclick="showInstallInstructions()">Installer</button>
+  <button class="close-banner" onclick="closeBanner()">✕</button>
+</div>
+
+<!-- SPLASH -->
+<div class="screen" id="splash">
+  <p class="splash-logo">Dawam</p>
+  <p class="splash-tagline">Petit, mais constant.</p>
+  <div class="splash-sep"></div>
+  <p class="splash-label">À chaque moment son action</p>
+  <p class="splash-quote">"Ton âge est ton capital. L'enjeu n'est pas d'agir comme tu veux, quand tu veux — mais d'accomplir l'action appropriée au moment opportun."</p>
+  <div id="cycle-wrap" style="width:100%;flex:1;min-height:0;margin:clamp(8px,2vh,16px) 0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+    <svg id="cycle-svg" width="100%" height="100%" viewBox="0 0 300 300" style="display:block;max-height:100%;transform-origin:center;transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;">
+      <defs>
+        <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#f0e0c0" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#f5ede0" stop-opacity="0"/>
+        </radialGradient>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 2L8 5L2 8" fill="none" stroke="#BA7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 2L8 5L2 8" fill="none" stroke="rgba(50,70,120,.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <circle cx="150" cy="150" r="112" fill="url(#bgGlow)"/>
+      <circle cx="150" cy="150" r="90" fill="none" stroke="rgba(186,117,23,.1)" stroke-width="8"/>
+      <circle cx="150" cy="150" r="90" fill="none" stroke="rgba(186,117,23,.15)" stroke-width="1.5"/>
+      <path d="M 150 60 A 90 90 0 0 1 240 150" fill="none" stroke="rgba(201,147,10,.4)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 240 150 A 90 90 0 0 1 150 240" fill="none" stroke="rgba(186,117,23,.3)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 150 240 A 90 90 0 0 1 60 150" fill="none" stroke="rgba(40,60,110,.2)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 60 150 A 90 90 0 0 1 150 60" fill="none" stroke="rgba(40,60,110,.15)" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="150" cy="60" r="26" fill="#fff8e8" stroke="#c9930a" stroke-width="1.5"/>
+      <text x="150" y="53" text-anchor="middle" font-size="17">🌅</text>
+      <text x="150" y="68" text-anchor="middle" font-size="9" font-weight="700" fill="#8a6020" font-family="DM Sans,sans-serif" letter-spacing=".5">MATIN</text>
+      <circle cx="240" cy="150" r="26" fill="#fff8e8" stroke="#c9930a" stroke-width="1.5"/>
+      <text x="240" y="143" text-anchor="middle" font-size="17">☀️</text>
+      <text x="240" y="158" text-anchor="middle" font-size="9" font-weight="700" fill="#8a6020" font-family="DM Sans,sans-serif" letter-spacing=".5">MIDI</text>
+      <circle cx="150" cy="240" r="26" fill="#fdf0e0" stroke="#BA7517" stroke-width="1.5"/>
+      <text x="150" y="233" text-anchor="middle" font-size="17">🌇</text>
+      <text x="150" y="248" text-anchor="middle" font-size="9" font-weight="700" fill="#8a6020" font-family="DM Sans,sans-serif" letter-spacing=".5">SOIR</text>
+      <circle cx="60" cy="150" r="26" fill="#1a2d4a" stroke="#4a6090" stroke-width="1.5"/>
+      <text x="60" y="143" text-anchor="middle" font-size="17">🌙</text>
+      <text x="60" y="160" text-anchor="middle" font-size="9" font-weight="700" fill="#8fb0d0" font-family="DM Sans,sans-serif" letter-spacing=".5">NUIT</text>
+      <circle cx="150" cy="150" r="36" fill="#f5ede0" stroke="rgba(186,117,23,.2)" stroke-width="1"/>
+      <text x="150" y="145" text-anchor="middle" font-size="20" fill="#BA7517">✦</text>
+      <text x="150" y="162" text-anchor="middle" font-size="8" fill="#8a6020" font-weight="600" font-family="DM Sans,sans-serif" letter-spacing=".5">DAWAM</text>
+      <path d="M 193 76 Q 216 94 228 120" fill="none" stroke="rgba(186,117,23,.4)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arr)"/>
+      <path d="M 228 180 Q 216 206 193 224" fill="none" stroke="rgba(186,117,23,.3)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arr)"/>
+      <path d="M 107 224 Q 84 206 72 180" fill="none" stroke="rgba(50,70,120,.3)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arr2)"/>
+      <path d="M 72 120 Q 84 94 107 76" fill="none" stroke="rgba(50,70,120,.2)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arr2)"/>
+    </svg>
+  </div>
+  <div class="splash-actions">
+    <button class="btn-primary" onclick="goToOnboarding()">Commencer</button>
+    <button class="btn-secondary" onclick="showAbout()">En savoir plus →</button>
+  </div>
+</div>
+
+<!-- ONBOARDING V3 (DOM injecte par onboarding.js) -->
+<div class="screen" id="onboarding"></div>
+
+<!-- NOTIF PROMPT (post first-check) -->
+<div class="notif-prompt" id="notif-prompt">
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:36px;margin-bottom:8px">🔔</div>
+    <div style="font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Tu as fait ta première action !</div>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">Active les rappels pour ne pas perdre le rythme — calés sur tes prières.</div>
+  </div>
+  <button class="btn-primary" onclick="activateNotifsFromPrompt()" style="margin-bottom:10px">Activer les rappels</button>
+  <button onclick="dismissNotifPrompt()" style="width:100%;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;">Plus tard →</button>
+</div>
+
+<!-- PATH -->
+<div class="screen" id="path">
+  <div class="path-hero fade-up">
+    <div class="path-hero-name" id="hero-name">Bonjour</div>
+    <div class="path-hero-motiv" id="hero-motiv"></div>
+    <div class="path-hero-sep"></div>
+    <div class="prog-mix-row">
+      <div class="prog-mix-ring">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <defs>
+            <linearGradient id="athlete-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff3b30"/>
+              <stop offset="60%" stop-color="#ff7a00"/>
+              <stop offset="100%" stop-color="#ffcc00"/>
+            </linearGradient>
+            <linearGradient id="quest-ring-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00ff88"/>
+              <stop offset="50%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#b347ff"/>
+            </linearGradient>
+          </defs>
+          <circle cx="36" cy="36" r="28" fill="none" stroke="var(--border)" stroke-width="6"/>
+          <circle id="prog-ring-arc" cx="36" cy="36" r="28" fill="none" stroke="var(--accent)" stroke-width="6"
+            stroke-dasharray="175.9" stroke-dashoffset="175.9"
+            stroke-linecap="round" transform="rotate(-90 36 36)"
+            style="transition:stroke-dashoffset .6s cubic-bezier(.34,1.2,.64,1)"/>
+        </svg>
+        <div class="prog-mix-ring-center">
+          <div class="prog-mix-pct" id="prog-ring-pct">0%</div>
+        </div>
+      </div>
+      <div class="prog-mix-info">
+        <div class="prog-mix-count" id="prog-label">0 / 0 objectifs</div>
+        <div class="prog-mix-sub" id="prog-right">Commence par une étape</div>
+        <div class="prog-mix-next" id="prog-next-label" style="display:none"></div>
+      </div>
+    </div>
+    <div class="prog-mix-periods" id="prog-period-row"></div>
+    <div class="path-pills">
+      <div class="path-pill-constance"><div class="path-pill-dot"></div><span class="path-pill-text" id="pill-constance">Semaine 1</span></div>
+      <div class="path-hero-chip"><span id="hero-chip">🌱 Débutant</span></div>
+    </div>
+  </div>
+  <div class="path-body" id="path-body"></div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- INVOCATIONS -->
+<div class="screen" id="invocations">
+  <div class="invoc-tabs-bar">
+    <button class="invoc-tab active" onclick="switchInvocTab('matin',this)">🌅 Matin</button>
+    <button class="invoc-tab" onclick="switchInvocTab('soir',this)">🌙 Soir</button>
+    <button class="invoc-tab" onclick="switchInvocTab('dhikr',this)">📿 Dhikr</button>
+  </div>
+  <div id="invoc-content" class="invoc-list"></div>
+</div>
+
+<!-- PROFIL -->
+<div class="screen" id="profil">
+  <div class="profil-header fade-up">
+    <div class="profil-title">Mon profil</div>
+    <div class="profil-sub">Petit, mais constant.</div>
+  </div>
+  <div class="profil-body">
+
+    <!-- Hero -->
+    <div class="profil-hero scale-in">
+      <button class="profil-edit-btn" onclick="openProfilEdit()">✏️ Modifier</button>
+      <div class="profil-hero-avatar" id="profil-avatar">?</div>
+      <div class="profil-hero-name" id="profil-name">—</div>
+      <div class="profil-hero-palier-badge" id="profil-palier">—</div>
+      <div class="profil-hero-streak">
+        <span id="profil-streak-emoji" style="font-size:30px">🔥</span>
+        <div>
+          <div class="profil-hero-streak-num" id="profil-streak">0</div>
+          <div class="profil-hero-streak-label" id="profil-streak-label">jour de suite</div>
+          <div class="profil-hero-streak-sub" id="profil-streak-sub">Commence ta série aujourd'hui !</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row fade-up" style="animation-delay:.1s">
+      <div class="stat-pill">
+        <div class="stat-pill-value" id="stat-total">0</div>
+        <div class="stat-pill-label">📅 Jours actifs</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-pill-value" id="stat-actions">0/0</div>
+        <div class="stat-pill-label">✅ Aujourd'hui</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-pill-value" id="stat-week-pct">0%</div>
+        <div class="stat-pill-label">📊 Cette semaine</div>
+      </div>
+    </div>
+
+    <!-- Activité -->
+    <div class="profil-section-title fade-up" style="animation-delay:.15s">Activité récente</div>
+    <div class="card fade-up" style="animation-delay:.2s;padding:16px">
+      <div class="streak-dots" id="streak-dots"></div>
+      <div id="days-timeline"></div>
+    </div>
+
+    <!-- Paramètres -->
+    <div class="profil-section-title fade-up" style="animation-delay:.25s">Paramètres</div>
+    <div class="profil-menu fade-up" style="animation-delay:.3s">
+      <div class="profil-menu-item" onclick="toggleNotifs()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔔</div><span class="profil-menu-text">Rappels quotidiens</span><div class="toggle-switch" id="notif-toggle"></div></div>
+      <div class="profil-menu-item" onclick="toggleDarkMode()"><div class="profil-menu-icon" style="background:rgba(15,25,35,.1)">🌙</div><span class="profil-menu-text">Mode sombre</span><div class="toggle-switch" id="dark-toggle"></div></div>
+      <div class="profil-menu-item" onclick="showThemeModal()"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Changer le thème</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="showFeedbackModal()"><div class="profil-menu-icon" style="background:rgba(74,158,218,.1)">💬</div><span class="profil-menu-text">Donner mon avis</span><span class="profil-menu-arrow">›</span></div>
+    </div>
+
+    <!-- Zone sensible -->
+    <div class="profil-section-title fade-up" style="animation-delay:.35s">Zone sensible</div>
+    <div class="danger-zone fade-up" style="animation-delay:.4s">
+      <div class="danger-item" onclick="resetApp()">
+        <div class="danger-icon">🔄</div>
+        <div style="flex:1"><div class="danger-text">Recommencer l'onboarding</div><div style="font-size:11px;color:#b02020;opacity:.6;margin-top:1px">Efface toutes tes données</div></div>
+        <span class="danger-arrow">›</span>
+      </div>
+      <div class="danger-item" onclick="signOutUser()">
+        <div class="danger-icon">🚪</div>
+        <div style="flex:1"><div class="danger-text">Se déconnecter</div><div style="font-size:11px;color:#b02020;opacity:.6;margin-top:1px">Retour à l'écran de connexion</div></div>
+        <span class="danger-arrow">›</span>
+      </div>
+    </div>
+
+    <div class="dawam-footer">Dawam · Petit, mais constant.</div>
+  </div>
+</div>
+
+<!-- EDIT PROFIL MODAL -->
+<div id="edit-profil-modal">
+  <div class="edit-profil-sheet">
+    <div class="edit-profil-handle"></div>
+    <div class="edit-profil-title">Modifier mon profil</div>
+    <div class="edit-field">
+      <div class="edit-field-label">Prénom</div>
+      <input class="edit-field-input" id="edit-name-input" type="text" placeholder="Ton prénom" maxlength="30" autocomplete="off">
+    </div>
+    <div class="edit-field">
+      <div class="edit-field-label">Ville (notifications de prière)</div>
+      <input class="edit-field-input" id="edit-city-input" type="text" placeholder="Ex : Paris, Lyon, Bruxelles…" maxlength="50" autocomplete="off">
+    </div>
+    <button class="btn-primary" onclick="saveProfilEdit()" style="margin-top:8px">Enregistrer</button>
+    <button onclick="closeProfilEdit()" style="width:100%;margin-top:10px;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;">Annuler</button>
+  </div>
+</div>
+
+<!-- GROUPES -->
+<div class="screen" id="groupes">
+  <div class="grp-header">
+    <div class="grp-title">Groupes</div>
+    <div class="grp-sub">Dhikr collectif, en temps réel</div>
+  </div>
+  <div class="grp-body" id="grp-body">
+    <div class="grp-skeleton" style="height:180px;border-radius:var(--radius)"></div>
+    <div class="grp-skeleton" style="height:80px;border-radius:var(--radius);margin-top:4px"></div>
+  </div>
+</div>
+
+<!-- MODAL CRÉATION GROUPE -->
+<div id="grp-create-modal" onclick="if(event.target===this)closeGrpCreate()">
+  <div class="grp-create-sheet">
+    <div class="grp-sheet-handle"></div>
+    <div class="grp-sheet-title">Créer un groupe</div>
+    <div class="grp-sheet-sub">Choisis le type de groupe.</div>
+    <!-- Sélecteur type -->
+    <div class="grp-type-selector">
+      <button class="grp-type-btn selected" id="grp-type-dhikr" onclick="selectGrpGroupType('dhikr')">
+        <span class="grp-type-btn-icon">📿</span>
+        <span class="grp-type-btn-label">Dhikr collectif</span>
+      </button>
+      <button class="grp-type-btn" id="grp-type-qiyam" onclick="selectGrpGroupType('qiyam')">
+        <span class="grp-type-btn-icon">🌙</span>
+        <span class="grp-type-btn-label">Qiyam al-Layl</span>
+      </button>
+    </div>
+    <!-- Section Dhikr -->
+    <div id="grp-dhikr-create-section">
+      <div class="grp-sheet-section">
+        <div class="grp-sheet-label">Type de dhikr</div>
+        <div class="grp-dhikr-options" id="grp-dhikr-options">
+          <div class="grp-dhikr-opt selected" data-key="subhan" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">سُبْحَانَ ٱللَّٰهِ</span>
+            <span class="grp-dhikr-opt-label">Sous-han Allah</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="alhamd" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">ٱلْحَمْدُ لِلَّٰهِ</span>
+            <span class="grp-dhikr-opt-label">Alhamdulillah</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="allahu" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">ٱللَّٰهُ أَكْبَرُ</span>
+            <span class="grp-dhikr-opt-label">Allahu Akbar</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="astaghfir" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">أَسْتَغْفِرُ ٱللَّٰهَ</span>
+            <span class="grp-dhikr-opt-label">Astaghfirullah</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="grp-dhikr-opt" data-key="salawat" onclick="selectGrpDhikr(this)">
+            <span class="grp-dhikr-opt-ar">صَلَّىٰ ٱللَّٰهُ عَلَيْهِ</span>
+            <span class="grp-dhikr-opt-label">Salawat sur le Prophète ﷺ</span>
+            <div class="grp-dhikr-opt-chk"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <div class="grp-sheet-section">
+        <div class="grp-sheet-label">Objectif collectif</div>
+        <div class="grp-target-row">
+          <div class="grp-target-display" id="grp-target-display">1 000</div>
+          <input class="grp-target-slider" type="range" min="1" max="100" value="10"
+                 id="grp-target-slider" oninput="updateGrpTarget(this.value)">
+        </div>
+        <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:4px">De 100 à 10 000 — glisse le curseur</div>
+      </div>
+    </div>
+    <!-- Section Qiyam -->
+    <div id="grp-qiyam-create-section" style="display:none">
+      <div class="grp-sheet-section">
+        <div class="grp-sheet-label">Défi semaine (optionnel)</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:12px">Fixe un nombre de Qiyam à accomplir chacun cette semaine.</div>
+        <div class="grp-target-row">
+          <div class="grp-target-display" id="grp-qiyam-target-display">—</div>
+          <input class="grp-target-slider" type="range" min="0" max="7" value="0"
+                 id="grp-qiyam-target-slider" oninput="updateGrpQiyamTarget(this.value)">
+        </div>
+        <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:4px">0 = pas de défi cette semaine</div>
+      </div>
+    </div>
+    <div class="grp-sheet-actions">
+      <button class="btn-primary" id="grp-create-btn" onclick="submitCreateGroup()">Créer le groupe</button>
+      <button class="btn-secondary" onclick="closeGrpCreate()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav">
+  <div id="nav-indicator"></div>
+  <button class="nav-tab active" onclick="showTab('path',this)" id="tab-path">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Accueil</span>
+  </button>
+  <button class="nav-tab" onclick="showTab('invocations',this)" id="tab-invocations">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-width="1.8"/><path d="M8 12h8M12 8v8" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span>Invocations</span>
+  </button>
+  <button class="nav-tab" onclick="showTab('groupes',this)" id="tab-groupes">
+    <svg viewBox="0 0 24 24" fill="none">
+      <circle cx="9" cy="7" r="3" stroke-width="1.8"/>
+      <path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M16 3.13a4 4 0 010 7.75" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M21 21v-2a4 4 0 00-3-3.85" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <span>Groupes</span>
+  </button>
+  <button class="nav-tab" onclick="showTab('profil',this)" id="tab-profil">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </button>
+</nav>
+
+<!-- INVOC POPUP -->
+<div id="invoc-popup" onclick="if(event.target===this)closeInvocPopup()">
+  <div class="invoc-popup-sheet">
+    <div class="invoc-popup-header">
+      <div class="invoc-popup-title" id="invoc-popup-title"></div>
+      <span class="invoc-popup-counter" id="invoc-popup-counter"></span>
+      <button class="invoc-popup-close" onclick="closeInvocPopup()">×</button>
+    </div>
+    <div class="invoc-progress-track" id="invoc-progress-track" style="display:none">
+      <div class="invoc-progress-fill" id="invoc-progress-fill" style="width:0%"></div>
+    </div>
+    <div class="invoc-popup-body" id="invoc-popup-body"></div>
+    <div class="invoc-popup-footer" id="invoc-popup-footer"></div>
+  </div>
+</div>
+
+<!-- THEME MODAL -->
+<div id="theme-modal">
+  <div class="theme-sheet">
+    <div class="about-handle"></div>
+    <div style="padding:20px 20px 12px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text)">Apparence</div>
+      <button onclick="closeThemeModal()" style="background:rgba(128,128,128,.12);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);padding:0 20px 16px;line-height:1.5">Choisis un thème pour personnaliser ton expérience.</p>
+    <div class="theme-grid" id="theme-grid"></div>
+    <div style="padding:12px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom))">
+      <button class="btn-primary" onclick="closeThemeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div id="about-modal">
+  <div class="about-sheet">
+    <div class="about-handle"></div>
+    <div class="about-content">
+      <div class="about-title">À chaque moment son action</div>
+      <div class="about-interpel">Ô mon frère croyant, ô ma sœur croyante,</div>
+      <div class="about-verset">
+        <p>« C'est Lui qui a créé la mort et la vie afin de vous éprouver [et voir] qui de vous agit le mieux. »</p>
+        <small>Sourate al-Mulk, verset 2</small>
+      </div>
+      <p class="about-para">Entre la vie et la mort, s'étend un temps d'action pour l'être humain, autrement dit : un champ dédié à l'adoration. Ton âge est ton capital, il t'appartient donc d'organiser ton temps entre les obligations et les différents engagements, afin que certains n'empiètent pas sur d'autres.</p>
+      <p class="about-para">L'enjeu n'est pas d'agir comme tu veux, quand tu veux, mais d'accomplir l'action appropriée au moment opportun. Tu dois donc discerner ce que requiert chaque instant : œuvre du cœur, de la langue ou des membres, et t'y appliquer avec soin, afin qu'elle prenne place là où Dieu la veut, et qu'elle soit agréée par Lui – exalté soit-Il.</p>
+      <div class="about-citation">
+        <p>« Sache qu'il est des œuvres propres au jour que Dieu n'accepte pas la nuit, et des œuvres propres à la nuit que Dieu n'accepte pas le jour. »</p>
+      </div>
+      <div class="about-section-title">Le passage du temps de l'habitude au temps de l'adoration</div>
+      <div class="about-verset">
+        <p>« Quiconque, homme ou femme, accomplit une œuvre vertueuse tout en étant croyant, Nous lui ferons vivre une vie pleine de bien. »</p>
+        <small>Sourate an-Naḥl, verset 97</small>
+      </div>
+      <p class="about-para">C'est donc par la foi et les œuvres vertueuses que s'accomplit le bonheur véritable. Mais le croyant se doit de baliser sa vie quotidienne par des repères clairs, afin que son pas soit fermement ancré dans le temps de l'adoration et de l'engagement, et non dans celui de l'habitude ou de la distraction.</p>
+      <div class="about-citation">
+        <p>« Celui qui passe un jour de sa vie sans avoir accompli un droit dû, ou rempli une obligation, ou fondé une noblesse, ou mérité une louange, ou établi un bien, ou recherché un savoir — a trahi son jour et s'est montré injuste envers lui-même. »</p>
+      </div>
+      <p class="about-question">Alors… comment commenceras-tu ta journée ? Comment la termineras-tu ? Et quelle est la clé du passage du temps de l'habitude au temps de l'adoration ?</p>
+      <div class="about-footer">Petit, mais constant.</div>
+      <br>
+      <button class="btn-primary" onclick="closeAbout()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<!-- FEEDBACK MODAL -->
+<div id="feedback-modal">
+  <div class="fb-sheet">
+    <div class="about-handle"></div>
+    <div class="fb-content" id="fb-content"></div>
+  </div>
+</div>
+
+<!-- SEANCE GUIDÉE AUBE -->
+<div id="seance-aube">
+  <div class="sa-header">
+    <button class="sa-close" onclick="closeSeanceAube()">✕</button>
+    <div class="sa-header-title">Séance de l'aube</div>
+    <div style="width:38px"></div>
+  </div>
+  <div class="sa-stepper" id="sa-stepper"></div>
+  <div class="sa-progress"><div class="sa-progress-fill" id="sa-progress-fill" style="width:0%"></div></div>
+  <div class="sa-body" id="sa-body"></div>
+  <div class="sa-footer" id="sa-footer">
+    <button class="btn-primary" id="sa-cta" onclick="seanceCta()">Suivant →</button>
+    <button class="sa-skip-btn" id="sa-skip" style="display:none" onclick="seanceSkip()">Passer cette étape</button>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detail-modal">
+  <div class="detail-sheet">
+    <div class="detail-handle"></div>
+    <div class="detail-content" id="detail-content"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- GUIDED SCREEN -->
+<div id="guided-screen">
+  <div class="guided-header">
+    <button class="guided-back" onclick="closeGuided()">←</button>
+    <div class="guided-dots" id="guided-dots"></div>
+    <div class="guided-xp-tag" id="guided-xp-tag"></div>
+  </div>
+  <div class="guided-body" id="guided-body"></div>
+  <div class="guided-footer">
+    <button class="btn-primary" id="guided-cta">Commencer</button>
+    <button id="guided-skip" onclick="guidedSkip()" style="display:none;width:100%;margin-top:10px;padding:12px;background:none;border:none;color:var(--text-light);font-size:14px;cursor:pointer;opacity:.7;">Terminer ✓</button>
+  </div>
+</div>
+
+<!-- CONFIG SÉANCE DHIKR -->
+<div id="seance-dhikr-modal">
+  <div id="seance-dhikr-sheet">
+    <div class="sdm-handle"></div>
+    <div class="sdm-title">Séance de dhikr</div>
+    <div class="sdm-sub">Définis la durée pour chaque invocation</div>
+    <div id="sdm-rows"></div>
+    <div class="sdm-total">
+      <span class="sdm-total-label">Durée totale</span>
+      <span class="sdm-total-val" id="sdm-total">15 min</span>
+    </div>
+    <button class="btn-primary" onclick="startSeanceDhikr()">▶ Commencer la séance</button>
+  </div>
+</div>
+
+<!-- SESSION SÉANCE DHIKR -->
+<div id="seance-dhikr-screen">
+  <div class="sds-header">
+    <button class="guided-back" onclick="closeSeanceDhikr()">←</button>
+    <div class="sds-dots" id="sds-dots"></div>
+    <div class="sds-timer-top" id="sds-timer-top"></div>
+  </div>
+  <div class="sds-body" id="sds-body"></div>
+  <div class="sds-footer">
+    <button class="btn-primary" id="sds-cta">Suivant →</button>
+  </div>
+</div>
+
+<!-- Overlay journée complète -->
+<div id="dawam-completion-overlay">
+  <span id="dawam-center-star">✦</span>
+  <div class="dawam-cp" id="dcp1" style="background:#BA7517;width:10px;height:10px;"></div>
+  <div class="dawam-cp" id="dcp2" style="background:#3B6D11;width:8px;height:8px;"></div>
+  <div class="dawam-cp" id="dcp3" style="background:#f0c040;width:6px;height:6px;"></div>
+  <div class="dawam-cp" id="dcp4" style="background:#BA7517;width:7px;height:7px;"></div>
+  <div class="dawam-cp" id="dcp5" style="background:#3B6D11;width:9px;height:9px;"></div>
+  <div class="dawam-cp" id="dcp6" style="background:#c9930a;width:6px;height:6px;"></div>
+  <div id="dawam-completion-msg">
+    <h2>Ma sha Allah</h2>
+    <p>"Petit, mais constant."<br>Journée complète — barakAllahu fik.</p>
+  </div>
+</div>
+
+<!-- Liquid Glass SVG filter (noise grain pour texture verre dépoli) -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <filter id="lqg" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.75 0.82" numOctaves="3" seed="5" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
+      <feBlend in="SourceGraphic" in2="mono" mode="soft-light" result="textured"/>
+      <feComposite in="textured" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+</svg>
+
+
+<script src="app.js"></script>
+<script src="onboarding.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(console.error);
+}
+</script>
+</body>
+</html>

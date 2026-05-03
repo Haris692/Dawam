@@ -1,4 +1,4 @@
-const CACHE = "dawam-v36";
+const CACHE = "dawam-preprod-v1";
 const ASSETS = [
   "./manifest.json",
   "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap"
@@ -6,7 +6,6 @@ const ASSETS = [
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  // Prendre le contrôle immédiatement (important pour migrer depuis une ancienne version sans bouton de mise à jour)
   self.skipWaiting();
 });
 
@@ -18,7 +17,6 @@ self.addEventListener("activate", e => {
   );
 });
 
-// L'app envoie "skipWaiting" quand l'utilisateur accepte la mise à jour
 self.addEventListener("message", e => {
   if (e.data === "skipWaiting") self.skipWaiting();
 });
@@ -52,7 +50,6 @@ self.addEventListener("push", e => {
     let type = "default";
     let customTitle = null, customBody = null;
 
-    // 1. Essaie de lire le type depuis le payload (Android/Chrome)
     if (e.data) {
       try {
         const text = e.data.text().trim();
@@ -65,7 +62,6 @@ self.addEventListener("push", e => {
       } catch (_) {}
     }
 
-    // 2. Si pas de payload (iOS) ou type inconnu → demande au serveur selon heure + ville
     if (!PUSH_MSGS[type] || type === "default") {
       try {
         const sub = await self.registration.pushManager.getSubscription();
@@ -84,7 +80,6 @@ self.addEventListener("push", e => {
       } catch (_) {}
     }
 
-    // 3. Telemetrie
     fetch("https://dawam-push.mydawam.workers.dev/push-log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -105,7 +100,6 @@ self.addEventListener("push", e => {
   })());
 });
 
-// Clic sur la notification → ouvre l'app
 self.addEventListener("notificationclick", e => {
   e.notification.close();
   e.waitUntil(
@@ -122,7 +116,6 @@ self.addEventListener("fetch", e => {
   const isHTML = url.pathname.endsWith(".html") || url.pathname.endsWith("/") || url.pathname === "";
 
   if (isHTML) {
-    // Network-first pour index.html : toujours récupérer la dernière version
     e.respondWith(
       fetch(e.request)
         .then(res => {
@@ -133,7 +126,6 @@ self.addEventListener("fetch", e => {
         .catch(() => caches.match(e.request))
     );
   } else {
-    // Cache-first pour les assets (fonts, images…)
     e.respondWith(
       caches.match(e.request).then(cached => {
         if (cached) return cached;
