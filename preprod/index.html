@@ -652,7 +652,7 @@
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
       const doUpdate = (sw) => { sw.postMessage('skipWaiting'); };
       reg.addEventListener('updatefound', () => {
         const nw = reg.installing;
