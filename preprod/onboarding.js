@@ -174,16 +174,29 @@ function ob3Compass(prayers) {
 // ── Pages ─────────────────────────────────────────────────────
 
 function ob3P1() {
-  const feats=[{e:'🌙',l:'Prières du jour et de la nuit'},{e:'📿',l:'Invocations du matin et du soir'},{e:'📖',l:'Lecture du Coran'},{e:'🌱',l:'Constance — sans pression'}];
-  return ob3Shell(0, `
-    ${ob3Ec('🕌')}
-    <div class="ob3-center">
-      ${ob3Gl('Bismillah')}
-      <h2 class="ob3-h2">Bienvenue dans Dawam</h2>
-      ${ob3Qb("L'enjeu n'est pas d'agir — mais d'accomplir l'action au moment opportun.")}
+  const feats = [
+    {e:'🌙', l:'Prières de la nuit',             bg:'rgba(59,109,17,.1)'},
+    {e:'📿', l:'Invocations du matin et du soir', bg:'rgba(186,117,23,.1)'},
+    {e:'📖', l:'Lecture du Coran',                bg:'rgba(74,144,217,.1)'},
+    {e:'🌱', l:'Constance — sans pression',        bg:'rgba(212,53,126,.1)'},
+  ];
+  return `<div style="flex:1;min-height:0;display:flex;flex-direction:column;background:var(--bg)">
+    ${ob3Dots()}
+    <div style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;padding:clamp(10px,2vh,20px) 24px 0">
+      <div class="ob-emoji-circle">🕌</div>
+      <p class="ob-label">Bismillah</p>
+      <h1 class="ob-title">Bienvenue dans Dawam</h1>
+      <p class="ob-desc">"L'enjeu n'est pas d'agir comme tu veux, quand tu veux, mais d'accomplir l'action appropriée au moment opportun."</p>
+      <div class="ob-features">
+        ${feats.map(f=>`<div class="ob-feature"><div class="ob-feature-icon" style="background:${f.bg}">${f.e}</div><span class="ob-feature-text">${f.l}</span></div>`).join('')}
+      </div>
+      <div class="ob-bottom">
+        <div style="width:44px"></div>
+        <span class="ob-counter">1 / 9</span>
+        <button class="ob-next" style="background:var(--green)" onclick="ob3Next()">Suivant →</button>
+      </div>
     </div>
-    ${feats.map(f=>`<div class="ob3-feat"><span class="ob3-feat-e">${f.e}</span><span class="ob3-feat-l">${f.l}</span></div>`).join('')}
-  `);
+  </div>`;
 }
 
 function ob3P2() {
