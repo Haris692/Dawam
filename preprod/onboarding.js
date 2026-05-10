@@ -696,7 +696,7 @@ function ob3P10() {
   </div>
 
   <div class="ob3-p10-cta" id="p10cta">
-    <button class="ob3-cta${ob3.committed?'':' ob3-cta-dim'}" onclick="${ob3.committed?"ob3Navigate(11,1)":''}">${ctaLabel}</button>
+    <button class="ob3-cta${ob3.committed?'':' ob3-cta-dim'}" onclick="${ob3.committed?"ob3StartPurchase()":''}">${ctaLabel}</button>
   </div>
 </div>`;
 
@@ -819,8 +819,8 @@ function ob3ToggleCommit(el) {
   const cta = document.querySelector('.ob3-p10-cta .ob3-cta');
   if (cta) {
     cta.classList.toggle('ob3-cta-dim', !ob3.committed);
-    cta.setAttribute('onclick', ob3.committed ? 'ob3Navigate(11,1)' : '');
-    cta.textContent = ob3.committed ? (ob3.freeForAllah ? 'Continuer — fi sabilillah ♥' : 'Continuer →') : "Je m'engage pour activer";
+    cta.setAttribute('onclick', ob3.committed ? 'ob3StartPurchase()' : '');
+    cta.textContent = ob3.committed ? (ob3.freeForAllah ? 'Continuer — fi sabilillah ♥' : "Commencer l'essai gratuit →") : "Je m'engage pour activer";
   }
 }
 
@@ -870,7 +870,39 @@ function ob3AcceptFi() {
     if (!echo) { echo = document.createElement('p'); echo.className='ob3-commit-echo'; echo.textContent="Qu'Allah facilite ton chemin."; commit.after(echo); }
   }
   const cta = document.querySelector('.ob3-p10-cta .ob3-cta');
-  if (cta) { cta.classList.remove('ob3-cta-dim'); cta.setAttribute('onclick','ob3Navigate(11,1)'); cta.textContent='Continuer — fi sabilillah ♥'; }
+  if (cta) { cta.classList.remove('ob3-cta-dim'); cta.setAttribute('onclick','ob3StartPurchase()'); cta.textContent='Continuer — fi sabilillah ♥'; }
+}
+
+// ── Achat abonnement depuis le paywall P10 ─────────────────────
+function ob3StartPurchase() {
+  // fi sabilillah : pas de paiement requis
+  if (ob3.freeForAllah) {
+    ob3._premiumGranted = true;
+    ob3Navigate(11, 1);
+    return;
+  }
+  if (window.isNativeIOSApp) {
+    const cta = document.querySelector('.ob3-p10-cta .ob3-cta');
+    if (cta) { cta.textContent = 'Chargement…'; cta.disabled = true; }
+    // Surcharge temporaire du callback IAP pendant l'onboarding
+    window.iapResult = function(success, detail) {
+      if (cta) { cta.textContent = "Commencer l'essai gratuit →"; cta.disabled = false; }
+      if (success) {
+        ob3._premiumGranted = true;
+        ob3Navigate(11, 1);
+      } else if (detail !== 'cancelled') {
+        if (typeof showToast === 'function') showToast('Achat non disponible pour le moment.');
+      }
+    };
+    try { window.webkit.messageHandlers.purchaseSubscription.postMessage({}); } catch(_) {
+      if (cta) { cta.textContent = "Commencer l'essai gratuit →"; cta.disabled = false; }
+      showToast('Achat non disponible sur cet appareil.');
+    }
+  } else {
+    // Preprod web : pas de paiement réel, accès direct pour les tests
+    ob3._premiumGranted = true;
+    ob3Navigate(11, 1);
+  }
 }
 
 // ── Navigation ────────────────────────────────────────────────
@@ -1013,7 +1045,8 @@ function ob3Finish() {
   localStorage.removeItem(STORAGE_KEY);
   S = { name:ob3.name||'ami', profile, palier, weekNumber:1,
         checklist:{}, totalDays:0, lastDate:null, history:[],
-        customSteps:null, notifs: ob3._notifEndpoint ? { pushSub: ob3._notifEndpoint } : null };
+        customSteps:null, notifs: ob3._notifEndpoint ? { pushSub: ob3._notifEndpoint } : null,
+        premium: !!(ob3._premiumGranted) };
   save();
   if (typeof track === 'function') track('onboarding_complete');
   if (_auth.currentUser || window._isPreprod) {

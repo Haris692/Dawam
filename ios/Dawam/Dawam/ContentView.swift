@@ -3,6 +3,7 @@ import WebKit
 import UserNotifications
 import AuthenticationServices
 import CryptoKit
+import StoreKit
 
 // MARK: - WKWebView wrapper
 struct DawamWebView: UIViewRepresentable {
@@ -33,6 +34,9 @@ struct DawamWebView: UIViewRepresentable {
         config.userContentController.add(context.coordinator, name: "showConfirm")
         // Bridge pour Sign in with Apple
         config.userContentController.add(context.coordinator, name: "signInWithApple")
+        // Bridges In-App Purchase (StoreKit 2)
+        config.userContentController.add(context.coordinator, name: "purchaseSubscription")
+        config.userContentController.add(context.coordinator, name: "restorePurchases")
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
@@ -103,6 +107,14 @@ struct DawamWebView: UIViewRepresentable {
             }
             if message.name == "signInWithApple" {
                 handleSignInWithApple()
+                return
+            }
+            if message.name == "purchaseSubscription" {
+                Task { @MainActor in await self.handlePurchaseSubscription() }
+                return
+            }
+            if message.name == "restorePurchases" {
+                Task { await self.handleRestorePurchases() }
                 return
             }
             guard message.name == "requestNotifPermission" else { return }
@@ -270,6 +282,57 @@ struct DawamWebView: UIViewRepresentable {
                     let safe = token.replacingOccurrences(of: "'", with: "")
                     self.callJS("window.nativeNotifResult(true, '\(safe)')")
                 }
+            }
+        }
+
+        // MARK: StoreKit 2 — Achat abonnement
+
+        @MainActor
+        func handlePurchaseSubscription() async {
+            do {
+                let products = try await Product.products(for: ["dawam_monthly"])
+                guard let product = products.first else {
+                    callJS("window.iapResult(false, 'not_found')")
+                    return
+                }
+                let result = try await product.purchase()
+                switch result {
+                case .success(let verification):
+                    switch verification {
+                    case .verified(let transaction):
+                        await transaction.finish()
+                        callJS("window.iapResult(true, 'dawam_monthly')")
+                    case .unverified(_, _):
+                        callJS("window.iapResult(false, 'unverified')")
+                    }
+                case .userCancelled:
+                    callJS("window.iapResult(false, 'cancelled')")
+                case .pending:
+                    callJS("window.iapResult(false, 'pending')")
+                @unknown default:
+                    callJS("window.iapResult(false, 'unknown')")
+                }
+            } catch {
+                callJS("window.iapResult(false, 'error')")
+            }
+        }
+
+        func handleRestorePurchases() async {
+            do {
+                try await AppStore.sync()
+                var hasActive = false
+                for await result in Transaction.currentEntitlements {
+                    if case .verified(let transaction) = result,
+                       transaction.productID == "dawam_monthly" {
+                        hasActive = true
+                        await transaction.finish()
+                        break
+                    }
+                }
+                let jsVal = hasActive ? "true" : "false"
+                DispatchQueue.main.async { self.callJS("window.restoreResult(\(jsVal))") }
+            } catch {
+                DispatchQueue.main.async { self.callJS("window.restoreResult(false)") }
             }
         }
 

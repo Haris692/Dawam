@@ -313,7 +313,7 @@ const DHIKR_LIST = [
 
 // ═══ STATE ═══
 const STORAGE_KEY = "dawam_pwa_v1";
-let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[],city:""},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[],customSteps:null,prayerTimes:null,versetSelection:[],versetLastStep:0};
+let S = {name:"",profile:{salat:0,quran:0,witr:0,type:"worker",goal:[],city:""},palier:1,weekNumber:1,totalDays:0,checklist:{},lastDate:null,history:[],customSteps:null,prayerTimes:null,versetSelection:[],versetLastStep:0,premium:false};
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S));}
 function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JSON.parse(r)};}catch{}}
 
@@ -2091,6 +2091,7 @@ function playAubeBeep(){
 let _sa={phase:null,invocStep:0,versetStep:0,duaStep:0};
 
 function openSeanceGuidee(){
+  if(!S.premium){showPremiumGate();return;}
   if(!S.versetSelection)S.versetSelection=[];
   _sa={phase:'invocations',invocStep:0,versetStep:0,duaStep:0};
   _saLastPhase=null;
@@ -2664,6 +2665,7 @@ const _SD_EMOJIS=['📿','💚','✨'];
 let _sdTimes=[5,5,5],_sdStep=0,_sdSec=0,_sdTotal=0,_sdInterval=null;
 
 function openSeanceDhikr(){
+  if(!S.premium){showPremiumGate();return;}
   _sdTimes=[5,5,5];
   renderSdmRows();
   document.getElementById('seance-dhikr-modal').classList.add('show');
@@ -2791,6 +2793,8 @@ function launchApp(){
   }
   // Groupes : charger le groupe actif
   initGroupes();
+  // Vérifie l'abonnement actif côté Apple (restore silencieux au lancement)
+  verifySubscription();
 }
 function dismissNotifPrompt(){
   document.getElementById('notif-prompt').classList.remove('show');
@@ -2907,6 +2911,37 @@ window._isPreprod = true;
     showScreen('splash');
   }
 })();
+
+// ═══ ABONNEMENT PREMIUM ═══
+
+function verifySubscription() {
+  if (!window.isNativeIOSApp) return;
+  try { window.webkit.messageHandlers.restorePurchases.postMessage({}); } catch(_) {}
+}
+
+window.restoreResult = function(active) {
+  if (active && !S.premium) { S.premium = true; save(); renderPath(); }
+};
+
+// Callback IAP — redéfini par onboarding.js pendant l'onboarding,
+// puis reprend cette version pour les achats depuis l'app
+window.iapResult = function(success, detail) {
+  if (success) {
+    S.premium = true; save();
+    showToast('Premium activé ✓');
+    renderPath();
+  } else if (detail !== 'cancelled') {
+    showToast('Achat non disponible pour le moment.');
+  }
+};
+
+function showPremiumGate() {
+  if (window.isNativeIOSApp) {
+    try { window.webkit.messageHandlers.purchaseSubscription.postMessage({}); } catch(_) {}
+  } else {
+    showToast('Fonctionnalité Premium · disponible après abonnement.');
+  }
+}
 
 // ═══ iOS NATIVE DETECTION ═══
 if (window.isNativeIOSApp) {
