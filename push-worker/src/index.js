@@ -390,7 +390,7 @@ const NOTIF_MSGS = {
 function getMsg(type, palier) {
   const msgs = NOTIF_MSGS[type];
   if (!msgs) return { title: 'Dawam 📿', body: 'Ton programme spirituel t\'attend.' };
-  return msgs[getTier(palier) - 1];
+  return msgs[Math.min(getTier(palier) - 1, msgs.length - 1)];
 }
 
 // ── Anti-doublon quotidien via KV ──────────────────────────────────────────
@@ -624,6 +624,62 @@ export default {
       return json({ ok: true, type: notifType, message: 'Notifications envoyées' });
     }
 
+    // Message de bienvenue : POST /send-welcome { token, deviceToken? }
+    // Sans deviceToken → envoi à tous les iOS. Avec → test sur un seul appareil.
+    if (pathname === '/send-welcome' && request.method === 'POST') {
+      const { token, deviceToken } = await request.json().catch(() => ({}));
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+      const title = 'Dawam ❤️';
+      const body  = "BarakAllahu fikum d'avoir téléchargé Dawam — que Allah vous facilite la constance dans vos actes.";
+      if (deviceToken) {
+        const res = await sendAPNs(deviceToken, title, body, env);
+        return json({ ok: true, status: res.status, body: await res.text() });
+      }
+      let sent = 0, failed = 0;
+      let cursor;
+      do {
+        const page = await env.SUBSCRIPTIONS.list({ prefix: 'apns:', cursor, limit: 100 });
+        cursor = page.cursor;
+        await Promise.allSettled(page.keys.map(async ({ name }) => {
+          const raw = await env.SUBSCRIPTIONS.get(name);
+          if (!raw) return;
+          const sub = JSON.parse(raw);
+          if (!sub.deviceToken) return;
+          const res = await sendAPNs(sub.deviceToken, title, body, env);
+          if (res.status === 410 || res.status === 400) { await env.SUBSCRIPTIONS.delete(name); failed++; }
+          else sent++;
+        }));
+      } while (cursor);
+      return json({ ok: true, sent, failed });
+    }
+
+    // Envoi custom : POST /send-custom { token, title, body } — message libre à tous les iOS (APNs)
+    if (pathname === '/send-custom' && request.method === 'POST') {
+      const { token, title, body } = await request.json().catch(() => ({}));
+      if (token !== env.TEST_TOKEN) return json({ error: 'unauthorized' }, 401);
+      if (!title || !body) return json({ error: 'missing title or body' }, 400);
+      let sent = 0, failed = 0;
+      let cursor;
+      do {
+        const page = await env.SUBSCRIPTIONS.list({ prefix: 'apns:', cursor, limit: 100 });
+        cursor = page.cursor;
+        await Promise.allSettled(page.keys.map(async ({ name }) => {
+          const raw = await env.SUBSCRIPTIONS.get(name);
+          if (!raw) return;
+          const sub = JSON.parse(raw);
+          if (!sub.deviceToken) return;
+          const res = await sendAPNs(sub.deviceToken, title, body, env);
+          if (res.status === 410 || res.status === 400) {
+            await env.SUBSCRIPTIONS.delete(name);
+            failed++;
+          } else {
+            sent++;
+          }
+        }));
+      } while (cursor);
+      return json({ ok: true, sent, failed });
+    }
+
     // Debug : POST /debug-push { token } — envoie à toutes les subs et retourne les statuts réels
     if (pathname === '/debug-push' && request.method === 'POST') {
       const { token } = await request.json().catch(() => ({}));
@@ -632,7 +688,8 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
+        !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') &&
+        !k.name.startsWith('stats:') && !k.name.startsWith('apns:') && !k.name.startsWith('presence:')
       );
 
       const privKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY, env.VAPID_PUBLIC_KEY);
@@ -717,7 +774,8 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
+        !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') &&
+        !k.name.startsWith('stats:') && !k.name.startsWith('apns:') && !k.name.startsWith('presence:')
       );
       const results = await Promise.all(subKeys.map(async ({ name }) => {
         const raw = await env.SUBSCRIPTIONS.get(name);
@@ -745,7 +803,8 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
+        !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') &&
+        !k.name.startsWith('stats:') && !k.name.startsWith('apns:') && !k.name.startsWith('presence:')
       );
 
       const privKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY, env.VAPID_PUBLIC_KEY);
@@ -787,7 +846,8 @@ export default {
       const page = await env.SUBSCRIPTIONS.list({ limit: 100 });
       const subKeys = page.keys.filter(k =>
         !k.name.startsWith('sent:') && !k.name.startsWith('pt:') &&
-        !k.name.startsWith('feedback:') && !k.name.startsWith('stats:') && !k.name.startsWith('presence:')
+        !k.name.startsWith('pushlog:') && !k.name.startsWith('feedback:') &&
+        !k.name.startsWith('stats:') && !k.name.startsWith('apns:') && !k.name.startsWith('presence:')
       );
       const subs = await Promise.all(subKeys.map(async ({ name }) => {
         const raw = await env.SUBSCRIPTIONS.get(name);

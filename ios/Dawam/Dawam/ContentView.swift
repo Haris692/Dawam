@@ -28,26 +28,22 @@ struct DawamWebView: UIViewRepresentable {
         )
         config.userContentController.addUserScript(nativeFlag)
 
-// Bridge pour les demandes de permission de notification
         config.userContentController.add(context.coordinator, name: "requestNotifPermission")
-        // Bridge pour les dialogs de confirmation (confirm() remplacé en JS)
         config.userContentController.add(context.coordinator, name: "showConfirm")
-        // Bridge pour Sign in with Apple
         config.userContentController.add(context.coordinator, name: "signInWithApple")
-        // Bridges In-App Purchase (StoreKit 2)
         config.userContentController.add(context.coordinator, name: "purchaseSubscription")
         config.userContentController.add(context.coordinator, name: "restorePurchases")
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
-        webView.uiDelegate = context.coordinator   // nécessaire pour confirm() / alert()
+        webView.uiDelegate = context.coordinator
         webView.scrollView.bounces = false
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
 
-        // Désactive le long-press et la sélection de texte (feeling natif)
+        // Désactive le long-press et la sélection de texte
         webView.configuration.userContentController.addUserScript(
             WKUserScript(
                 source: """
@@ -59,7 +55,6 @@ struct DawamWebView: UIViewRepresentable {
             )
         )
 
-        // Stocke la référence pour les callbacks Swift → JS
         context.coordinator.webView = webView
 
         #if PREPROD
@@ -73,7 +68,7 @@ struct DawamWebView: UIViewRepresentable {
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 
-    // MARK: - Coordinator (navigation + script message delegate)
+    // MARK: - Coordinator
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKUIDelegate,
                        ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
         var parent: DawamWebView
@@ -123,16 +118,13 @@ struct DawamWebView: UIViewRepresentable {
                 DispatchQueue.main.async {
                     switch settings.authorizationStatus {
                     case .denied:
-                        // Déjà refusé → ouvre les Réglages iOS directement
                         self?.callJS("window.nativeNotifResult(false, null)")
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url)
                         }
                     case .authorized, .provisional:
-                        // Déjà autorisé → enregistre directement
                         UIApplication.shared.registerForRemoteNotifications()
                     default:
-                        // Pas encore demandé → affiche la dialog système
                         UNUserNotificationCenter.current().requestAuthorization(
                             options: [.alert, .sound, .badge]
                         ) { granted, _ in
@@ -150,7 +142,6 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         // MARK: Sign in with Apple
-
         func handleSignInWithApple() {
             guard !isAppleSignInInProgress else { return }
             isAppleSignInInProgress = true
@@ -190,7 +181,6 @@ struct DawamWebView: UIViewRepresentable {
             let familyName = credential.fullName?.familyName ?? ""
             let fullName   = [givenName, familyName].filter { !$0.isEmpty }.joined(separator: " ")
 
-            // JSON encoding évite tout problème d'échappement (nonce intact = SHA256 correct)
             let payload: [String: String] = ["idToken": idToken, "nonce": nonce, "fullName": fullName]
             guard let data = try? JSONSerialization.data(withJSONObject: payload),
                   let json = String(data: data, encoding: .utf8) else {
@@ -204,13 +194,11 @@ struct DawamWebView: UIViewRepresentable {
                                      didCompleteWithError error: Error) {
             currentNonce = nil
             isAppleSignInInProgress = false
-            // Ignore les annulations volontaires
             if let authError = error as? ASAuthorizationError, authError.code == .canceled { return }
             callJS("window.appleSignInError('Connexion Apple impossible')")
         }
 
         // MARK: Nonce helpers
-
         private func randomNonceString(length: Int = 32) -> String {
             var randomBytes = [UInt8](repeating: 0, count: length)
             _ = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
@@ -224,8 +212,7 @@ struct DawamWebView: UIViewRepresentable {
             return hash.compactMap { String(format: "%02x", $0) }.joined()
         }
 
-        // MARK: WKUIDelegate — permet à confirm() et alert() de fonctionner
-
+        // MARK: WKUIDelegate
         func webView(
             _ webView: WKWebView,
             runJavaScriptAlertPanelWithMessage message: String,
@@ -244,7 +231,6 @@ struct DawamWebView: UIViewRepresentable {
             presentAlert(message: message, confirm: true) { completionHandler($0) }
         }
 
-        // Bridge JS → Swift pour confirm() : webkit.messageHandlers.showConfirm.postMessage({message, ok, cancel})
         func handleShowConfirm(_ body: [String: Any]) {
             let message  = body["message"]  as? String ?? ""
             let cbOk     = body["ok"]       as? String ?? ""
@@ -257,8 +243,8 @@ struct DawamWebView: UIViewRepresentable {
         private func presentAlert(message: String, confirm: Bool, completion: @escaping (Bool) -> Void) {
             let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
             if confirm {
-                alert.addAction(UIAlertAction(title: "Annuler", style: .cancel)     { _ in completion(false) })
-                alert.addAction(UIAlertAction(title: "Confirmer", style: .destructive) { _ in completion(true) })
+                alert.addAction(UIAlertAction(title: "Annuler", style: .cancel)        { _ in completion(false) })
+                alert.addAction(UIAlertAction(title: "Confirmer", style: .destructive) { _ in completion(true)  })
             } else {
                 alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completion(true) })
             }
@@ -272,7 +258,6 @@ struct DawamWebView: UIViewRepresentable {
             top.present(alert, animated: true)
         }
 
-        // Reçoit le token APNs depuis AppDelegate via NotificationCenter
         @objc func didReceiveAPNsToken(_ notification: Foundation.Notification) {
             guard let token = notification.userInfo?["token"] as? String else { return }
             DispatchQueue.main.async {
@@ -285,8 +270,7 @@ struct DawamWebView: UIViewRepresentable {
             }
         }
 
-        // MARK: StoreKit 2 — Achat abonnement
-
+        // MARK: StoreKit 2
         @MainActor
         func handlePurchaseSubscription() async {
             do {
@@ -302,7 +286,7 @@ struct DawamWebView: UIViewRepresentable {
                     case .verified(let transaction):
                         await transaction.finish()
                         callJS("window.iapResult(true, 'dawam_monthly')")
-                    case .unverified(_, _):
+                    case .unverified:
                         callJS("window.iapResult(false, 'unverified')")
                     }
                 case .userCancelled:
@@ -343,7 +327,7 @@ struct DawamWebView: UIViewRepresentable {
         // MARK: WKNavigationDelegate
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(.easeOut(duration: 0.4)) {
+                withAnimation(.easeOut(duration: 0.5)) {
                     self.parent.isLoaded = true
                 }
             }
@@ -370,30 +354,80 @@ struct DawamWebView: UIViewRepresentable {
 
 // MARK: - Vue principale
 struct ContentView: View {
-    // Splash natif supprimé — la PWA gère son propre écran de chargement
-    @State private var isLoaded = true
-
-    // Couleur de fond Dawam
-    let dawamBg = Color(red: 0.961, green: 0.929, blue: 0.878) // #F5EDE0
+    @State private var isLoaded = false
 
     var body: some View {
         ZStack {
-            dawamBg.ignoresSafeArea()
-
             DawamWebView(isLoaded: $isLoaded)
                 .ignoresSafeArea()
+
+            if !isLoaded {
+                if #available(iOS 26.0, *) {
+                    LiquidGlassSplash()
+                        .transition(.opacity)
+                } else {
+                    ClassicSplash()
+                        .transition(.opacity)
+                }
+            }
+        }
+        .animation(.easeOut(duration: 0.5), value: isLoaded)
+    }
+}
+
+// MARK: - Splash Liquid Glass (iOS 26+)
+@available(iOS 26.0, *)
+struct LiquidGlassSplash: View {
+    private let accent = Color(red: 0.729, green: 0.459, blue: 0.090)
+    private let bg     = Color(red: 0.961, green: 0.929, blue: 0.878)
+
+    @State private var shimmer = false
+
+    var body: some View {
+        ZStack {
+            bg.ignoresSafeArea()
+
+            // Cercles de couleur derrière le verre pour enrichir l'effet de réfraction
+            Circle()
+                .fill(accent.opacity(0.25))
+                .frame(width: 260, height: 260)
+                .offset(x: -80, y: -120)
+                .blur(radius: 60)
+
+            Circle()
+                .fill(Color(red: 0.95, green: 0.75, blue: 0.35).opacity(0.20))
+                .frame(width: 200, height: 200)
+                .offset(x: 90, y: 100)
+                .blur(radius: 50)
+
+            // Carte Liquid Glass
+            GlassEffectContainer {
+                VStack(spacing: 10) {
+                    Text("Dawam")
+                        .font(.custom("Georgia-Bold", size: 52))
+                        .foregroundStyle(accent)
+                        .kerning(-1)
+
+                    Text("Petit, mais constant.")
+                        .font(.custom("Georgia-Italic", size: 15))
+                        .foregroundStyle(accent.opacity(0.75))
+                }
+                .padding(.horizontal, 48)
+                .padding(.vertical, 36)
+                .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            }
         }
     }
 }
 
-// MARK: - Splash screen natif
-struct SplashView: View {
-    let dawamBg = Color(red: 0.961, green: 0.929, blue: 0.878)
-    let accent   = Color(red: 0.729, green: 0.459, blue: 0.090) // #BA7517
+// MARK: - Splash classique (iOS 15–25)
+struct ClassicSplash: View {
+    private let bg     = Color(red: 0.961, green: 0.929, blue: 0.878)
+    private let accent = Color(red: 0.729, green: 0.459, blue: 0.090)
 
     var body: some View {
         ZStack {
-            dawamBg.ignoresSafeArea()
+            bg.ignoresSafeArea()
             VStack(spacing: 8) {
                 Text("Dawam")
                     .font(.custom("Georgia-Bold", size: 52))
