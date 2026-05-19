@@ -261,6 +261,59 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .ob-edit-toggle { width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--text-secondary);margin-top:10px;transition:all .2s; }
 .ob-edit-toggle.active { border-color:var(--green);color:var(--green);background:rgba(59,109,17,.06); }
 .ob-step-badge { font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:2px 7px;border-radius:8px;flex-shrink:0; }
+/* OB SUMMARY + PAYWALL */
+.ob-page-full { padding:0;overflow:hidden; }
+.ob-sum-wrap,.ob-pay-wrap { height:100%;display:flex;flex-direction:column; }
+.ob-sum-scroll,.ob-pay-scroll { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch; }
+.ob-sum-top,.ob-pay-top { padding:16px 20px 0; }
+.ob-sum-hero { padding:20px 24px 0; }
+.ob-sum-eyebrow { font-size:10.5px;font-weight:700;letter-spacing:2.5px;color:var(--green);text-transform:uppercase;margin:0 0 14px;text-align:center; }
+.ob-sum-badge { display:inline-flex;align-items:center;gap:9px;background:var(--accent-light);border:1.5px solid rgba(186,117,23,.35);border-radius:40px;padding:7px 18px 7px 11px;margin-bottom:18px; }
+.ob-sum-badge-e { font-size:22px;line-height:1; }
+.ob-sum-badge-l { font-size:13px;font-weight:700;color:var(--accent-dark); }
+.ob-sum-title { font-family:var(--font-display);font-size:clamp(22px,6vw,28px);font-weight:700;color:var(--text);line-height:1.28;margin:0 0 10px; }
+.ob-sum-title span { color:var(--accent); }
+.ob-sum-sub { font-size:13.5px;color:var(--text-secondary);line-height:1.65;margin:0 0 20px; }
+.ob-sum-sep { height:1px;background:linear-gradient(to right,transparent,rgba(186,117,23,.4),rgba(59,109,17,.2),transparent);margin:4px 24px 18px; }
+.ob-sum-tl { padding:0 24px; }
+.ob-sum-tl-lbl { font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-secondary);margin:0 0 12px; }
+.ob-sum-step { display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg-card);border-radius:12px;border:.5px solid var(--border-light);margin-bottom:8px; }
+.ob-sum-step-e { font-size:20px;flex-shrink:0; }
+.ob-sum-step-l { font-size:13px;font-weight:600;color:var(--text); }
+.ob-sum-step-t { font-size:11px;color:var(--text-light);margin-top:2px; }
+.ob-sum-orn { display:flex;justify-content:center;padding:18px 0 4px; }
+.ob-sum-cta-zone { padding:14px 24px 36px; }
+.ob-sum-cta { width:100%;padding:17px;background:var(--accent);color:#fff8e8;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 24px rgba(186,117,23,.35);font-family:var(--font-body); }
+.ob-pay-hero { padding:20px 24px 0;text-align:center; }
+.ob-pay-badge-coming { display:inline-flex;align-items:center;gap:6px;background:rgba(59,109,17,.1);border:1px solid rgba(59,109,17,.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:16px; }
+.ob-pay-icon { font-size:52px;margin-bottom:12px;line-height:1; }
+.ob-pay-title { font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text);margin:0 0 8px;line-height:1.3; }
+.ob-pay-title em { font-style:normal;color:var(--accent); }
+.ob-pay-sub { font-size:13px;color:var(--text-secondary);margin:0 0 20px;line-height:1.6; }
+.ob-pay-card { margin:0 24px;border-radius:16px;background:var(--bg-card);border:1.5px solid rgba(186,117,23,.25);padding:20px;position:relative;overflow:hidden; }
+.ob-pay-card-bg { position:absolute;right:-4px;top:-4px;font-size:64px;opacity:.05;line-height:1;pointer-events:none; }
+.ob-pay-price-lbl { font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--accent);margin-bottom:6px; }
+.ob-pay-price-ttl { font-size:21px;font-weight:800;color:var(--text);line-height:1.25;margin-bottom:6px; }
+.ob-pay-price-ttl em { font-style:normal;color:var(--accent); }
+.ob-pay-price-note { font-size:11.5px;color:var(--text-secondary);margin-bottom:16px; }
+.ob-pay-feats { display:flex;flex-direction:column;gap:8px;margin-bottom:14px; }
+.ob-pay-feat { display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text); }
+.ob-pay-feat-dot { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
+.ob-pay-split-ttl { font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;opacity:.7; }
+.ob-pay-split-bar { display:flex;height:7px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:10px; }
+.ob-pay-split-seg { border-radius:4px; }
+.ob-pay-split-rows { display:flex;flex-direction:column;gap:6px; }
+.ob-pay-split-row { display:flex;align-items:center;gap:8px; }
+.ob-pay-split-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+.ob-pay-split-lbl { flex:1;font-size:11.5px;color:var(--text-secondary); }
+.ob-pay-split-pct { font-size:10px;color:var(--text-light);margin-right:4px;opacity:.55; }
+.ob-pay-split-amt { font-size:12px;font-weight:600;color:var(--text);flex-shrink:0; }
+.ob-pay-split-hi .ob-pay-split-lbl { color:var(--text);font-weight:600; }
+.ob-pay-split-hi .ob-pay-split-amt { color:var(--accent);font-size:13px;font-weight:700; }
+.ob-pay-dona { font-size:11.5px;font-style:italic;color:var(--accent);text-align:center;margin:10px 0 0;opacity:.85;line-height:1.5; }
+.ob-pay-cta-zone { padding:14px 24px;background:var(--bg);border-top:1px solid var(--border-light);flex-shrink:0; }
+.ob-pay-cta { width:100%;padding:17px;background:var(--green);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 24px rgba(59,109,17,.3);font-family:var(--font-body);margin-bottom:10px;display:block; }
+.ob-pay-cta-note { text-align:center;font-size:11.5px;color:var(--text-light);line-height:1.5; }
 
 /* PATH */
 #path { background:var(--bg); }
@@ -1094,7 +1147,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 
 <!-- ONBOARDING -->
 <div class="screen" id="onboarding">
-  <!-- Page 0: Welcome -->
+  <!-- P0: Welcome -->
   <div class="ob-page active" data-page="0">
     <div class="ob-dots" id="dots-0"></div>
     <div class="ob-emoji-circle">🕌</div>
@@ -1109,254 +1162,54 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     </div>
     <div class="ob-bottom">
       <div style="width:44px"></div>
-      <span class="ob-counter">1 / 12</span>
+      <span class="ob-counter">1 / 3</span>
       <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
     </div>
   </div>
-  <!-- Page 1: Prénom -->
+  <!-- P1: Prénom + Ville -->
   <div class="ob-page" data-page="1">
     <div class="ob-dots" id="dots-1"></div>
     <div class="ob-emoji-circle">🤲</div>
     <p class="ob-label">Fais connaissance</p>
-    <h1 class="ob-title">Comment tu t'appelles ?</h1>
-    <p class="ob-desc">Pour personnaliser ton expérience, dis-nous ton prénom.</p>
+    <h1 class="ob-title">Pour personnaliser<br>ton programme</h1>
     <input class="ob-name-input" type="text" placeholder="Ton prénom…" id="name-input" oninput="checkNameInput()" autocomplete="given-name">
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">2 / 12</span>
-      <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 2: Prières — Slider -->
-  <div class="ob-page" data-page="2">
-    <div class="ob-dots" id="dots-2"></div>
-    <div class="ob-emoji-circle">🕌</div>
-    <p class="ob-label">Question 1 sur 6</p>
-    <h1 class="ob-title">La prière</h1>
-    <p class="ob-desc">Sois honnête avec toi-même — combien de prières tu fais par jour en ce moment ?</p>
-    <div class="ob-slider-wrap">
-      <div class="ob-slider-value" id="salat-display">0</div>
-      <div class="ob-slider-sub" id="salat-label">Je n'ai pas encore cette habitude</div>
-      <input class="ob-slider" type="range" min="0" max="5" value="0" id="salat-slider" oninput="handleSalatSlider(this.value)">
-      <div class="ob-slider-ticks"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
-    </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">3 / 12</span>
-      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 3: Lesquelles ? (sautée si 0 ou 5) -->
-  <div class="ob-page" data-page="3">
-    <div class="ob-dots" id="dots-3"></div>
-    <div class="ob-emoji-circle">🕌</div>
-    <p class="ob-label">Précise</p>
-    <h1 class="ob-title">Lesquelles ?</h1>
-    <p class="ob-desc">Sélectionne les prières que tu fais régulièrement — on activera un rappel avant chacune.</p>
-    <div class="ob-prayer-grid">
-      <div class="ob-prayer-card" data-prayer="fajr" onclick="togglePrayerCard(this)">
-        <span class="ob-prayer-name">Fajr</span><span class="ob-prayer-ar">الفجر</span>
-        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="ob-prayer-card" data-prayer="dhuhr" onclick="togglePrayerCard(this)">
-        <span class="ob-prayer-name">Dhuhr</span><span class="ob-prayer-ar">الظهر</span>
-        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="ob-prayer-card" data-prayer="asr" onclick="togglePrayerCard(this)">
-        <span class="ob-prayer-name">Asr</span><span class="ob-prayer-ar">العصر</span>
-        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="ob-prayer-card" data-prayer="maghrib" onclick="togglePrayerCard(this)">
-        <span class="ob-prayer-name">Maghrib</span><span class="ob-prayer-ar">المغرب</span>
-        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-      <div class="ob-prayer-card" data-prayer="isha" onclick="togglePrayerCard(this)">
-        <span class="ob-prayer-name">Isha</span><span class="ob-prayer-ar">العشاء</span>
-        <div class="ob-prayer-chk"><svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>
-    </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">4 / 12</span>
-      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 4: Coran -->
-  <div class="ob-page" data-page="4">
-    <div class="ob-dots" id="dots-4"></div>
-    <div class="ob-emoji-circle">📖</div>
-    <p class="ob-label">Question 2 sur 6</p>
-    <h1 class="ob-title">Le Coran</h1>
-    <p class="ob-desc">La lecture quotidienne du Coran est un pilier du programme.</p>
-    <div class="ob-options" id="coran-main-options">
-      <div class="ob-option" data-value="never" onclick="selectCoranType(this,'never')"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Jamais ou presque</div><div class="ob-option-desc">Je lis peu en ce moment</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="sometimes" onclick="selectCoranType(this,'sometimes')"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Parfois</div><div class="ob-option-desc">Pas encore quotidiennement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="daily" onclick="selectCoranType(this,'daily')"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Quotidiennement</div><div class="ob-option-desc">J'ai un wird régulier</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-    </div>
-    <div class="ob-coran-sub" id="coran-sub" style="display:none"></div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">5 / 12</span>
-      <button class="ob-next" id="q2-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 5: Prière de nuit -->
-  <div class="ob-page" data-page="5">
-    <div class="ob-dots" id="dots-5"></div>
-    <div class="ob-emoji-circle">🌙</div>
-    <p class="ob-label">Question 3 sur 6</p>
-    <h1 class="ob-title">La prière de nuit</h1>
-    <p class="ob-desc">Le pilier fondamental du programme spirituel quotidien.</p>
-    <div class="ob-options" id="witr-main-options">
-      <div class="ob-option" data-value="0" onclick="selectWitrType(this,0)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Pas encore</div><div class="ob-option-desc">Je dors jusqu'au Fajr</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="1" onclick="selectWitrType(this,1)"><span class="ob-option-emoji">🌙</span><div class="ob-option-text"><div class="ob-option-label">Le Witr seul</div><div class="ob-option-desc">1 rak'a avant le Fajr, parfois</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="2" onclick="selectWitrType(this,2)"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">Witr + Chaf'</div><div class="ob-option-desc">3 rak'aat régulièrement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="3" onclick="selectWitrType(this,3)"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Qiyam complet</div><div class="ob-option-desc">7 à 11 rak'aat — programme nocturne</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-    </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">6 / 12</span>
-      <button class="ob-next" id="q3-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 6: Situation de vie -->
-  <div class="ob-page" data-page="6">
-    <div class="ob-dots" id="dots-6"></div>
-    <div class="ob-emoji-circle">🧭</div>
-    <p class="ob-label">Question 4 sur 6</p>
-    <h1 class="ob-title">Ta situation de vie</h1>
-    <p class="ob-desc">Tu peux choisir plusieurs situations — le parcours s'adaptera.</p>
-    <div class="ob-options" data-key="situations" data-multi="true">
-      <div class="ob-option" data-value="worker" onclick="selectOption(this)"><span class="ob-option-emoji">💼</span><div class="ob-option-text"><div class="ob-option-label">Travail</div><div class="ob-option-desc">Journées chargées, contraintes d'horaire</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="student" onclick="selectOption(this)"><span class="ob-option-emoji">📚</span><div class="ob-option-text"><div class="ob-option-label">Études</div><div class="ob-option-desc">Lycée, université, formation</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="married" onclick="selectOption(this)"><span class="ob-option-emoji">🏡</span><div class="ob-option-text"><div class="ob-option-label">En famille</div><div class="ob-option-desc">Conjoint, enfants, vie commune</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="home" onclick="selectOption(this)"><span class="ob-option-emoji">🏠</span><div class="ob-option-text"><div class="ob-option-label">À la maison</div><div class="ob-option-desc">Horaire libre, sans contrainte fixe</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="night_shift" onclick="selectOption(this)"><span class="ob-option-emoji">🌙</span><div class="ob-option-text"><div class="ob-option-label">Travail de nuit</div><div class="ob-option-desc">Horaires décalés ou nuit</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-    </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">7 / 12</span>
-      <button class="ob-next" id="q4-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 7: Intentions -->
-  <div class="ob-page" data-page="7">
-    <div class="ob-dots" id="dots-7"></div>
-    <div class="ob-emoji-circle">🎯</div>
-    <p class="ob-label">Question 5 sur 6</p>
-    <h1 class="ob-title">Tes intentions</h1>
-    <p class="ob-desc">Choisis une ou plusieurs intentions — elles guideront ton message quotidien.</p>
-    <div class="ob-options" data-key="goal" data-multi="true">
-      <div class="ob-option" data-value="taqwa" onclick="selectOption(this)"><span class="ob-option-emoji">💚</span><div class="ob-option-text"><div class="ob-option-label">Me rapprocher d'Allah</div><div class="ob-option-desc">Renforcer mon lien et ma dévotion</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="habits" onclick="selectOption(this)"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Être constant dans mon deen</div><div class="ob-option-desc">Installer des habitudes durables, sans pression</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="serenity" onclick="selectOption(this)"><span class="ob-option-emoji">🕊️</span><div class="ob-option-text"><div class="ob-option-label">Trouver la sérénité</div><div class="ob-option-desc">Paix du cœur et équilibre intérieur</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="knowledge" onclick="selectOption(this)"><span class="ob-option-emoji">📚</span><div class="ob-option-text"><div class="ob-option-label">Apprendre ma religion</div><div class="ob-option-desc">Mieux comprendre et pratiquer l'Islam</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="relations" onclick="selectOption(this)"><span class="ob-option-emoji">🤲</span><div class="ob-option-text"><div class="ob-option-label">Être meilleur envers mes proches</div><div class="ob-option-desc">Famille, amis, communauté</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-    </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">8 / 12</span>
-      <button class="ob-next" id="q5-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 8: Obstacles -->
-  <div class="ob-page" data-page="8">
-    <div class="ob-dots" id="dots-8"></div>
-    <div class="ob-emoji-circle">🧩</div>
-    <p class="ob-label">Question 6 sur 6</p>
-    <h1 class="ob-title">Qu'est-ce qui t'a bloqué ?</h1>
-    <p class="ob-desc">Sois honnête — cela nous aide à calibrer ton programme à ta réalité.</p>
-    <div class="ob-options" data-key="obstacles" data-multi="true">
-      <div class="ob-option" data-value="time" onclick="selectOption(this)"><span class="ob-option-emoji">⏰</span><div class="ob-option-text"><div class="ob-option-label">Manque de temps</div><div class="ob-option-desc">Journées trop chargées</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="motivation" onclick="selectOption(this)"><span class="ob-option-emoji">😴</span><div class="ob-option-text"><div class="ob-option-label">Motivation fluctuante</div><div class="ob-option-desc">Je commence puis je m'arrête</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="knowledge" onclick="selectOption(this)"><span class="ob-option-emoji">📚</span><div class="ob-option-text"><div class="ob-option-label">Manque de connaissances</div><div class="ob-option-desc">Je ne sais pas par où commencer</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="consistency" onclick="selectOption(this)"><span class="ob-option-emoji">🌀</span><div class="ob-option-text"><div class="ob-option-label">Irrégularité</div><div class="ob-option-desc">Constant quelques jours puis j'arrête</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-      <div class="ob-option" data-value="none" onclick="selectOption(this)"><span class="ob-option-emoji">🤲</span><div class="ob-option-text"><div class="ob-option-label">Pas d'obstacle particulier</div><div class="ob-option-desc">Je cherche juste à m'améliorer</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
-    </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">9 / 12</span>
-      <button class="ob-next" id="q6-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 9: Ville -->
-  <div class="ob-page" data-page="9">
-    <div class="ob-dots" id="dots-9"></div>
-    <div class="ob-emoji-circle">🏙️</div>
-    <p class="ob-label">Horaires de prière</p>
-    <h1 class="ob-title">Ta ville</h1>
-    <p class="ob-desc">Pour adapter ton programme aux horaires de prière exacts. Optionnel — tu pourras le modifier plus tard.</p>
+    <p class="ob-label" style="text-align:left;margin-top:16px;margin-bottom:4px">Ta ville</p>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;line-height:1.5">Pour les horaires de prière — optionnel.</p>
     <div class="city-sug-wrap">
-      <input class="ob-name-input" type="text" placeholder="Ex: Paris, Casablanca, Dubaï…" id="city-input" oninput="checkCityInput()" autocomplete="off">
+      <input class="ob-name-input" type="text" placeholder="Ex : Paris, Lyon, Bruxelles…" id="city-input" oninput="checkCityInput()" autocomplete="off">
       <div id="city-suggestions"></div>
     </div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">10 / 12</span>
-      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
+      <span class="ob-counter">2 / 3</span>
+      <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 10: Thème -->
-  <div class="ob-page" data-page="10">
-    <div class="ob-dots" id="dots-10"></div>
-    <div class="ob-emoji-circle">🎨</div>
-    <p class="ob-label">Personnalise</p>
-    <h1 class="ob-title">Choisis ton thème</h1>
-    <p class="ob-desc">Tu pourras le changer à tout moment depuis ton profil.</p>
-    <div id="ob-theme-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%"></div>
+  <!-- P2: Prières — 3 options -->
+  <div class="ob-page" data-page="2">
+    <div class="ob-dots" id="dots-2"></div>
+    <div class="ob-emoji-circle">🕌</div>
+    <p class="ob-label">Ta pratique</p>
+    <h1 class="ob-title">La prière</h1>
+    <p class="ob-desc">Sois honnête avec toi-même — c'est la première étape.</p>
+    <div class="ob-options" id="prayer-level-options">
+      <div class="ob-option" onclick="obSelectPrayerLevel(this,'few')"><span class="ob-option-emoji">🌱</span><div class="ob-option-text"><div class="ob-option-label">Peu ou pas encore</div><div class="ob-option-desc">Je commence mon chemin</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" onclick="obSelectPrayerLevel(this,'some')"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">2 à 4 prières</div><div class="ob-option-desc">Pas encore les 5 régulièrement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+      <div class="ob-option" onclick="obSelectPrayerLevel(this,'all')"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Les 5 prières</div><div class="ob-option-desc">Régulièrement, alhamdulillah</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
+    </div>
+    <div id="ob-prayer-feedback" style="font-size:13px;color:var(--green);text-align:center;min-height:22px;margin-top:10px;font-style:italic;font-weight:500;padding:0 8px;line-height:1.5"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">11 / 12</span>
-      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
+      <span class="ob-counter">3 / 3</span>
+      <button class="ob-next" id="prayer-level-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
-  <!-- Page 11: Engagement -->
-  <div class="ob-page" data-page="11">
-    <div class="ob-dots" id="dots-11"></div>
-    <div class="ob-emoji-circle">📅</div>
-    <p class="ob-label">Engagement</p>
-    <h1 class="ob-title">Quand veux-tu pratiquer ?</h1>
-    <p class="ob-desc">Choisis le moment de ta journée — on t'y préparera un rappel.</p>
-    <div class="ob-commit-options">
-      <div class="ob-commit-slot" data-slot="fajr" onclick="selectCommitSlot(this)">
-        <span class="ob-commit-slot-emoji">🌅</span>
-        <div><div class="ob-commit-slot-label">Après Fajr</div><div class="ob-commit-slot-sub">Le moment le plus béni de la journée</div></div>
-      </div>
-      <div class="ob-commit-slot" data-slot="morning" onclick="selectCommitSlot(this)">
-        <span class="ob-commit-slot-emoji">☀️</span>
-        <div><div class="ob-commit-slot-label">Le matin</div><div class="ob-commit-slot-sub">Entre 8h et 11h — journée calme</div></div>
-      </div>
-      <div class="ob-commit-slot" data-slot="afternoon" onclick="selectCommitSlot(this)">
-        <span class="ob-commit-slot-emoji">🌤️</span>
-        <div><div class="ob-commit-slot-label">L'après-midi</div><div class="ob-commit-slot-sub">Entre 14h et 17h — pause du travail</div></div>
-      </div>
-      <div class="ob-commit-slot" data-slot="evening" onclick="selectCommitSlot(this)">
-        <span class="ob-commit-slot-emoji">🌇</span>
-        <div><div class="ob-commit-slot-label">Le soir</div><div class="ob-commit-slot-sub">Après Isha — avant de dormir</div></div>
-      </div>
-    </div>
-    <div class="ob-pledge" id="ob-pledge">✊ Je m'engage à pratiquer chaque jour à ce moment.</div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">12 / 12</span>
-      <button class="ob-next" id="q-commit-next" style="background:var(--green)" onclick="obNext()" disabled>Prendre cet engagement →</button>
-    </div>
-  </div>
-  <!-- Page 12: Programme proposé -->
-  <div class="ob-page" data-page="12">
-    <div class="ob-dots" id="dots-12"></div>
-    <p class="ob-label" style="text-align:center;margin-bottom:6px">Ton programme</p>
-    <h1 class="ob-title" style="margin-bottom:16px">Voici ton point de départ</h1>
-    <div id="result-content"></div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">Presque…</span>
-      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
-    </div>
-  </div>
-  <!-- Page 13: Notifications -->
-  <div class="ob-page" data-page="13">
-    <div class="ob-dots" id="dots-13"></div>
+  <!-- P3: Résumé animé (rendu par JS) -->
+  <div class="ob-page ob-page-full" data-page="3" id="ob-summary-page"></div>
+  <!-- P4: Paywall (rendu par JS) -->
+  <div class="ob-page ob-page-full" data-page="4" id="ob-paywall-page"></div>
+  <!-- P5: Notifications -->
+  <div class="ob-page" data-page="5">
     <div class="ob-emoji-circle">🔔</div>
     <p class="ob-label">Dernière étape</p>
     <h1 class="ob-title">Active tes rappels</h1>
@@ -2129,8 +1982,8 @@ function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)S={...S,...JS
 
 // ═══ ONBOARDING ═══
 let obPage=0, obAns={};
-const OB_N=14;
-function initDots(){for(let i=0;i<OB_N;i++){const el=document.getElementById("dots-"+i);if(!el)return;let h="";for(let j=0;j<OB_N;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
+const OB_N=6;
+function initDots(){for(let i=0;i<3;i++){const el=document.getElementById("dots-"+i);if(!el)continue;let h="";for(let j=0;j<3;j++){h+=`<div class="ob-dot${j===i?" active":j<i?" done":""}"></div>`;}el.innerHTML=h;}}
 function goToOnboarding() {
   const splash = document.getElementById('splash');
   const cycle = document.getElementById('cycle-svg');
@@ -2179,106 +2032,81 @@ function renderObPage(n, goBack=false){
   const p=document.querySelector(`.ob-page[data-page="${n}"]`);
   if(!p)return;
   p.classList.add("active");
-  void p.offsetWidth; // force reflow → animation repart proprement
+  void p.offsetWidth;
   p.classList.add(goBack?"ob-slide-back":"ob-slide-in");
-  if(n===12)renderResultPage();
-  if(n===10)renderObThemeGrid();
+  if(n===3)renderSummaryPage();
+  if(n===4)renderPaywallPage();
 }
 function obNext(){
-  if(obPage===2){const c=obAns.salatCount??0;obPage=(c===0||c===5)?4:3;}
-  else{obPage++;}
+  obPage++;
   if(obPage<OB_N)renderObPage(obPage,false);
 }
 function obBack(){
-  if(obPage===4){const c=obAns.salatCount??0;obPage=(c===0||c===5)?2:3;}
-  else if(obPage>0){obPage--;}
+  if(obPage>0){obPage--;}
   else{showScreen("splash");return;}
   renderObPage(obPage,true);
 }
-// ─── Slider salat ───
-const SALAT_LABELS=["Je n'ai pas encore cette habitude","Je fais 1 prière par jour","Je fais 2 prières par jour","Je fais 3 prières par jour","Je fais 4 prières par jour","Les 5 prières — alhamdulillah ✓"];
-function handleSalatSlider(val){
-  val=Number(val);obAns.salatCount=val;
-  document.getElementById("salat-display").textContent=val;
-  document.getElementById("salat-label").textContent=SALAT_LABELS[val];
-  const pct=(val/5)*100;
-  document.getElementById("salat-slider").style.background=`linear-gradient(to right,var(--green) ${pct}%,var(--border) ${pct}%)`;
-  if(val===5)obAns.prayers=["fajr","dhuhr","asr","maghrib","isha"];
-  else if(val===0)obAns.prayers=[];
-}
-// ─── Checkboxes prières ───
-function togglePrayerCard(el){
-  el.classList.toggle("selected");
-  const p=el.dataset.prayer;
-  if(!obAns.prayers)obAns.prayers=[];
-  if(el.classList.contains("selected")){if(!obAns.prayers.includes(p))obAns.prayers.push(p);}
-  else{obAns.prayers=obAns.prayers.filter(x=>x!==p);}
-}
-// ─── Coran type + sous-options ───
-function selectCoranType(el,type){
-  document.querySelectorAll("#coran-main-options .ob-option").forEach(o=>o.classList.remove("selected"));
-  el.classList.add("selected");
-  obAns.quranType=type;delete obAns.quranGoal;
-  const sub=document.getElementById("coran-sub");
-  const btn=document.getElementById("q2-next");
-  btn.disabled=true;
-  const chk=`<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1.5,5.5 4.5,8.5 9.5,2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  if(type==="daily"){
-    sub.style.display="block";
-    sub.innerHTML=`<p class="ob-coran-sub-label">Combien par session ?</p>`+
-      [["versets","Quelques versets","~2 min","📖"],["page","1 page","~5-10 min","📖"],["pages","Plusieurs pages","~15-20 min","📖"],["hizb","1 hizb ou plus","~30 min+","📖"]]
-      .map(([v,l,d,e])=>`<div class="ob-option" style="margin-bottom:8px" onclick="selectCoranGoal(this,'${v}')"><span class="ob-option-emoji">${e}</span><div class="ob-option-text"><div class="ob-option-label">${l}</div><div class="ob-option-desc">${d}</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>`).join("");
-  }else{
-    sub.style.display="block";
-    sub.innerHTML=`<p class="ob-coran-sub-label">Par où veux-tu commencer ?</p>`+
-      [["sourates","3 sourates courtes","~2 min par jour","🌱"],["page","1 page","~5 min par jour","🌿"],["try","Je veux juste essayer","On t'accompagne","🤲"]]
-      .map(([v,l,d,e])=>`<div class="ob-option" style="margin-bottom:8px" onclick="selectCoranGoal(this,'${v}')"><span class="ob-option-emoji">${e}</span><div class="ob-option-text"><div class="ob-option-label">${l}</div><div class="ob-option-desc">${d}</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>`).join("");
-  }
-}
-// Offset avant Fajr selon le niveau witr : 0→15min, 1→30min, 2→45min, 3→60min
-const WITR_FAJR_OFFSET = {0:15, 1:30, 2:45, 3:60};
-function selectWitrType(el,val){
-  document.querySelectorAll("#witr-main-options .ob-option").forEach(o=>o.classList.remove("selected"));
-  el.classList.add("selected");
-  obAns.witr=val;
-  obAns.fajrOffset=WITR_FAJR_OFFSET[val]??15;
-  document.getElementById("q3-next").disabled=false;
-}
-function selectCommitSlot(el){
-  document.querySelectorAll(".ob-commit-slot").forEach(s=>s.classList.remove("selected"));
-  el.classList.add("selected");
-  obAns.practiceSlot=el.dataset.slot;
-  document.getElementById("ob-pledge").classList.add("visible");
-  document.getElementById("q-commit-next").disabled=false;
-}
-function selectCoranGoal(el,val){
-  document.querySelectorAll("#coran-sub .ob-option").forEach(o=>o.classList.remove("selected"));
-  el.classList.add("selected");
-  obAns.quranGoal=val;
-  document.getElementById("q2-next").disabled=false;
+// ─── Sélection niveau prières ───
+function obSelectPrayerLevel(el, val) {
+  document.querySelectorAll('#prayer-level-options .ob-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  obAns.prayerLevel = val;
+  if (val === 'all') { obAns.salatCount = 5; obAns.prayers = ['fajr','dhuhr','asr','maghrib','isha']; }
+  else if (val === 'some') { obAns.salatCount = 3; obAns.prayers = ['fajr','dhuhr','asr']; }
+  else { obAns.salatCount = 0; obAns.prayers = []; }
+  const msgs = { all:"Alhamdulillah — on consolide ensemble.", some:"C'est une belle base. On travaille depuis là.", few:"Chaque grand voyage commence par un pas." };
+  const fb = document.getElementById('ob-prayer-feedback');
+  if (fb) fb.textContent = msgs[val] || '';
+  document.getElementById('prayer-level-next').disabled = false;
 }
 
-// ─── Thème onboarding ───
-function renderObThemeGrid(){
-  const current=localStorage.getItem('dawam_theme')||'default';
-  const el=document.getElementById('ob-theme-grid');
-  if(!el)return;
-  el.innerHTML=Object.entries(THEMES).map(([key,t])=>{
-    const sel=key===current;
-    return`<div onclick="obSelectTheme('${key}')" style="border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;border:2px solid ${sel?t.accent:'rgba(128,100,50,0.15)'};background:${t.bg};transition:all .2s;position:relative">
-      <div style="font-size:20px;margin-bottom:4px">${t.emoji}</div>
-      <div style="display:flex;gap:3px;justify-content:center;margin-bottom:4px">
-        <div style="width:10px;height:10px;border-radius:50%;background:${t.accent}"></div>
-        <div style="width:10px;height:10px;border-radius:50%;background:${t.green}"></div>
-      </div>
-      <div style="font-size:10px;font-weight:600;color:${t.text};line-height:1.2">${t.name}</div>
-      ${sel?`<div style="position:absolute;top:4px;right:4px;width:14px;height:14px;border-radius:50%;background:${t.accent};display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><polyline points="1,4 3,6.5 7,1.5" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`:''}
-    </div>`;
-  }).join('');
+function calcPalier(p) {
+  const level = p.prayerLevel || (p.salatCount >= 5 ? 'all' : p.salatCount >= 3 ? 'some' : 'few');
+  if (level === 'all') return 3;
+  if (level === 'some') return 2;
+  return 1;
 }
-function obSelectTheme(key){applyTheme(key);renderObThemeGrid();}
 
-// ─── Notifications (déplacées post-premier check) ───
+// ─── Résumé animé (P3) ───
+function renderSummaryPage() {
+  const el = document.getElementById('ob-summary-page');
+  if (!el) return;
+  const name = obAns.name || document.getElementById('name-input')?.value.trim() || '';
+  const level = obAns.prayerLevel || 'few';
+  const palier = calcPalier(obAns);
+  const lv = { all:{e:'🌳',l:'Engagé',msg:"Tu pries les 5 — consolidons avec la constance."}, some:{e:'🌿',l:'En chemin',msg:"Tu as un rythme — ancrons-le durablement."}, few:{e:'🌱',l:'Au commencement',msg:"Tu commences le chemin — c'est le pas le plus courageux."} }[level];
+  const steps = PROGRAM.filter(i => i.paliers.includes(palier));
+  const stepsHtml = steps.map((s,i) => `<div class="ob-sum-step" id="obss${i}"><span class="ob-sum-step-e">${s.emoji}</span><div><div class="ob-sum-step-l">${s.titleFr}</div><div class="ob-sum-step-t">${s.time}</div></div></div>`).join('');
+  el.innerHTML = `<div class="ob-sum-wrap"><div class="ob-sum-top"><button class="ob-back" onclick="obBack()">←</button></div><div class="ob-sum-scroll"><div class="ob-sum-hero"><p class="ob-sum-eyebrow" id="obsey">✦ Ton profil Dawam</p><div class="ob-sum-badge" id="obsbadge"><span class="ob-sum-badge-e">${lv.e}</span><div class="ob-sum-badge-l">${lv.l}</div></div><h2 class="ob-sum-title" id="obstitle">${name?`<span>${name}</span>,<br>Dawam est fait pour toi`:'Dawam est<br>fait pour toi'}</h2><p class="ob-sum-sub" id="obssub">${lv.msg}</p></div><div class="ob-sum-sep" id="obssep"></div><div class="ob-sum-tl"><p class="ob-sum-tl-lbl" id="obstlbl">Ton programme · ${steps.length} étapes</p>${stepsHtml}</div><div class="ob-sum-orn" id="obsorn"><svg id="ob-sum-ornsvg" width="72" height="72" viewBox="0 0 80 80" style="transform-origin:50% 50%"><circle cx="40" cy="40" r="34" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="5 8" opacity=".3"/><circle cx="40" cy="40" r="24" fill="none" stroke="var(--accent)" stroke-width=".6" stroke-dasharray="3 5" opacity=".2"/><circle cx="40" cy="40" r="14" fill="var(--accent-light)" stroke="var(--accent)" stroke-width=".8" opacity=".35"/><text x="40" y="46" text-anchor="middle" font-family="Georgia,serif" font-size="19" fill="var(--accent)" opacity=".75">✦</text><circle cx="40" cy="6" r="3" fill="var(--accent)" opacity=".4"/><circle cx="74" cy="40" r="3" fill="var(--accent)" opacity=".4"/><circle cx="40" cy="74" r="3" fill="var(--accent)" opacity=".4"/><circle cx="6" cy="40" r="3" fill="var(--accent)" opacity=".4"/></svg></div><div class="ob-sum-cta-zone" id="obscta"><button class="ob-sum-cta" onclick="obNext()">Voir mon programme →</button></div></div></div>`;
+  requestAnimationFrame(() => {
+    if (typeof gsap === 'undefined') return;
+    gsap.set(['#obsey','#obsbadge','#obstitle','#obssub','#obssep','#obstlbl','#obsorn','#obscta'], {opacity:0});
+    gsap.set('#obsbadge', {scale:.85,y:8}); gsap.set('#obstitle', {y:12}); gsap.set('#obssub', {y:8});
+    gsap.set('#obsorn', {scale:.6,rotation:-20}); gsap.set('#obscta', {y:16});
+    gsap.set('[id^=obss]', {opacity:0,x:-12});
+    const tl = gsap.timeline({defaults:{ease:'power3.out'}});
+    tl.to('#obsey',     {opacity:1,duration:.45,delay:.06})
+      .to('#obsbadge',  {opacity:1,scale:1,y:0,duration:.6,ease:'back.out(1.8)'}, '-=.15')
+      .to('#obstitle',  {opacity:1,y:0,duration:.65}, '-=.3')
+      .to('#obssub',    {opacity:1,y:0,duration:.5}, '-=.4')
+      .to('#obssep',    {opacity:1,duration:.55}, '-=.25')
+      .to('#obstlbl',   {opacity:1,duration:.35}, '-=.3')
+      .to('[id^=obss]', {opacity:1,x:0,duration:.38,stagger:.065}, '-=.2')
+      .to('#obsorn',    {opacity:1,scale:1,rotation:0,duration:1,ease:'power2.out'}, '-=.55')
+      .to('#obscta',    {opacity:1,y:0,duration:.6,ease:'power2.out'}, '-=.5');
+    gsap.to('#ob-sum-ornsvg', {rotation:360,duration:30,repeat:-1,ease:'none',transformOrigin:'50% 50%'});
+    gsap.to('#obsbadge', {scale:1.03,duration:2.3,repeat:-1,yoyo:true,ease:'sine.inOut',delay:1.8});
+  });
+}
+
+// ─── Paywall (P4) ───
+function renderPaywallPage() {
+  const el = document.getElementById('ob-paywall-page');
+  if (!el) return;
+  el.innerHTML = `<div class="ob-pay-wrap"><div class="ob-pay-top"><button class="ob-back" onclick="obBack()">←</button></div><div class="ob-pay-scroll"><div class="ob-pay-hero"><div class="ob-pay-badge-coming">✦ Prochainement</div><div class="ob-pay-icon">🔮</div><h2 class="ob-pay-title">Dawam <em>Premium</em></h2><p class="ob-pay-sub">Séances guidées, statistiques et accès complet — en cours de développement.</p></div><div class="ob-pay-card"><div class="ob-pay-card-bg">🕌</div><div class="ob-pay-price-lbl">Essai gratuit · À venir</div><div class="ob-pay-price-ttl">7 jours gratuits,<br>puis <em>2,99€</em> / mois</div><div class="ob-pay-price-note">Annulable à tout moment · sans engagement</div><div class="ob-pay-feats"><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Séances guidées du matin et du soir</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Statistiques de constance sur 30 jours</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Rappels avancés personnalisés</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Accès à toutes les étapes du programme</span></div></div><div class="ob-pay-split-ttl" style="margin-top:16px">Où va ton abonnement</div><div class="ob-pay-split-bar"><div class="ob-pay-split-seg" style="flex:15;background:#9ca3af"></div><div class="ob-pay-split-seg" style="flex:15;background:var(--green)"></div><div class="ob-pay-split-seg" style="flex:70;background:var(--accent)"></div></div><div class="ob-pay-split-rows"><div class="ob-pay-split-row"><div class="ob-pay-split-dot" style="background:#9ca3af"></div><span class="ob-pay-split-lbl">Plateforme</span><span class="ob-pay-split-pct">15%</span><span class="ob-pay-split-amt">€0,45</span></div><div class="ob-pay-split-row"><div class="ob-pay-split-dot" style="background:var(--green)"></div><span class="ob-pay-split-lbl">Infra & communication</span><span class="ob-pay-split-pct">15%</span><span class="ob-pay-split-amt">€0,45</span></div><div class="ob-pay-split-row ob-pay-split-hi"><div class="ob-pay-split-dot" style="background:var(--accent)"></div><span class="ob-pay-split-lbl">Projets communautaires</span><span class="ob-pay-split-pct">70%</span><span class="ob-pay-split-amt">€2,09</span></div></div><p class="ob-pay-dona">Ce n'est pas juste un abonnement — c'est un don pour la communauté.</p></div><div style="height:16px"></div></div><div class="ob-pay-cta-zone"><button class="ob-pay-cta" onclick="obNext()">Continuer gratuitement →</button><p class="ob-pay-cta-note">Le paiement sera disponible prochainement.<br>Tu as accès à tout dès maintenant.</p></div></div>`;
+}
+
+// ─── Name + city ───
 function checkNameInput(){const v=document.getElementById("name-input").value.trim();document.getElementById("name-next").disabled=!v;if(v)obAns.name=v;}
 let _cityTimer=null;
 function checkCityInput(){
@@ -2297,126 +2125,31 @@ async function _fetchCities(q){
     const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&addressdetails=1&limit=6&accept-language=fr`);
     const data=await r.json();
     const seen=new Set();
-    const cities=data.filter(d=>{
-      if(!d.address)return false;
-      const name=d.address.city||d.address.town||d.address.village||d.address.municipality||d.name;
-      if(!name||seen.has(name))return false;
-      seen.add(name);return true;
-    });
+    const cities=data.filter(d=>{if(!d.address)return false;const name=d.address.city||d.address.town||d.address.village||d.address.municipality||d.name;if(!name||seen.has(name))return false;seen.add(name);return true;});
     if(!cities.length){box.innerHTML=`<div class="city-sug-list"><div class="city-sug-none">Aucune ville trouvée</div></div>`;return;}
-    box.innerHTML=`<div class="city-sug-list">${cities.slice(0,5).map(c=>{
-      const name=c.address.city||c.address.town||c.address.village||c.address.municipality||c.name;
-      const cc=(c.address.country_code||"").toUpperCase();
-      const display=cc?`${name}, ${cc}`:name;
-      return `<div class="city-sug-item" onclick="selectCitySug('${display.replace(/'/g,"\\'").replace(/\\/g,"\\\\")}')">📍 ${display}</div>`;
-    }).join("")}</div>`;
+    box.innerHTML=`<div class="city-sug-list">${cities.slice(0,5).map(c=>{const name=c.address.city||c.address.town||c.address.village||c.address.municipality||c.name;const cc=(c.address.country_code||"").toUpperCase();const display=cc?`${name}, ${cc}`:name;return `<div class="city-sug-item" onclick="selectCitySug('${display.replace(/'/g,"\\'").replace(/\\/g,"\\\\")}')" >📍 ${display}</div>`;}).join("")}</div>`;
   }catch{box.innerHTML=`<div class="city-sug-list"><div class="city-sug-none">Erreur de connexion</div></div>`;}
 }
-function selectCitySug(val){
-  document.getElementById("city-input").value=val;
-  obAns.city=val;
-  document.getElementById("city-suggestions").innerHTML="";
-}
-function selectOption(el){
-  const parent=el.closest(".ob-options");
-  const isMulti=parent.dataset.multi==="true";
-  const key=parent.dataset.key;
-  const val=el.dataset.value;
-  if(!isMulti){parent.querySelectorAll(".ob-option").forEach(o=>o.classList.remove("selected"));el.classList.add("selected");obAns[key]=isNaN(val)?val:Number(val);}
-  else{el.classList.toggle("selected");if(!obAns[key])obAns[key]=[];if(el.classList.contains("selected")){if(!obAns[key].includes(val))obAns[key].push(val);}else{obAns[key]=obAns[key].filter(v=>v!==val);}}
-  const map={salat:"q1-next",quran:"q2-next",witr:"q3-next",situations:"q4-next",goal:"q5-next",obstacles:"q6-next"};
-  const btnId=map[key];
-  if(btnId){const btn=document.getElementById(btnId);if(btn)btn.disabled=isMulti?obAns[key].length===0:false;}
-}
-function calcPalier(p){
-  const sc   = p.salatCount ?? p.salat ?? 0;
-  const witr = p.witrLevel  ?? p.witr  ?? 0;
-  const qt   = p.quranType  || "jamais";
-  // La salat plafonne le palier maximum
-  if(sc<=1) return 1;
-  if(sc<=3) return 2;
-  if(sc==4) return 3;
-  // sc==5 : coran + witr affinent le niveau 3/4/5
-  const quranScore = (qt==="quotidien"||qt==="daily") ? 2 : qt==="parfois" ? 1 : 0;
-  const witrScore  = Math.min(witr, 3);
-  const secondary  = quranScore + witrScore; // max 5
-  if(secondary>=4) return 5;
-  if(secondary>=2) return 4;
-  return 3;
-}
-// ─── Page résultat + personnalisation ───
-let obEditMode=false, obSelectedSteps=[];
-function renderResultPage(){
-  obEditMode=false;
-  const palier=calcPalier({salatCount:obAns.salatCount??0,quranType:obAns.quranType,quranGoal:obAns.quranGoal,witr:obAns.witr??0});
-  obSelectedSteps=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id);
-  renderResultContent(palier);
-}
-const PALIER_WHY = {
-  1:"Tu es au début du chemin — ton programme se concentre sur un seul ancrage fort : Fajr. Une habitude à la fois, c'est la clé.",
-  2:"Tu as un rythme de départ. Le programme ajoute la séance après l'aube et les bénédictions sur le Prophète ﷺ pour renforcer ce que tu as déjà.",
-  3:"Tu pries régulièrement. Il est temps de consolider avec le Witr et les adhkar du matin — la fondation est là, construisons dessus.",
-  4:"Ton programme est solide. On y ajoute les prières complémentaires et le dhikr pour approfondir ta relation avec Allah.",
-  5:"Programme complet. La constance est désormais ta bataille — pas la quantité, mais la régularité.",
-};
-const PALIER_DURATION = {1:"~15 min/jour",2:"~25 min/jour",3:"~35 min/jour",4:"~45 min/jour",5:"~60 min/jour"};
-function renderResultContent(palier){
-  const el=document.getElementById("result-content");
-  if(!el)return;
-  const pi=PALIER[palier];
-  const chk=`<svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  let html=`<div class="ob-result-palier"><div class="ob-result-emoji">${pi.emoji}</div><div class="ob-result-name">${pi.name}</div><div class="ob-result-desc">${pi.desc}</div></div>`;
-  html+=`<div class="ob-palier-why">💡 ${PALIER_WHY[palier]}</div>`;
-  html+=`<div style="text-align:center;margin-bottom:14px"><span class="ob-duration-badge">⏱ ${PALIER_DURATION[palier]}</span></div>`;
-  if(!obEditMode){
-    const steps=PROGRAM.filter(i=>obSelectedSteps.includes(i.id));
-    html+=`<p class="ob-label" style="text-align:left;margin-bottom:10px">Ton programme · ${steps.length} étapes</p>`;
-    html+=steps.map(item=>`<div class="ob-result-step"><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div></div>`).join("");
-    html+=`<button class="ob-edit-toggle" onclick="toggleResultEdit()">✏️ Modifier mon programme</button>`;
-  } else {
-    html+=`<p class="ob-label" style="text-align:left;margin-bottom:6px">Personnalise ton programme</p>`;
-    html+=`<p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5">Coche ou décoche les étapes selon ce que tu veux travailler.</p>`;
-    const proposed=PROGRAM.filter(i=>i.paliers.includes(palier));
-    const advanced=PROGRAM.filter(i=>!i.paliers.includes(palier));
-    const renderStep=item=>{
-      const sel=obSelectedSteps.includes(item.id);
-      const adv=!item.paliers.includes(palier);
-      return `<div class="ob-result-step edit-mode${sel?" selected":""}" onclick="toggleStep(${item.id})"><div class="ob-result-check">${sel?chk:""}</div><span class="ob-result-step-emoji">${item.emoji}</span><div class="ob-result-step-info"><div class="ob-result-step-title">${item.titleFr}</div><div class="ob-result-step-time">${item.time}</div></div>${adv?`<span class="ob-step-badge">avancé</span>`:``}</div>`;
-    };
-    html+=proposed.map(renderStep).join("");
-    if(advanced.length){html+=`<p class="ob-label" style="text-align:left;margin:14px 0 8px;color:var(--accent)">Étapes avancées</p>`;html+=advanced.map(renderStep).join("");}
-    html+=`<button class="ob-edit-toggle active" onclick="toggleResultEdit()">✓ Valider la sélection</button>`;
-  }
-  el.innerHTML=html;
-}
-function toggleResultEdit(){
-  obEditMode=!obEditMode;
-  renderResultContent(calcPalier({salatCount:obAns.salatCount??0,quranType:obAns.quranType,quranGoal:obAns.quranGoal,witr:obAns.witr??0}));
-  document.getElementById("result-content")?.scrollIntoView({behavior:"smooth",block:"start"});
-}
-function toggleStep(id){
-  if(obSelectedSteps.includes(id)){if(obSelectedSteps.length>1)obSelectedSteps=obSelectedSteps.filter(s=>s!==id);}
-  else{obSelectedSteps=[...obSelectedSteps,id];}
-  renderResultContent(calcPalier({salatCount:obAns.salatCount??0,quranType:obAns.quranType,quranGoal:obAns.quranGoal,witr:obAns.witr??0}));
-}
+function selectCitySug(val){document.getElementById("city-input").value=val;obAns.city=val;document.getElementById("city-suggestions").innerHTML="";}
 
 function finishOnboarding(){
   const name=document.getElementById("name-input")?.value.trim()||obAns.name||"ami";
   const sc=obAns.salatCount??0;
   const profile={
-    salatCount:sc,prayers:obAns.prayers||[],
-    quranType:obAns.quranType||"never",quranGoal:obAns.quranGoal||"try",
-    salat:sc,quran:obAns.quranType==="daily"?2:(obAns.quranType==="sometimes"?1:0),
-    witr:obAns.witr??0,witrLevel:obAns.witr??0,fajrOffset:obAns.fajrOffset??(WITR_FAJR_OFFSET[obAns.witr??0]??15),situations:obAns.situations||["worker"],type:(obAns.situations||["worker"])[0],goal:obAns.goal||["taqwa"],obstacles:obAns.obstacles||[],practiceSlot:obAns.practiceSlot||"morning",city:obAns.city||""
+    salatCount:sc, prayers:obAns.prayers||[],
+    quranType:"never", quranGoal:"try",
+    salat:sc, quran:0,
+    witr:0, witrLevel:0, fajrOffset:15,
+    situations:["worker"], type:"worker",
+    goal:["taqwa"], obstacles:[],
+    practiceSlot:"morning", city:obAns.city||"",
+    prayerLevel:obAns.prayerLevel||"few"
   };
-  const palier=calcPalier(profile);
-  const defaultIds=PROGRAM.filter(i=>i.paliers.includes(palier)).map(i=>i.id).sort((a,b)=>a-b);
-  const selSorted=[...obSelectedSteps].sort((a,b)=>a-b);
-  const isCustom=obSelectedSteps.length>0&&JSON.stringify(selSorted)!==JSON.stringify(defaultIds);
+  const palier=calcPalier(obAns);
   localStorage.removeItem(STORAGE_KEY);
   let notifs=obAns._pushSub?{pushSub:obAns._pushSub}:null;
   if(!notifs&&obAns._apnsToken){notifs={pushSub:'apns:'+obAns._apnsToken};}
-  S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:isCustom?[...obSelectedSteps]:null,notifs};
+  S={name,profile,palier,weekNumber:1,checklist:{},totalDays:0,lastDate:null,history:[],customSteps:null,notifs};
   S.notifAsked=true;
   save();track('onboarding_complete');
   if(obAns._apnsToken&&obAns._apnsToken!=='simulator-token'){
@@ -2424,12 +2157,8 @@ function finishOnboarding(){
   }
   if (_auth.currentUser) {
     launchApp(); track('launch');
-    // Ne pas re-afficher le prompt si les notifs ont été gérées dans l'onboarding
     if(!S.notifs) setTimeout(()=>document.getElementById('notif-prompt')?.classList.add('show'),1200);
   } else {
-    // Onboarding terminé sans compte → reload propre pour que signInWithPopup
-    // fonctionne dans TWA (l'état Firebase est réinitialisé à chaque chargement)
-    // Les données sont déjà en localStorage, onAuthStateChanged affichera l'écran auth
     location.reload();
   }
 }
