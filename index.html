@@ -125,6 +125,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .scale-in { animation: scaleIn .4s cubic-bezier(.22,1,.36,1) both; }
 .btn-primary { display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:14px;border:none;cursor:pointer;background:var(--accent);color:#fff8e8;font-family:var(--font-body);font-size:15px;font-weight:600;transition:opacity .15s,transform .1s; }
 .btn-primary:active { opacity:.85;transform:scale(.98); }
+.btn-primary:disabled { opacity:.38;cursor:not-allowed;transform:none; }
 .btn-secondary { background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:14px;color:var(--text-secondary);padding:10px;width:100%;text-align:center;transition:opacity .15s; }
 .btn-secondary:active { opacity:.6; }
 .card { background:var(--bg-card);border-radius:var(--radius);border:.5px solid var(--border);padding:16px 18px;box-shadow:var(--shadow); }
@@ -277,10 +278,17 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .ob-sum-sep { height:1px;background:linear-gradient(to right,transparent,rgba(186,117,23,.4),rgba(59,109,17,.2),transparent);margin:4px 24px 18px; }
 .ob-sum-tl { padding:0 24px; }
 .ob-sum-tl-lbl { font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-secondary);margin:0 0 12px; }
-.ob-sum-step { display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg-card);border-radius:12px;border:.5px solid var(--border-light);margin-bottom:8px; }
+.ob-sum-step-grp { margin-bottom:8px; }
+.ob-sum-step { display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg-card);border-radius:10px;border:.5px solid var(--border-light);cursor:pointer;transition:border-radius .15s; }
+.ob-sum-step-grp.open .ob-sum-step { border-radius:10px 10px 0 0;border-bottom-color:transparent; }
 .ob-sum-step-e { font-size:20px;flex-shrink:0; }
 .ob-sum-step-l { font-size:13px;font-weight:600;color:var(--text); }
 .ob-sum-step-t { font-size:11px;color:var(--text-light);margin-top:2px; }
+.ob-sum-chev { flex-shrink:0;transition:transform .25s ease; }
+.ob-sum-step-grp.open .ob-sum-chev { transform:rotate(180deg); }
+.ob-sum-detail { display:none;padding:10px 14px 12px;background:var(--bg-card);border:.5px solid var(--border-light);border-top:none;border-radius:0 0 10px 10px; }
+.ob-sum-step-grp.open .ob-sum-detail { display:block; }
+.ob-sum-detail p { font-size:12px;color:var(--text-secondary);line-height:1.65;margin:0;font-style:italic; }
 .ob-sum-orn { display:flex;justify-content:center;padding:18px 0 4px; }
 .ob-sum-cta-zone { padding:14px 24px 36px; }
 .ob-sum-cta { width:100%;padding:17px;background:var(--accent);color:#fff8e8;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 24px rgba(186,117,23,.35);font-family:var(--font-body); }
@@ -1168,7 +1176,11 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   </div>
   <!-- P1: Prénom + Ville -->
   <div class="ob-page" data-page="1">
-    <div class="ob-dots" id="dots-1"></div>
+    <div style="display:flex;align-items:center;margin-bottom:clamp(10px,2vh,18px)">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <div class="ob-dots" id="dots-1" style="flex:1;margin-bottom:0"></div>
+      <div style="width:44px"></div>
+    </div>
     <div class="ob-emoji-circle">🤲</div>
     <p class="ob-label">Fais connaissance</p>
     <h1 class="ob-title">Pour personnaliser<br>ton programme</h1>
@@ -1179,10 +1191,9 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       <input class="ob-name-input" type="text" placeholder="Ex : Paris, Lyon, Bruxelles…" id="city-input" oninput="checkCityInput()" autocomplete="off">
       <div id="city-suggestions"></div>
     </div>
-    <div class="ob-bottom">
-      <button class="ob-back" onclick="obBack()">←</button>
-      <span class="ob-counter">2 / 3</span>
-      <button class="ob-next" id="name-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+    <div style="margin-top:auto;flex-shrink:0;padding:16px 0 clamp(16px,3.5vh,28px)">
+      <button class="btn-primary" id="name-next" onclick="obNext()" disabled>Suivant →</button>
+      <p style="text-align:center;font-size:12px;color:var(--text-light);margin-top:12px">2 / 3</p>
     </div>
   </div>
   <!-- P2: Prières — 3 options -->
@@ -2076,7 +2087,7 @@ function renderSummaryPage() {
   const palier = calcPalier(obAns);
   const lv = { all:{e:'🌳',l:'Engagé',msg:"Tu pries les 5 — consolidons avec la constance."}, some:{e:'🌿',l:'En chemin',msg:"Tu as un rythme — ancrons-le durablement."}, few:{e:'🌱',l:'Au commencement',msg:"Tu commences le chemin — c'est le pas le plus courageux."} }[level];
   const steps = PROGRAM.filter(i => i.paliers.includes(palier));
-  const stepsHtml = steps.map((s,i) => `<div class="ob-sum-step" id="obss${i}"><span class="ob-sum-step-e">${s.emoji}</span><div><div class="ob-sum-step-l">${s.titleFr}</div><div class="ob-sum-step-t">${s.time}</div></div></div>`).join('');
+  const stepsHtml = steps.map((s,i) => `<div class="ob-sum-step-grp"><div class="ob-sum-step" id="obss${i}" onclick="obSumToggle(${i})"><span class="ob-sum-step-e">${s.emoji}</span><div style="flex:1"><div class="ob-sum-step-l">${s.titleFr}</div><div class="ob-sum-step-t">${s.time}</div></div><svg class="ob-sum-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="4,6 8,10 12,6" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>${s.why?`<div class="ob-sum-detail"><p>${s.why}</p></div>`:''}</div>`).join('');
   el.innerHTML = `<div class="ob-sum-wrap"><div class="ob-sum-top"><button class="ob-back" onclick="obBack()">←</button></div><div class="ob-sum-scroll"><div class="ob-sum-hero"><p class="ob-sum-eyebrow" id="obsey">✦ Ton profil Dawam</p><div class="ob-sum-badge" id="obsbadge"><span class="ob-sum-badge-e">${lv.e}</span><div class="ob-sum-badge-l">${lv.l}</div></div><h2 class="ob-sum-title" id="obstitle">${name?`<span>${name}</span>,<br>Dawam est fait pour toi`:'Dawam est<br>fait pour toi'}</h2><p class="ob-sum-sub" id="obssub">${lv.msg}</p></div><div class="ob-sum-sep" id="obssep"></div><div class="ob-sum-tl"><p class="ob-sum-tl-lbl" id="obstlbl">Ton programme · ${steps.length} étapes</p>${stepsHtml}</div><div class="ob-sum-orn" id="obsorn"><svg id="ob-sum-ornsvg" width="72" height="72" viewBox="0 0 80 80" style="transform-origin:50% 50%"><circle cx="40" cy="40" r="34" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="5 8" opacity=".3"/><circle cx="40" cy="40" r="24" fill="none" stroke="var(--accent)" stroke-width=".6" stroke-dasharray="3 5" opacity=".2"/><circle cx="40" cy="40" r="14" fill="var(--accent-light)" stroke="var(--accent)" stroke-width=".8" opacity=".35"/><text x="40" y="46" text-anchor="middle" font-family="Georgia,serif" font-size="19" fill="var(--accent)" opacity=".75">✦</text><circle cx="40" cy="6" r="3" fill="var(--accent)" opacity=".4"/><circle cx="74" cy="40" r="3" fill="var(--accent)" opacity=".4"/><circle cx="40" cy="74" r="3" fill="var(--accent)" opacity=".4"/><circle cx="6" cy="40" r="3" fill="var(--accent)" opacity=".4"/></svg></div><div class="ob-sum-cta-zone" id="obscta"><button class="ob-sum-cta" onclick="obNext()">Voir mon programme →</button></div></div></div>`;
   requestAnimationFrame(() => {
     if (typeof gsap === 'undefined') return;
@@ -2099,11 +2110,17 @@ function renderSummaryPage() {
   });
 }
 
+function obSumToggle(i) {
+  const step = document.getElementById('obss' + i);
+  if (!step) return;
+  step.parentElement.classList.toggle('open');
+}
+
 // ─── Paywall (P4) ───
 function renderPaywallPage() {
   const el = document.getElementById('ob-paywall-page');
   if (!el) return;
-  el.innerHTML = `<div class="ob-pay-wrap"><div class="ob-pay-top"><button class="ob-back" onclick="obBack()">←</button></div><div class="ob-pay-scroll"><div class="ob-pay-hero"><div class="ob-pay-badge-coming">✦ Prochainement</div><div class="ob-pay-icon">🔮</div><h2 class="ob-pay-title">Dawam <em>Premium</em></h2><p class="ob-pay-sub">Séances guidées, statistiques et accès complet — en cours de développement.</p></div><div class="ob-pay-card"><div class="ob-pay-card-bg">🕌</div><div class="ob-pay-price-lbl">Essai gratuit · À venir</div><div class="ob-pay-price-ttl">7 jours gratuits,<br>puis <em>2,99€</em> / mois</div><div class="ob-pay-price-note">Annulable à tout moment · sans engagement</div><div class="ob-pay-feats"><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Séances guidées du matin et du soir</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Statistiques de constance sur 30 jours</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Rappels avancés personnalisés</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Accès à toutes les étapes du programme</span></div></div><div class="ob-pay-split-ttl" style="margin-top:16px">Où va ton abonnement</div><div class="ob-pay-split-bar"><div class="ob-pay-split-seg" style="flex:15;background:#9ca3af"></div><div class="ob-pay-split-seg" style="flex:15;background:var(--green)"></div><div class="ob-pay-split-seg" style="flex:70;background:var(--accent)"></div></div><div class="ob-pay-split-rows"><div class="ob-pay-split-row"><div class="ob-pay-split-dot" style="background:#9ca3af"></div><span class="ob-pay-split-lbl">Plateforme</span><span class="ob-pay-split-pct">15%</span><span class="ob-pay-split-amt">€0,45</span></div><div class="ob-pay-split-row"><div class="ob-pay-split-dot" style="background:var(--green)"></div><span class="ob-pay-split-lbl">Infra & communication</span><span class="ob-pay-split-pct">15%</span><span class="ob-pay-split-amt">€0,45</span></div><div class="ob-pay-split-row ob-pay-split-hi"><div class="ob-pay-split-dot" style="background:var(--accent)"></div><span class="ob-pay-split-lbl">Projets communautaires</span><span class="ob-pay-split-pct">70%</span><span class="ob-pay-split-amt">€2,09</span></div></div><p class="ob-pay-dona">Ce n'est pas juste un abonnement — c'est un don pour la communauté.</p></div><div style="height:16px"></div></div><div class="ob-pay-cta-zone"><button class="ob-pay-cta" onclick="obNext()">Continuer gratuitement →</button><p class="ob-pay-cta-note">Le paiement sera disponible prochainement.<br>Tu as accès à tout dès maintenant.</p></div></div>`;
+  el.innerHTML = `<div class="ob-pay-wrap"><div class="ob-pay-top"><button class="ob-back" onclick="obBack()">←</button></div><div class="ob-pay-scroll"><div class="ob-pay-hero"><div class="ob-pay-badge-coming">✦ Prochainement</div><div class="ob-pay-icon"><svg width="72" height="72" viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="6 9" opacity=".35"/><circle cx="40" cy="40" r="26" fill="none" stroke="var(--accent)" stroke-width=".8" stroke-dasharray="3 6" opacity=".25"/><circle cx="40" cy="40" r="16" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.2" opacity=".6"/><text x="40" y="47" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="var(--accent)">✦</text><circle cx="40" cy="4" r="3" fill="var(--accent)" opacity=".5"/><circle cx="76" cy="40" r="3" fill="var(--accent)" opacity=".5"/><circle cx="40" cy="76" r="3" fill="var(--accent)" opacity=".5"/><circle cx="4" cy="40" r="3" fill="var(--accent)" opacity=".5"/></svg></div><h2 class="ob-pay-title">Dawam <em>Premium</em></h2><p class="ob-pay-sub">Séances guidées, statistiques et accès complet — en cours de développement.</p></div><div class="ob-pay-card"><div class="ob-pay-card-bg">🕌</div><div class="ob-pay-price-lbl">Essai gratuit · À venir</div><div class="ob-pay-price-ttl">7 jours gratuits,<br>puis <em>2,99€</em> / mois</div><div class="ob-pay-price-note">Annulable à tout moment · sans engagement</div><div class="ob-pay-feats"><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Séances guidées du matin et du soir</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Statistiques de constance sur 30 jours</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Rappels avancés personnalisés</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Accès à toutes les étapes du programme</span></div></div><div class="ob-pay-split-ttl" style="margin-top:16px">Où va ton abonnement</div><div class="ob-pay-split-bar"><div class="ob-pay-split-seg" style="flex:15;background:#9ca3af"></div><div class="ob-pay-split-seg" style="flex:15;background:var(--green)"></div><div class="ob-pay-split-seg" style="flex:70;background:var(--accent)"></div></div><div class="ob-pay-split-rows"><div class="ob-pay-split-row"><div class="ob-pay-split-dot" style="background:#9ca3af"></div><span class="ob-pay-split-lbl">Plateforme</span><span class="ob-pay-split-pct">15%</span><span class="ob-pay-split-amt">€0,45</span></div><div class="ob-pay-split-row"><div class="ob-pay-split-dot" style="background:var(--green)"></div><span class="ob-pay-split-lbl">Infra & communication</span><span class="ob-pay-split-pct">15%</span><span class="ob-pay-split-amt">€0,45</span></div><div class="ob-pay-split-row ob-pay-split-hi"><div class="ob-pay-split-dot" style="background:var(--accent)"></div><span class="ob-pay-split-lbl">Projets communautaires</span><span class="ob-pay-split-pct">70%</span><span class="ob-pay-split-amt">€2,09</span></div></div><p class="ob-pay-dona">Ce n'est pas juste un abonnement — c'est un don pour la communauté.</p></div><div style="height:16px"></div></div><div class="ob-pay-cta-zone"><button class="ob-pay-cta" onclick="obNext()">Continuer gratuitement →</button><p class="ob-pay-cta-note">Le paiement sera disponible prochainement.<br>Tu as accès à tout dès maintenant.</p></div></div>`;
 }
 
 // ─── Name + city ───
