@@ -5,10 +5,42 @@ import AuthenticationServices
 import CryptoKit
 import StoreKit
 
+// MARK: - Tabs
+
+enum TabItem: String, CaseIterable {
+    case accueil = "path"
+    case invocations = "invocations"
+    case groupes = "groupes"
+    case profil = "profil"
+
+    var tabId: String { "tab-\(rawValue)" }
+
+    var label: String {
+        switch self {
+        case .accueil:     return "Accueil"
+        case .invocations: return "Invocations"
+        case .groupes:     return "Groupes"
+        case .profil:      return "Profil"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .accueil:     return "house"
+        case .invocations: return "hands.sparkles"
+        case .groupes:     return "person.3"
+        case .profil:      return "person.circle"
+        }
+    }
+}
+
 // MARK: - WKWebView wrapper
+
 struct DawamWebView: UIViewRepresentable {
 
     @Binding var isLoaded: Bool
+    @Binding var activeTab: TabItem
+    var assignedTab: TabItem = .accueil
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
@@ -16,17 +48,38 @@ struct DawamWebView: UIViewRepresentable {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
-
-        // Permet au localStorage et aux cookies de persister
         config.websiteDataStore = .default()
 
-        // Signale à la PWA qu'elle tourne dans une app native iOS
         let nativeFlag = WKUserScript(
             source: "window.isNativeIOSApp = true;",
             injectionTime: .atDocumentStart,
             forMainFrameOnly: true
         )
         config.userContentController.addUserScript(nativeFlag)
+
+        // Sur iOS 26 : cache la web nav et intercepte les changements d'onglet
+        if #available(iOS 26.0, *) {
+            let hideNavAndPatch = WKUserScript(
+                source: """
+                (function() {
+                    var nav = document.getElementById('bottom-nav');
+                    if (nav) nav.style.setProperty('display','none','important');
+
+                    var orig = window.showTab;
+                    if (orig) {
+                        window.showTab = function(id, el) {
+                            orig.call(this, id, el);
+                            window.webkit?.messageHandlers?.tabChanged?.postMessage(id);
+                        };
+                    }
+                })();
+                """,
+                injectionTime: .atDocumentEnd,
+                forMainFrameOnly: true
+            )
+            config.userContentController.addUserScript(hideNavAndPatch)
+            config.userContentController.add(context.coordinator, name: "tabChanged")
+        }
 
         config.userContentController.add(context.coordinator, name: "requestNotifPermission")
         config.userContentController.add(context.coordinator, name: "showConfirm")
@@ -39,11 +92,8 @@ struct DawamWebView: UIViewRepresentable {
         webView.uiDelegate = context.coordinator
         webView.scrollView.bounces = false
         webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.isOpaque = false
-        webView.backgroundColor = .clear
-        webView.scrollView.backgroundColor = .clear
+        webView.backgroundColor = UIColor(red: 0.961, green: 0.929, blue: 0.878, alpha: 1)
 
-        // Désactive le long-press et la sélection de texte
         webView.configuration.userContentController.addUserScript(
             WKUserScript(
                 source: """
@@ -69,12 +119,14 @@ struct DawamWebView: UIViewRepresentable {
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 
     // MARK: - Coordinator
+
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKUIDelegate,
                        ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
         var parent: DawamWebView
         weak var webView: WKWebView?
         var currentNonce: String?
         private var isAppleSignInInProgress = false
+        var lastNativeTab: TabItem = .accueil
 
         init(_ parent: DawamWebView) {
             self.parent = parent
@@ -92,17 +144,22 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         // MARK: WKScriptMessageHandler
+
         func userContentController(
             _ userContentController: WKUserContentController,
             didReceive message: WKScriptMessage
         ) {
-            if message.name == "showConfirm", let body = message.body as? [String: Any] {
-                handleShowConfirm(body)
+            if message.name == "tabChanged", let id = message.body as? String,
+               let tab = TabItem(rawValue: id) {
+                DispatchQueue.main.async { self.parent.activeTab = tab }
+                lastNativeTab = tab
                 return
             }
+            if message.name == "showConfirm", let body = message.body as? [String: Any] {
+                handleShowConfirm(body); return
+            }
             if message.name == "signInWithApple" {
-                handleSignInWithApple()
-                return
+                handleSignInWithApple(); return
             }
             if message.name == "purchaseSubscription" {
                 Task { @MainActor in await self.handlePurchaseSubscription() }
@@ -142,6 +199,7 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         // MARK: Sign in with Apple
+
         func handleSignInWithApple() {
             guard !isAppleSignInInProgress else { return }
             isAppleSignInInProgress = true
@@ -166,10 +224,7 @@ struct DawamWebView: UIViewRepresentable {
 
         func authorizationController(controller: ASAuthorizationController,
                                      didCompleteWithAuthorization authorization: ASAuthorization) {
-            defer {
-                currentNonce = nil
-                isAppleSignInInProgress = false
-            }
+            defer { currentNonce = nil; isAppleSignInInProgress = false }
             guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
                   let nonce = currentNonce,
                   let tokenData = credential.identityToken,
@@ -199,6 +254,7 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         // MARK: Nonce helpers
+
         private func randomNonceString(length: Int = 32) -> String {
             var randomBytes = [UInt8](repeating: 0, count: length)
             _ = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
@@ -213,21 +269,14 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         // MARK: WKUIDelegate
-        func webView(
-            _ webView: WKWebView,
-            runJavaScriptAlertPanelWithMessage message: String,
-            initiatedByFrame frame: WKFrameInfo,
-            completionHandler: @escaping () -> Void
-        ) {
+
+        func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
+                     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
             presentAlert(message: message, confirm: false) { _ in completionHandler() }
         }
 
-        func webView(
-            _ webView: WKWebView,
-            runJavaScriptConfirmPanelWithMessage message: String,
-            initiatedByFrame frame: WKFrameInfo,
-            completionHandler: @escaping (Bool) -> Void
-        ) {
+        func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
+                     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
             presentAlert(message: message, confirm: true) { completionHandler($0) }
         }
 
@@ -243,15 +292,14 @@ struct DawamWebView: UIViewRepresentable {
         private func presentAlert(message: String, confirm: Bool, completion: @escaping (Bool) -> Void) {
             let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
             if confirm {
-                alert.addAction(UIAlertAction(title: "Annuler", style: .cancel)        { _ in completion(false) })
-                alert.addAction(UIAlertAction(title: "Confirmer", style: .destructive) { _ in completion(true)  })
+                alert.addAction(UIAlertAction(title: "Annuler",    style: .cancel)      { _ in completion(false) })
+                alert.addAction(UIAlertAction(title: "Confirmer",  style: .destructive) { _ in completion(true)  })
             } else {
                 alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in completion(true) })
             }
             guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                   let root  = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
-                completion(false)
-                return
+                completion(false); return
             }
             var top = root
             while let presented = top.presentedViewController { top = presented }
@@ -271,13 +319,13 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         // MARK: StoreKit 2
+
         @MainActor
         func handlePurchaseSubscription() async {
             do {
                 let products = try await Product.products(for: ["dawam_monthly"])
                 guard let product = products.first else {
-                    callJS("window.iapResult(false, 'not_found')")
-                    return
+                    callJS("window.iapResult(false, 'not_found')"); return
                 }
                 let result = try await product.purchase()
                 switch result {
@@ -289,12 +337,9 @@ struct DawamWebView: UIViewRepresentable {
                     case .unverified:
                         callJS("window.iapResult(false, 'unverified')")
                     }
-                case .userCancelled:
-                    callJS("window.iapResult(false, 'cancelled')")
-                case .pending:
-                    callJS("window.iapResult(false, 'pending')")
-                @unknown default:
-                    callJS("window.iapResult(false, 'unknown')")
+                case .userCancelled: callJS("window.iapResult(false, 'cancelled')")
+                case .pending:       callJS("window.iapResult(false, 'pending')")
+                @unknown default:    callJS("window.iapResult(false, 'unknown')")
                 }
             } catch {
                 callJS("window.iapResult(false, 'error')")
@@ -325,21 +370,22 @@ struct DawamWebView: UIViewRepresentable {
         }
 
         // MARK: WKNavigationDelegate
+
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                if #available(iOS 26.0, *) {
+                    let js = "document.getElementById('\(self.parent.assignedTab.tabId)')?.click();"
+                    webView.evaluateJavaScript(js, completionHandler: nil)
+                }
                 withAnimation(.easeOut(duration: 0.5)) {
                     self.parent.isLoaded = true
                 }
             }
         }
 
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationAction: WKNavigationAction,
-            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-        ) {
-            if let url = navigationAction.request.url,
-               url.host == "haris692.github.io" {
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            if let url = navigationAction.request.url, url.host == "haris692.github.io" {
                 decisionHandler(.allow)
             } else if navigationAction.request.url?.scheme == "mailto" ||
                       navigationAction.request.url?.scheme == "tel" {
@@ -353,41 +399,122 @@ struct DawamWebView: UIViewRepresentable {
 }
 
 // MARK: - Vue principale
+
 struct ContentView: View {
     @State private var isLoaded = false
+    @State private var activeTab: TabItem = .accueil
 
     var body: some View {
-        ZStack {
-            DawamWebView(isLoaded: $isLoaded)
-                .ignoresSafeArea()
-
-            if !isLoaded {
-                if #available(iOS 26.0, *) {
-                    LiquidGlassSplash()
-                        .transition(.opacity)
-                } else {
+        if #available(iOS 26.0, *) {
+            TabView(selection: $activeTab) {
+                ForEach(TabItem.allCases, id: \.self) { tab in
+                    DawamWebView(isLoaded: $isLoaded, activeTab: $activeTab, assignedTab: tab)
+                        .ignoresSafeArea()
+                        .tag(tab)
+                        .tabItem { Label(tab.label, systemImage: tab.icon) }
+                }
+            }
+            .overlay {
+                if !isLoaded { LiquidGlassSplash().transition(.opacity) }
+            }
+            .animation(.easeOut(duration: 0.5), value: isLoaded)
+        } else {
+            ZStack {
+                DawamWebView(isLoaded: $isLoaded, activeTab: $activeTab)
+                    .ignoresSafeArea()
+                if !isLoaded {
                     ClassicSplash()
                         .transition(.opacity)
                 }
             }
+            .animation(.easeOut(duration: 0.5), value: isLoaded)
         }
-        .animation(.easeOut(duration: 0.5), value: isLoaded)
+    }
+}
+
+// MARK: - Tab bar native Liquid Glass (iOS 26+)
+
+@available(iOS 26.0, *)
+struct NativeTabBar: View {
+    @Binding var activeTab: TabItem
+    private let accent = Color(red: 0.729, green: 0.459, blue: 0.090)
+    private let tabs   = TabItem.allCases
+    @Namespace private var ns
+
+    var body: some View {
+        GeometryReader { geo in
+            let pad  = CGFloat(8)
+            let n    = CGFloat(tabs.count)
+            let tabW = (geo.size.width - pad * 2) / n
+            let barH = geo.size.height
+
+            GlassEffectContainer(spacing: 8) {
+                ZStack(alignment: .topLeading) {
+
+                    // Bulle active — matchedGeometryEffect anime le glissement entre onglets
+                    let idx = CGFloat(tabs.firstIndex(of: activeTab) ?? 0)
+                    Color.clear
+                        .frame(width: tabW - 8, height: barH - 12)
+                        .glassEffect(
+                            .regular.interactive(),
+                            in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        )
+                        .matchedGeometryEffect(id: "bubble", in: ns)
+                        .offset(x: pad + idx * tabW + 4, y: 6)
+
+                    // Onglets
+                    HStack(spacing: 0) {
+                        ForEach(tabs, id: \.self) { tab in
+                            VStack(spacing: 3) {
+                                Image(systemName: tab.icon)
+                                    .font(.system(size: 22, weight: .light))
+                                Text(tab.label)
+                                    .font(.system(size: 10, weight: .medium))
+                            }
+                            .foregroundStyle(activeTab == tab ? accent : Color(white: 0.38))
+                            .frame(width: tabW, height: barH - 12)
+                        }
+                    }
+                    .offset(x: pad, y: 6)
+                }
+                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            }
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                    .onChanged { value in
+                        let idx    = Int((value.location.x - pad) / tabW)
+                        let newTab = tabs[min(max(idx, 0), tabs.count - 1)]
+                        if newTab != activeTab {
+                            withAnimation(.bouncy(duration: 0.45)) { activeTab = newTab }
+                        }
+                    }
+                    .onEnded { value in
+                        let idx = Int((value.location.x - pad) / tabW)
+                        withAnimation(.bouncy(duration: 0.45)) {
+                            activeTab = tabs[min(max(idx, 0), tabs.count - 1)]
+                        }
+                    }
+            )
+        }
+        .frame(height: 64)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
+        .animation(.bouncy(duration: 0.45), value: activeTab)
     }
 }
 
 // MARK: - Splash Liquid Glass (iOS 26+)
+
 @available(iOS 26.0, *)
 struct LiquidGlassSplash: View {
     private let accent = Color(red: 0.729, green: 0.459, blue: 0.090)
     private let bg     = Color(red: 0.961, green: 0.929, blue: 0.878)
 
-    @State private var shimmer = false
-
     var body: some View {
         ZStack {
             bg.ignoresSafeArea()
 
-            // Cercles de couleur derrière le verre pour enrichir l'effet de réfraction
             Circle()
                 .fill(accent.opacity(0.25))
                 .frame(width: 260, height: 260)
@@ -400,14 +527,12 @@ struct LiquidGlassSplash: View {
                 .offset(x: 90, y: 100)
                 .blur(radius: 50)
 
-            // Carte Liquid Glass
             GlassEffectContainer {
                 VStack(spacing: 10) {
                     Text("Dawam")
                         .font(.custom("Georgia-Bold", size: 52))
                         .foregroundStyle(accent)
                         .kerning(-1)
-
                     Text("Petit, mais constant.")
                         .font(.custom("Georgia-Italic", size: 15))
                         .foregroundStyle(accent.opacity(0.75))
@@ -421,6 +546,7 @@ struct LiquidGlassSplash: View {
 }
 
 // MARK: - Splash classique (iOS 15–25)
+
 struct ClassicSplash: View {
     private let bg     = Color(red: 0.961, green: 0.929, blue: 0.878)
     private let accent = Color(red: 0.729, green: 0.459, blue: 0.090)
