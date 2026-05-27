@@ -1107,6 +1107,171 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 @media (prefers-reduced-motion:no-preference){
   [data-theme="tarbiya"] .t-card,[data-theme="tarbiya"] .t-btn,[data-theme="tarbiya"] .t-hero{transition:background-color .3s ease,color .3s ease;}
 }
+
+/* ════════════════════════════════════════════════════════
+   PONT DAWAM → TARBIYA
+   Remplace les variables CSS Dawam par les tokens Tarbiya
+   + overrides des composants à valeurs hardcodées
+   ════════════════════════════════════════════════════════ */
+
+/* 1 ── Variables Dawam remplacées par les tokens Tarbiya */
+[data-theme="tarbiya"] {
+  --bg:            var(--t-bg);
+  --bg-card:       #ffffff;
+  --bg-glass:      rgba(246,244,255,0.88);
+  --accent:        var(--t-accent);
+  --accent-dark:   var(--t-accent);
+  --accent-light:  var(--t-accent-soft);
+  --text:          var(--t-ink);
+  --text-secondary:var(--t-muted);
+  --text-light:    rgba(24,16,37,0.38);
+  --green:         var(--t-success);
+  --green-light:   #DEEFE3;
+  --border:        var(--t-line);
+  --border-light:  rgba(0,0,0,0.03);
+  --shadow:        var(--t-card-shadow);
+  --radius:        var(--t-radius);
+  --overlay:       rgba(24,16,37,0.55);
+  --font-display:  var(--t-font-title);
+  --font-body:     var(--t-font-body);
+  --glass-bg:      rgba(255,255,255,0.88);
+  --glass-shadow:  0 14px 18px -8px color-mix(in srgb,var(--t-accent) 18%,transparent),0 0 1px rgba(0,0,0,.06);
+  --glass-border:  rgba(255,255,255,0.7);
+  --glass-shine:   linear-gradient(to bottom,rgba(255,255,255,.6),rgba(255,255,255,0));
+  --glass-glow:    radial-gradient(ellipse,rgba(246,244,255,.7),rgba(246,244,255,0));
+}
+
+/* 2 ── Hero écran Chemin → gradient pleine largeur */
+[data-theme="tarbiya"] .path-hero {
+  background: var(--t-hero-grad);
+  padding-bottom: 88px;
+  margin-bottom: -64px;
+  border-bottom-left-radius: var(--t-radius);
+  border-bottom-right-radius: var(--t-radius);
+  overflow: hidden;
+  position: relative;
+}
+[data-theme="tarbiya"] .path-hero::after {
+  content:'';position:absolute;width:220px;height:220px;top:-80px;right:-60px;
+  border-radius:50%;background:rgba(255,255,255,.10);pointer-events:none;
+}
+[data-theme="tarbiya"] .path-hero-name,
+[data-theme="tarbiya"] .path-prog-label { color:#fff; }
+[data-theme="tarbiya"] .path-hero-motiv { color:rgba(255,255,255,.82); }
+[data-theme="tarbiya"] .path-hero-chip { background:rgba(255,255,255,.18) !important;border-color:rgba(255,255,255,.28) !important; }
+[data-theme="tarbiya"] .path-hero-chip span { color:#fff !important; }
+[data-theme="tarbiya"] .path-hero-sep { background:rgba(255,255,255,.25); }
+[data-theme="tarbiya"] .path-prog-right { color:rgba(255,255,255,.72); }
+[data-theme="tarbiya"] .path-prog-bar { background:rgba(255,255,255,.22); }
+
+/* 3 ── Cards → blanches, ombre teintée, grand radius */
+[data-theme="tarbiya"] .card {
+  background:#fff !important;
+  border:none !important;
+  box-shadow:var(--t-card-shadow) !important;
+}
+[data-theme="tarbiya"] .stats-card {
+  background:#fff;border:none;
+  box-shadow:var(--t-card-shadow);
+}
+[data-theme="tarbiya"] .prog-week-card {
+  background:#fff !important;border:none !important;
+  border-left:4px solid var(--t-accent) !important;
+  box-shadow:var(--t-card-shadow) !important;
+}
+[data-theme="tarbiya"] .next-action-card {
+  background:var(--t-warm-grad) !important;
+  border:none !important;color:#fff;
+}
+[data-theme="tarbiya"] .next-action-label { color:rgba(255,255,255,.9) !important; }
+[data-theme="tarbiya"] .next-action-title,[data-theme="tarbiya"] .next-action-sub { color:#fff; }
+[data-theme="tarbiya"] .next-action-xp { color:rgba(255,255,255,.9); }
+[data-theme="tarbiya"] .next-action-icon { background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.15); }
+
+/* 4 ── Bouton primaire */
+[data-theme="tarbiya"] .btn-primary {
+  background:var(--t-accent) !important;
+  border-radius:var(--t-radius-btn) !important;
+  font-weight:800;height:50px;
+  box-shadow:none !important;color:#fff !important;
+}
+
+/* 5 ── Period cards (pcard) — valeurs hardcodées → override complet */
+[data-theme="tarbiya"] .pcard {
+  background:#fff !important;
+  border:1px solid rgba(0,0,0,.06) !important;
+  box-shadow:0 4px 12px -4px color-mix(in srgb,var(--t-accent) 16%,transparent) !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+}
+[data-theme="tarbiya"] .pcard.active {
+  background:var(--t-accent) !important;
+  border-color:transparent !important;
+  box-shadow:0 8px 20px -6px color-mix(in srgb,var(--t-accent) 45%,transparent) !important;
+}
+[data-theme="tarbiya"] .pcard.active .pcard-frac { color:rgba(255,255,255,.85) !important; }
+[data-theme="tarbiya"] .pcard.done { background:#fff !important;border-color:rgba(0,0,0,.04) !important; }
+[data-theme="tarbiya"] .pcard-fill { background:var(--t-accent) !important; }
+[data-theme="tarbiya"] .pcard.active .pcard-fill { background:rgba(255,255,255,.55) !important; }
+[data-theme="tarbiya"] .pcard-bar { background:rgba(0,0,0,.06) !important; }
+[data-theme="tarbiya"] .pcard.active .pcard-bar { background:rgba(255,255,255,.22) !important; }
+
+/* 6 ── Nav bas → pill flottante */
+[data-theme="tarbiya"] #bottom-nav {
+  justify-content:center;
+  background:transparent !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  padding-bottom:max(20px,env(safe-area-inset-bottom));
+}
+[data-theme="tarbiya"] #bottom-nav.scrolled {
+  background:transparent !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+}
+[data-theme="tarbiya"] #bottom-nav::before { display:none; }
+[data-theme="tarbiya"] #nav-indicator {
+  background:var(--t-accent) !important;
+  border-radius:var(--t-pill) !important;
+  border:none !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  box-shadow:0 6px 20px -4px color-mix(in srgb,var(--t-accent) 45%,transparent) !important;
+}
+[data-theme="tarbiya"] .nav-tab.active svg { stroke:#fff !important; }
+[data-theme="tarbiya"] .nav-tab.active span { color:#fff !important; }
+
+/* 7 ── Profil hero → gradient */
+[data-theme="tarbiya"] .profil-hero {
+  background:var(--t-hero-grad) !important;
+  border:none !important;color:#fff;
+  overflow:hidden;position:relative;
+}
+[data-theme="tarbiya"] .profil-hero::after {
+  content:'';position:absolute;width:180px;height:180px;top:-60px;right:-50px;
+  border-radius:50%;background:rgba(255,255,255,.10);pointer-events:none;
+}
+[data-theme="tarbiya"] .profil-hero-name { color:#fff; }
+[data-theme="tarbiya"] .profil-hero-avatar {
+  background:rgba(255,255,255,.22) !important;
+  box-shadow:0 4px 20px rgba(0,0,0,.18),0 0 0 3px rgba(255,255,255,.25) !important;
+  color:#fff !important;
+}
+[data-theme="tarbiya"] .profil-hero-palier-badge {
+  background:rgba(255,255,255,.18) !important;
+  border:1px solid rgba(255,255,255,.3) !important;color:#fff !important;
+}
+[data-theme="tarbiya"] .profil-hero-streak {
+  background:rgba(255,255,255,.15) !important;
+  border:1px solid rgba(255,255,255,.25) !important;
+}
+[data-theme="tarbiya"] .profil-hero-streak-num,
+[data-theme="tarbiya"] .profil-hero-streak-label,
+[data-theme="tarbiya"] .profil-hero-streak-sub { color:#fff; }
+
+/* 8 ── Menu profil */
+[data-theme="tarbiya"] .profil-menu {
+  background:#fff !important;border:none !important;
+  box-shadow:var(--t-card-shadow) !important;
+}
+[data-theme="tarbiya"] .profil-menu-item:active { background:var(--t-accent-soft) !important; }
+[data-theme="tarbiya"] .toggle-switch.on { background:var(--t-accent) !important; }
 </style>
 <!-- Firebase SDK (compat) -->
 <!-- tarbiya-theme.js — doit être synchrone dans <head> pour éviter le FOUC -->
