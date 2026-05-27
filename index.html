@@ -1144,26 +1144,23 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* 2 ── body.t-app : Dawam use une nav sticky, pas une tabbar flottante */
 [data-theme="tarbiya"] body.t-app { padding-bottom: 0 !important; min-height: unset !important; }
 
-/* 3 ── Hero écran Chemin → gradient pleine largeur */
+/* 3 ── Hero écran Chemin → gradient + layout injecté via JS */
 [data-theme="tarbiya"] .path-hero {
   background: var(--t-hero-grad);
+  padding-left: 22px;
+  padding-right: 22px;
   border-bottom-left-radius: var(--t-radius);
   border-bottom-right-radius: var(--t-radius);
   overflow: hidden;
   position: relative;
 }
+/* Masquer tous les enfants Dawam — seul .t-hero-overlay reste visible */
+[data-theme="tarbiya"] .path-hero > :not(.t-hero-overlay) { display:none !important; }
+/* Blob décoratif */
 [data-theme="tarbiya"] .path-hero::after {
   content:'';position:absolute;width:220px;height:220px;top:-80px;right:-60px;
   border-radius:50%;background:rgba(255,255,255,.10);pointer-events:none;
 }
-[data-theme="tarbiya"] .path-hero-name,
-[data-theme="tarbiya"] .path-prog-label { color:#fff; }
-[data-theme="tarbiya"] .path-hero-motiv { color:rgba(255,255,255,.82); }
-[data-theme="tarbiya"] .path-hero-chip { background:rgba(255,255,255,.18) !important;border-color:rgba(255,255,255,.28) !important; }
-[data-theme="tarbiya"] .path-hero-chip span { color:#fff !important; }
-[data-theme="tarbiya"] .path-hero-sep { background:rgba(255,255,255,.25); }
-[data-theme="tarbiya"] .path-prog-right { color:rgba(255,255,255,.72); }
-[data-theme="tarbiya"] .path-prog-bar { background:rgba(255,255,255,.22); }
 
 /* 3 ── Cards → blanches, ombre teintée, grand radius */
 [data-theme="tarbiya"] .card {
@@ -4063,9 +4060,56 @@ function selectThemeFromApparence(key){applyTheme(key);renderApparenceModal();}
 function selectTarbiyaPalette(key){window.tarbiyaTheme.setPalette(key);renderApparenceModal();}
 function toggleTarbiyaTheme(){
   const current=window.tarbiyaTheme.get().theme;
-  window.tarbiyaTheme.setTheme(current==='tarbiya'?'default':'tarbiya');
+  const next=current==='tarbiya'?'default':'tarbiya';
+  window.tarbiyaTheme.setTheme(next);
+  if(next==='tarbiya') renderTarbiyaHero(); else removeTarbiyaHero();
   renderApparenceModal();
 }
+
+// ── Hero Tarbiya injecté ──
+function removeTarbiyaHero(){
+  document.querySelectorAll('.t-hero-overlay').forEach(function(el){el.remove();});
+}
+function renderTarbiyaHero(){
+  if(window.tarbiyaTheme.get().theme!=='tarbiya') return;
+  removeTarbiyaHero();
+  var hero=document.querySelector('.path-hero');
+  if(!hero) return;
+  var name=(document.getElementById('hero-name')||{}).textContent||S.name||'toi';
+  var motiv=(document.getElementById('hero-motiv')||{}).textContent||'Allah aime les actions les plus régulières, même petites.';
+  var chip=(document.getElementById('hero-chip')||{}).textContent||'';
+  var constance=(document.getElementById('pill-constance')||{}).textContent||'';
+  var streak=S.totalDays||0;
+  var now=new Date();
+  var DAYS=['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'];
+  var MONTHS=['JAN','FÉV','MAR','AVR','MAI','JUIN','JUIL','AOÛT','SEP','OCT','NOV','DÉC'];
+  var dateMeta=DAYS[now.getDay()]+' '+now.getDate()+' '+MONTHS[now.getMonth()];
+  var overlay=document.createElement('div');
+  overlay.className='t-hero-overlay';
+  overlay.style.cssText='display:flex;flex-direction:column;position:relative;z-index:1';
+  overlay.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.78);margin-bottom:14px">'+
+      '<span>'+dateMeta+'</span><span>'+constance+'</span>'+
+    '</div>'+
+    '<p style="font-size:13px;font-weight:500;color:rgba(255,255,255,.8);margin:0 0 2px;line-height:1.4">As-salāmu ʿalaykum,</p>'+
+    '<h1 style="font-family:var(--t-font-title);font-weight:800;font-size:42px;line-height:1;letter-spacing:-1.5px;color:#fff;margin:4px 0 10px">'+
+      name+'<span style="color:var(--t-warm)">.</span>'+
+    '</h1>'+
+    '<p style="font-size:13px;font-style:italic;color:rgba(255,255,255,.85);line-height:1.5;margin:0 0 18px;max-width:290px">'+motiv+'</p>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
+      '<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.13);color:var(--t-warm);font-weight:700;font-size:12px">🔥 '+streak+'j de série</span>'+
+      (chip?'<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-weight:700;font-size:12px">'+chip+'</span>':'')+
+    '</div>';
+  hero.insertBefore(overlay,hero.firstChild);
+}
+// MutationObserver : re-rend le hero Tarbiya quand l'app met à jour le nom ou la motivation
+(function(){
+  var el=document.getElementById('hero-name');
+  if(!el) return;
+  new MutationObserver(function(){
+    if(window.tarbiyaTheme.get().theme==='tarbiya') renderTarbiyaHero();
+  }).observe(el,{childList:true,characterData:true,subtree:true});
+})();
 function showApparenceModal(){renderApparenceModal();document.getElementById('apparence-modal').classList.add('show');}
 function closeApparenceModal(){document.getElementById('apparence-modal').classList.remove('show');}
 document.getElementById('apparence-modal').addEventListener('click',function(e){if(e.target===this)closeApparenceModal();});
