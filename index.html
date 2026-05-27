@@ -39,7 +39,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Dawam — Petit, mais constant.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #f5ede0; --bg-card: #faeeda; --bg-glass: rgba(245,237,224,0.8);
@@ -998,14 +998,153 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .auth-verify-desc strong{color:var(--text);font-weight:600;}
 .auth-verify-resend{background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-light);padding:8px;width:100%;text-align:center;margin-top:4px;}
 .auth-verify-resend:active{opacity:.6;}
+/* ── Modal Apparence ── */
+#apparence-modal{position:fixed;inset:0;background:var(--overlay);z-index:350;display:none;align-items:flex-end;}
+#apparence-modal.show{display:flex;}
+.apparence-sheet{background:var(--bg);border-radius:28px 28px 0 0;width:100%;max-width:430px;margin:0 auto;max-height:90vh;overflow-y:auto;animation:fadeUp .22s ease;}
+.apparence-tarbiya-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);border:.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:background .15s;}
+.apparence-tarbiya-row:active{background:rgba(186,117,23,.06);}
+.apparence-palette-cell{cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid transparent;transition:border-color .15s;}
+.apparence-palette-cell.active{border-color:var(--text);}
+.apparence-palette-swatch{height:30px;position:relative;}
+.apparence-palette-dot{position:absolute;right:5px;bottom:5px;width:12px;height:12px;border-radius:50%;}
+.apparence-palette-name{font-size:9px;font-weight:700;color:var(--text);padding:4px 3px;text-align:center;line-height:1.2;}
+</style>
+
+<!-- tarbiya-theme.css intégré inline -->
+<style id="tarbiya-theme-css">
+/* ============================================================================
+   TOKENS — palette par défaut "Violet & Coral"
+   ============================================================================ */
+[data-theme="tarbiya"] {
+  --t-accent:#5B3FE4;--t-accent-soft:#EFEAFE;--t-warm:#FF8A3D;--t-coral:#FF6B6B;
+  --t-hero-grad:linear-gradient(160deg,#6E4DEC 0%,#4A2FE1 65%,#3D24D6 100%);
+  --t-warm-grad:linear-gradient(135deg,#FF8A3D 0%,#FF6B6B 60%,#E94B7A 100%);
+  --t-bg:#F6F4FF;--t-ink:#181025;--t-muted:#7A748A;--t-line:rgba(0,0,0,.06);
+  --t-success:#1F8A5B;--t-danger:#E94B40;
+  --t-page-pad-x:18px;--t-card-gap:14px;--t-card-pad:18px;--t-hero-pad:16px 22px 90px;
+  --t-radius:26px;--t-radius-sm:14px;--t-radius-btn:16px;--t-pill:999px;
+  --t-card-shadow:0 14px 18px -8px color-mix(in srgb,var(--t-accent) 28%,transparent),0 0 1px 0 color-mix(in srgb,var(--t-accent) 5%,transparent);
+  --t-font-title:"Plus Jakarta Sans",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --t-font-body:"Plus Jakarta Sans",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --t-font-arabic:"Amiri","Scheherazade New",serif;
+}
+[data-theme="tarbiya"][data-palette="emeraldAmber"]{--t-accent:#1F8A5B;--t-accent-soft:#DEEFE3;--t-warm:#FFB23A;--t-coral:#FF8A3D;--t-hero-grad:linear-gradient(160deg,#1F8A5B 0%,#15673F 60%,#0E5C3A 100%);--t-warm-grad:linear-gradient(135deg,#FFD16B 0%,#FFB23A 55%,#FF8A3D 100%);}
+[data-theme="tarbiya"][data-palette="rubyGold"]{--t-accent:#C8344B;--t-accent-soft:#FBE4E6;--t-warm:#E2B23A;--t-coral:#C29230;--t-hero-grad:linear-gradient(160deg,#D63A55 0%,#B12A45 60%,#8A1C32 100%);--t-warm-grad:linear-gradient(135deg,#F0CE5A 0%,#E2B23A 55%,#C29230 100%);}
+[data-theme="tarbiya"][data-palette="midnightLilac"]{--t-accent:#2B2569;--t-accent-soft:rgba(162,139,255,.18);--t-warm:#D9B26F;--t-coral:#6B4DFF;--t-hero-grad:linear-gradient(160deg,#2B2569 0%,#1A1545 60%,#0E0D24 100%);--t-warm-grad:linear-gradient(135deg,#D9B26F 0%,#A28BFF 60%,#6B4DFF 100%);}
+[data-theme="tarbiya"][data-palette="oceanMint"]{--t-accent:#0B6BB3;--t-accent-soft:#DCEEF8;--t-warm:#4DCCE0;--t-coral:#38B6CC;--t-hero-grad:linear-gradient(160deg,#1689CB 0%,#0E78BD 60%,#0B6BB3 100%);--t-warm-grad:linear-gradient(135deg,#86E1B8 0%,#4DCCE0 60%,#38B6CC 100%);}
+/* Layout global */
+[data-theme="tarbiya"] .t-app{background:var(--t-bg);color:var(--t-ink);font-family:var(--t-font-body);-webkit-font-smoothing:antialiased;min-height:100dvh;padding-bottom:110px;}
+[data-theme="tarbiya"] .t-page{padding-left:var(--t-page-pad-x);padding-right:var(--t-page-pad-x);display:flex;flex-direction:column;gap:var(--t-card-gap);}
+/* Hero */
+[data-theme="tarbiya"] .t-hero{position:relative;overflow:hidden;color:#fff;background:var(--t-hero-grad);padding:var(--t-hero-pad);border-bottom-left-radius:var(--t-radius);border-bottom-right-radius:var(--t-radius);margin-bottom:-64px;}
+[data-theme="tarbiya"] .t-hero--seance{background:var(--t-warm-grad);border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:-14px;}
+[data-theme="tarbiya"] .t-hero__deco{position:absolute;inset:0;pointer-events:none;}
+[data-theme="tarbiya"] .t-hero__deco::before,[data-theme="tarbiya"] .t-hero__deco::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.10);}
+[data-theme="tarbiya"] .t-hero__deco::before{width:200px;height:200px;top:-70px;right:-50px;}
+[data-theme="tarbiya"] .t-hero__deco::after{width:130px;height:130px;bottom:60px;left:-40px;filter:blur(8px);background:rgba(255,255,255,.12);}
+[data-theme="tarbiya"] .t-hero__title{font-family:var(--t-font-title);font-weight:800;font-size:42px;line-height:1;letter-spacing:-1.5px;margin:4px 0 8px;}
+[data-theme="tarbiya"] .t-hero__title-dot{color:var(--t-warm);}
+[data-theme="tarbiya"] .t-hero__kicker{font-size:13px;opacity:.8;font-weight:600;}
+[data-theme="tarbiya"] .t-hero__quote{font-size:13px;font-style:italic;opacity:.88;line-height:1.45;margin:8px 0 0;max-width:290px;}
+[data-theme="tarbiya"] .t-hero__meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;opacity:.85;}
+/* Card */
+[data-theme="tarbiya"] .t-card{background:#fff;border-radius:var(--t-radius);padding:var(--t-card-pad);box-shadow:var(--t-card-shadow);position:relative;}
+[data-theme="tarbiya"] .t-card--accent{background:var(--t-accent);color:#fff;}
+[data-theme="tarbiya"] .t-card--warm{background:var(--t-warm-grad);color:#fff;position:relative;overflow:hidden;}
+[data-theme="tarbiya"] .t-card--sm{border-radius:var(--t-radius-sm);padding:14px;}
+[data-theme="tarbiya"] .t-card__kicker{font-size:10px;font-weight:800;color:var(--t-accent);letter-spacing:1.6px;text-transform:uppercase;}
+[data-theme="tarbiya"] .t-card__title{font-family:var(--t-font-title);font-weight:800;font-size:22px;letter-spacing:-.4px;line-height:1.15;}
+/* Chip */
+[data-theme="tarbiya"] .t-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--t-pill);background:var(--t-accent-soft);color:var(--t-accent);font-weight:700;font-size:12px;}
+[data-theme="tarbiya"] .t-chip--inverse{background:rgba(255,255,255,.18);color:#fff;}
+[data-theme="tarbiya"] .t-chip--warm{background:rgba(255,255,255,.13);color:var(--t-warm);}
+/* Button */
+[data-theme="tarbiya"] .t-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:var(--t-radius-btn);background:var(--t-accent);color:#fff;font-weight:800;font-size:15px;letter-spacing:.2px;font-family:inherit;border:0;cursor:pointer;width:100%;transition:transform .12s ease,opacity .12s ease;}
+[data-theme="tarbiya"] .t-btn:active{transform:scale(.98);opacity:.92;}
+[data-theme="tarbiya"] .t-btn--warm{background:#fff;color:var(--t-coral);}
+[data-theme="tarbiya"] .t-btn--ghost{background:var(--t-accent-soft);color:var(--t-accent);}
+[data-theme="tarbiya"] .t-btn--icon{width:50px;height:50px;padding:0;flex-shrink:0;}
+/* Ring */
+[data-theme="tarbiya"] .t-ring{display:inline-block;position:relative;color:var(--t-accent);}
+[data-theme="tarbiya"] .t-ring__track{stroke:var(--t-accent-soft);}
+[data-theme="tarbiya"] .t-ring__bar{stroke:currentColor;transition:stroke-dashoffset .4s ease;}
+[data-theme="tarbiya"] .t-ring__center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+/* Stat */
+[data-theme="tarbiya"] .t-stat{flex:1;background:#fff;border-radius:var(--t-radius-sm);padding:14px;box-shadow:var(--t-card-shadow);}
+[data-theme="tarbiya"] .t-stat__value{font-family:var(--t-font-title);font-weight:800;font-size:24px;letter-spacing:-.5px;margin-top:8px;}
+[data-theme="tarbiya"] .t-stat__label{font-size:11px;font-weight:700;color:var(--t-muted);letter-spacing:.4px;text-transform:uppercase;margin-top:2px;}
+[data-theme="tarbiya"] .t-stat__sub{font-size:11px;font-weight:700;color:var(--t-accent);margin-top:4px;}
+/* Settings row */
+[data-theme="tarbiya"] .t-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--t-line);}
+[data-theme="tarbiya"] .t-row:last-child{border-bottom:0;}
+[data-theme="tarbiya"] .t-row__icon{width:36px;height:36px;border-radius:12px;background:var(--t-accent-soft);color:var(--t-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+[data-theme="tarbiya"] .t-row__label{flex:1;font-weight:700;font-size:15px;}
+[data-theme="tarbiya"] .t-row--danger .t-row__icon{background:rgba(233,75,64,.10);color:var(--t-danger);}
+[data-theme="tarbiya"] .t-row--danger .t-row__label{color:var(--t-danger);}
+/* Arabic */
+[data-theme="tarbiya"] .t-arabic{font-family:var(--t-font-arabic);font-size:24px;line-height:1.9;direction:rtl;text-align:right;}
+/* Tabbar */
+[data-theme="tarbiya"] .t-tabbar{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center;z-index:50;pointer-events:none;}
+[data-theme="tarbiya"] .t-tabbar__pill{pointer-events:auto;display:flex;align-items:center;gap:4px;padding:8px 10px;border-radius:var(--t-pill);background:rgba(255,255,255,.92);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);border:1px solid rgba(255,255,255,.6);box-shadow:0 18px 40px -16px rgba(20,18,40,.30);}
+[data-theme="tarbiya"] .t-tabbar__btn{display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:var(--t-pill);font-weight:700;font-size:12px;color:var(--t-muted);font-family:inherit;background:transparent;border:0;cursor:pointer;}
+[data-theme="tarbiya"] .t-tabbar__btn[aria-current="page"]{background:rgba(255,255,255,.85);color:var(--t-accent);padding:10px 18px;}
+/* Constance grid */
+[data-theme="tarbiya"] .t-grid-30{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;}
+[data-theme="tarbiya"] .t-grid-30__cell{width:100%;aspect-ratio:1;border-radius:7px;background:var(--t-accent-soft);}
+[data-theme="tarbiya"] .t-grid-30__cell[data-state="complete"]{background:var(--t-success);}
+[data-theme="tarbiya"] .t-grid-30__cell[data-state="partial"]{background:var(--t-warm);}
+[data-theme="tarbiya"] .t-grid-30__cell[data-state="today"]{background:transparent;border:2px solid var(--t-accent);}
+/* Flex helpers */
+[data-theme="tarbiya"] .t-flex{display:flex;}
+[data-theme="tarbiya"] .t-flex-col{display:flex;flex-direction:column;}
+[data-theme="tarbiya"] .t-gap-s{gap:8px;}
+[data-theme="tarbiya"] .t-gap-m{gap:12px;}
+[data-theme="tarbiya"] .t-gap-l{gap:14px;}
+[data-theme="tarbiya"] .t-between{justify-content:space-between;}
+[data-theme="tarbiya"] .t-center{align-items:center;}
+/* Transitions lors du switch */
+@media (prefers-reduced-motion:no-preference){
+  [data-theme="tarbiya"] .t-card,[data-theme="tarbiya"] .t-btn,[data-theme="tarbiya"] .t-hero{transition:background-color .3s ease,color .3s ease;}
+}
 </style>
 <!-- Firebase SDK (compat) -->
+<!-- tarbiya-theme.js — doit être synchrone dans <head> pour éviter le FOUC -->
+<script>
+(function(){
+  'use strict';
+  var STORAGE_KEY='app.theme';
+  var STORAGE_PALETTE_KEY='app.theme.palette';
+  var THEMES=['default','tarbiya'];
+  var PALETTES=['violetCoral','emeraldAmber','rubyGold','midnightLilac','oceanMint'];
+  function read(key,fallback,allowed){try{var v=localStorage.getItem(key);if(v&&(!allowed||allowed.indexOf(v)!==-1))return v;}catch(_){}return fallback;}
+  function write(key,v){try{localStorage.setItem(key,v);}catch(_){}}
+  var subs=[];
+  function emit(){var s=api.get();for(var i=0;i<subs.length;i++){try{subs[i](s);}catch(_){}}}
+  function apply(theme,palette){
+    var html=document.documentElement;
+    if(theme==='tarbiya'){html.setAttribute('data-theme','tarbiya');html.setAttribute('data-palette',palette);}
+    else{html.removeAttribute('data-theme');html.removeAttribute('data-palette');}
+  }
+  var api={
+    THEMES:THEMES.slice(),
+    PALETTES:PALETTES.slice(),
+    get:function(){return{theme:read(STORAGE_KEY,'default',THEMES),palette:read(STORAGE_PALETTE_KEY,'violetCoral',PALETTES)};},
+    setTheme:function(theme){if(THEMES.indexOf(theme)===-1)return;write(STORAGE_KEY,theme);var s=api.get();apply(s.theme,s.palette);emit();},
+    setPalette:function(palette){if(PALETTES.indexOf(palette)===-1)return;write(STORAGE_PALETTE_KEY,palette);var s=api.get();apply(s.theme,s.palette);emit();},
+    subscribe:function(fn){subs.push(fn);return function(){subs=subs.filter(function(f){return f!==fn;});};},
+  };
+  var initial=api.get();
+  apply(initial.theme,initial.palette);
+  window.tarbiyaTheme=api;
+})();
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
-<body>
+<body class="t-app">
 <div id="app">
 
 <!-- LOADER (couvre tout pendant la vérification Firebase) -->
@@ -1369,7 +1508,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="profil-menu fade-up" style="animation-delay:.3s">
       <div class="profil-menu-item" onclick="toggleNotifs()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔔</div><span class="profil-menu-text">Rappels quotidiens</span><div class="toggle-switch" id="notif-toggle"></div></div>
       <div class="profil-menu-item" onclick="toggleDarkMode()"><div class="profil-menu-icon" style="background:rgba(15,25,35,.1)">🌙</div><span class="profil-menu-text">Mode sombre</span><div class="toggle-switch" id="dark-toggle"></div></div>
-      <div class="profil-menu-item" onclick="showThemeModal()"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Changer le thème</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="showApparenceModal()"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Apparence</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showFeedbackModal()"><div class="profil-menu-icon" style="background:rgba(74,158,218,.1)">💬</div><span class="profil-menu-text">Donner mon avis</span><span class="profil-menu-arrow">›</span></div>
     </div>
@@ -1556,6 +1695,46 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="theme-grid" id="theme-grid"></div>
     <div style="padding:12px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom))">
       <button class="btn-primary" onclick="closeThemeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPARENCE MODAL -->
+<div id="apparence-modal">
+  <div class="apparence-sheet">
+    <div class="about-handle"></div>
+    <div style="padding:20px 20px 12px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text)">Apparence</div>
+      <button onclick="closeApparenceModal()" style="background:rgba(128,128,128,.12);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+
+    <!-- Section Tarbiya -->
+    <div style="padding:0 20px 16px">
+      <div class="profil-section-title" style="margin-bottom:10px">Interface</div>
+      <div class="apparence-tarbiya-row" onclick="toggleTarbiyaTheme()">
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--text)">Tarbiya gamifié ✦</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Direction artistique moderne</div>
+        </div>
+        <div class="toggle-switch" id="tarbiya-toggle"></div>
+      </div>
+      <div id="apparence-palette-wrap" style="display:none;margin-top:12px">
+        <div style="font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:10px">Palette de couleurs</div>
+        <div id="apparence-palette-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px"></div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="height:.5px;background:var(--border);margin:0 20px 16px"></div>
+
+    <!-- Section couleurs de base (thèmes existants) -->
+    <div style="padding:0 20px 4px">
+      <div class="profil-section-title" style="margin-bottom:4px">Couleur de base</div>
+    </div>
+    <div class="theme-grid" id="apparence-theme-grid"></div>
+
+    <div style="padding:12px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom))">
+      <button class="btn-primary" onclick="closeApparenceModal()">Fermer</button>
     </div>
   </div>
 </div>
@@ -3674,6 +3853,56 @@ function selectTheme(key){applyTheme(key);renderThemeGrid();}
 function showThemeModal(){renderThemeGrid();document.getElementById('theme-modal').classList.add('show');}
 function closeThemeModal(){document.getElementById('theme-modal').classList.remove('show');}
 document.getElementById('theme-modal').addEventListener('click',function(e){if(e.target===this)closeThemeModal();});
+
+// ═══ APPARENCE MODAL (Tarbiya + couleurs de base) ═══
+const PALETTES_META = {
+  violetCoral:  {name:'Violet',    accent:'#5B3FE4', warm:'#FF8A3D', soft:'#EFEAFE'},
+  emeraldAmber: {name:'Émeraude',  accent:'#1F8A5B', warm:'#FFB23A', soft:'#DEEFE3'},
+  rubyGold:     {name:'Rubis',     accent:'#C8344B', warm:'#E2B23A', soft:'#FBE4E6'},
+  midnightLilac:{name:'Minuit',    accent:'#2B2569', warm:'#D9B26F', soft:'rgba(162,139,255,.25)'},
+  oceanMint:    {name:'Océan',     accent:'#0B6BB3', warm:'#4DCCE0', soft:'#DCEEF8'},
+};
+
+function renderApparenceModal() {
+  const t = window.tarbiyaTheme.get();
+  const isTarbiya = t.theme === 'tarbiya';
+  const toggle = document.getElementById('tarbiya-toggle');
+  if (toggle) toggle.classList.toggle('on', isTarbiya);
+  const paletteWrap = document.getElementById('apparence-palette-wrap');
+  if (paletteWrap) paletteWrap.style.display = isTarbiya ? '' : 'none';
+  if (isTarbiya) {
+    const grid = document.getElementById('apparence-palette-grid');
+    if (grid) grid.innerHTML = Object.entries(PALETTES_META).map(([key, p]) =>
+      `<div class="apparence-palette-cell${key===t.palette?' active':''}" onclick="selectTarbiyaPalette('${key}')">
+        <div class="apparence-palette-swatch" style="background:${p.accent}">
+          <div class="apparence-palette-dot" style="background:${p.warm}"></div>
+        </div>
+        <div class="apparence-palette-name">${p.name}</div>
+      </div>`).join('');
+  }
+  const current = localStorage.getItem('dawam_theme') || 'default';
+  const cg = document.getElementById('apparence-theme-grid');
+  if (cg) cg.innerHTML = Object.entries(THEMES).map(([key,th]) =>
+    `<div class="theme-card${key===current?' active':''}" onclick="selectThemeFromApparence('${key}')">
+      <div class="theme-card-emoji">${th.emoji}</div>
+      <div class="theme-card-swatches">
+        <div class="theme-swatch" style="background:${th.bg}"></div>
+        <div class="theme-swatch" style="background:${th.accent}"></div>
+        <div class="theme-swatch" style="background:${th.green}"></div>
+      </div>
+      <div class="theme-card-name">${th.name}</div>
+    </div>`).join('');
+}
+function selectThemeFromApparence(key){applyTheme(key);renderApparenceModal();}
+function selectTarbiyaPalette(key){window.tarbiyaTheme.setPalette(key);renderApparenceModal();}
+function toggleTarbiyaTheme(){
+  const current=window.tarbiyaTheme.get().theme;
+  window.tarbiyaTheme.setTheme(current==='tarbiya'?'default':'tarbiya');
+  renderApparenceModal();
+}
+function showApparenceModal(){renderApparenceModal();document.getElementById('apparence-modal').classList.add('show');}
+function closeApparenceModal(){document.getElementById('apparence-modal').classList.remove('show');}
+document.getElementById('apparence-modal').addEventListener('click',function(e){if(e.target===this)closeApparenceModal();});
 
 // ═══ NOTIFICATIONS (Web Push) ═══
 // ⚠️  Remplace cette URL après avoir déployé le Worker Cloudflare
