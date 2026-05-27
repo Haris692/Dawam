@@ -1141,11 +1141,12 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   --glass-glow:    radial-gradient(ellipse,rgba(246,244,255,.7),rgba(246,244,255,0));
 }
 
-/* 2 ── Hero écran Chemin → gradient pleine largeur */
+/* 2 ── body.t-app : Dawam use une nav sticky, pas une tabbar flottante */
+[data-theme="tarbiya"] body.t-app { padding-bottom: 0 !important; min-height: unset !important; }
+
+/* 3 ── Hero écran Chemin → gradient pleine largeur */
 [data-theme="tarbiya"] .path-hero {
   background: var(--t-hero-grad);
-  padding-bottom: 88px;
-  margin-bottom: -64px;
   border-bottom-left-radius: var(--t-radius);
   border-bottom-right-radius: var(--t-radius);
   overflow: hidden;
