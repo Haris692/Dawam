@@ -1313,11 +1313,39 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .prog-week-card,
 [data-theme="tarbiya"] #path .notif-banner{display:none !important;}
 
-[data-theme="tarbiya"] .path-hero{padding-bottom:130px !important;padding-top:max(56px,calc(48px + var(--sat,0px))) !important;margin-bottom:-80px !important;}
+/* Bande fixe en haut : couvre la safe-area (encoche iOS) avec le violet */
+[data-theme="tarbiya"] body::before{
+  content:"";position:fixed;top:0;left:0;right:0;
+  height:env(safe-area-inset-top,0px);
+  background:linear-gradient(180deg,#6E4DEC 0%,#4A2FE1 100%);
+  z-index:50;pointer-events:none;
+}
+/* #app : violet en arrière-plan pour qu'il n'y ait pas de blanc au-dessus du hero */
+[data-theme="tarbiya"] #app{background:var(--t-hero-grad) !important;}
+
+/* Hero : plus compact + effets flou */
+[data-theme="tarbiya"] .path-hero{
+  padding-bottom:90px !important;
+  padding-top:max(32px,calc(24px + var(--sat,0px))) !important;
+  margin-bottom:-60px !important;
+  overflow:hidden !important;
+}
+[data-theme="tarbiya"] .path-hero::before{
+  content:"";position:absolute;width:200px;height:200px;
+  bottom:-50px;left:-60px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,200,90,.28) 0%,rgba(255,138,61,.10) 60%,transparent 100%);
+  filter:blur(28px);pointer-events:none;z-index:0;
+}
+[data-theme="tarbiya"] .path-hero::after{
+  width:240px !important;height:240px !important;
+  top:-90px !important;right:-70px !important;
+  background:radial-gradient(circle,rgba(255,255,255,.22) 0%,rgba(255,255,255,.08) 60%,transparent 100%) !important;
+  filter:blur(14px) !important;
+}
 [data-theme="tarbiya"] #path-body{display:flex;flex-direction:column;gap:16px;padding-top:0;position:relative;z-index:2;}
 
-[data-theme="tarbiya"] .t-hero-overlay h1{font-size:52px !important;letter-spacing:-2px !important;line-height:.95 !important;margin:6px 0 12px !important;}
-[data-theme="tarbiya"] .t-hero-overlay p:first-of-type{font-size:14px !important;margin-bottom:4px !important;}
+[data-theme="tarbiya"] .t-hero-overlay h1{font-size:46px !important;letter-spacing:-1.8px !important;line-height:.95 !important;margin:6px 0 10px !important;}
+[data-theme="tarbiya"] .t-hero-overlay p:first-of-type{font-size:13px !important;margin-bottom:2px !important;}
 
 [data-theme="tarbiya"] .next-action-card{padding:26px 22px !important;border-radius:26px !important;margin:0 4px !important;position:relative;overflow:hidden;}
 [data-theme="tarbiya"] .next-action-card::before{content:"";position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.10);top:-60px;right:-50px;pointer-events:none;}
@@ -1473,8 +1501,21 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   function emit(){var s=api.get();for(var i=0;i<subs.length;i++){try{subs[i](s);}catch(_){}}}
   function apply(theme,palette){
     var html=document.documentElement;
-    if(theme==='tarbiya'){html.setAttribute('data-theme','tarbiya');html.setAttribute('data-palette',palette);}
-    else{html.removeAttribute('data-theme');html.removeAttribute('data-palette');}
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(theme==='tarbiya'){
+      html.setAttribute('data-theme','tarbiya');
+      html.setAttribute('data-palette',palette);
+      if(meta){
+        if(!meta.dataset.tarbOrig) meta.dataset.tarbOrig=meta.getAttribute('content')||'';
+        meta.setAttribute('content','#5B3FE4');
+      }
+    } else {
+      html.removeAttribute('data-theme');
+      html.removeAttribute('data-palette');
+      if(meta && meta.dataset.tarbOrig){
+        meta.setAttribute('content',meta.dataset.tarbOrig);
+      }
+    }
   }
   var api={
     THEMES:THEMES.slice(),
