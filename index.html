@@ -1270,6 +1270,171 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 [data-theme="tarbiya"] .profil-menu-item:active { background:var(--t-accent-soft) !important; }
 [data-theme="tarbiya"] .toggle-switch.on { background:var(--t-accent) !important; }
+
+/* ============================================================================
+   v2 — Compléments 4 écrans : Home/Chemin, Invocations, Séance, Profil
+   ============================================================================ */
+
+/* État manqué pour la heatmap 30 jours */
+[data-theme="tarbiya"] .t-grid-30__cell[data-state="missed"]{background:#A28BFF;opacity:.55;}
+[data-theme="tarbiya"] .t-grid-30__cell[data-state="empty"]{background:#EFEAFE;opacity:.45;}
+
+/* ─── ÉCRAN 1 — HOME / CHEMIN (enrichissements) ─── */
+[data-theme="tarbiya"] .prog-mix-row,[data-theme="tarbiya"] .prog-mix-periods,[data-theme="tarbiya"] .path-pills,[data-theme="tarbiya"] .path-hero-sep{display:none !important;}
+
+[data-theme="tarbiya"] .t-prayer-strip{display:flex;justify-content:space-between;align-items:flex-end;gap:4px;padding:14px 0 0;margin-top:18px;border-top:1px solid rgba(255,255,255,.18);}
+[data-theme="tarbiya"] .t-prayer-strip__item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;border-radius:10px;flex:1;min-width:0;}
+[data-theme="tarbiya"] .t-prayer-strip__name{font-size:9.5px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.65);}
+[data-theme="tarbiya"] .t-prayer-strip__time{font-size:13px;font-weight:700;color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums;}
+[data-theme="tarbiya"] .t-prayer-strip__item--active{background:rgba(255,255,255,.14);}
+[data-theme="tarbiya"] .t-prayer-strip__item--active .t-prayer-strip__name,[data-theme="tarbiya"] .t-prayer-strip__item--active .t-prayer-strip__time{color:#fff;}
+
+[data-theme="tarbiya"] .t-progress-card{display:flex;align-items:center;gap:16px;background:#fff;border-radius:var(--t-radius);padding:18px;box-shadow:var(--t-card-shadow);}
+[data-theme="tarbiya"] .t-progress-card__ring{position:relative;flex-shrink:0;width:64px;height:64px;}
+[data-theme="tarbiya"] .t-progress-card__ring svg{display:block;transform:rotate(-90deg);}
+[data-theme="tarbiya"] .t-progress-card__ring-bg{fill:none;stroke:var(--t-accent-soft);stroke-width:6;}
+[data-theme="tarbiya"] .t-progress-card__ring-bar{fill:none;stroke:var(--t-accent);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.34,1.2,.64,1);}
+[data-theme="tarbiya"] .t-progress-card__ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--t-accent);font-family:var(--t-font-title);}
+[data-theme="tarbiya"] .t-progress-card__body{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0;}
+[data-theme="tarbiya"] .t-progress-card__title{font-family:var(--t-font-title);font-weight:800;font-size:17px;color:var(--t-ink);letter-spacing:-.3px;line-height:1.2;}
+[data-theme="tarbiya"] .t-progress-card__sub{font-size:13px;color:var(--t-muted);line-height:1.4;}
+[data-theme="tarbiya"] .t-progress-card__bar{height:3px;border-radius:999px;background:var(--t-accent-soft);overflow:hidden;margin-top:6px;}
+[data-theme="tarbiya"] .t-progress-card__bar-fill{height:100%;background:var(--t-accent);border-radius:999px;transition:width .6s ease;}
+
+[data-theme="tarbiya"] .t-seance-chips-row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px;}
+[data-theme="tarbiya"] .t-seance-chip{padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.22);color:#fff;font-size:11px;font-weight:700;letter-spacing:.2px;}
+
+[data-theme="tarbiya"] .next-action-card .btn-primary{background:#fff !important;color:var(--t-coral) !important;}
+
+/* ─── ÉCRAN 2 — INVOCATIONS ─── */
+[data-theme="tarbiya"] .t-invoc-header{display:flex;justify-content:space-between;align-items:flex-end;padding:18px 18px 6px;gap:12px;}
+[data-theme="tarbiya"] .t-invoc-header__left{display:flex;flex-direction:column;gap:2px;min-width:0;}
+[data-theme="tarbiya"] .t-invoc-header__kicker{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--t-muted);}
+[data-theme="tarbiya"] .t-invoc-header__title{font-family:var(--t-font-title);font-weight:800;font-size:26px;letter-spacing:-.5px;color:var(--t-ink);line-height:1.05;}
+[data-theme="tarbiya"] .t-invoc-header__meta{font-size:11px;font-weight:700;color:var(--t-muted);text-align:right;line-height:1.4;}
+[data-theme="tarbiya"] .t-invoc-header__meta strong{display:block;color:var(--t-accent);letter-spacing:1.2px;font-size:12px;}
+
+[data-theme="tarbiya"] .invoc-tabs-bar{background:transparent !important;border:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;padding:6px 18px 12px !important;gap:8px !important;box-shadow:none !important;display:flex !important;justify-content:flex-start !important;}
+[data-theme="tarbiya"] .invoc-tab{background:var(--t-accent-soft) !important;color:var(--t-accent) !important;border:none !important;border-radius:999px !important;font-weight:700 !important;font-size:13px !important;padding:10px 18px !important;flex:0 1 auto !important;letter-spacing:.1px;height:auto !important;}
+[data-theme="tarbiya"] .invoc-tab.active{background:var(--t-accent) !important;color:#fff !important;box-shadow:0 8px 18px -8px var(--t-accent) !important;}
+
+[data-theme="tarbiya"] .t-series-strip{display:flex;justify-content:space-between;align-items:center;background:var(--t-accent-soft);border-radius:var(--t-radius-sm);padding:10px 14px;margin:0 18px 12px;}
+[data-theme="tarbiya"] .t-series-strip__label{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--t-accent);display:flex;flex-direction:column;gap:2px;}
+[data-theme="tarbiya"] .t-series-strip__label small{font-weight:700;letter-spacing:.5px;text-transform:none;font-size:11px;color:var(--t-ink);}
+[data-theme="tarbiya"] .t-series-strip__xp{padding:5px 10px;border-radius:999px;background:var(--t-accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.3px;}
+
+[data-theme="tarbiya"] .invoc-card{background:#fff !important;border:none !important;border-radius:var(--t-radius) !important;padding:18px !important;margin:0 18px 12px !important;box-shadow:var(--t-card-shadow) !important;}
+[data-theme="tarbiya"] .t-invoc-card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;}
+[data-theme="tarbiya"] .t-invoc-card-head-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+[data-theme="tarbiya"] .t-invoc-card-ring{position:relative;width:38px;height:38px;flex-shrink:0;}
+[data-theme="tarbiya"] .t-invoc-card-ring svg{transform:rotate(-90deg);display:block;}
+[data-theme="tarbiya"] .t-invoc-card-ring-bg{fill:none;stroke:var(--t-accent-soft);stroke-width:4;}
+[data-theme="tarbiya"] .t-invoc-card-ring-bar{fill:none;stroke:var(--t-accent);stroke-width:4;stroke-linecap:round;}
+[data-theme="tarbiya"] .t-invoc-card-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--t-accent);font-family:var(--t-font-title);}
+[data-theme="tarbiya"] .t-invoc-card-titles{display:flex;flex-direction:column;gap:2px;min-width:0;}
+[data-theme="tarbiya"] .t-invoc-card-kicker{font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--t-muted);}
+[data-theme="tarbiya"] .t-invoc-card-title{font-family:var(--t-font-title);font-weight:800;font-size:15px;color:var(--t-ink);letter-spacing:-.2px;line-height:1.25;}
+[data-theme="tarbiya"] .t-invoc-card-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+[data-theme="tarbiya"] .t-invoc-icon-btn{width:34px;height:34px;border-radius:50%;background:var(--t-accent-soft);border:none;color:var(--t-accent);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .12s ease;font-size:14px;}
+[data-theme="tarbiya"] .t-invoc-icon-btn:active{transform:scale(.92);}
+[data-theme="tarbiya"] .t-invoc-arabic{font-family:var(--t-font-arabic);font-size:24px;line-height:1.95;direction:rtl;text-align:right;color:var(--t-ink);margin:6px 0 14px;}
+[data-theme="tarbiya"] .t-invoc-phonetic{font-size:13px;font-style:italic;color:var(--t-accent);line-height:1.5;margin-bottom:8px;}
+[data-theme="tarbiya"] .t-invoc-french{font-size:13.5px;color:var(--t-ink);line-height:1.55;}
+[data-theme="tarbiya"] .t-invoc-card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--t-line);}
+[data-theme="tarbiya"] .t-invoc-card-source{font-size:11px;font-style:italic;color:var(--t-muted);}
+[data-theme="tarbiya"] .t-invoc-card-done{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:999px;background:#DEEFE3;color:var(--t-success);font-size:11px;font-weight:800;letter-spacing:.2px;}
+
+/* ─── ÉCRAN 3 — SÉANCE GUIDÉE ─── */
+[data-theme="tarbiya"] #guided-screen{background:var(--t-bg) !important;}
+[data-theme="tarbiya"] .guided-header{background:var(--t-warm-grad) !important;color:#fff !important;flex-direction:column !important;align-items:stretch !important;gap:12px !important;padding:calc(14px + var(--sat,0px)) 22px 22px !important;border-bottom-left-radius:0 !important;border-bottom-right-radius:0 !important;position:relative;overflow:hidden;}
+[data-theme="tarbiya"] .guided-header::before{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.10);top:-60px;right:-40px;pointer-events:none;}
+[data-theme="tarbiya"] .guided-header::after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.10);bottom:-40px;left:-30px;pointer-events:none;filter:blur(6px);}
+[data-theme="tarbiya"] .guided-back{background:rgba(255,255,255,.25) !important;border:none !important;color:#fff !important;width:36px !important;height:36px !important;border-radius:50% !important;padding:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;position:relative;z-index:1;}
+[data-theme="tarbiya"] .guided-progress,[data-theme="tarbiya"] .guided-dots{display:none !important;}
+[data-theme="tarbiya"] .guided-xp-tag{background:rgba(255,255,255,.22) !important;color:#fff !important;border:none !important;position:relative;z-index:1;}
+[data-theme="tarbiya"] .t-guided-topbar{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;}
+[data-theme="tarbiya"] .t-guided-menu-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.22);border:none;color:#fff;font-size:18px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;letter-spacing:1px;padding:0;}
+[data-theme="tarbiya"] .t-guided-kicker{font-size:11px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,255,255,.85);position:relative;z-index:1;}
+[data-theme="tarbiya"] .t-guided-screen-title{font-family:var(--t-font-title);font-weight:800;font-size:26px;color:#fff;letter-spacing:-.5px;line-height:1;margin:-4px 0 2px;position:relative;z-index:1;}
+[data-theme="tarbiya"] .t-guided-stepper{display:flex;gap:14px;align-items:center;flex-wrap:wrap;position:relative;z-index:1;}
+[data-theme="tarbiya"] .t-guided-stepper__item{font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:rgba(255,255,255,.55);padding-bottom:3px;}
+[data-theme="tarbiya"] .t-guided-stepper__item--active{color:#fff;border-bottom:2px solid #fff;}
+
+[data-theme="tarbiya"] #guided-body{padding:24px 22px 16px !important;}
+[data-theme="tarbiya"] .t-guided-step-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-muted);text-align:center;margin-bottom:6px;}
+[data-theme="tarbiya"] .t-guided-step-title{font-family:var(--t-font-title);font-weight:800;font-size:24px;color:var(--t-ink);letter-spacing:-.4px;text-align:center;line-height:1.15;margin-bottom:6px;}
+[data-theme="tarbiya"] .t-guided-step-sub{font-size:13px;color:var(--t-muted);text-align:center;line-height:1.5;max-width:300px;margin:0 auto 18px;}
+[data-theme="tarbiya"] .t-guided-arabic{font-family:var(--t-font-arabic);font-size:28px;line-height:2;direction:rtl;text-align:center;color:var(--t-ink);margin:18px 0 14px;}
+[data-theme="tarbiya"] .t-guided-phonetic{font-size:14px;font-style:italic;color:var(--t-accent);text-align:center;line-height:1.55;margin-bottom:10px;}
+[data-theme="tarbiya"] .t-guided-french{font-size:14px;color:var(--t-ink);text-align:center;line-height:1.6;max-width:320px;margin:0 auto;}
+[data-theme="tarbiya"] .t-guided-source-row{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:14px;border-top:1px solid var(--t-line);}
+[data-theme="tarbiya"] .t-guided-source{font-size:12px;font-style:italic;color:var(--t-muted);}
+[data-theme="tarbiya"] .t-guided-source-actions{display:flex;gap:8px;}
+[data-theme="tarbiya"] .t-guided-source-actions button{width:36px;height:36px;border-radius:50%;background:var(--t-accent-soft);border:none;color:var(--t-accent);font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+
+[data-theme="tarbiya"] .guided-footer{display:flex !important;flex-direction:row !important;gap:12px !important;align-items:center !important;padding:14px 18px calc(16px + var(--sat,0px)) !important;background:var(--t-bg) !important;border-top:1px solid var(--t-line) !important;}
+[data-theme="tarbiya"] .t-guided-btn-back,[data-theme="tarbiya"] .t-guided-btn-pause{width:50px !important;height:50px !important;border-radius:50% !important;background:var(--t-accent-soft) !important;color:var(--t-accent) !important;border:none !important;flex-shrink:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;cursor:pointer;font-size:18px;font-weight:800;padding:0 !important;}
+[data-theme="tarbiya"] #guided-cta{flex:1 !important;border-radius:var(--t-radius-btn) !important;}
+
+/* ─── ÉCRAN 4 — PROFIL ─── */
+[data-theme="tarbiya"] .profil-header,[data-theme="tarbiya"] .stats-row,[data-theme="tarbiya"] .streak-dots,[data-theme="tarbiya"] .days-timeline,[data-theme="tarbiya"] .profil-edit-btn{display:none !important;}
+[data-theme="tarbiya"] .profil-hero > :not(.t-profil-hero-overlay){display:none !important;}
+[data-theme="tarbiya"] .profil-hero{padding:0 !important;min-height:auto !important;border-bottom-left-radius:var(--t-radius) !important;border-bottom-right-radius:var(--t-radius) !important;margin-bottom:0 !important;}
+[data-theme="tarbiya"] .profil-hero::before{content:"";position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.10);bottom:-20px;left:-40px;filter:blur(6px);pointer-events:none;}
+
+[data-theme="tarbiya"] .t-profil-hero-overlay{position:relative;z-index:1;display:flex;flex-direction:column;padding:calc(16px + var(--sat,0px)) 22px 22px;color:#fff;}
+[data-theme="tarbiya"] .t-profil-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+[data-theme="tarbiya"] .t-profil-topbar-label{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.85);}
+[data-theme="tarbiya"] .t-profil-share-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.22);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+[data-theme="tarbiya"] .t-profil-share-btn svg{width:16px;height:16px;}
+[data-theme="tarbiya"] .t-profil-id{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+[data-theme="tarbiya"] .t-profil-avatar{width:64px;height:64px;border-radius:50%;background:var(--t-warm-grad);color:#fff;font-family:var(--t-font-title);font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 18px -6px rgba(0,0,0,.35);}
+[data-theme="tarbiya"] .t-profil-id-body{display:flex;flex-direction:column;gap:6px;min-width:0;}
+[data-theme="tarbiya"] .t-profil-name{font-family:var(--t-font-title);font-weight:800;font-size:22px;color:#fff;letter-spacing:-.4px;line-height:1;}
+[data-theme="tarbiya"] .t-profil-chips-row{display:flex;gap:6px;flex-wrap:wrap;}
+[data-theme="tarbiya"] .t-profil-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-size:11px;font-weight:700;}
+[data-theme="tarbiya"] .t-profil-chip--warm{background:rgba(255,200,90,.22);color:#FFD06B;}
+
+[data-theme="tarbiya"] .t-xp-bar-block{padding:0 2px;margin-top:6px;}
+[data-theme="tarbiya"] .t-xp-bar-labels{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#fff;}
+[data-theme="tarbiya"] .t-xp-bar-labels .right{opacity:.75;}
+[data-theme="tarbiya"] .t-xp-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.22);margin:8px 0 0;overflow:hidden;}
+[data-theme="tarbiya"] .t-xp-bar__fill{height:100%;border-radius:999px;background:#fff;transition:width .6s cubic-bezier(.34,1.2,.64,1);}
+
+[data-theme="tarbiya"] .t-stats-row{display:flex;gap:10px;padding:0 18px;margin:16px 0 6px;}
+[data-theme="tarbiya"] .t-stat{flex:1;background:#fff;border-radius:var(--t-radius-sm);padding:13px 12px;box-shadow:var(--t-card-shadow);display:flex;flex-direction:column;gap:6px;min-width:0;}
+[data-theme="tarbiya"] .t-stat__icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+[data-theme="tarbiya"] .t-stat__icon--check{background:#DEEFE3;color:var(--t-success);}
+[data-theme="tarbiya"] .t-stat__icon--fire{background:#FFE6CF;color:var(--t-warm);}
+[data-theme="tarbiya"] .t-stat__icon--gauge{background:var(--t-accent-soft);color:var(--t-accent);}
+[data-theme="tarbiya"] .t-stat__value{font-family:var(--t-font-title);font-weight:800;font-size:20px;color:var(--t-ink);letter-spacing:-.4px;line-height:1;}
+[data-theme="tarbiya"] .t-stat__label{font-size:10px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--t-muted);line-height:1.3;}
+[data-theme="tarbiya"] .t-stat__sub{font-size:10px;font-weight:700;color:var(--t-muted);}
+
+[data-theme="tarbiya"] .profil-section-title{font-family:var(--t-font-title) !important;font-weight:800 !important;font-size:18px !important;color:var(--t-ink) !important;letter-spacing:-.3px !important;text-transform:none !important;padding:0 18px !important;margin:18px 0 10px !important;display:flex !important;justify-content:space-between !important;align-items:baseline !important;}
+[data-theme="tarbiya"] .profil-section-title-sub{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--t-muted);}
+
+[data-theme="tarbiya"] .t-heatmap-card{margin:0 18px;background:#fff;border-radius:var(--t-radius);padding:16px;box-shadow:var(--t-card-shadow);}
+[data-theme="tarbiya"] .t-heatmap-card .t-grid-30{margin-bottom:14px;}
+[data-theme="tarbiya"] .t-heatmap-legend{display:flex;flex-wrap:wrap;gap:14px;}
+[data-theme="tarbiya"] .t-heatmap-legend__item{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--t-muted);}
+[data-theme="tarbiya"] .t-heatmap-legend__dot{width:10px;height:10px;border-radius:3px;background:var(--t-accent-soft);}
+[data-theme="tarbiya"] .t-heatmap-legend__dot--complete{background:var(--t-success);}
+[data-theme="tarbiya"] .t-heatmap-legend__dot--partial{background:var(--t-warm);}
+[data-theme="tarbiya"] .t-heatmap-legend__dot--missed{background:#A28BFF;opacity:.7;}
+[data-theme="tarbiya"] .t-heatmap-legend__dot--today{background:transparent;border:2px solid var(--t-accent);}
+
+[data-theme="tarbiya"] .t-badges-section{padding:0 18px;margin-top:8px;}
+[data-theme="tarbiya"] .t-badges-row{display:flex;gap:10px;}
+[data-theme="tarbiya"] .t-badge-card{flex:1;background:#fff;border-radius:var(--t-radius-sm);padding:14px 12px;box-shadow:var(--t-card-shadow);display:flex;flex-direction:column;gap:6px;min-width:0;}
+[data-theme="tarbiya"] .t-badge-card--locked{opacity:.6;filter:grayscale(.5);}
+[data-theme="tarbiya"] .t-badge-card__icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff;}
+[data-theme="tarbiya"] .t-badge-card__icon--warm{background:var(--t-warm-grad);}
+[data-theme="tarbiya"] .t-badge-card__icon--accent{background:var(--t-accent);}
+[data-theme="tarbiya"] .t-badge-card__icon--locked{background:var(--t-accent-soft);color:var(--t-muted);}
+[data-theme="tarbiya"] .t-badge-card__title{font-family:var(--t-font-title);font-weight:800;font-size:12px;color:var(--t-ink);letter-spacing:-.1px;line-height:1.25;}
+[data-theme="tarbiya"] .t-badge-card__sub{font-size:11px;color:var(--t-muted);font-weight:700;}
+/* fin v2 */
 </style>
 <!-- Firebase SDK (compat) -->
 <!-- tarbiya-theme.js — doit être synchrone dans <head> pour éviter le FOUC -->
@@ -2847,6 +3012,9 @@ function renderPath(){
     body.innerHTML += `<div class="path-group-label past fade-up" style="animation-delay:.14s">Passé</div>`;
     pastCats.forEach((cat, si) => { body.innerHTML += renderSection(cat, si + 1, 'past'); });
   }
+
+  // Tarbiya v2 — injecte les cards spécifiques (progress ring + sous-chips séance)
+  if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
 }
 
 function toggleSection(h){const items=h.nextElementSibling;const hidden=items.style.display==="none";items.style.display=hidden?"flex":"none";if(hidden)items.style.flexDirection="column";}
@@ -2936,10 +3104,25 @@ function switchInvocTab(tab, el) {
   document.querySelectorAll('.invoc-tab').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
   renderInvocContent();
+  if(window.tarbiyaTheme && window.tarbiyaTheme.get().theme==='tarbiya' && typeof renderTarbiyaInvocHeader==='function'){
+    renderTarbiyaInvocHeader();
+  }
 }
 function renderInvocContent() {
   const el = document.getElementById('invoc-content');
   if (!el) return;
+  const isTarbiya = window.tarbiyaTheme && window.tarbiyaTheme.get().theme==='tarbiya';
+  if(isTarbiya){
+    let html = _tarbiyaSeriesStripHtml(_invocTab);
+    if(_invocTab==='dhikr'){
+      html += DHIKR_LIST.map((d,i)=>_tarbiyaInvocCardHtml(d,i,true)).join('');
+    } else {
+      const items=ADHKAR[_invocTab]||[];
+      html += items.map((a,i)=>_tarbiyaInvocCardHtml(a,i,false)).join('');
+    }
+    el.innerHTML = html;
+    return;
+  }
   if (_invocTab === 'dhikr') {
     el.innerHTML = `<div class="seance-launch-btn" onclick="openSeanceDhikr()">
       <span style="font-size:24px">📿</span>
@@ -2979,6 +3162,9 @@ function renderInvocations() {
     const tabs = ['matin','soir','dhikr'];
     t.classList.toggle('active', tabs[i] === _invocTab);
   });
+  if(window.tarbiyaTheme && window.tarbiyaTheme.get().theme==='tarbiya' && typeof renderTarbiyaInvocHeader==='function'){
+    renderTarbiyaInvocHeader();
+  }
   renderInvocContent();
 }
 
@@ -3154,6 +3340,9 @@ function renderProfil(){
     </div>`;
   }
   tl.innerHTML=tlHtml;
+
+  // Tarbiya v2 — injecte hero, stats, heatmap 30j, badges
+  if(typeof renderTarbiyaProfilOverlays==='function') renderTarbiyaProfilOverlays();
 }
 function openProfilEdit(){
   document.getElementById('edit-name-input').value=S.name||'';
@@ -4062,7 +4251,22 @@ function toggleTarbiyaTheme(){
   const current=window.tarbiyaTheme.get().theme;
   const next=current==='tarbiya'?'default':'tarbiya';
   window.tarbiyaTheme.setTheme(next);
-  if(next==='tarbiya') renderTarbiyaHero(); else removeTarbiyaHero();
+  if(next==='tarbiya'){
+    renderTarbiyaHero();
+    if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
+    if(typeof renderTarbiyaProfilOverlays==='function') renderTarbiyaProfilOverlays();
+    if(typeof renderTarbiyaInvocHeader==='function') renderTarbiyaInvocHeader();
+    if(typeof renderInvocContent==='function') renderInvocContent();
+  } else {
+    removeTarbiyaHero();
+    if(typeof removeTarbiyaProfilOverlays==='function') removeTarbiyaProfilOverlays();
+    if(typeof removeTarbiyaInvocHeader==='function') removeTarbiyaInvocHeader();
+    if(typeof removeTarbiyaGuidedInjections==='function') removeTarbiyaGuidedInjections();
+    // Nettoie aussi les injections path
+    document.querySelectorAll('#path-body .t-progress-card, #path-body .t-seance-chips-row').forEach(function(el){el.remove();});
+    // Re-render invocations en mode default
+    if(typeof renderInvocContent==='function') renderInvocContent();
+  }
   renderApparenceModal();
 }
 
@@ -4076,9 +4280,11 @@ function renderTarbiyaHero(){
   var hero=document.querySelector('.path-hero');
   if(!hero) return;
   var name=(document.getElementById('hero-name')||{}).textContent||S.name||'toi';
+  // Nettoie le greeting "Bonjour, X" → "X"
+  name=name.replace(/^Bonjour,?\s*/i,'')||'toi';
   var motiv=(document.getElementById('hero-motiv')||{}).textContent||'Allah aime les actions les plus régulières, même petites.';
-  var chip=(document.getElementById('hero-chip')||{}).textContent||'';
-  var constance=(document.getElementById('pill-constance')||{}).textContent||'';
+  var palierName=(typeof PALIER!=='undefined' && S.palier && PALIER[S.palier]) ? PALIER[S.palier].name : '';
+  var week=S.weekNumber||1;
   var streak=S.totalDays||0;
   var now=new Date();
   var DAYS=['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'];
@@ -4089,19 +4295,569 @@ function renderTarbiyaHero(){
   overlay.style.cssText='display:flex;flex-direction:column;position:relative;z-index:1';
   overlay.innerHTML=
     '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.78);margin-bottom:14px">'+
-      '<span>'+dateMeta+'</span><span>'+constance+'</span>'+
+      '<span>'+dateMeta+'</span><span>SEMAINE '+week+'</span>'+
     '</div>'+
     '<p style="font-size:13px;font-weight:500;color:rgba(255,255,255,.8);margin:0 0 2px;line-height:1.4">As-salāmu ʿalaykum,</p>'+
     '<h1 style="font-family:var(--t-font-title);font-weight:800;font-size:42px;line-height:1;letter-spacing:-1.5px;color:#fff;margin:4px 0 10px">'+
       name+'<span style="color:var(--t-warm)">.</span>'+
     '</h1>'+
-    '<p style="font-size:13px;font-style:italic;color:rgba(255,255,255,.85);line-height:1.5;margin:0 0 18px;max-width:290px">'+motiv+'</p>'+
+    '<p style="font-size:13px;font-style:italic;color:rgba(255,255,255,.85);line-height:1.5;margin:0 0 16px;max-width:290px">'+motiv+'</p>'+
     '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
       '<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.13);color:var(--t-warm);font-weight:700;font-size:12px">🔥 '+streak+'j de série</span>'+
-      (chip?'<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-weight:700;font-size:12px">'+chip+'</span>':'')+
-    '</div>';
+      '<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,200,90,.20);color:#FFD06B;font-weight:700;font-size:12px">Sem. '+week+'</span>'+
+      (palierName?'<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-weight:700;font-size:12px">'+palierName+'</span>':'')+
+    '</div>'+
+    _tarbiyaPrayerStripHtml();
   hero.insertBefore(overlay,hero.firstChild);
 }
+
+// Prayer strip injectée en bas du hero Tarbiya
+function _tarbiyaPrayerStripHtml(){
+  var pt=S.prayerTimes;
+  if(!pt||!pt.Fajr) return '';
+  var order=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+  var now=new Date();
+  var cur=now.getHours()*60+now.getMinutes();
+  var activeKey=null;
+  for(var i=0;i<order.length;i++){
+    var t=pt[order[i]]?parseTime(pt[order[i]]):null;
+    if(t!==null && t>cur){activeKey=order[i];break;}
+  }
+  if(!activeKey) activeKey='Fajr';
+  var html='<div class="t-prayer-strip">';
+  for(var j=0;j<order.length;j++){
+    var k=order[j];
+    var time=pt[k]||'--:--';
+    var active=k===activeKey?' t-prayer-strip__item--active':'';
+    html+='<div class="t-prayer-strip__item'+active+'">'+
+      '<span class="t-prayer-strip__name">'+k.toUpperCase()+'</span>'+
+      '<span class="t-prayer-strip__time">'+time+'</span>'+
+    '</div>';
+  }
+  return html+'</div>';
+}
+
+// Injecte/met à jour les cards spécifiques Tarbiya dans #path-body
+function renderTarbiyaPathCards(){
+  if(!window.tarbiyaTheme || window.tarbiyaTheme.get().theme!=='tarbiya') return;
+  var body=document.getElementById('path-body');
+  if(!body) return;
+  // Nettoyage des injections précédentes
+  body.querySelectorAll('.t-progress-card,.t-seance-chips-row').forEach(function(el){el.remove();});
+
+  var items=getActiveItems();
+  var checked=Object.values(S.checklist).filter(Boolean).length;
+  var total=items.length;
+  var remaining=total-checked;
+  var pct=total>0?checked/total:0;
+
+  // 1) Progress ring card "Encore N actions"
+  if(remaining>0){
+    var c=2*Math.PI*26;
+    var dashOffset=c*(1-pct);
+    var sub=remaining===total?'Commence par la plus simple ✓':'Continue, tu progresses bien';
+    var card=document.createElement('div');
+    card.className='t-progress-card fade-up';
+    card.innerHTML=
+      '<div class="t-progress-card__ring">'+
+        '<svg width="64" height="64" viewBox="0 0 64 64">'+
+          '<circle class="t-progress-card__ring-bg" cx="32" cy="32" r="26"/>'+
+          '<circle class="t-progress-card__ring-bar" cx="32" cy="32" r="26" stroke-dasharray="'+c.toFixed(2)+'" stroke-dashoffset="'+dashOffset.toFixed(2)+'"/>'+
+        '</svg>'+
+        '<div class="t-progress-card__ring-num">'+checked+'</div>'+
+      '</div>'+
+      '<div class="t-progress-card__body">'+
+        '<div class="t-progress-card__title">Encore '+remaining+' action'+(remaining>1?'s':'')+'</div>'+
+        '<div class="t-progress-card__sub">'+sub+'</div>'+
+      '</div>';
+    body.insertBefore(card,body.firstChild);
+  }
+
+  // 2) Sub-chips dans la card "Séance après l'aube" (item id=2)
+  var catOrder=['qiyam','aube','journee','soir','nuit'];
+  var curIdx=catOrder.indexOf(getCurrentCat());
+  var futureCats=catOrder.slice(curIdx+1);
+  var next=items.find(function(i){return !S.checklist[i.id]&&futureCats.indexOf(i.cat)===-1;});
+  if(next && next.id===2){
+    var seanceCard=body.querySelector('.next-action-card');
+    if(seanceCard && !seanceCard.querySelector('.t-seance-chips-row')){
+      var chipsRow=document.createElement('div');
+      chipsRow.className='t-seance-chips-row';
+      chipsRow.innerHTML='<span class="t-seance-chip">Intention</span><span class="t-seance-chip">Adhkar</span><span class="t-seance-chip">Lecture</span><span class="t-seance-chip">Bilan</span>';
+      var btn=seanceCard.querySelector('.btn-primary');
+      if(btn) seanceCard.insertBefore(chipsRow,btn);
+    }
+  }
+}
+
+// ── PROFIL Tarbiya v2 ──
+var TARBIYA_PALIER_XP={
+  1:{cur:480,next:600,nextName:"Le Marcheur"},
+  2:{cur:950,next:1200,nextName:"Le Constant"},
+  3:{cur:1700,next:2000,nextName:"Le Déterminé"},
+  4:{cur:2800,next:3200,nextName:"Le Vaillant"},
+  5:{cur:3500,next:3500,nextName:"—"}
+};
+function _tarbiyaBestStreak(){
+  var hist=(S.history||[]).slice();
+  var todayDone=Object.values(S.checklist||{}).filter(Boolean).length>0;
+  if(todayDone) hist.push({checked:1,total:1});
+  var best=0,cur=0;
+  for(var i=0;i<hist.length;i++){
+    if((hist[i].checked||0)>0){cur++;if(cur>best)best=cur;}else cur=0;
+  }
+  return best;
+}
+function _tarbiyaActiveDaysWeek(){
+  var today=new Date(),count=0;
+  for(var i=6;i>=0;i--){
+    var d=new Date(today);d.setDate(d.getDate()-i);
+    if(i===0){if(Object.values(S.checklist||{}).filter(Boolean).length>0)count++;continue;}
+    var key=d.toISOString().split('T')[0];
+    var e=(S.history||[]).find(function(h){return h.date===key;});
+    if(e&&(e.checked||0)>0)count++;
+  }
+  return count;
+}
+function _tarbiyaWeekDelta(){
+  var today=new Date(),items=getActiveItems();
+  var curDone=0,curTot=0,prevDone=0,prevTot=0;
+  for(var i=6;i>=0;i--){
+    var d=new Date(today);d.setDate(d.getDate()-i);
+    if(i===0){curDone+=Object.values(S.checklist||{}).filter(Boolean).length;curTot+=items.length;continue;}
+    var key=d.toISOString().split('T')[0];
+    var e=(S.history||[]).find(function(h){return h.date===key;});
+    if(e&&e.total>0){curDone+=e.checked;curTot+=e.total;}
+  }
+  for(var j=13;j>=7;j--){
+    var d2=new Date(today);d2.setDate(d2.getDate()-j);
+    var key2=d2.toISOString().split('T')[0];
+    var e2=(S.history||[]).find(function(h){return h.date===key2;});
+    if(e2&&e2.total>0){prevDone+=e2.checked;prevTot+=e2.total;}
+  }
+  var curPct=curTot>0?Math.round(curDone/curTot*100):0;
+  var prevPct=prevTot>0?Math.round(prevDone/prevTot*100):null;
+  return {pct:curPct, delta: prevPct===null?null:curPct-prevPct};
+}
+function renderTarbiyaProfilHero(){
+  var hero=document.querySelector('#profil .profil-hero');
+  if(!hero) return;
+  hero.querySelectorAll('.t-profil-hero-overlay').forEach(function(el){el.remove();});
+  var pi=(typeof PALIER!=='undefined'&&S.palier&&PALIER[S.palier])?PALIER[S.palier]:{name:"L'Éveillé"};
+  var xp=TARBIYA_PALIER_XP[S.palier]||TARBIYA_PALIER_XP[1];
+  var pct=Math.max(0,Math.min(100,Math.round(xp.cur/xp.next*100)));
+  var streak=calcStreak();
+  var avatar=(S.name&&S.name[0])?S.name[0].toUpperCase():'?';
+  var name=S.name||'—';
+  var overlay=document.createElement('div');
+  overlay.className='t-profil-hero-overlay';
+  overlay.innerHTML=
+    '<div class="t-profil-topbar">'+
+      '<span class="t-profil-topbar-label">PROFIL</span>'+
+      '<button class="t-profil-share-btn" onclick="tarbiyaShareProfil()" aria-label="Partager">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'+
+      '</button>'+
+    '</div>'+
+    '<div class="t-profil-id">'+
+      '<div class="t-profil-avatar">'+avatar+'</div>'+
+      '<div class="t-profil-id-body">'+
+        '<div class="t-profil-name">'+name+'</div>'+
+        '<div class="t-profil-chips-row">'+
+          '<span class="t-profil-chip">● '+pi.name+'</span>'+
+          '<span class="t-profil-chip t-profil-chip--warm">↑ '+streak+' j</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="t-xp-bar-block">'+
+      '<div class="t-xp-bar-labels">'+
+        '<span>'+pi.name+' '+xp.cur+' XP</span>'+
+        '<span class="right">'+xp.nextName+' '+xp.next+' XP</span>'+
+      '</div>'+
+      '<div class="t-xp-bar"><div class="t-xp-bar__fill" style="width:'+pct+'%"></div></div>'+
+    '</div>';
+  hero.appendChild(overlay);
+}
+function tarbiyaShareProfil(){
+  var palierName=(typeof PALIER!=='undefined'&&S.palier&&PALIER[S.palier])?PALIER[S.palier].name:'';
+  if(navigator.share){
+    navigator.share({title:'Dawam',text:'Mon programme spirituel · '+(S.name||'')+' · '+palierName,url:location.href}).catch(function(){});
+  } else if(typeof showToast==='function'){
+    showToast('Partage non disponible');
+  }
+}
+function renderTarbiyaProfilStats(){
+  var hero=document.querySelector('#profil .profil-hero');
+  if(!hero) return;
+  document.querySelectorAll('#profil .t-stats-row').forEach(function(el){el.remove();});
+  var active=_tarbiyaActiveDaysWeek();
+  var streak=calcStreak();
+  var best=_tarbiyaBestStreak();
+  var wk=_tarbiyaWeekDelta();
+  var deltaTxt=wk.delta===null?'—':(wk.delta>=0?'↑ +'+wk.delta:'↓ '+Math.abs(wk.delta))+'%';
+  var row=document.createElement('div');
+  row.className='t-stats-row fade-up';
+  row.innerHTML=
+    '<div class="t-stat">'+
+      '<div class="t-stat__icon t-stat__icon--check">✓</div>'+
+      '<div class="t-stat__value">'+active+'</div>'+
+      '<div class="t-stat__label">Jours actifs</div>'+
+      '<div class="t-stat__sub">cette sem.</div>'+
+    '</div>'+
+    '<div class="t-stat">'+
+      '<div class="t-stat__icon t-stat__icon--fire">🔥</div>'+
+      '<div class="t-stat__value">'+streak+'j</div>'+
+      '<div class="t-stat__label">Streak</div>'+
+      '<div class="t-stat__sub">record '+best+'j</div>'+
+    '</div>'+
+    '<div class="t-stat">'+
+      '<div class="t-stat__icon t-stat__icon--gauge">⚡</div>'+
+      '<div class="t-stat__value">'+wk.pct+'%</div>'+
+      '<div class="t-stat__label">Semaine</div>'+
+      '<div class="t-stat__sub">'+deltaTxt+'</div>'+
+    '</div>';
+  hero.insertAdjacentElement('afterend',row);
+}
+function renderTarbiyaProfilHeatmap(){
+  var titles=document.querySelectorAll('#profil .profil-section-title');
+  var actTitle=null;
+  for(var i=0;i<titles.length;i++){
+    var t=titles[i];
+    var raw=(t.dataset.origText||t.textContent||'').trim();
+    if(raw.indexOf('Activité')===0||raw.indexOf('Constance')===0){actTitle=t;break;}
+  }
+  if(!actTitle) return;
+  if(!actTitle.dataset.origText) actTitle.dataset.origText=actTitle.textContent;
+  actTitle.innerHTML='<span>Constance</span><span class="profil-section-title-sub">30 DERNIERS JOURS</span>';
+  var card=actTitle.nextElementSibling;
+  if(!card||!card.classList||!card.classList.contains('card')) return;
+  card.querySelectorAll('.t-grid-30,.t-heatmap-legend').forEach(function(el){el.remove();});
+  var today=new Date();
+  var cells='';
+  for(var d=29;d>=0;d--){
+    var dd=new Date(today);dd.setDate(dd.getDate()-d);
+    var key=dd.toISOString().split('T')[0];
+    var state='empty';
+    if(d===0){state='today';}
+    else{
+      var e=(S.history||[]).find(function(h){return h.date===key;});
+      if(e&&e.total>0){
+        var p=e.checked/e.total;
+        if(p>=0.9) state='complete';
+        else if(p>0) state='partial';
+        else state='missed';
+      }
+    }
+    cells+='<div class="t-grid-30__cell" data-state="'+state+'"></div>';
+  }
+  var grid=document.createElement('div');
+  grid.className='t-grid-30';
+  grid.innerHTML=cells;
+  card.appendChild(grid);
+  var legend=document.createElement('div');
+  legend.className='t-heatmap-legend';
+  legend.innerHTML=
+    '<div class="t-heatmap-legend__item"><span class="t-heatmap-legend__dot t-heatmap-legend__dot--complete"></span>Complet</div>'+
+    '<div class="t-heatmap-legend__item"><span class="t-heatmap-legend__dot t-heatmap-legend__dot--partial"></span>Partiel</div>'+
+    '<div class="t-heatmap-legend__item"><span class="t-heatmap-legend__dot t-heatmap-legend__dot--missed"></span>Manqué</div>'+
+    '<div class="t-heatmap-legend__item"><span class="t-heatmap-legend__dot t-heatmap-legend__dot--today"></span>Aujourd\'hui</div>';
+  card.appendChild(legend);
+}
+function renderTarbiyaProfilBadges(){
+  document.querySelectorAll('#profil .t-badges-block').forEach(function(el){el.remove();});
+  var titles=document.querySelectorAll('#profil .profil-section-title');
+  var paramsTitle=null;
+  for(var i=0;i<titles.length;i++){
+    var raw=(titles[i].dataset.origText||titles[i].textContent||'').trim();
+    if(raw.indexOf('Paramètres')===0){paramsTitle=titles[i];break;}
+  }
+  if(!paramsTitle) return;
+  var streak=calcStreak();
+  var seanceDone=(S.history||[]).length>0||(S.totalDays||0)>=1||Object.values(S.checklist||{}).filter(Boolean).length>0;
+  var pi=(typeof PALIER!=='undefined'&&S.palier&&PALIER[S.palier])?PALIER[S.palier]:{name:"L'Éveillé",emoji:'🌑'};
+  var block=document.createElement('div');
+  block.className='t-badges-block';
+  block.innerHTML=
+    '<div class="profil-section-title fade-up" data-tarbiya-injected="1"><span>Badges récents</span></div>'+
+    '<div class="t-badges-section fade-up">'+
+      '<div class="t-badges-row">'+
+        '<div class="t-badge-card'+(seanceDone?'':' t-badge-card--locked')+'">'+
+          '<div class="t-badge-card__icon t-badge-card__icon--warm">✨</div>'+
+          '<div class="t-badge-card__title">Première séance</div>'+
+          '<div class="t-badge-card__sub">'+(seanceDone?"Aujourd'hui":'Verrouillé')+'</div>'+
+        '</div>'+
+        '<div class="t-badge-card">'+
+          '<div class="t-badge-card__icon t-badge-card__icon--accent">'+(pi.emoji||'🌑')+'</div>'+
+          '<div class="t-badge-card__title">'+pi.name+'</div>'+
+          '<div class="t-badge-card__sub">Niveau '+(S.palier||1)+'</div>'+
+        '</div>'+
+        '<div class="t-badge-card'+(streak>=7?'':' t-badge-card--locked')+'">'+
+          '<div class="t-badge-card__icon '+(streak>=7?'t-badge-card__icon--warm':'t-badge-card__icon--locked')+'">🔥</div>'+
+          '<div class="t-badge-card__title">7 jours</div>'+
+          '<div class="t-badge-card__sub">'+(streak>=7?'Débloqué':'Verrouillé')+'</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  paramsTitle.parentNode.insertBefore(block,paramsTitle);
+}
+function renderTarbiyaProfilOverlays(){
+  if(!window.tarbiyaTheme||window.tarbiyaTheme.get().theme!=='tarbiya') return;
+  renderTarbiyaProfilHero();
+  renderTarbiyaProfilStats();
+  renderTarbiyaProfilHeatmap();
+  renderTarbiyaProfilBadges();
+}
+function removeTarbiyaProfilOverlays(){
+  document.querySelectorAll('#profil .t-profil-hero-overlay,#profil .t-stats-row,#profil .t-badges-block').forEach(function(el){el.remove();});
+  document.querySelectorAll('#profil .card .t-grid-30,#profil .card .t-heatmap-legend').forEach(function(el){el.remove();});
+  document.querySelectorAll('#profil .profil-section-title').forEach(function(t){
+    if(t.dataset.origText){t.textContent=t.dataset.origText;delete t.dataset.origText;}
+  });
+}
+
+// ── INVOCATIONS Tarbiya v2 ──
+function _tarbiyaInvocCardHtml(a,i,isDhikr){
+  var idx=String(i+1).padStart(2,'0');
+  var repeat=a.repeat||1;
+  var cir=2*Math.PI*15;
+  var title=isDhikr?(a.title||'Dhikr'):(a.note?a.note:('Adhkar du '+(window._invocTab==='soir'?'soir':'matin')));
+  var kicker=(isDhikr?'DHIKR':'ADHKAR')+' · '+idx;
+  return '<div class="invoc-card" style="animation:fadeUp .3s ease '+(i*0.04)+'s both">'+
+    '<div class="t-invoc-card-head">'+
+      '<div class="t-invoc-card-head-left">'+
+        '<div class="t-invoc-card-ring">'+
+          '<svg width="38" height="38" viewBox="0 0 38 38">'+
+            '<circle class="t-invoc-card-ring-bg" cx="19" cy="19" r="15"/>'+
+            '<circle class="t-invoc-card-ring-bar" cx="19" cy="19" r="15" stroke-dasharray="'+cir.toFixed(2)+'" stroke-dashoffset="0"/>'+
+          '</svg>'+
+          '<div class="t-invoc-card-ring-num">'+repeat+'</div>'+
+        '</div>'+
+        '<div class="t-invoc-card-titles">'+
+          '<div class="t-invoc-card-kicker">'+kicker+'</div>'+
+          '<div class="t-invoc-card-title">'+title+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="t-invoc-card-actions">'+
+        '<button class="t-invoc-icon-btn" onclick="tarbiyaInvocAudio(event)" aria-label="Audio">▶</button>'+
+        '<button class="t-invoc-icon-btn" onclick="tarbiyaInvocBookmark(event)" aria-label="Marque-page">☆</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="t-invoc-arabic">'+(a.arabic||'')+'</div>'+
+    (a.phonetic?'<div class="t-invoc-phonetic">'+a.phonetic+'</div>':'')+
+    (a.french?'<div class="t-invoc-french">'+a.french+'</div>':'')+
+    '<div class="t-invoc-card-foot">'+
+      '<span class="t-invoc-card-source">'+(a.source||'')+'</span>'+
+      '<span class="t-invoc-card-done">× '+repeat+'</span>'+
+    '</div>'+
+  '</div>';
+}
+function tarbiyaInvocAudio(e){
+  if(e&&e.stopPropagation) e.stopPropagation();
+  if(typeof showToast==='function') showToast('Audio · Bientôt disponible');
+}
+function tarbiyaInvocBookmark(e){
+  if(e&&e.stopPropagation) e.stopPropagation();
+  if(typeof showToast==='function') showToast('Marque-page · Bientôt disponible');
+}
+function _tarbiyaSeriesStripHtml(tab){
+  if(tab==='dhikr') return '';
+  var list=ADHKAR[tab]||[];
+  var label=tab==='matin'?'SÉRIE DU MATIN':'SÉRIE DU SOIR';
+  var xp=Math.max(15,list.length*5);
+  return '<div class="t-series-strip">'+
+    '<div class="t-series-strip__label">'+label+'<small>0 / '+list.length+' invocations</small></div>'+
+    '<div class="t-series-strip__xp">+'+xp+' XP</div>'+
+  '</div>';
+}
+function renderTarbiyaInvocHeader(){
+  var screen=document.getElementById('invocations');
+  if(!screen) return;
+  screen.querySelectorAll('.t-invoc-header').forEach(function(el){el.remove();});
+  var tab=window._invocTab||'matin';
+  var tabLabel=tab==='matin'?'MATIN':(tab==='soir'?'SOIR':'DHIKR');
+  var list=tab==='dhikr'?DHIKR_LIST:(ADHKAR[tab]||[]);
+  var totalRepeats=0;
+  for(var i=0;i<list.length;i++) totalRepeats+=(list[i].repeat||1);
+  var header=document.createElement('div');
+  header.className='t-invoc-header';
+  header.innerHTML=
+    '<div class="t-invoc-header__left">'+
+      '<span class="t-invoc-header__kicker">AUJOURD\'HUI</span>'+
+      '<span class="t-invoc-header__title">Invocations</span>'+
+    '</div>'+
+    '<div class="t-invoc-header__meta">'+
+      '<strong>'+tabLabel+'</strong>'+
+      list.length+' séries · '+totalRepeats+' dhikr'+
+    '</div>';
+  var tabsBar=screen.querySelector('.invoc-tabs-bar');
+  if(tabsBar) screen.insertBefore(header,tabsBar);
+  else screen.insertBefore(header,screen.firstChild);
+}
+function removeTarbiyaInvocHeader(){
+  document.querySelectorAll('#invocations .t-invoc-header').forEach(function(el){el.remove();});
+}
+
+// ── SÉANCE GUIDÉE Tarbiya v2 ──
+var TARBIYA_STEP_LABELS={
+  1:['Réveil','Wudu','2 raka\'at','Continue','Witr','Istighfar'],
+  2:['Intention','Adhkar','Lecture','Du\'a','Chourouk'],
+  3:['Sunna','Fajr','Chourouk'],
+  9:['Bilan','Tawba','Wudu','Adhkar','Sommeil'],
+  10:['Étude','Tâche','Accompli'],
+  11:['Contact','Cercle','Retenue'],
+  12:['Lecture','Chapitre','Notes'],
+  13:['Plan','Audit','Action']
+};
+var TARBIYA_PHASE_KICKERS={aube:'PHASE · AUBE',qiyam:'PHASE · NUIT',journee:'PHASE · JOUR',soir:'PHASE · SOIR',nuit:'PHASE · NUIT'};
+
+function _tarbiyaGuidedStepperHtml(flow,id){
+  if(flow.type!=='steps'||!flow.steps) return '';
+  var labels=TARBIYA_STEP_LABELS[id];
+  if(!labels) labels=flow.steps.map(function(_,i){return 'Étape '+(i+1);});
+  var html='<div class="t-guided-stepper">';
+  for(var i=0;i<labels.length;i++){
+    var active=i===_gStep?' t-guided-stepper__item--active':'';
+    html+='<span class="t-guided-stepper__item'+active+'">'+labels[i]+'</span>';
+  }
+  return html+'</div>';
+}
+
+function renderTarbiyaGuidedHero(flow,item){
+  var header=document.querySelector('#guided-screen .guided-header');
+  if(!header) return;
+  // Cleanup avant : ré-attache .guided-back au header si elle était dans le block
+  var oldBlocks=header.querySelectorAll('.t-guided-tarbiya-block');
+  oldBlocks.forEach(function(b){
+    var origBack=b.querySelector('.guided-back');
+    if(origBack && !header.querySelector(':scope > .guided-back')) header.insertBefore(origBack,header.firstChild);
+    b.remove();
+  });
+
+  var kicker=(item&&item.cat&&TARBIYA_PHASE_KICKERS[item.cat])||(flow.type==='steps'?'PHASE · SÉANCE':'INVOCATION');
+  var title=item?item.titleFr:'Séance guidée';
+
+  var block=document.createElement('div');
+  block.className='t-guided-tarbiya-block';
+  block.style.cssText='display:flex;flex-direction:column;gap:10px;width:100%;position:relative;z-index:1;';
+
+  var topbar=document.createElement('div');
+  topbar.className='t-guided-topbar';
+  var origBack=header.querySelector(':scope > .guided-back');
+  if(origBack){
+    origBack.innerHTML='×';
+    topbar.appendChild(origBack);
+  } else {
+    var nb=document.createElement('button');
+    nb.className='guided-back';
+    nb.innerHTML='×';
+    nb.onclick=closeGuided;
+    topbar.appendChild(nb);
+  }
+  var menuBtn=document.createElement('button');
+  menuBtn.className='t-guided-menu-btn';
+  menuBtn.innerHTML='⋯';
+  menuBtn.setAttribute('aria-label','Options');
+  menuBtn.onclick=tarbiyaGuidedMenu;
+  topbar.appendChild(menuBtn);
+  block.appendChild(topbar);
+
+  var k=document.createElement('div');
+  k.className='t-guided-kicker';
+  k.textContent=kicker;
+  block.appendChild(k);
+
+  var t=document.createElement('div');
+  t.className='t-guided-screen-title';
+  t.textContent=title;
+  block.appendChild(t);
+
+  var stepperHtml=_tarbiyaGuidedStepperHtml(flow,_gId);
+  if(stepperHtml){
+    var wrap=document.createElement('div');
+    wrap.innerHTML=stepperHtml;
+    if(wrap.firstChild) block.appendChild(wrap.firstChild);
+  }
+
+  header.appendChild(block);
+}
+
+function tarbiyaGuidedMenu(e){
+  if(e&&e.stopPropagation) e.stopPropagation();
+  if(typeof showToast==='function') showToast('Options · Bientôt');
+}
+function tarbiyaGuidedLang(e){
+  if(e&&e.stopPropagation) e.stopPropagation();
+  if(typeof showToast==='function') showToast('Traduction · Bientôt');
+}
+
+function _tarbiyaGuidedStepBodyHtml(s,flow){
+  var total=flow.steps.length;
+  var arabic=s.arabic||'';
+  var phonetic=s.phonetic||'';
+  var desc=s.desc||'';
+  var tip=s.tip||'';
+  var hasSource=arabic||phonetic;
+  return '<div class="fade-up">'+
+    '<div class="t-guided-step-label">ÉTAPE '+(_gStep+1)+' SUR '+total+'</div>'+
+    '<div class="t-guided-step-title">'+s.title+'</div>'+
+    (desc?'<div class="t-guided-step-sub">'+desc+'</div>':'')+
+    (arabic?'<div class="t-guided-arabic">'+arabic+'</div>':'')+
+    (phonetic?'<div class="t-guided-phonetic">'+phonetic+'</div>':'')+
+    (s.french?'<div class="t-guided-french">'+s.french+'</div>':'')+
+    (tip?'<div class="t-guided-source-row" style="border-top:none;margin-top:8px;padding-top:0"><span class="t-guided-source" style="font-style:normal">💡 '+tip+'</span></div>':'')+
+    (hasSource?'<div class="t-guided-source-row">'+
+      '<span class="t-guided-source">Source · Hadith authentique</span>'+
+      '<div class="t-guided-source-actions">'+
+        '<button onclick="tarbiyaInvocAudio(event)" aria-label="Audio">▶</button>'+
+        '<button onclick="tarbiyaGuidedLang(event)" aria-label="Langue">FR</button>'+
+      '</div>'+
+    '</div>':'')+
+  '</div>';
+}
+
+function renderTarbiyaGuidedFooter(flow){
+  var footer=document.querySelector('#guided-screen .guided-footer');
+  if(!footer) return;
+  footer.querySelectorAll('.t-guided-btn-back,.t-guided-btn-pause').forEach(function(el){el.remove();});
+  var cta=document.getElementById('guided-cta');
+  if(!cta) return;
+  var back=document.createElement('button');
+  back.className='t-guided-btn-back';
+  back.innerHTML='←';
+  back.setAttribute('aria-label','Retour');
+  back.onclick=function(){
+    if(flow.type==='steps' && _gStep>0){_gStep--;renderGuided();}
+    else closeGuided();
+  };
+  footer.insertBefore(back,cta);
+  var pause=document.createElement('button');
+  pause.className='t-guided-btn-pause';
+  pause.innerHTML=(flow.type==='timer'&&_gRunning)?'⏸':'⏸';
+  pause.setAttribute('aria-label','Pause');
+  pause.onclick=function(){
+    if(flow.type==='timer'){
+      if(_gRunning){guidedTimerStop();pause.innerHTML='▶';} else {guidedTimerStart();pause.innerHTML='⏸';}
+    } else {
+      if(typeof showToast==='function') showToast('Mode pause indisponible ici');
+    }
+  };
+  if(cta.nextSibling) footer.insertBefore(pause,cta.nextSibling); else footer.appendChild(pause);
+}
+
+function removeTarbiyaGuidedInjections(){
+  var header=document.querySelector('#guided-screen .guided-header');
+  if(header){
+    header.querySelectorAll('.t-guided-tarbiya-block').forEach(function(b){
+      var origBack=b.querySelector('.guided-back');
+      if(origBack){
+        origBack.innerHTML='←';
+        if(!header.querySelector(':scope > .guided-back')) header.insertBefore(origBack,header.firstChild);
+      }
+      b.remove();
+    });
+  }
+  document.querySelectorAll('#guided-screen .t-guided-btn-back,#guided-screen .t-guided-btn-pause').forEach(function(el){el.remove();});
+}
+
 // MutationObserver : re-rend le hero Tarbiya quand l'app met à jour le nom ou la motivation
 (function(){
   var el=document.getElementById('hero-name');
@@ -4864,21 +5620,31 @@ function renderGuided(){
   const dots=document.getElementById('guided-dots');
   const skipBtn=document.getElementById('guided-skip');
   if(skipBtn) skipBtn.style.display=(flow.type==='timer')?'block':'none';
+  const isTarbiya=window.tarbiyaTheme && window.tarbiyaTheme.get().theme==='tarbiya';
+  const gItem=PROGRAM.find(p=>p.id===_gId)||getPrayerItems().find(p=>p.id===_gId);
+  if(isTarbiya){
+    renderTarbiyaGuidedHero(flow,gItem);
+    renderTarbiyaGuidedFooter(flow);
+  }
 
   if(flow.type==='steps'){
     const steps=flow.steps,total=steps.length;
     dots.innerHTML=steps.map((_,i)=>`<div class="guided-dot${i<_gStep?' done':i===_gStep?' active':''}"></div>`).join('');
     if(_gStep>=total){renderGuidedDone();return;}
     const s=steps[_gStep];
-    body.innerHTML=`<div class="guided-step fade-up">
-      <div class="guided-step-num">Étape ${_gStep+1} / ${total}</div>
-      <div class="guided-step-emoji">${s.emoji}</div>
-      <div class="guided-step-title">${s.title}</div>
-      <div class="guided-step-desc">${s.desc}</div>
-      ${s.arabic?`<div class="guided-step-arabic">${s.arabic}</div><div class="guided-step-phonetic">${s.phonetic}</div>`:''}
-      ${s.tip?`<div class="guided-step-tip">💡 ${s.tip}</div>`:''}
-    </div>`;
-    cta.textContent=_gStep<total-1?'C\'est fait, continuer →':'Terminer la séance ✓';
+    if(isTarbiya){
+      body.innerHTML=_tarbiyaGuidedStepBodyHtml(s,flow);
+    } else {
+      body.innerHTML=`<div class="guided-step fade-up">
+        <div class="guided-step-num">Étape ${_gStep+1} / ${total}</div>
+        <div class="guided-step-emoji">${s.emoji}</div>
+        <div class="guided-step-title">${s.title}</div>
+        <div class="guided-step-desc">${s.desc}</div>
+        ${s.arabic?`<div class="guided-step-arabic">${s.arabic}</div><div class="guided-step-phonetic">${s.phonetic}</div>`:''}
+        ${s.tip?`<div class="guided-step-tip">💡 ${s.tip}</div>`:''}
+      </div>`;
+    }
+    cta.textContent=_gStep<total-1?'Étape suivante →':'Terminer la séance ✓';
     cta.onclick=()=>{_gStep++;renderGuided();};
   }
   else if(flow.type==='counter'){
@@ -5033,6 +5799,7 @@ function renderGuidedDone(){
 function closeGuided(){
   guidedTimerStop();
   document.getElementById('guided-screen').classList.remove('show');
+  if(typeof removeTarbiyaGuidedInjections==='function') removeTarbiyaGuidedInjections();
   setTimeout(()=>{document.getElementById('guided-body').innerHTML='';_gId=null;renderPath();},420);
 }
 
