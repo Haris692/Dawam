@@ -1496,6 +1496,150 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* Padding bas de path-body pour ne pas cacher le contenu derrière la prayer strip + nav */
 [data-theme="tarbiya"] .path-body{padding-bottom:160px !important;}
 
+/* ─── Carrousel d'actions ─── */
+[data-theme="tarbiya"] .next-action-card,
+[data-theme="tarbiya"] .all-done-card{display:none !important;}
+
+[data-theme="tarbiya"] .t-actions-carousel-wrap{margin:0 -16px;padding:4px 0;}
+[data-theme="tarbiya"] .t-actions-carousel{
+  display:flex;gap:14px;
+  overflow-x:auto;overflow-y:visible;
+  scroll-snap-type:x mandatory;
+  padding:6px 16px 14px;
+  scrollbar-width:none;-ms-overflow-style:none;
+  -webkit-overflow-scrolling:touch;
+}
+[data-theme="tarbiya"] .t-actions-carousel::-webkit-scrollbar{display:none;}
+[data-theme="tarbiya"] .t-action-card{
+  flex:0 0 86%;max-width:380px;
+  scroll-snap-align:center;
+  border-radius:26px;padding:24px 22px;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+  box-sizing:border-box;
+}
+[data-theme="tarbiya"] .t-action-card--current,
+[data-theme="tarbiya"] .t-action-card--next{background:var(--t-warm-grad);color:#fff;}
+[data-theme="tarbiya"] .t-action-card--current::before,
+[data-theme="tarbiya"] .t-action-card--next::before{
+  content:"";position:absolute;width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,.10);top:-60px;right:-50px;pointer-events:none;
+}
+[data-theme="tarbiya"] .t-action-card--done{
+  background:#fff;color:var(--t-ink);
+  border:1px solid var(--t-line);box-shadow:var(--t-card-shadow);opacity:.78;
+}
+[data-theme="tarbiya"] .t-action-card--locked{
+  background:var(--t-accent-soft);color:var(--t-muted);
+}
+[data-theme="tarbiya"] .t-action-card__label{
+  font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  margin-bottom:10px;opacity:.92;position:relative;z-index:1;
+}
+[data-theme="tarbiya"] .t-action-card__row{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:6px;position:relative;z-index:1;
+}
+[data-theme="tarbiya"] .t-action-card__icon{
+  width:50px;height:50px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex-shrink:0;
+  background:rgba(255,255,255,.20);
+}
+[data-theme="tarbiya"] .t-action-card--done .t-action-card__icon,
+[data-theme="tarbiya"] .t-action-card--locked .t-action-card__icon{
+  background:var(--t-accent-soft);color:var(--t-accent);
+}
+[data-theme="tarbiya"] .t-action-card__title{
+  font-family:var(--t-font-title);font-weight:800;
+  font-size:30px;line-height:1.05;letter-spacing:-1px;
+  margin-bottom:4px;
+}
+[data-theme="tarbiya"] .t-action-card__sub{
+  font-size:13px;font-weight:500;opacity:.88;line-height:1.4;
+}
+[data-theme="tarbiya"] .t-action-card__cta{
+  height:50px;border-radius:16px;border:none;
+  font-size:15px;font-weight:800;cursor:pointer;
+  margin-top:14px;position:relative;z-index:1;
+  font-family:inherit;
+  transition:transform .12s,opacity .12s;
+}
+[data-theme="tarbiya"] .t-action-card__cta:active{transform:scale(.98);}
+[data-theme="tarbiya"] .t-action-card--current .t-action-card__cta,
+[data-theme="tarbiya"] .t-action-card--next .t-action-card__cta{background:#fff;color:var(--t-coral);}
+[data-theme="tarbiya"] .t-action-card--done .t-action-card__cta{background:var(--t-accent-soft);color:var(--t-accent);cursor:default;}
+[data-theme="tarbiya"] .t-action-card--locked .t-action-card__cta{background:rgba(0,0,0,.04);color:var(--t-muted);cursor:default;}
+
+[data-theme="tarbiya"] .t-actions-dots{display:flex;justify-content:center;gap:6px;margin-top:8px;}
+[data-theme="tarbiya"] .t-actions-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--t-accent-soft);
+  transition:width .25s,background .25s;
+}
+[data-theme="tarbiya"] .t-actions-dot--active{background:var(--t-accent);width:20px;border-radius:3px;}
+
+[data-theme="tarbiya"] .t-actions-see-all{
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  margin:14px auto 0;padding:8px 14px;
+  font-size:13px;font-weight:600;color:var(--t-accent);
+  background:transparent;border:none;cursor:pointer;font-family:inherit;
+}
+[data-theme="tarbiya"] .t-actions-see-all:active{opacity:.6;}
+
+/* Bottom sheet "Toutes les actions" */
+[data-theme="tarbiya"] #t-all-actions-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:300;display:none;align-items:flex-end;justify-content:center;
+}
+[data-theme="tarbiya"] #t-all-actions-modal.show{display:flex;}
+[data-theme="tarbiya"] .t-all-actions-sheet{
+  background:#fff;width:100%;max-width:430px;
+  border-radius:24px 24px 0 0;
+  max-height:80vh;overflow-y:auto;
+  padding:10px 18px max(24px,env(safe-area-inset-bottom));
+  animation:fadeUp .35s cubic-bezier(.22,1,.36,1);
+}
+[data-theme="tarbiya"] .t-all-actions-handle{
+  width:40px;height:4px;border-radius:2px;
+  background:rgba(0,0,0,.15);margin:0 auto 14px;
+}
+[data-theme="tarbiya"] .t-all-actions-title{
+  font-family:var(--t-font-title);font-weight:800;
+  font-size:20px;color:var(--t-ink);margin-bottom:4px;
+}
+[data-theme="tarbiya"] .t-all-actions-sub{
+  font-size:12px;color:var(--t-muted);margin-bottom:14px;
+}
+[data-theme="tarbiya"] .t-all-actions-list{display:flex;flex-direction:column;gap:6px;}
+[data-theme="tarbiya"] .t-all-actions-group-label{
+  font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--t-muted);margin:10px 4px 4px;
+}
+[data-theme="tarbiya"] .t-all-actions-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:14px;
+  background:rgba(0,0,0,.025);cursor:pointer;
+  transition:background .15s;
+}
+[data-theme="tarbiya"] .t-all-actions-item:active{background:rgba(0,0,0,.05);}
+[data-theme="tarbiya"] .t-all-actions-item.done{opacity:.6;}
+[data-theme="tarbiya"] .t-all-actions-item.locked{opacity:.45;pointer-events:none;}
+[data-theme="tarbiya"] .t-all-actions-check{
+  width:22px;height:22px;border-radius:50%;
+  border:1.5px solid var(--t-accent-soft);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--t-success);flex-shrink:0;
+  background:#fff;
+}
+[data-theme="tarbiya"] .t-all-actions-check.checked{
+  background:var(--t-success);border-color:var(--t-success);color:#fff;
+}
+[data-theme="tarbiya"] .t-all-actions-emoji{font-size:20px;flex-shrink:0;}
+[data-theme="tarbiya"] .t-all-actions-info{flex:1;min-width:0;}
+[data-theme="tarbiya"] .t-all-actions-name{font-size:14px;font-weight:700;color:var(--t-ink);line-height:1.3;}
+[data-theme="tarbiya"] .t-all-actions-meta{font-size:11px;color:var(--t-muted);margin-top:2px;}
+
 /* Safe-area pour l'écran invocations (sinon le header touche la status bar) */
 [data-theme="tarbiya"] .t-invoc-header{padding-top:max(20px,calc(16px + env(safe-area-inset-top))) !important;}
 
@@ -4422,8 +4566,11 @@ function toggleTarbiyaTheme(){
     if(typeof removeTarbiyaInvocHeader==='function') removeTarbiyaInvocHeader();
     if(typeof removeTarbiyaGuidedInjections==='function') removeTarbiyaGuidedInjections();
     if(typeof removeTarbiyaPrayerStripBottom==='function') removeTarbiyaPrayerStripBottom();
-    // Nettoie aussi les injections path
-    document.querySelectorAll('#path-body .t-progress-card, #path-body .t-seance-chips-row').forEach(function(el){el.remove();});
+    if(typeof removeTarbiyaAllActionsModal==='function') removeTarbiyaAllActionsModal();
+    // Nettoie aussi les injections path (carrousel + progress card + chips)
+    document.querySelectorAll('#path-body .t-progress-card, #path-body .t-actions-carousel-wrap, #path-body .t-seance-chips-row').forEach(function(el){el.remove();});
+    // Force renderPath pour rétablir la next-action-card (qui est cachée en CSS Tarbiya)
+    if(typeof renderPath==='function') renderPath();
     // Re-render invocations en mode default
     if(typeof renderInvocContent==='function') renderInvocContent();
   }
@@ -4512,21 +4659,24 @@ function removeTarbiyaPrayerStripBottom(){
   document.querySelectorAll('.t-prayer-strip-bottom').forEach(function(el){el.remove();});
 }
 
-// Injecte/met à jour les cards spécifiques Tarbiya dans #path-body
-// v2.2 : progress card "Encore N actions" au-dessus + sous-chips si séance aube
+// v2.4 — Progress card + carrousel d'actions + lien "Voir tout"
 function renderTarbiyaPathCards(){
   if(!window.tarbiyaTheme || window.tarbiyaTheme.get().theme!=='tarbiya') return;
   var body=document.getElementById('path-body');
   if(!body) return;
-  body.querySelectorAll('.t-progress-card,.t-seance-chips-row').forEach(function(el){el.remove();});
+  body.querySelectorAll('.t-progress-card,.t-actions-carousel-wrap,.t-seance-chips-row').forEach(function(el){el.remove();});
 
   var items=getActiveItems();
   var checked=Object.values(S.checklist).filter(Boolean).length;
   var total=items.length;
   var remaining=total-checked;
   var pct=total>0?checked/total:0;
+  var catOrder=['qiyam','aube','journee','soir','nuit'];
+  var curCat=getCurrentCat();
+  var curIdx=catOrder.indexOf(curCat);
+  var futureCats=catOrder.slice(curIdx+1);
 
-  // 1) Card "Encore N actions" — au-dessus de la card action
+  // 1) Card "Encore N actions"
   if(remaining>0){
     var c=2*Math.PI*26;
     var dashOffset=c*(1-pct);
@@ -4548,21 +4698,149 @@ function renderTarbiyaPathCards(){
     body.insertBefore(card,body.firstChild);
   }
 
-  // 2) Sous-chips dans la card "Séance après l'aube" (item id=2)
+  // 2) Carrousel d'actions (tri chronologique par cat puis par id)
+  var sorted=items.slice().sort(function(a,b){
+    var ai=catOrder.indexOf(a.cat),bi=catOrder.indexOf(b.cat);
+    if(ai!==bi) return ai-bi;
+    return (a.id||0)-(b.id||0);
+  });
+
+  // Position initiale = première action non faite et non future
+  var initialIdx=0;
+  for(var i=0;i<sorted.length;i++){
+    if(!S.checklist[sorted[i].id] && futureCats.indexOf(sorted[i].cat)===-1){initialIdx=i;break;}
+  }
+
+  var cardsHtml='';
+  for(var i=0;i<sorted.length;i++){
+    var item=sorted[i];
+    var done=!!S.checklist[item.id];
+    var locked=futureCats.indexOf(item.cat)!==-1;
+    var isCur=item.cat===curCat;
+    var status=done?'done':locked?'locked':(isCur?'current':'next');
+    var secLabel=(typeof SECTIONS!=='undefined'&&SECTIONS[item.cat])?SECTIONS[item.cat].label:item.time;
+    var stateLabel=done?'✓ ACCOMPLIE'
+                  :locked?'🔒 Disponible plus tard · '+secLabel
+                  :(isCur?'● Maintenant · ':'● Prochaine étape · ')+secLabel;
+    var ctaText=done?'Accomplie ✓':locked?'Bientôt':(item.id===2?'Commencer la séance':'Voir l\'action')+' →';
+    var ctaOnclick=(done||locked)?'':' onclick="openGuided('+item.id+')"';
+    var chipsHtml=(item.id===2&&!done&&!locked)?'<div class="t-seance-chips-row"><span class="t-seance-chip">Intention</span><span class="t-seance-chip">Adhkar</span><span class="t-seance-chip">Lecture</span><span class="t-seance-chip">Bilan</span></div>':'';
+    cardsHtml+='<div class="t-action-card t-action-card--'+status+'" data-idx="'+i+'" data-id="'+item.id+'">'+
+      '<div class="t-action-card__label">'+stateLabel+'</div>'+
+      '<div class="t-action-card__row">'+
+        '<div class="t-action-card__icon">'+item.emoji+'</div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div class="t-action-card__title">'+item.titleFr+'</div>'+
+          '<div class="t-action-card__sub">'+item.time+'</div>'+
+        '</div>'+
+      '</div>'+
+      chipsHtml+
+      '<button class="t-action-card__cta"'+ctaOnclick+(done||locked?' disabled':'')+'>'+ctaText+'</button>'+
+    '</div>';
+  }
+
+  var dotsHtml='';
+  for(var i=0;i<sorted.length;i++){
+    var active=i===initialIdx?' t-actions-dot--active':'';
+    dotsHtml+='<span class="t-actions-dot'+active+'"></span>';
+  }
+
+  var wrap=document.createElement('div');
+  wrap.className='t-actions-carousel-wrap fade-up';
+  wrap.innerHTML=
+    '<div class="t-actions-carousel">'+cardsHtml+'</div>'+
+    '<div class="t-actions-dots">'+dotsHtml+'</div>'+
+    '<button class="t-actions-see-all" onclick="openTarbiyaAllActions()">Voir toutes les actions ›</button>';
+
+  // Place wrap juste après .t-progress-card (ou en tête)
+  var progCard=body.querySelector('.t-progress-card');
+  if(progCard) progCard.parentNode.insertBefore(wrap,progCard.nextSibling);
+  else body.insertBefore(wrap,body.firstChild);
+
+  // Snap initial + listener pour mettre à jour les dots au scroll
+  var carousel=wrap.querySelector('.t-actions-carousel');
+  if(carousel){
+    requestAnimationFrame(function(){
+      var card=carousel.children[initialIdx];
+      if(card){
+        var carouselW=carousel.offsetWidth;
+        var cardW=card.offsetWidth;
+        var target=card.offsetLeft-(carouselW-cardW)/2;
+        carousel.scrollLeft=Math.max(0,target);
+      }
+    });
+    var ticking=false;
+    carousel.addEventListener('scroll',function(){
+      if(ticking) return;
+      ticking=true;
+      requestAnimationFrame(function(){
+        if(!carousel.children.length){ticking=false;return;}
+        var cardW=carousel.children[0].offsetWidth+14;
+        var idx=Math.round(carousel.scrollLeft/cardW);
+        if(idx<0) idx=0;
+        if(idx>=carousel.children.length) idx=carousel.children.length-1;
+        var dots=wrap.querySelectorAll('.t-actions-dot');
+        for(var k=0;k<dots.length;k++) dots[k].classList.toggle('t-actions-dot--active',k===idx);
+        ticking=false;
+      });
+    },{passive:true});
+  }
+}
+
+// Bottom sheet "Toutes les actions du jour"
+function openTarbiyaAllActions(){
+  var modal=document.getElementById('t-all-actions-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='t-all-actions-modal';
+    modal.innerHTML='<div class="t-all-actions-sheet" onclick="event.stopPropagation()"><div class="t-all-actions-handle"></div><div class="t-all-actions-title">Toutes les actions</div><div class="t-all-actions-sub">Aperçu complet de ton programme du jour</div><div class="t-all-actions-list" id="t-all-actions-list"></div></div>';
+    modal.onclick=function(e){if(e.target===modal) closeTarbiyaAllActions();};
+    document.body.appendChild(modal);
+  }
+  var items=getActiveItems();
   var catOrder=['qiyam','aube','journee','soir','nuit'];
-  var curIdx=catOrder.indexOf(getCurrentCat());
+  var curCat=getCurrentCat();
+  var curIdx=catOrder.indexOf(curCat);
   var futureCats=catOrder.slice(curIdx+1);
-  var next=items.find(function(i){return !S.checklist[i.id]&&futureCats.indexOf(i.cat)===-1;});
-  if(next && next.id===2){
-    var seanceCard=body.querySelector('.next-action-card');
-    if(seanceCard && !seanceCard.querySelector('.t-seance-chips-row')){
-      var chipsRow=document.createElement('div');
-      chipsRow.className='t-seance-chips-row';
-      chipsRow.innerHTML='<span class="t-seance-chip">Intention</span><span class="t-seance-chip">Adhkar</span><span class="t-seance-chip">Lecture</span><span class="t-seance-chip">Bilan</span>';
-      var btn=seanceCard.querySelector('.btn-primary');
-      if(btn) seanceCard.insertBefore(chipsRow,btn);
+  var byCat={};
+  for(var i=0;i<items.length;i++){
+    var c=items[i].cat;
+    if(!byCat[c]) byCat[c]=[];
+    byCat[c].push(items[i]);
+  }
+  var html='';
+  for(var j=0;j<catOrder.length;j++){
+    var cat=catOrder[j];
+    if(!byCat[cat]) continue;
+    var secLabel=(typeof SECTIONS!=='undefined'&&SECTIONS[cat])?SECTIONS[cat].label:cat;
+    var sec=byCat[cat];
+    var locked=futureCats.indexOf(cat)!==-1;
+    html+='<div class="t-all-actions-group-label">'+secLabel+'</div>';
+    for(var m=0;m<sec.length;m++){
+      var it=sec[m];
+      var done=!!S.checklist[it.id];
+      var cls='t-all-actions-item'+(done?' done':'')+(locked?' locked':'');
+      var onClick=locked?'':' onclick="closeTarbiyaAllActions();openGuided('+it.id+')"';
+      html+='<div class="'+cls+'"'+onClick+'>'+
+        '<div class="t-all-actions-check'+(done?' checked':'')+'">'+(done?'✓':'')+'</div>'+
+        '<span class="t-all-actions-emoji">'+it.emoji+'</span>'+
+        '<div class="t-all-actions-info">'+
+          '<div class="t-all-actions-name">'+it.titleFr+'</div>'+
+          '<div class="t-all-actions-meta">'+it.time+(locked?' · 🔒':'')+'</div>'+
+        '</div>'+
+      '</div>';
     }
   }
+  document.getElementById('t-all-actions-list').innerHTML=html;
+  modal.classList.add('show');
+}
+function closeTarbiyaAllActions(){
+  var modal=document.getElementById('t-all-actions-modal');
+  if(modal) modal.classList.remove('show');
+}
+function removeTarbiyaAllActionsModal(){
+  var modal=document.getElementById('t-all-actions-modal');
+  if(modal) modal.remove();
 }
 
 // ── PROFIL Tarbiya v2 ──
