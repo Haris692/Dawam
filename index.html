@@ -1499,16 +1499,15 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* Safe-area pour l'écran invocations (sinon le header touche la status bar) */
 [data-theme="tarbiya"] .t-invoc-header{padding-top:max(20px,calc(16px + env(safe-area-inset-top))) !important;}
 
-/* Prayer strip flottante au-dessus de la nav */
+/* Prayer strip flottante au-dessus de la nav — recentrée */
 [data-theme="tarbiya"] .t-prayer-strip-bottom{
   position:fixed;
   left:50%;
   transform:translateX(-50%);
   bottom:calc(74px + env(safe-area-inset-bottom,0px));
-  max-width:430px;
   width:calc(100% - 24px);
-  margin:0 12px;
-  padding:10px 14px;
+  max-width:406px;
+  padding:10px 8px;
   background:rgba(255,255,255,.94);
   -webkit-backdrop-filter:blur(20px);
   backdrop-filter:blur(20px);
@@ -1516,11 +1515,12 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   border-radius:18px;
   box-shadow:0 8px 30px -8px rgba(0,0,0,.12);
   display:flex;
-  justify-content:space-between;
+  justify-content:space-around;
   align-items:center;
-  gap:4px;
+  gap:0;
   z-index:90;
   pointer-events:auto;
+  box-sizing:border-box;
 }
 [data-theme="tarbiya"] .t-prayer-strip-bottom .t-prayer-strip__item{
   background:transparent;border-top:none;padding:6px 8px;
@@ -2214,14 +2214,14 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       </div>
     </div>
 
-    <!-- Divider -->
-    <div style="height:.5px;background:var(--border);margin:0 20px 16px"></div>
-
-    <!-- Section couleurs de base (thèmes existants) -->
-    <div style="padding:0 20px 4px">
-      <div class="profil-section-title" style="margin-bottom:4px">Couleur de base</div>
+    <!-- Section couleurs de base (masquée quand Tarbiya actif) -->
+    <div id="apparence-base-section">
+      <div style="height:.5px;background:var(--border);margin:0 20px 16px"></div>
+      <div style="padding:0 20px 4px">
+        <div class="profil-section-title" style="margin-bottom:4px">Couleur de base</div>
+      </div>
+      <div class="theme-grid" id="apparence-theme-grid"></div>
     </div>
-    <div class="theme-grid" id="apparence-theme-grid"></div>
 
     <div style="padding:12px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom))">
       <button class="btn-primary" onclick="closeApparenceModal()">Fermer</button>
@@ -4383,18 +4383,11 @@ function renderApparenceModal() {
   const isTarbiya = t.theme === 'tarbiya';
   const toggle = document.getElementById('tarbiya-toggle');
   if (toggle) toggle.classList.toggle('on', isTarbiya);
+  // Tarbiya = thème verrouillé : on masque la palette ET les couleurs de base
   const paletteWrap = document.getElementById('apparence-palette-wrap');
-  if (paletteWrap) paletteWrap.style.display = isTarbiya ? '' : 'none';
-  if (isTarbiya) {
-    const grid = document.getElementById('apparence-palette-grid');
-    if (grid) grid.innerHTML = Object.entries(PALETTES_META).map(([key, p]) =>
-      `<div class="apparence-palette-cell${key===t.palette?' active':''}" onclick="selectTarbiyaPalette('${key}')">
-        <div class="apparence-palette-swatch" style="background:${p.accent}">
-          <div class="apparence-palette-dot" style="background:${p.warm}"></div>
-        </div>
-        <div class="apparence-palette-name">${p.name}</div>
-      </div>`).join('');
-  }
+  if (paletteWrap) paletteWrap.style.display = 'none';
+  const baseSection = document.getElementById('apparence-base-section');
+  if (baseSection) baseSection.style.display = isTarbiya ? 'none' : '';
   const current = localStorage.getItem('dawam_theme') || 'default';
   const cg = document.getElementById('apparence-theme-grid');
   if (cg) cg.innerHTML = Object.entries(THEMES).map(([key,th]) =>
