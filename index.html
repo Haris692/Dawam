@@ -1484,6 +1484,105 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .t-badge-card__icon--locked{background:var(--t-accent-soft);color:var(--t-muted);}
 [data-theme="tarbiya"] .t-badge-card__title{font-family:var(--t-font-title);font-weight:800;font-size:12px;color:var(--t-ink);letter-spacing:-.1px;line-height:1.25;}
 [data-theme="tarbiya"] .t-badge-card__sub{font-size:11px;color:var(--t-muted);font-weight:700;}
+
+/* ============================================================================
+   v2.3 — Le haut scroll naturellement + prayer strip en bas + nav restylé
+   ============================================================================ */
+
+/* Annule la bande fixe en haut + le bg violet de #app : le hero scroll librement */
+[data-theme="tarbiya"] body::before{display:none !important;}
+[data-theme="tarbiya"] #app{background:var(--t-bg) !important;padding-top:0 !important;}
+
+/* Padding bas de path-body pour ne pas cacher le contenu derrière la prayer strip + nav */
+[data-theme="tarbiya"] .path-body{padding-bottom:160px !important;}
+
+/* Safe-area pour l'écran invocations (sinon le header touche la status bar) */
+[data-theme="tarbiya"] .t-invoc-header{padding-top:max(20px,calc(16px + env(safe-area-inset-top))) !important;}
+
+/* Prayer strip flottante au-dessus de la nav */
+[data-theme="tarbiya"] .t-prayer-strip-bottom{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:calc(74px + env(safe-area-inset-bottom,0px));
+  max-width:430px;
+  width:calc(100% - 24px);
+  margin:0 12px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px);
+  border:.5px solid rgba(0,0,0,.04);
+  border-radius:18px;
+  box-shadow:0 8px 30px -8px rgba(0,0,0,.12);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:4px;
+  z-index:90;
+  pointer-events:auto;
+}
+[data-theme="tarbiya"] .t-prayer-strip-bottom .t-prayer-strip__item{
+  background:transparent;border-top:none;padding:6px 8px;
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  border-radius:10px;transition:background .2s;
+}
+[data-theme="tarbiya"] .t-prayer-strip-bottom .t-prayer-strip__name{
+  color:var(--t-muted) !important;font-size:9.5px;font-weight:800;
+  letter-spacing:1.1px;text-transform:uppercase;
+}
+[data-theme="tarbiya"] .t-prayer-strip-bottom .t-prayer-strip__time{
+  color:var(--t-ink) !important;font-size:13px;font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+[data-theme="tarbiya"] .t-prayer-strip-bottom .t-prayer-strip__item--active{
+  background:var(--t-accent-soft) !important;
+}
+[data-theme="tarbiya"] .t-prayer-strip-bottom .t-prayer-strip__item--active .t-prayer-strip__name,
+[data-theme="tarbiya"] .t-prayer-strip-bottom .t-prayer-strip__item--active .t-prayer-strip__time{
+  color:var(--t-accent) !important;
+}
+
+/* Bottom nav : style capture (icônes + labels + indicateur arc au-dessus de l'actif) */
+[data-theme="tarbiya"] #bottom-nav{
+  background:rgba(255,255,255,.96) !important;
+  -webkit-backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px);
+  border-top:.5px solid rgba(0,0,0,.05);
+  justify-content:space-around !important;
+  padding:8px 6px max(8px,env(safe-area-inset-bottom)) !important;
+  gap:0;
+}
+[data-theme="tarbiya"] #bottom-nav::before{display:none !important;}
+[data-theme="tarbiya"] #nav-indicator{display:none !important;}
+[data-theme="tarbiya"] .nav-tab{
+  position:relative;
+  flex-direction:row !important;
+  gap:6px !important;
+  padding:8px 10px !important;
+  background:transparent !important;
+  height:auto !important;
+  flex:0 1 auto !important;
+}
+[data-theme="tarbiya"] .nav-tab svg{
+  width:18px !important;height:18px !important;
+  stroke:var(--t-muted) !important;stroke-width:1.8 !important;
+  fill:none !important;
+}
+[data-theme="tarbiya"] .nav-tab span{
+  font-size:12.5px !important;font-weight:600 !important;
+  color:var(--t-muted) !important;
+}
+[data-theme="tarbiya"] .nav-tab.active svg{stroke:var(--t-accent) !important;}
+[data-theme="tarbiya"] .nav-tab.active span{color:var(--t-accent) !important;font-weight:700 !important;}
+[data-theme="tarbiya"] .nav-tab.active::before{
+  content:"";position:absolute;
+  top:-1px;left:50%;transform:translateX(-50%);
+  width:28px;height:3px;
+  background:var(--t-accent);
+  border-radius:0 0 8px 8px;
+}
+
 /* fin v2 */
 </style>
 <!-- Firebase SDK (compat) -->
@@ -3078,6 +3177,7 @@ function renderPath(){
 
   // Tarbiya v2 — injecte les cards spécifiques (progress ring + sous-chips séance)
   if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
+  if(typeof renderTarbiyaPrayerStripBottom==='function') renderTarbiyaPrayerStripBottom();
 }
 
 function toggleSection(h){const items=h.nextElementSibling;const hidden=items.style.display==="none";items.style.display=hidden?"flex":"none";if(hidden)items.style.flexDirection="column";}
@@ -3425,7 +3525,7 @@ document.getElementById('edit-profil-modal').addEventListener('click',function(e
 
 // ═══ NAV ═══
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");const nav=document.getElementById("bottom-nav");nav.classList.toggle("visible",["path","invocations","groupes","profil"].includes(id));}
-function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");const _tabIds=['tab-path','tab-invocations','tab-groupes','tab-profil'];const _idx=_tabIds.indexOf(el.id);const _ind=document.getElementById('nav-indicator');if(_ind&&_idx>=0){const _nav=document.getElementById('bottom-nav');_ind.style.transform='translateX('+(_idx*(_nav.offsetWidth/4))+'px)';}document.getElementById('bottom-nav').classList.remove('scrolled');if(id==="path")renderPath();if(id==="profil")renderProfil();if(id==="invocations")renderInvocations();if(id==="groupes")renderGroupes();}
+function showTab(id,el){showScreen(id);document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");const _tabIds=['tab-path','tab-invocations','tab-groupes','tab-profil'];const _idx=_tabIds.indexOf(el.id);const _ind=document.getElementById('nav-indicator');if(_ind&&_idx>=0){const _nav=document.getElementById('bottom-nav');_ind.style.transform='translateX('+(_idx*(_nav.offsetWidth/4))+'px)';}document.getElementById('bottom-nav').classList.remove('scrolled');if(id==="path")renderPath();if(id==="profil")renderProfil();if(id==="invocations")renderInvocations();if(id==="groupes")renderGroupes();if(window.tarbiyaTheme&&window.tarbiyaTheme.get().theme==='tarbiya'){if(id==='path')renderTarbiyaPrayerStripBottom();else removeTarbiyaPrayerStripBottom();}}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400);}
 (function(){const _nav=document.getElementById('bottom-nav');document.querySelectorAll('.screen').forEach(function(s){s.addEventListener('scroll',function(){if(_nav.classList.contains('visible'))_nav.classList.toggle('scrolled',s.scrollTop>12);},{passive:true});});})();
 
@@ -4320,11 +4420,15 @@ function toggleTarbiyaTheme(){
     if(typeof renderTarbiyaProfilOverlays==='function') renderTarbiyaProfilOverlays();
     if(typeof renderTarbiyaInvocHeader==='function') renderTarbiyaInvocHeader();
     if(typeof renderInvocContent==='function') renderInvocContent();
+    // Affiche la prayer strip basse uniquement si on est sur path
+    var activeScreen=document.querySelector('.screen.active');
+    if(activeScreen && activeScreen.id==='path' && typeof renderTarbiyaPrayerStripBottom==='function') renderTarbiyaPrayerStripBottom();
   } else {
     removeTarbiyaHero();
     if(typeof removeTarbiyaProfilOverlays==='function') removeTarbiyaProfilOverlays();
     if(typeof removeTarbiyaInvocHeader==='function') removeTarbiyaInvocHeader();
     if(typeof removeTarbiyaGuidedInjections==='function') removeTarbiyaGuidedInjections();
+    if(typeof removeTarbiyaPrayerStripBottom==='function') removeTarbiyaPrayerStripBottom();
     // Nettoie aussi les injections path
     document.querySelectorAll('#path-body .t-progress-card, #path-body .t-seance-chips-row').forEach(function(el){el.remove();});
     // Re-render invocations en mode default
@@ -4369,8 +4473,7 @@ function renderTarbiyaHero(){
       '<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.13);color:var(--t-warm);font-weight:700;font-size:12px">🔥 '+streak+'j de série</span>'+
       '<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,200,90,.20);color:#FFD06B;font-weight:700;font-size:12px">Sem. '+week+'</span>'+
       (palierName?'<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-weight:700;font-size:12px">'+palierName+'</span>':'')+
-    '</div>'+
-    _tarbiyaPrayerStripHtml();
+    '</div>';
   hero.insertBefore(overlay,hero.firstChild);
 }
 
@@ -4398,6 +4501,22 @@ function _tarbiyaPrayerStripHtml(){
     '</div>';
   }
   return html+'</div>';
+}
+
+// Prayer strip flottante en bas (au-dessus de la nav) — uniquement sur l'écran path
+function renderTarbiyaPrayerStripBottom(){
+  removeTarbiyaPrayerStripBottom();
+  if(!window.tarbiyaTheme || window.tarbiyaTheme.get().theme!=='tarbiya') return;
+  var html=_tarbiyaPrayerStripHtml();
+  if(!html) return;
+  var wrapper=document.createElement('div');
+  wrapper.innerHTML=html;
+  var strip=wrapper.firstChild;
+  strip.classList.add('t-prayer-strip-bottom');
+  document.body.appendChild(strip);
+}
+function removeTarbiyaPrayerStripBottom(){
+  document.querySelectorAll('.t-prayer-strip-bottom').forEach(function(el){el.remove();});
 }
 
 // Injecte/met à jour les cards spécifiques Tarbiya dans #path-body
