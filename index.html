@@ -4401,7 +4401,7 @@ function _tarbiyaPrayerStripHtml(){
 }
 
 // Injecte/met à jour les cards spécifiques Tarbiya dans #path-body
-// v2.1 : home simplifié — pas de progress card, juste la card action + sous-chips si séance aube
+// v2.2 : progress card "Encore N actions" au-dessus + sous-chips si séance aube
 function renderTarbiyaPathCards(){
   if(!window.tarbiyaTheme || window.tarbiyaTheme.get().theme!=='tarbiya') return;
   var body=document.getElementById('path-body');
@@ -4409,6 +4409,34 @@ function renderTarbiyaPathCards(){
   body.querySelectorAll('.t-progress-card,.t-seance-chips-row').forEach(function(el){el.remove();});
 
   var items=getActiveItems();
+  var checked=Object.values(S.checklist).filter(Boolean).length;
+  var total=items.length;
+  var remaining=total-checked;
+  var pct=total>0?checked/total:0;
+
+  // 1) Card "Encore N actions" — au-dessus de la card action
+  if(remaining>0){
+    var c=2*Math.PI*26;
+    var dashOffset=c*(1-pct);
+    var sub=remaining===total?'Commence par la plus simple ✓':'Continue, tu progresses bien';
+    var card=document.createElement('div');
+    card.className='t-progress-card fade-up';
+    card.innerHTML=
+      '<div class="t-progress-card__ring">'+
+        '<svg width="64" height="64" viewBox="0 0 64 64">'+
+          '<circle class="t-progress-card__ring-bg" cx="32" cy="32" r="26"/>'+
+          '<circle class="t-progress-card__ring-bar" cx="32" cy="32" r="26" stroke-dasharray="'+c.toFixed(2)+'" stroke-dashoffset="'+dashOffset.toFixed(2)+'"/>'+
+        '</svg>'+
+        '<div class="t-progress-card__ring-num">'+checked+'</div>'+
+      '</div>'+
+      '<div class="t-progress-card__body">'+
+        '<div class="t-progress-card__title">Encore '+remaining+' action'+(remaining>1?'s':'')+'</div>'+
+        '<div class="t-progress-card__sub">'+sub+'</div>'+
+      '</div>';
+    body.insertBefore(card,body.firstChild);
+  }
+
+  // 2) Sous-chips dans la card "Séance après l'aube" (item id=2)
   var catOrder=['qiyam','aube','journee','soir','nuit'];
   var curIdx=catOrder.indexOf(getCurrentCat());
   var futureCats=catOrder.slice(curIdx+1);
