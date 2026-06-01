@@ -1587,6 +1587,250 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 [data-theme="tarbiya"] .t-actions-see-all:active{opacity:.6;}
 
+/* ─── v2.5 — Path Duolingo-style 3D ─── */
+[data-theme="tarbiya"] .t-actions-carousel-wrap{display:none !important;}
+
+[data-theme="tarbiya"] .t-path-wrap{
+  position:relative;
+  margin:8px -4px 0;
+  padding:0;
+  min-height:200px;
+}
+[data-theme="tarbiya"] .t-path-svg{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+[data-theme="tarbiya"] .t-path-svg-shadow{
+  fill:none;
+  stroke:rgba(91,63,228,.12);
+  stroke-width:14;
+  stroke-linecap:round;
+}
+[data-theme="tarbiya"] .t-path-svg-line{
+  fill:none;
+  stroke:url(#t-path-grad);
+  stroke-width:6;
+  stroke-linecap:round;
+  stroke-dasharray:8 8;
+  animation:tPathFlow 30s linear infinite;
+}
+[data-theme="tarbiya"] .t-path-svg-line--solid{
+  stroke:var(--t-success);
+  stroke-dasharray:none;
+  opacity:.65;
+}
+@keyframes tPathFlow{
+  to{stroke-dashoffset:-160;}
+}
+
+/* Zone headers */
+[data-theme="tarbiya"] .t-path-zone-header{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;
+  padding:8px 16px;
+  background:rgba(255,255,255,.85);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border:.5px solid rgba(0,0,0,.04);
+  border-radius:999px;
+  font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--t-ink);
+  box-shadow:0 4px 16px -4px rgba(0,0,0,.08);
+  z-index:2;
+  white-space:nowrap;
+}
+[data-theme="tarbiya"] .t-path-zone-icon{font-size:14px;}
+[data-theme="tarbiya"] .t-path-zone-count{
+  font-size:10px;color:var(--t-muted);font-weight:700;
+  padding:2px 8px;border-radius:999px;background:var(--t-accent-soft);
+  letter-spacing:.5px;
+}
+
+/* Nodes */
+[data-theme="tarbiya"] .t-path-node{
+  position:absolute;
+  width:88px;height:114px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transform:translate(-50%,-50%);
+  z-index:3;
+  opacity:0;
+  animation:tNodeReveal .55s cubic-bezier(.34,1.4,.64,1) forwards;
+}
+@keyframes tNodeReveal{
+  from{opacity:0;transform:translate(-50%,calc(-50% + 20px)) scale(.7);}
+  to{opacity:1;transform:translate(-50%,-50%) scale(1);}
+}
+
+[data-theme="tarbiya"] .t-path-node-btn{
+  position:relative;
+  width:72px;height:72px;border-radius:50%;
+  border:none;cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;line-height:1;
+  font-family:inherit;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s ease;
+  transform:translateZ(0);
+  -webkit-tap-highlight-color:transparent;
+}
+[data-theme="tarbiya"] .t-path-node-btn::before{
+  content:"";position:absolute;
+  inset:6px;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,0) 60%);
+  pointer-events:none;
+}
+[data-theme="tarbiya"] .t-path-node-btn::after{
+  content:"";position:absolute;
+  bottom:8px;left:18%;right:18%;height:5px;border-radius:50%;
+  background:rgba(0,0,0,.18);
+  filter:blur(2px);
+  pointer-events:none;
+}
+
+/* Done state — vert profond, "physique" */
+[data-theme="tarbiya"] .t-path-node--done .t-path-node-btn{
+  background:linear-gradient(180deg,#3FCB7F 0%,#1F8A5B 100%);
+  box-shadow:
+    0 8px 0 #14633F,
+    0 12px 22px -8px rgba(31,138,91,.45);
+  color:#fff;
+}
+[data-theme="tarbiya"] .t-path-node--done .t-path-node-btn:active{
+  transform:translateY(4px);
+  box-shadow:0 4px 0 #14633F,0 8px 14px -6px rgba(31,138,91,.4);
+}
+
+/* Current — actif, warm + pulse */
+[data-theme="tarbiya"] .t-path-node--current .t-path-node-btn{
+  background:linear-gradient(180deg,#FF9A4D 0%,#FF6B6B 100%);
+  box-shadow:
+    0 8px 0 #C8364B,
+    0 16px 32px -8px rgba(255,107,107,.55);
+  color:#fff;
+  width:84px;height:84px;
+  font-size:36px;
+  animation:tNodePulse 2.4s ease-in-out infinite;
+}
+@keyframes tNodePulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.06);}
+}
+[data-theme="tarbiya"] .t-path-node--current .t-path-node-btn:active{
+  transform:scale(.96) translateY(3px);
+  animation:none;
+  box-shadow:0 5px 0 #C8364B,0 10px 18px -6px rgba(255,107,107,.45);
+}
+/* Halo glow autour de current */
+[data-theme="tarbiya"] .t-path-node--current::before{
+  content:"";position:absolute;
+  width:130px;height:130px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,107,.35) 0%,rgba(255,107,107,0) 65%);
+  filter:blur(6px);
+  z-index:-1;
+  animation:tNodeGlow 2.4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes tNodeGlow{
+  0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
+}
+
+/* Next — disponible mais pas actif */
+[data-theme="tarbiya"] .t-path-node--next .t-path-node-btn{
+  background:linear-gradient(180deg,#A28BFF 0%,#5B3FE4 100%);
+  box-shadow:
+    0 8px 0 #3D24D6,
+    0 12px 22px -8px rgba(91,63,228,.45);
+  color:#fff;
+}
+[data-theme="tarbiya"] .t-path-node--next .t-path-node-btn:active{
+  transform:translateY(4px);
+  box-shadow:0 4px 0 #3D24D6,0 8px 14px -6px rgba(91,63,228,.4);
+}
+
+/* Locked — gris pâle */
+[data-theme="tarbiya"] .t-path-node--locked .t-path-node-btn{
+  background:linear-gradient(180deg,#E5E0F5 0%,#C8C0E0 100%);
+  box-shadow:
+    0 6px 0 #A89DC9,
+    0 8px 14px -6px rgba(0,0,0,.1);
+  color:#7A748A;
+  cursor:default;
+}
+[data-theme="tarbiya"] .t-path-node--locked .t-path-node-btn:active{
+  transform:translateY(2px) rotate(-2deg);
+  animation:tNodeShake .3s;
+}
+@keyframes tNodeShake{
+  0%,100%{transform:translateY(2px) rotate(0);}
+  25%{transform:translateY(2px) rotate(-3deg);}
+  75%{transform:translateY(2px) rotate(3deg);}
+}
+[data-theme="tarbiya"] .t-path-node--locked .t-path-node-btn::after{display:none;}
+
+/* Node label sous le bouton */
+[data-theme="tarbiya"] .t-path-node-label{
+  font-family:var(--t-font-title);
+  font-size:11.5px;font-weight:700;
+  color:var(--t-ink);
+  text-align:center;
+  line-height:1.2;
+  max-width:100px;
+  padding:2px 6px;
+}
+[data-theme="tarbiya"] .t-path-node--done .t-path-node-label{color:var(--t-success);}
+[data-theme="tarbiya"] .t-path-node--current .t-path-node-label{
+  color:var(--t-coral);font-weight:800;font-size:12px;
+}
+[data-theme="tarbiya"] .t-path-node--locked .t-path-node-label{color:var(--t-muted);}
+
+/* Mini badge sur le node (étape N, XP, etc) */
+[data-theme="tarbiya"] .t-path-node-badge{
+  position:absolute;
+  top:-4px;right:-2px;
+  background:#fff;
+  border:2px solid var(--t-coral);
+  color:var(--t-coral);
+  font-size:10px;font-weight:800;
+  padding:2px 6px;border-radius:999px;
+  z-index:4;
+  box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+[data-theme="tarbiya"] .t-path-node--done .t-path-node-badge{
+  border-color:var(--t-success);color:var(--t-success);
+}
+
+/* Tag "PROCHAINE" au-dessus du current */
+[data-theme="tarbiya"] .t-path-node--current .t-path-node-tag{
+  position:absolute;
+  top:-22px;left:50%;
+  transform:translateX(-50%);
+  background:var(--t-coral);
+  color:#fff;
+  padding:3px 9px;border-radius:999px;
+  font-size:9.5px;font-weight:800;letter-spacing:1.1px;
+  white-space:nowrap;
+  box-shadow:0 4px 10px -2px rgba(255,107,107,.4);
+  z-index:5;
+}
+[data-theme="tarbiya"] .t-path-node--current .t-path-node-tag::after{
+  content:"";position:absolute;
+  bottom:-4px;left:50%;
+  transform:translateX(-50%) rotate(45deg);
+  width:6px;height:6px;
+  background:var(--t-coral);
+}
+
+/* Padding bas accru pour ne pas chevaucher la prayer strip */
+[data-theme="tarbiya"] .t-path-wrap + .t-actions-see-all{
+  margin-top:24px;
+}
+
 /* Bottom sheet "Toutes les actions" */
 [data-theme="tarbiya"] #t-all-actions-modal{
   position:fixed;inset:0;background:rgba(0,0,0,.45);
@@ -4659,12 +4903,12 @@ function removeTarbiyaPrayerStripBottom(){
   document.querySelectorAll('.t-prayer-strip-bottom').forEach(function(el){el.remove();});
 }
 
-// v2.4 — Progress card + carrousel d'actions + lien "Voir tout"
+// v2.5 — Progress card + Duo path (nodes 3D + zones + SVG) + lien "Voir tout"
 function renderTarbiyaPathCards(){
   if(!window.tarbiyaTheme || window.tarbiyaTheme.get().theme!=='tarbiya') return;
   var body=document.getElementById('path-body');
   if(!body) return;
-  body.querySelectorAll('.t-progress-card,.t-actions-carousel-wrap,.t-seance-chips-row').forEach(function(el){el.remove();});
+  body.querySelectorAll('.t-progress-card,.t-actions-carousel-wrap,.t-path-wrap,.t-actions-see-all,.t-seance-chips-row').forEach(function(el){el.remove();});
 
   var items=getActiveItems();
   var checked=Object.values(S.checklist).filter(Boolean).length;
@@ -4676,7 +4920,7 @@ function renderTarbiyaPathCards(){
   var curIdx=catOrder.indexOf(curCat);
   var futureCats=catOrder.slice(curIdx+1);
 
-  // 1) Card "Encore N actions"
+  // 1) Card "Encore N actions" (inchangée)
   if(remaining>0){
     var c=2*Math.PI*26;
     var dashOffset=c*(1-pct);
@@ -4698,93 +4942,115 @@ function renderTarbiyaPathCards(){
     body.insertBefore(card,body.firstChild);
   }
 
-  // 2) Carrousel d'actions (tri chronologique par cat puis par id)
+  // 2) Duo path — tri + groupe par cat
   var sorted=items.slice().sort(function(a,b){
     var ai=catOrder.indexOf(a.cat),bi=catOrder.indexOf(b.cat);
     if(ai!==bi) return ai-bi;
     return (a.id||0)-(b.id||0);
   });
-
-  // Position initiale = première action non faite et non future
-  var initialIdx=0;
+  var byCat={};
   for(var i=0;i<sorted.length;i++){
-    if(!S.checklist[sorted[i].id] && futureCats.indexOf(sorted[i].cat)===-1){initialIdx=i;break;}
+    var k=sorted[i].cat;
+    if(!byCat[k]) byCat[k]=[];
+    byCat[k].push(sorted[i]);
+  }
+  // "current" = 1ère action non faite et non future (1 seule)
+  var currentId=null;
+  for(var i=0;i<sorted.length;i++){
+    var it=sorted[i];
+    if(!S.checklist[it.id] && futureCats.indexOf(it.cat)===-1){currentId=it.id;break;}
   }
 
-  var cardsHtml='';
-  for(var i=0;i<sorted.length;i++){
-    var item=sorted[i];
-    var done=!!S.checklist[item.id];
-    var locked=futureCats.indexOf(item.cat)!==-1;
-    var isCur=item.cat===curCat;
-    var status=done?'done':locked?'locked':(isCur?'current':'next');
-    var secLabel=(typeof SECTIONS!=='undefined'&&SECTIONS[item.cat])?SECTIONS[item.cat].label:item.time;
-    var stateLabel=done?'✓ ACCOMPLIE'
-                  :locked?'🔒 Disponible plus tard · '+secLabel
-                  :(isCur?'● Maintenant · ':'● Prochaine étape · ')+secLabel;
-    var ctaText=done?'Accomplie ✓':locked?'Bientôt':(item.id===2?'Commencer la séance':'Voir l\'action')+' →';
-    var ctaOnclick=(done||locked)?'':' onclick="openGuided('+item.id+')"';
-    var chipsHtml=(item.id===2&&!done&&!locked)?'<div class="t-seance-chips-row"><span class="t-seance-chip">Intention</span><span class="t-seance-chip">Adhkar</span><span class="t-seance-chip">Lecture</span><span class="t-seance-chip">Bilan</span></div>':'';
-    cardsHtml+='<div class="t-action-card t-action-card--'+status+'" data-idx="'+i+'" data-id="'+item.id+'">'+
-      '<div class="t-action-card__label">'+stateLabel+'</div>'+
-      '<div class="t-action-card__row">'+
-        '<div class="t-action-card__icon">'+item.emoji+'</div>'+
-        '<div style="flex:1;min-width:0">'+
-          '<div class="t-action-card__title">'+item.titleFr+'</div>'+
-          '<div class="t-action-card__sub">'+item.time+'</div>'+
-        '</div>'+
-      '</div>'+
-      chipsHtml+
-      '<button class="t-action-card__cta"'+ctaOnclick+(done||locked?' disabled':'')+'>'+ctaText+'</button>'+
-    '</div>';
+  // Layout vertical : on accumule headers + nodes
+  var HEADER_H=42, HEADER_GAP=18, NODE_VSPACE=108, ZONE_GAP=10, PAD_TOP=18, PAD_BOTTOM=24;
+  var layout=[];
+  var y=PAD_TOP;
+  var nodeIdx=0;
+  for(var z=0;z<catOrder.length;z++){
+    var cat=catOrder[z];
+    if(!byCat[cat]) continue;
+    var sec=(typeof SECTIONS!=='undefined'&&SECTIONS[cat])?SECTIONS[cat]:{label:cat,emoji:'•'};
+    var zoneLocked=futureCats.indexOf(cat)!==-1;
+    layout.push({type:'header',y:y+HEADER_H/2,label:sec.label,emoji:sec.emoji,count:byCat[cat].length,locked:zoneLocked});
+    y+=HEADER_H+HEADER_GAP;
+    for(var n=0;n<byCat[cat].length;n++){
+      var item=byCat[cat][n];
+      var done=!!S.checklist[item.id];
+      var isCurrent=item.id===currentId;
+      var status=done?'done':(zoneLocked?'locked':(isCurrent?'current':'next'));
+      // Zigzag sinusoïdal : amplitude 26% autour de 50%
+      var xpc=50+26*Math.sin(nodeIdx*Math.PI/2);
+      layout.push({type:'node',y:y+57,x:xpc,status:status,item:item,idx:nodeIdx+1,isCurrent:isCurrent});
+      y+=NODE_VSPACE;
+      nodeIdx++;
+    }
+    y+=ZONE_GAP;
+  }
+  var totalH=y+PAD_BOTTOM;
+
+  // SVG path entre nodes consécutifs (cubic Bézier en S)
+  var nodes=layout.filter(function(e){return e.type==='node';});
+  var pathD='';
+  for(var k=0;k<nodes.length-1;k++){
+    var n1=nodes[k], n2=nodes[k+1];
+    var dy=(n2.y-n1.y)/2;
+    pathD+='M'+n1.x.toFixed(2)+','+n1.y+' C'+n1.x.toFixed(2)+','+(n1.y+dy)+' '+n2.x.toFixed(2)+','+(n2.y-dy)+' '+n2.x.toFixed(2)+','+n2.y+' ';
   }
 
-  var dotsHtml='';
-  for(var i=0;i<sorted.length;i++){
-    var active=i===initialIdx?' t-actions-dot--active':'';
-    dotsHtml+='<span class="t-actions-dot'+active+'"></span>';
+  // Build markup headers + nodes
+  var inner='';
+  inner+='<svg class="t-path-svg" viewBox="0 0 100 '+totalH+'" preserveAspectRatio="none">'+
+    '<defs>'+
+      '<linearGradient id="t-path-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="'+totalH+'">'+
+        '<stop offset="0%" stop-color="#FF9A4D"/>'+
+        '<stop offset="50%" stop-color="#FF6B6B"/>'+
+        '<stop offset="100%" stop-color="#5B3FE4"/>'+
+      '</linearGradient>'+
+    '</defs>'+
+    (pathD?'<path class="t-path-svg-shadow" d="'+pathD+'" vector-effect="non-scaling-stroke"/>'+
+           '<path class="t-path-svg-line" d="'+pathD+'" vector-effect="non-scaling-stroke"/>':'')+
+  '</svg>';
+
+  for(var e=0;e<layout.length;e++){
+    var el=layout[e];
+    if(el.type==='header'){
+      inner+='<div class="t-path-zone-header" style="top:'+el.y+'px">'+
+        '<span class="t-path-zone-icon">'+el.emoji+'</span>'+
+        '<span>'+el.label+'</span>'+
+        '<span class="t-path-zone-count">'+el.count+'</span>'+
+      '</div>';
+    } else {
+      var item=el.item, status=el.status;
+      var btnEmoji=(status==='locked')?'🔒':(status==='done'?'✓':item.emoji);
+      var btnAttr=(status==='locked')?' disabled':(' onclick="openGuided('+item.id+')"');
+      var aria=(item.titleFr||'').replace(/"/g,'&quot;')+(status==='locked'?' (verrouillée)':'');
+      var tag=el.isCurrent?'<div class="t-path-node-tag">PROCHAINE</div>':'';
+      var badge='';
+      if(status==='next' && item.xp) badge='<div class="t-path-node-badge">+'+item.xp+'</div>';
+      inner+='<div class="t-path-node t-path-node--'+status+'" style="top:'+el.y+'px;left:'+el.x.toFixed(2)+'%" data-id="'+item.id+'">'+
+        tag+
+        '<button class="t-path-node-btn" aria-label="'+aria+'"'+btnAttr+'>'+btnEmoji+'</button>'+
+        badge+
+        '<div class="t-path-node-label">'+item.titleFr+'</div>'+
+      '</div>';
+    }
   }
 
   var wrap=document.createElement('div');
-  wrap.className='t-actions-carousel-wrap fade-up';
-  wrap.innerHTML=
-    '<div class="t-actions-carousel">'+cardsHtml+'</div>'+
-    '<div class="t-actions-dots">'+dotsHtml+'</div>'+
-    '<button class="t-actions-see-all" onclick="openTarbiyaAllActions()">Voir toutes les actions ›</button>';
+  wrap.className='t-path-wrap fade-up';
+  wrap.style.height=totalH+'px';
+  wrap.innerHTML=inner;
 
-  // Place wrap juste après .t-progress-card (ou en tête)
+  var seeAll=document.createElement('button');
+  seeAll.className='t-actions-see-all';
+  seeAll.textContent='Voir toutes les actions ›';
+  seeAll.onclick=openTarbiyaAllActions;
+
+  // Insertion : juste après .t-progress-card
   var progCard=body.querySelector('.t-progress-card');
-  if(progCard) progCard.parentNode.insertBefore(wrap,progCard.nextSibling);
-  else body.insertBefore(wrap,body.firstChild);
-
-  // Snap initial + listener pour mettre à jour les dots au scroll
-  var carousel=wrap.querySelector('.t-actions-carousel');
-  if(carousel){
-    requestAnimationFrame(function(){
-      var card=carousel.children[initialIdx];
-      if(card){
-        var carouselW=carousel.offsetWidth;
-        var cardW=card.offsetWidth;
-        var target=card.offsetLeft-(carouselW-cardW)/2;
-        carousel.scrollLeft=Math.max(0,target);
-      }
-    });
-    var ticking=false;
-    carousel.addEventListener('scroll',function(){
-      if(ticking) return;
-      ticking=true;
-      requestAnimationFrame(function(){
-        if(!carousel.children.length){ticking=false;return;}
-        var cardW=carousel.children[0].offsetWidth+14;
-        var idx=Math.round(carousel.scrollLeft/cardW);
-        if(idx<0) idx=0;
-        if(idx>=carousel.children.length) idx=carousel.children.length-1;
-        var dots=wrap.querySelectorAll('.t-actions-dot');
-        for(var k=0;k<dots.length;k++) dots[k].classList.toggle('t-actions-dot--active',k===idx);
-        ticking=false;
-      });
-    },{passive:true});
-  }
+  var refAfter=progCard?progCard.nextSibling:body.firstChild;
+  body.insertBefore(wrap, refAfter);
+  body.insertBefore(seeAll, wrap.nextSibling);
 }
 
 // Bottom sheet "Toutes les actions du jour"
