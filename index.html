@@ -1587,7 +1587,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 [data-theme="tarbiya"] .t-actions-see-all:active{opacity:.6;}
 
-/* ─── v2.5 — Path Duolingo-style 3D ─── */
+/* ─── v2.6 — Path Duolingo-style 3D (animé) ─── */
 [data-theme="tarbiya"] .t-actions-carousel-wrap{display:none !important;}
 
 [data-theme="tarbiya"] .t-path-wrap{
@@ -1596,40 +1596,100 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   padding:0;
   min-height:200px;
 }
+/* Halo doux derrière tout le chemin */
+[data-theme="tarbiya"] .t-path-wrap::before{
+  content:"";position:absolute;
+  top:-20px;bottom:-20px;left:10%;right:10%;
+  background:
+    radial-gradient(60% 40% at 30% 12%, rgba(255,154,77,.10) 0%, transparent 70%),
+    radial-gradient(50% 40% at 75% 55%, rgba(91,63,228,.10) 0%, transparent 70%),
+    radial-gradient(45% 30% at 35% 90%, rgba(31,138,91,.08) 0%, transparent 70%);
+  filter:blur(2px);
+  pointer-events:none;z-index:0;
+}
+
 [data-theme="tarbiya"] .t-path-svg{
   position:absolute;inset:0;
   width:100%;height:100%;
   pointer-events:none;
   z-index:1;
+  overflow:visible;
 }
+/* Ombre douce */
 [data-theme="tarbiya"] .t-path-svg-shadow{
   fill:none;
   stroke:rgba(91,63,228,.12);
   stroke-width:14;
   stroke-linecap:round;
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
+  animation:tPathDraw 1.4s cubic-bezier(.65,.05,.36,1) .15s forwards;
 }
+/* Ligne principale — gradient qui se dessine puis pulse doucement */
 [data-theme="tarbiya"] .t-path-svg-line{
   fill:none;
   stroke:url(#t-path-grad);
   stroke-width:6;
   stroke-linecap:round;
-  stroke-dasharray:8 8;
-  animation:tPathFlow 30s linear infinite;
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
+  animation:tPathDraw 1.4s cubic-bezier(.65,.05,.36,1) .25s forwards,
+            tPathBreathe 4s ease-in-out 1.7s infinite;
+  filter:drop-shadow(0 2px 6px rgba(91,63,228,.18));
 }
-[data-theme="tarbiya"] .t-path-svg-line--solid{
-  stroke:var(--t-success);
-  stroke-dasharray:none;
-  opacity:.65;
+/* Overlay scintillant qui glisse le long du chemin */
+[data-theme="tarbiya"] .t-path-svg-flow{
+  fill:none;
+  stroke:rgba(255,255,255,.85);
+  stroke-width:3.2;
+  stroke-linecap:round;
+  stroke-dasharray:.014 .055;
+  opacity:0;
+  animation:tPathFlowIn .8s ease 1.6s forwards,
+            tPathFlow 14s linear 1.6s infinite;
+  filter:drop-shadow(0 0 3px rgba(255,255,255,.6));
+}
+@keyframes tPathDraw{
+  to{stroke-dashoffset:0;}
+}
+@keyframes tPathFlowIn{
+  from{opacity:0;}
+  to{opacity:.9;}
 }
 @keyframes tPathFlow{
-  to{stroke-dashoffset:-160;}
+  to{stroke-dashoffset:-3;}
+}
+@keyframes tPathBreathe{
+  0%,100%{filter:drop-shadow(0 2px 6px rgba(91,63,228,.18));}
+  50%{filter:drop-shadow(0 4px 14px rgba(91,63,228,.32));}
 }
 
-/* Zone headers */
+/* Étoiles décoratives en fond (twinkle) */
+[data-theme="tarbiya"] .t-path-star{
+  position:absolute;
+  width:6px;height:6px;border-radius:50%;
+  background:radial-gradient(circle,#fff 0%,rgba(255,255,255,0) 70%);
+  box-shadow:0 0 8px rgba(255,255,255,.9), 0 0 14px rgba(255,210,120,.5);
+  z-index:1;pointer-events:none;opacity:0;
+  animation:tStarTwinkle 4s ease-in-out infinite;
+}
+[data-theme="tarbiya"] .t-path-star--gold{
+  background:radial-gradient(circle,#FFD16B 0%,rgba(255,209,107,0) 70%);
+  box-shadow:0 0 8px rgba(255,209,107,.9), 0 0 16px rgba(255,154,77,.5);
+}
+[data-theme="tarbiya"] .t-path-star--violet{
+  background:radial-gradient(circle,#C8B6FF 0%,rgba(200,182,255,0) 70%);
+  box-shadow:0 0 8px rgba(200,182,255,.9), 0 0 16px rgba(91,63,228,.4);
+}
+@keyframes tStarTwinkle{
+  0%,100%{opacity:0;transform:scale(.6);}
+  50%{opacity:.95;transform:scale(1);}
+}
+
+/* Zone headers — slide-in depuis le haut + brillance */
 [data-theme="tarbiya"] .t-path-zone-header{
   position:absolute;
   left:50%;
-  transform:translateX(-50%);
   display:flex;align-items:center;gap:10px;
   padding:8px 16px;
   background:rgba(255,255,255,.85);
@@ -1641,27 +1701,56 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   box-shadow:0 4px 16px -4px rgba(0,0,0,.08);
   z-index:2;
   white-space:nowrap;
+  opacity:0;
+  transform:translate(-50%,-12px);
+  animation:tHeaderIn .55s cubic-bezier(.22,1,.36,1) both;
 }
-[data-theme="tarbiya"] .t-path-zone-icon{font-size:14px;}
+@keyframes tHeaderIn{
+  from{opacity:0;transform:translate(-50%,-12px) scale(.92);}
+  to{opacity:1;transform:translate(-50%,0) scale(1);}
+}
+[data-theme="tarbiya"] .t-path-zone-icon{
+  font-size:14px;
+  display:inline-block;
+  animation:tWiggle 6s ease-in-out infinite;
+}
+@keyframes tWiggle{
+  0%,90%,100%{transform:rotate(0);}
+  93%{transform:rotate(-12deg);}
+  96%{transform:rotate(10deg);}
+}
 [data-theme="tarbiya"] .t-path-zone-count{
   font-size:10px;color:var(--t-muted);font-weight:700;
   padding:2px 8px;border-radius:999px;background:var(--t-accent-soft);
   letter-spacing:.5px;
 }
 
-/* Nodes */
+/* Nodes — entrée en cascade, puis flottement idle */
 [data-theme="tarbiya"] .t-path-node{
   position:absolute;
   width:88px;height:114px;
   display:flex;flex-direction:column;align-items:center;gap:6px;
-  transform:translate(-50%,-50%);
   z-index:3;
   opacity:0;
-  animation:tNodeReveal .55s cubic-bezier(.34,1.4,.64,1) forwards;
+  transform:translate(-50%,calc(-50% + 28px)) scale(.6);
+  animation:tNodeReveal .65s cubic-bezier(.34,1.46,.64,1) both;
+  animation-delay:calc(var(--i,0) * 90ms + 450ms);
 }
 @keyframes tNodeReveal{
-  from{opacity:0;transform:translate(-50%,calc(-50% + 20px)) scale(.7);}
-  to{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  0%{opacity:0;transform:translate(-50%,calc(-50% + 28px)) scale(.6) rotate(-6deg);}
+  60%{opacity:1;transform:translate(-50%,calc(-50% - 4px)) scale(1.08) rotate(2deg);}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0);}
+}
+/* Flottement idle après l'entrée — done & next uniquement */
+[data-theme="tarbiya"] .t-path-node--done,
+[data-theme="tarbiya"] .t-path-node--next{
+  animation:tNodeReveal .65s cubic-bezier(.34,1.46,.64,1) both,
+            tNodeFloat 4.2s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * 90ms + 450ms), calc(var(--i,0) * 90ms + 1200ms);
+}
+@keyframes tNodeFloat{
+  0%,100%{transform:translate(-50%,-50%);}
+  50%{transform:translate(-50%,calc(-50% - 5px));}
 }
 
 [data-theme="tarbiya"] .t-path-node-btn{
@@ -1689,7 +1778,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   pointer-events:none;
 }
 
-/* Done state — vert profond, "physique" */
+/* Done — anneau vert profond + check qui "pop" */
 [data-theme="tarbiya"] .t-path-node--done .t-path-node-btn{
   background:linear-gradient(180deg,#3FCB7F 0%,#1F8A5B 100%);
   box-shadow:
@@ -1701,8 +1790,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   transform:translateY(4px);
   box-shadow:0 4px 0 #14633F,0 8px 14px -6px rgba(31,138,91,.4);
 }
+/* Petit anneau vert qui pulse autour des done */
+[data-theme="tarbiya"] .t-path-node--done .t-path-node-btn::before{
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 55%);
+}
 
-/* Current — actif, warm + pulse */
+/* Current — actif, warm + pulse + halo + couronne d'étincelles */
 [data-theme="tarbiya"] .t-path-node--current .t-path-node-btn{
   background:linear-gradient(180deg,#FF9A4D 0%,#FF6B6B 100%);
   box-shadow:
@@ -1711,33 +1805,77 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   color:#fff;
   width:84px;height:84px;
   font-size:36px;
-  animation:tNodePulse 2.4s ease-in-out infinite;
+  animation:tNodePulse 2.2s ease-in-out infinite;
 }
 @keyframes tNodePulse{
   0%,100%{transform:scale(1);}
-  50%{transform:scale(1.06);}
+  40%{transform:scale(1.07) rotate(-1deg);}
+  55%{transform:scale(1.05) rotate(1deg);}
 }
 [data-theme="tarbiya"] .t-path-node--current .t-path-node-btn:active{
-  transform:scale(.96) translateY(3px);
+  transform:scale(.94) translateY(3px);
   animation:none;
   box-shadow:0 5px 0 #C8364B,0 10px 18px -6px rgba(255,107,107,.45);
 }
-/* Halo glow autour de current */
+/* Double halo glow autour du current */
 [data-theme="tarbiya"] .t-path-node--current::before{
   content:"";position:absolute;
-  width:130px;height:130px;
-  top:50%;left:50%;
+  width:150px;height:150px;
+  top:42px;left:50%;
   transform:translate(-50%,-50%);
   border-radius:50%;
-  background:radial-gradient(circle,rgba(255,107,107,.35) 0%,rgba(255,107,107,0) 65%);
-  filter:blur(6px);
+  background:radial-gradient(circle,rgba(255,107,107,.4) 0%,rgba(255,154,77,.2) 35%,rgba(255,107,107,0) 65%);
+  filter:blur(8px);
   z-index:-1;
-  animation:tNodeGlow 2.4s ease-in-out infinite;
+  animation:tNodeGlow 2.6s ease-in-out infinite;
+  pointer-events:none;
+}
+[data-theme="tarbiya"] .t-path-node--current::after{
+  content:"";position:absolute;
+  width:96px;height:96px;
+  top:42px;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:2px solid rgba(255,107,107,.5);
+  z-index:-1;
+  animation:tRingExpand 2.4s ease-out infinite;
   pointer-events:none;
 }
 @keyframes tNodeGlow{
-  0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}
-  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
+  0%,100%{opacity:.65;transform:translate(-50%,-50%) scale(.95);}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}
+}
+@keyframes tRingExpand{
+  0%{opacity:.9;transform:translate(-50%,-50%) scale(.85);}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.6);}
+}
+
+/* Étincelles orbitant autour du current */
+[data-theme="tarbiya"] .t-path-node--current .t-spark-orbit{
+  position:absolute;
+  top:42px;left:50%;
+  width:120px;height:120px;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:4;
+  animation:tOrbit 8s linear infinite;
+}
+[data-theme="tarbiya"] .t-path-node--current .t-spark-orbit--rev{
+  animation:tOrbit 11s linear infinite reverse;
+  width:140px;height:140px;
+}
+[data-theme="tarbiya"] .t-path-node--current .t-spark{
+  position:absolute;
+  width:8px;height:8px;border-radius:50%;
+  background:#FFD16B;
+  box-shadow:0 0 10px #FFD16B,0 0 16px rgba(255,107,107,.7);
+}
+[data-theme="tarbiya"] .t-path-node--current .t-spark--a{top:-4px;left:50%;margin-left:-4px;}
+[data-theme="tarbiya"] .t-path-node--current .t-spark--b{bottom:-4px;left:50%;margin-left:-4px;background:#FF9A4D;box-shadow:0 0 10px #FF9A4D,0 0 18px rgba(255,107,107,.8);}
+[data-theme="tarbiya"] .t-path-node--current .t-spark--c{top:50%;left:-4px;margin-top:-4px;width:6px;height:6px;background:#fff;box-shadow:0 0 8px #fff,0 0 14px rgba(255,209,107,.7);}
+@keyframes tOrbit{
+  from{transform:translate(-50%,-50%) rotate(0deg);}
+  to{transform:translate(-50%,-50%) rotate(360deg);}
 }
 
 /* Next — disponible mais pas actif */
@@ -1753,7 +1891,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   box-shadow:0 4px 0 #3D24D6,0 8px 14px -6px rgba(91,63,228,.4);
 }
 
-/* Locked — gris pâle */
+/* Locked — gris pâle, mini wobble au tap */
 [data-theme="tarbiya"] .t-path-node--locked .t-path-node-btn{
   background:linear-gradient(180deg,#E5E0F5 0%,#C8C0E0 100%);
   box-shadow:
@@ -1763,13 +1901,14 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   cursor:default;
 }
 [data-theme="tarbiya"] .t-path-node--locked .t-path-node-btn:active{
-  transform:translateY(2px) rotate(-2deg);
-  animation:tNodeShake .3s;
+  animation:tNodeShake .4s ease-in-out;
 }
 @keyframes tNodeShake{
   0%,100%{transform:translateY(2px) rotate(0);}
-  25%{transform:translateY(2px) rotate(-3deg);}
-  75%{transform:translateY(2px) rotate(3deg);}
+  20%{transform:translateY(2px) rotate(-5deg);}
+  40%{transform:translateY(2px) rotate(4deg);}
+  60%{transform:translateY(2px) rotate(-3deg);}
+  80%{transform:translateY(2px) rotate(2deg);}
 }
 [data-theme="tarbiya"] .t-path-node--locked .t-path-node-btn::after{display:none;}
 
@@ -1789,7 +1928,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 [data-theme="tarbiya"] .t-path-node--locked .t-path-node-label{color:var(--t-muted);}
 
-/* Mini badge sur le node (étape N, XP, etc) */
+/* Mini badge XP sur le node */
 [data-theme="tarbiya"] .t-path-node-badge{
   position:absolute;
   top:-4px;right:-2px;
@@ -1800,23 +1939,34 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   padding:2px 6px;border-radius:999px;
   z-index:4;
   box-shadow:0 2px 6px rgba(0,0,0,.12);
+  animation:tBadgePop .5s cubic-bezier(.34,1.56,.64,1) both;
+  animation-delay:calc(var(--i,0) * 90ms + 900ms);
+}
+@keyframes tBadgePop{
+  from{opacity:0;transform:scale(0) rotate(-30deg);}
+  to{opacity:1;transform:scale(1) rotate(0);}
 }
 [data-theme="tarbiya"] .t-path-node--done .t-path-node-badge{
   border-color:var(--t-success);color:var(--t-success);
 }
 
-/* Tag "PROCHAINE" au-dessus du current */
+/* Tag "PROCHAINE" + chevron qui rebondit */
 [data-theme="tarbiya"] .t-path-node--current .t-path-node-tag{
   position:absolute;
-  top:-22px;left:50%;
-  transform:translateX(-50%);
+  top:-26px;left:50%;
   background:var(--t-coral);
   color:#fff;
-  padding:3px 9px;border-radius:999px;
+  padding:3px 10px;border-radius:999px;
   font-size:9.5px;font-weight:800;letter-spacing:1.1px;
   white-space:nowrap;
-  box-shadow:0 4px 10px -2px rgba(255,107,107,.4);
+  box-shadow:0 4px 12px -2px rgba(255,107,107,.5);
   z-index:5;
+  transform:translateX(-50%);
+  animation:tTagBob 2.4s ease-in-out infinite;
+}
+@keyframes tTagBob{
+  0%,100%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,-4px);}
 }
 [data-theme="tarbiya"] .t-path-node--current .t-path-node-tag::after{
   content:"";position:absolute;
@@ -1829,6 +1979,30 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 /* Padding bas accru pour ne pas chevaucher la prayer strip */
 [data-theme="tarbiya"] .t-path-wrap + .t-actions-see-all{
   margin-top:24px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  [data-theme="tarbiya"] .t-path-svg-shadow,
+  [data-theme="tarbiya"] .t-path-svg-line,
+  [data-theme="tarbiya"] .t-path-svg-flow,
+  [data-theme="tarbiya"] .t-path-node,
+  [data-theme="tarbiya"] .t-path-zone-header,
+  [data-theme="tarbiya"] .t-path-node-badge,
+  [data-theme="tarbiya"] .t-path-node--current .t-path-node-btn,
+  [data-theme="tarbiya"] .t-path-node--current::before,
+  [data-theme="tarbiya"] .t-path-node--current::after,
+  [data-theme="tarbiya"] .t-path-node--current .t-spark-orbit,
+  [data-theme="tarbiya"] .t-path-node--current .t-path-node-tag,
+  [data-theme="tarbiya"] .t-path-star,
+  [data-theme="tarbiya"] .t-path-zone-icon{
+    animation:none !important;
+    opacity:1 !important;
+    transform:translate(-50%,-50%) !important;
+  }
+  [data-theme="tarbiya"] .t-path-zone-header{transform:translateX(-50%) !important;}
+  [data-theme="tarbiya"] .t-path-svg-line,
+  [data-theme="tarbiya"] .t-path-svg-shadow{stroke-dashoffset:0 !important;}
 }
 
 /* Bottom sheet "Toutes les actions" */
@@ -5007,32 +5181,55 @@ function renderTarbiyaPathCards(){
         '<stop offset="100%" stop-color="#5B3FE4"/>'+
       '</linearGradient>'+
     '</defs>'+
-    (pathD?'<path class="t-path-svg-shadow" d="'+pathD+'" vector-effect="non-scaling-stroke"/>'+
-           '<path class="t-path-svg-line" d="'+pathD+'" vector-effect="non-scaling-stroke"/>':'')+
+    (pathD?'<path class="t-path-svg-shadow" d="'+pathD+'" pathLength="1" vector-effect="non-scaling-stroke"/>'+
+           '<path class="t-path-svg-line" d="'+pathD+'" pathLength="1" vector-effect="non-scaling-stroke"/>'+
+           '<path class="t-path-svg-flow" d="'+pathD+'" pathLength="1" vector-effect="non-scaling-stroke"/>':'')+
   '</svg>';
 
+  // Étoiles décoratives entre les zones (positions déterministes, basées sur totalH)
+  var starCount=Math.max(6,Math.floor(totalH/110));
+  var starVariants=['','--gold','--violet'];
+  for(var s=0;s<starCount;s++){
+    var sy=PAD_TOP+8+(totalH-PAD_TOP-PAD_BOTTOM-16)*((s+.5)/starCount);
+    // alterne gauche/droite et évite la zone centrale (10-90%) — mais on veut un peu de variété
+    var sx=(s%2===0)?(8+(s*7)%14):(78+(s*5)%14);
+    var sv=starVariants[s%3];
+    var sdelay=(s*0.55)%3.8;
+    inner+='<span class="t-path-star t-path-star'+sv+'" style="top:'+sy.toFixed(0)+'px;left:'+sx+'%;animation-delay:'+sdelay.toFixed(2)+'s"></span>';
+  }
+
+  var nodeRenderIdx=0, headerRenderIdx=0;
   for(var e=0;e<layout.length;e++){
     var el=layout[e];
     if(el.type==='header'){
-      inner+='<div class="t-path-zone-header" style="top:'+el.y+'px">'+
+      var hdelay=(headerRenderIdx*150+200);
+      inner+='<div class="t-path-zone-header" style="top:'+el.y+'px;animation-delay:'+hdelay+'ms">'+
         '<span class="t-path-zone-icon">'+el.emoji+'</span>'+
         '<span>'+el.label+'</span>'+
         '<span class="t-path-zone-count">'+el.count+'</span>'+
       '</div>';
+      headerRenderIdx++;
     } else {
       var item=el.item, status=el.status;
       var btnEmoji=(status==='locked')?'🔒':(status==='done'?'✓':item.emoji);
       var btnAttr=(status==='locked')?' disabled':(' onclick="openGuided('+item.id+')"');
       var aria=(item.titleFr||'').replace(/"/g,'&quot;')+(status==='locked'?' (verrouillée)':'');
       var tag=el.isCurrent?'<div class="t-path-node-tag">PROCHAINE</div>':'';
+      var sparks=el.isCurrent
+        ? '<div class="t-spark-orbit"><span class="t-spark t-spark--a"></span><span class="t-spark t-spark--b"></span></div>'
+          +'<div class="t-spark-orbit t-spark-orbit--rev"><span class="t-spark t-spark--c"></span></div>'
+        : '';
       var badge='';
       if(status==='next' && item.xp) badge='<div class="t-path-node-badge">+'+item.xp+'</div>';
-      inner+='<div class="t-path-node t-path-node--'+status+'" style="top:'+el.y+'px;left:'+el.x.toFixed(2)+'%" data-id="'+item.id+'">'+
+      var nodeAttr=el.isCurrent?' data-current="1"':'';
+      inner+='<div class="t-path-node t-path-node--'+status+'" style="--i:'+nodeRenderIdx+';top:'+el.y+'px;left:'+el.x.toFixed(2)+'%" data-id="'+item.id+'"'+nodeAttr+'>'+
         tag+
+        sparks+
         '<button class="t-path-node-btn" aria-label="'+aria+'"'+btnAttr+'>'+btnEmoji+'</button>'+
         badge+
         '<div class="t-path-node-label">'+item.titleFr+'</div>'+
       '</div>';
+      nodeRenderIdx++;
     }
   }
 
@@ -5051,6 +5248,21 @@ function renderTarbiyaPathCards(){
   var refAfter=progCard?progCard.nextSibling:body.firstChild;
   body.insertBefore(wrap, refAfter);
   body.insertBefore(seeAll, wrap.nextSibling);
+
+  // Auto-scroll doux vers la node "PROCHAINE" si elle n'est pas dans le viewport
+  try{
+    var cur=wrap.querySelector('[data-current="1"]');
+    if(cur && !window.__tarbiyaPathScrolled){
+      window.__tarbiyaPathScrolled=true;
+      setTimeout(function(){
+        var rect=cur.getBoundingClientRect();
+        var vh=window.innerHeight||document.documentElement.clientHeight;
+        if(rect.top<80 || rect.bottom>vh-120){
+          cur.scrollIntoView({behavior:'smooth',block:'center'});
+        }
+      }, 900);
+    }
+  }catch(_){}
 }
 
 // Bottom sheet "Toutes les actions du jour"
