@@ -2005,6 +2005,351 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   [data-theme="tarbiya"] .t-path-svg-shadow{stroke-dashoffset:0 !important;}
 }
 
+/* ─────────────────────────────────────────────────────────
+   v3 — TODAY STACK : Deck swipeable (Tarbiya uniquement)
+   Swipe → = fait · Swipe ← = plus tard · Swipe ↑ = détail
+   ───────────────────────────────────────────────────────── */
+
+/* Toggle Aujourd'hui / Parcours */
+[data-theme="tarbiya"] .t-view-toggle{
+  display:flex;background:rgba(255,255,255,.7);
+  backdrop-filter:blur(14px) saturate(160%);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(0,0,0,.04);
+  border-radius:var(--t-pill);
+  padding:4px;gap:2px;margin:6px auto 4px;width:fit-content;
+  box-shadow:0 6px 20px -10px rgba(20,18,40,.18);
+}
+[data-theme="tarbiya"] .t-view-toggle__btn{
+  font-family:inherit;font-weight:700;font-size:12.5px;
+  letter-spacing:.2px;color:var(--t-muted);
+  background:transparent;border:0;cursor:pointer;
+  padding:9px 18px;border-radius:var(--t-pill);
+  transition:background .22s ease,color .22s ease,transform .12s ease;
+}
+[data-theme="tarbiya"] .t-view-toggle__btn[aria-pressed="true"]{
+  background:var(--t-accent);color:#fff;
+  box-shadow:0 4px 12px -4px rgba(31,138,91,.42);
+}
+[data-theme="tarbiya"][data-palette="rubyGold"] .t-view-toggle__btn[aria-pressed="true"]{box-shadow:0 4px 12px -4px rgba(200,52,75,.42);}
+[data-theme="tarbiya"][data-palette="midnightLilac"] .t-view-toggle__btn[aria-pressed="true"]{box-shadow:0 4px 12px -4px rgba(107,77,255,.42);}
+[data-theme="tarbiya"][data-palette="oceanMint"] .t-view-toggle__btn[aria-pressed="true"]{box-shadow:0 4px 12px -4px rgba(11,107,179,.42);}
+[data-theme="tarbiya"] .t-view-toggle__btn:active{transform:scale(.96);}
+
+/* Quand mode=stack on cache le path Duolingo, le seeAll, la progress card */
+[data-theme="tarbiya"][data-path-view="stack"] .t-path-wrap{display:none !important;}
+[data-theme="tarbiya"][data-path-view="stack"] .t-actions-see-all{display:none !important;}
+[data-theme="tarbiya"][data-path-view="stack"] .t-progress-card{display:none !important;}
+[data-theme="tarbiya"][data-path-view="path"] .t-stack-wrap,
+[data-theme="tarbiya"][data-path-view="path"] .t-stack-actions,
+[data-theme="tarbiya"][data-path-view="path"] .t-stack-meta{display:none !important;}
+
+/* Deck wrapper */
+[data-theme="tarbiya"] .t-stack-wrap{
+  position:relative;
+  margin:8px auto 0;
+  width:100%;max-width:380px;
+  height:440px;
+  perspective:1400px;
+}
+[data-theme="tarbiya"] .t-stack-deck{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
+}
+
+/* Carte individuelle */
+[data-theme="tarbiya"] .t-swipe-card{
+  position:absolute;inset:0;
+  border-radius:28px;
+  padding:24px 22px 22px;
+  display:flex;flex-direction:column;
+  background:#fff;color:var(--t-ink);
+  box-shadow:0 24px 60px -20px rgba(20,18,40,.28),
+             0 8px 22px -12px rgba(20,18,40,.18);
+  cursor:grab;
+  touch-action:none;
+  user-select:none;-webkit-user-select:none;
+  will-change:transform,opacity;
+  transition:transform .42s cubic-bezier(.22,.9,.32,1.2),opacity .3s ease,box-shadow .3s ease;
+  transform-origin:50% 80%;
+  overflow:hidden;
+}
+[data-theme="tarbiya"] .t-swipe-card:active{cursor:grabbing;}
+[data-theme="tarbiya"] .t-swipe-card.is-dragging{transition:none;}
+
+/* États position dans la pile */
+[data-theme="tarbiya"] .t-swipe-card[data-pos="0"]{z-index:30;transform:translateY(0) scale(1);}
+[data-theme="tarbiya"] .t-swipe-card[data-pos="1"]{z-index:20;transform:translateY(14px) scale(.94);opacity:.9;}
+[data-theme="tarbiya"] .t-swipe-card[data-pos="2"]{z-index:10;transform:translateY(28px) scale(.88);opacity:.7;}
+[data-theme="tarbiya"] .t-swipe-card[data-pos="3"]{z-index:5;transform:translateY(38px) scale(.83);opacity:0;pointer-events:none;}
+
+/* Carte "active" (cat current) = gradient warm */
+[data-theme="tarbiya"] .t-swipe-card--current{
+  background:var(--t-warm-grad);
+  color:#fff;
+  box-shadow:0 30px 70px -16px rgba(255,107,107,.42),
+             0 10px 24px -10px rgba(255,138,61,.32);
+}
+[data-theme="tarbiya"] .t-swipe-card--current::before{
+  content:"";position:absolute;
+  width:240px;height:240px;border-radius:50%;
+  background:rgba(255,255,255,.12);
+  top:-90px;right:-70px;pointer-events:none;
+  filter:blur(4px);
+}
+[data-theme="tarbiya"] .t-swipe-card--current::after{
+  content:"";position:absolute;
+  width:140px;height:140px;border-radius:50%;
+  background:rgba(255,255,255,.08);
+  bottom:-50px;left:-40px;pointer-events:none;
+  filter:blur(8px);
+}
+
+/* Carte "future" (cat future) = soft accent */
+[data-theme="tarbiya"] .t-swipe-card--future{
+  background:linear-gradient(160deg,#fff 0%,var(--t-accent-soft) 100%);
+  color:var(--t-ink);
+}
+
+/* Header de carte */
+[data-theme="tarbiya"] .t-swipe-card__head{
+  display:flex;justify-content:space-between;align-items:center;
+  position:relative;z-index:2;
+}
+[data-theme="tarbiya"] .t-swipe-card__kicker{
+  font-size:10.5px;font-weight:800;
+  letter-spacing:1.6px;text-transform:uppercase;
+  opacity:.85;
+}
+[data-theme="tarbiya"] .t-swipe-card__xp{
+  font-size:12px;font-weight:800;
+  padding:5px 10px;border-radius:var(--t-pill);
+  background:rgba(255,255,255,.22);
+}
+[data-theme="tarbiya"] .t-swipe-card--future .t-swipe-card__xp{
+  background:var(--t-accent-soft);color:var(--t-accent);
+}
+
+/* Icône XL au centre */
+[data-theme="tarbiya"] .t-swipe-card__hero{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:14px;text-align:center;
+  padding:8px 0;position:relative;z-index:2;
+}
+[data-theme="tarbiya"] .t-swipe-card__emoji{
+  font-size:78px;line-height:1;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.18));
+  animation:tSwipeBob 4s ease-in-out infinite;
+}
+@keyframes tSwipeBob{
+  0%,100%{transform:translateY(0) rotate(-2deg);}
+  50%{transform:translateY(-6px) rotate(2deg);}
+}
+[data-theme="tarbiya"] .t-swipe-card__title{
+  font-family:var(--t-font-title);
+  font-weight:800;font-size:26px;line-height:1.08;
+  letter-spacing:-.8px;
+  padding:0 8px;
+}
+[data-theme="tarbiya"] .t-swipe-card__time{
+  font-size:13px;font-weight:600;opacity:.78;
+}
+
+/* Hint swipe up */
+[data-theme="tarbiya"] .t-swipe-card__hint{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:11.5px;font-weight:700;opacity:.7;
+  letter-spacing:.2px;padding:4px 0 2px;
+  position:relative;z-index:2;
+}
+[data-theme="tarbiya"] .t-swipe-card__hint svg{
+  width:14px;height:14px;animation:tSwipeArrow 2s ease-in-out infinite;
+}
+@keyframes tSwipeArrow{
+  0%,100%{transform:translateY(0);opacity:.6;}
+  50%{transform:translateY(-4px);opacity:1;}
+}
+
+/* Overlay de swipe (✓ / ⏭ / ℹ) */
+[data-theme="tarbiya"] .t-swipe-card__overlay{
+  position:absolute;inset:0;border-radius:28px;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .14s ease;
+  z-index:3;
+}
+[data-theme="tarbiya"] .t-swipe-card__overlay-badge{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:18px 26px;border-radius:22px;
+  background:rgba(255,255,255,.95);
+  box-shadow:0 12px 40px -10px rgba(0,0,0,.3);
+  transform:scale(.85);
+  transition:transform .14s ease;
+}
+[data-theme="tarbiya"] .t-swipe-card__overlay-icon{
+  font-size:38px;line-height:1;
+}
+[data-theme="tarbiya"] .t-swipe-card__overlay-label{
+  font-weight:800;font-size:13px;letter-spacing:1.4px;text-transform:uppercase;
+}
+[data-theme="tarbiya"] .t-swipe-card__overlay--right .t-swipe-card__overlay-badge{color:#1F8A5B;border:2px solid #1F8A5B;}
+[data-theme="tarbiya"] .t-swipe-card__overlay--left  .t-swipe-card__overlay-badge{color:#FF8A3D;border:2px solid #FF8A3D;}
+[data-theme="tarbiya"] .t-swipe-card__overlay--up    .t-swipe-card__overlay-badge{color:#5B3FE4;border:2px solid #5B3FE4;}
+[data-theme="tarbiya"] .t-swipe-card.is-overlay-right .t-swipe-card__overlay--right,
+[data-theme="tarbiya"] .t-swipe-card.is-overlay-left  .t-swipe-card__overlay--left,
+[data-theme="tarbiya"] .t-swipe-card.is-overlay-up    .t-swipe-card__overlay--up{opacity:1;}
+[data-theme="tarbiya"] .t-swipe-card.is-overlay-right .t-swipe-card__overlay--right .t-swipe-card__overlay-badge,
+[data-theme="tarbiya"] .t-swipe-card.is-overlay-left  .t-swipe-card__overlay--left .t-swipe-card__overlay-badge,
+[data-theme="tarbiya"] .t-swipe-card.is-overlay-up    .t-swipe-card__overlay--up .t-swipe-card__overlay-badge{transform:scale(1);}
+
+/* Actions sous le deck */
+[data-theme="tarbiya"] .t-stack-actions{
+  display:flex;justify-content:center;align-items:center;
+  gap:18px;margin:18px auto 0;
+}
+[data-theme="tarbiya"] .t-stack-action{
+  width:54px;height:54px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:800;font-family:inherit;
+  background:#fff;border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 8px 22px -8px rgba(20,18,40,.18);
+  cursor:pointer;transition:transform .12s ease,box-shadow .2s ease;
+}
+[data-theme="tarbiya"] .t-stack-action:active{transform:scale(.92);}
+[data-theme="tarbiya"] .t-stack-action--skip{color:#FF8A3D;}
+[data-theme="tarbiya"] .t-stack-action--info{color:#5B3FE4;width:46px;height:46px;font-size:18px;}
+[data-theme="tarbiya"] .t-stack-action--done{
+  color:#fff;background:linear-gradient(135deg,#1F8A5B 0%,#15673F 100%);
+  border-color:transparent;
+  box-shadow:0 10px 28px -8px rgba(31,138,91,.5);
+  width:62px;height:62px;font-size:26px;
+}
+[data-theme="tarbiya"] .t-stack-actions[data-disabled="1"] .t-stack-action{
+  pointer-events:none;opacity:.45;
+}
+
+/* Indicateurs de pile (dots + compteur) */
+[data-theme="tarbiya"] .t-stack-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  margin:14px 4px 0;
+  font-size:12px;font-weight:700;color:var(--t-muted);
+}
+[data-theme="tarbiya"] .t-stack-dots{display:flex;gap:5px;}
+[data-theme="tarbiya"] .t-stack-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(0,0,0,.12);transition:background .2s,width .2s;
+}
+[data-theme="tarbiya"] .t-stack-dot--active{background:var(--t-accent);width:18px;border-radius:3px;}
+[data-theme="tarbiya"] .t-stack-dot--done{background:var(--t-success);}
+
+/* État empty (tout fait ou stack vide) */
+[data-theme="tarbiya"] .t-stack-empty{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:30px 24px;text-align:center;
+  border-radius:28px;
+  background:linear-gradient(160deg,#fff 0%,var(--t-accent-soft) 100%);
+  box-shadow:0 24px 60px -20px rgba(20,18,40,.18);
+}
+[data-theme="tarbiya"] .t-stack-empty__icon{
+  font-size:64px;animation:tSwipeBob 4s ease-in-out infinite;
+}
+[data-theme="tarbiya"] .t-stack-empty__title{
+  font-family:var(--t-font-title);font-weight:800;font-size:24px;letter-spacing:-.6px;
+  color:var(--t-ink);
+}
+[data-theme="tarbiya"] .t-stack-empty__sub{
+  font-size:13.5px;color:var(--t-muted);line-height:1.45;max-width:280px;
+}
+[data-theme="tarbiya"] .t-stack-empty__cta{
+  margin-top:6px;height:46px;padding:0 22px;
+  border-radius:14px;border:none;cursor:pointer;
+  background:var(--t-accent);color:#fff;
+  font-family:inherit;font-weight:800;font-size:13.5px;
+  letter-spacing:.3px;
+}
+
+/* Bottom sheet détail */
+[data-theme="tarbiya"] #t-swipe-detail-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:320;display:none;align-items:flex-end;justify-content:center;
+  opacity:0;transition:opacity .25s ease;
+}
+[data-theme="tarbiya"] #t-swipe-detail-modal.show{display:flex;opacity:1;}
+[data-theme="tarbiya"] .t-swipe-detail{
+  width:100%;max-width:440px;
+  background:#fff;border-radius:24px 24px 0 0;
+  padding:14px 22px 26px;
+  transform:translateY(100%);
+  transition:transform .32s cubic-bezier(.2,.9,.3,1);
+  max-height:80vh;overflow-y:auto;
+  position:relative;
+}
+[data-theme="tarbiya"] #t-swipe-detail-modal.show .t-swipe-detail{transform:translateY(0);}
+[data-theme="tarbiya"] .t-swipe-detail__handle{
+  width:42px;height:5px;border-radius:3px;
+  background:rgba(0,0,0,.12);margin:0 auto 14px;
+}
+[data-theme="tarbiya"] .t-swipe-detail__head{
+  display:flex;align-items:center;gap:14px;margin-bottom:16px;
+}
+[data-theme="tarbiya"] .t-swipe-detail__emoji{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;flex-shrink:0;
+  background:var(--t-accent-soft);
+}
+[data-theme="tarbiya"] .t-swipe-detail__title{
+  font-family:var(--t-font-title);font-weight:800;
+  font-size:22px;letter-spacing:-.5px;line-height:1.12;
+}
+[data-theme="tarbiya"] .t-swipe-detail__time{
+  font-size:12.5px;color:var(--t-muted);margin-top:3px;font-weight:600;
+}
+[data-theme="tarbiya"] .t-swipe-detail__section{
+  background:var(--t-accent-soft);
+  border-radius:18px;padding:16px 18px;margin-bottom:12px;
+}
+[data-theme="tarbiya"] .t-swipe-detail__section-label{
+  font-size:10.5px;font-weight:800;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--t-accent);margin-bottom:8px;
+}
+[data-theme="tarbiya"] .t-swipe-detail__section-text{
+  font-size:14.5px;line-height:1.55;color:var(--t-ink);
+}
+[data-theme="tarbiya"] .t-swipe-detail__cta{
+  display:flex;gap:10px;margin-top:18px;
+}
+[data-theme="tarbiya"] .t-swipe-detail__btn{
+  flex:1;height:52px;border-radius:16px;
+  font-family:inherit;font-weight:800;font-size:14px;
+  cursor:pointer;border:none;
+  transition:transform .12s ease,opacity .15s ease;
+}
+[data-theme="tarbiya"] .t-swipe-detail__btn:active{transform:scale(.97);}
+[data-theme="tarbiya"] .t-swipe-detail__btn--primary{
+  background:var(--t-accent);color:#fff;
+  box-shadow:0 8px 20px -8px rgba(31,138,91,.45);
+}
+[data-theme="tarbiya"] .t-swipe-detail__btn--ghost{
+  background:rgba(0,0,0,.05);color:var(--t-ink);
+}
+
+/* Animations entrée / sortie */
+@keyframes tSwipeIn{
+  from{opacity:0;transform:translateY(16px) scale(.96);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+[data-theme="tarbiya"] .t-stack-wrap{animation:tSwipeIn .45s ease;}
+
+@media (prefers-reduced-motion: reduce){
+  [data-theme="tarbiya"] .t-swipe-card__emoji,
+  [data-theme="tarbiya"] .t-stack-empty__icon,
+  [data-theme="tarbiya"] .t-swipe-card__hint svg{animation:none !important;}
+  [data-theme="tarbiya"] .t-stack-wrap{animation:none !important;}
+}
+
 /* Bottom sheet "Toutes les actions" */
 [data-theme="tarbiya"] #t-all-actions-modal{
   position:fixed;inset:0;background:rgba(0,0,0,.45);
@@ -2166,6 +2511,10 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     if(theme==='tarbiya'){
       html.setAttribute('data-theme','tarbiya');
       html.setAttribute('data-palette',palette);
+      // v3 — init la vue du Chemin (stack par défaut)
+      var savedView='stack';
+      try{ var v=localStorage.getItem('tStackView'); if(v==='path'||v==='stack') savedView=v; }catch(_){}
+      html.setAttribute('data-path-view', savedView);
       if(meta){
         if(!meta.dataset.tarbOrig) meta.dataset.tarbOrig=meta.getAttribute('content')||'';
         meta.setAttribute('content','#5B3FE4');
@@ -2173,6 +2522,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     } else {
       html.removeAttribute('data-theme');
       html.removeAttribute('data-palette');
+      html.removeAttribute('data-path-view');
       if(meta && meta.dataset.tarbOrig){
         meta.setAttribute('content',meta.dataset.tarbOrig);
       }
@@ -5249,20 +5599,327 @@ function renderTarbiyaPathCards(){
   body.insertBefore(wrap, refAfter);
   body.insertBefore(seeAll, wrap.nextSibling);
 
-  // Auto-scroll doux vers la node "PROCHAINE" si elle n'est pas dans le viewport
+  // v3 — Toggle vue + Today Stack (deck swipeable)
+  _injectTarbiyaViewToggle(body);
+  renderTarbiyaTodayStack(body);
+  // Applique la vue persistée
+  var savedView=localStorage.getItem('tStackView')||'stack';
+  document.documentElement.setAttribute('data-path-view', savedView);
+  body.querySelectorAll('.t-view-toggle__btn').forEach(function(b){
+    b.setAttribute('aria-pressed', b.dataset.view===savedView?'true':'false');
+  });
+
+  // Auto-scroll doux vers la node "PROCHAINE" si elle n'est pas dans le viewport (uniquement en mode path)
   try{
-    var cur=wrap.querySelector('[data-current="1"]');
-    if(cur && !window.__tarbiyaPathScrolled){
-      window.__tarbiyaPathScrolled=true;
-      setTimeout(function(){
-        var rect=cur.getBoundingClientRect();
-        var vh=window.innerHeight||document.documentElement.clientHeight;
-        if(rect.top<80 || rect.bottom>vh-120){
-          cur.scrollIntoView({behavior:'smooth',block:'center'});
-        }
-      }, 900);
+    if(savedView==='path'){
+      var cur=wrap.querySelector('[data-current="1"]');
+      if(cur && !window.__tarbiyaPathScrolled){
+        window.__tarbiyaPathScrolled=true;
+        setTimeout(function(){
+          var rect=cur.getBoundingClientRect();
+          var vh=window.innerHeight||document.documentElement.clientHeight;
+          if(rect.top<80 || rect.bottom>vh-120){
+            cur.scrollIntoView({behavior:'smooth',block:'center'});
+          }
+        }, 900);
+      }
     }
   }catch(_){}
+}
+
+// ── v3 TODAY STACK ─────────────────────────────────────────
+// Deck swipeable des actions du jour : → fait · ← plus tard · ↑ détail
+window._tStackSkipped = window._tStackSkipped || {};
+
+function _injectTarbiyaViewToggle(body){
+  // évite doublon
+  body.querySelectorAll('.t-view-toggle').forEach(function(el){el.remove();});
+  var tg=document.createElement('div');
+  tg.className='t-view-toggle';
+  tg.innerHTML=
+    '<button class="t-view-toggle__btn" data-view="stack" type="button" aria-pressed="true" onclick="setTarbiyaPathView(\'stack\')">Aujourd\'hui</button>'+
+    '<button class="t-view-toggle__btn" data-view="path" type="button" aria-pressed="false" onclick="setTarbiyaPathView(\'path\')">Parcours</button>';
+  body.insertBefore(tg, body.firstChild);
+}
+
+function setTarbiyaPathView(mode){
+  if(mode!=='stack' && mode!=='path') mode='stack';
+  localStorage.setItem('tStackView', mode);
+  document.documentElement.setAttribute('data-path-view', mode);
+  document.querySelectorAll('.t-view-toggle__btn').forEach(function(b){
+    b.setAttribute('aria-pressed', b.dataset.view===mode?'true':'false');
+  });
+  // Reset skipped quand on revient sur stack
+  if(mode==='stack') window._tStackSkipped = {};
+  // Re-render le path/stack pour reset
+  if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
+  // Scroll en haut du path-body pour montrer le nouveau contenu
+  setTimeout(function(){
+    try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(_){ window.scrollTo(0,0); }
+  }, 60);
+}
+
+function _tStackBuildItems(){
+  var items=getActiveItems();
+  var catOrder=['qiyam','aube','journee','soir','nuit'];
+  var curCat=getCurrentCat();
+  var curIdx=catOrder.indexOf(curCat);
+  // Garde tout sauf future et déjà fait
+  var actionable=items.filter(function(it){
+    if(S.checklist[it.id]) return false;
+    var ci=catOrder.indexOf(it.cat);
+    return ci<=curIdx;
+  });
+  // Sépare skipped pour les remettre à la fin
+  var skipped=window._tStackSkipped||{};
+  var fresh=[], later=[];
+  actionable.forEach(function(it){ (skipped[it.id]?later:fresh).push(it); });
+  // Si tout a été skip, reset le skip (sinon on bloque)
+  if(fresh.length===0 && later.length>0){
+    window._tStackSkipped = {};
+    return later;
+  }
+  // Tri fresh : current cat d'abord
+  fresh.sort(function(a,b){
+    var ca=catOrder.indexOf(a.cat), cb=catOrder.indexOf(b.cat);
+    if(ca===curIdx && cb!==curIdx) return -1;
+    if(cb===curIdx && ca!==curIdx) return 1;
+    return ca-cb || ((a.id||0)-(b.id||0));
+  });
+  return fresh.concat(later);
+}
+
+function renderTarbiyaTodayStack(body){
+  // Nettoyage
+  body.querySelectorAll('.t-stack-wrap,.t-stack-actions,.t-stack-meta').forEach(function(el){el.remove();});
+
+  var stackItems=_tStackBuildItems();
+  var catOrder=['qiyam','aube','journee','soir','nuit'];
+  var curCat=getCurrentCat();
+  var totalActive=getActiveItems().filter(function(it){
+    var ci=catOrder.indexOf(it.cat);
+    return ci<=catOrder.indexOf(curCat);
+  }).length;
+  var done=totalActive-stackItems.length;
+
+  var wrap=document.createElement('div');
+  wrap.className='t-stack-wrap';
+
+  if(stackItems.length===0){
+    // Empty state
+    var empty=document.createElement('div');
+    empty.className='t-stack-empty';
+    var allDoneNow=Object.values(S.checklist||{}).filter(Boolean).length>0;
+    empty.innerHTML=
+      '<div class="t-stack-empty__icon">✨</div>'+
+      '<div class="t-stack-empty__title">'+(allDoneNow?'Bien joué !':'Rien à faire pour l\'instant')+'</div>'+
+      '<div class="t-stack-empty__sub">'+(allDoneNow?'Tu as accompli toutes les actions disponibles. Reviens plus tard pour les prochaines.':'Les prochaines actions s\'ouvriront au fil de la journée.')+'</div>'+
+      '<button class="t-stack-empty__cta" type="button" onclick="setTarbiyaPathView(\'path\')">Voir le parcours →</button>';
+    wrap.appendChild(empty);
+  } else {
+    var deck=document.createElement('div');
+    deck.className='t-stack-deck';
+    // 3 cartes max visibles
+    var visible=stackItems.slice(0,3);
+    visible.forEach(function(it,idx){
+      var cat=it.cat;
+      var isCurrent=(cat===curCat);
+      var catLabel=(typeof SECTIONS!=='undefined'&&SECTIONS[cat])?SECTIONS[cat].label:cat;
+      var card=document.createElement('div');
+      card.className='t-swipe-card '+(isCurrent?'t-swipe-card--current':'t-swipe-card--future');
+      card.setAttribute('data-pos',String(idx));
+      card.setAttribute('data-id',String(it.id));
+      var kicker=(isCurrent?'● Maintenant':'● Bientôt')+' · '+catLabel;
+      var xp=it.xp?('+'+it.xp+' XP'):'';
+      card.innerHTML=
+        '<div class="t-swipe-card__head">'+
+          '<div class="t-swipe-card__kicker">'+kicker+'</div>'+
+          (xp?'<div class="t-swipe-card__xp">'+xp+'</div>':'')+
+        '</div>'+
+        '<div class="t-swipe-card__hero">'+
+          '<div class="t-swipe-card__emoji">'+(it.emoji||'✦')+'</div>'+
+          '<div class="t-swipe-card__title">'+it.titleFr+'</div>'+
+          '<div class="t-swipe-card__time">'+(it.time||'')+'</div>'+
+        '</div>'+
+        '<div class="t-swipe-card__hint">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'+
+          'Glisse vers le haut pour le détail'+
+        '</div>'+
+        '<div class="t-swipe-card__overlay t-swipe-card__overlay--right"><div class="t-swipe-card__overlay-badge"><div class="t-swipe-card__overlay-icon">✓</div><div class="t-swipe-card__overlay-label">Validée</div></div></div>'+
+        '<div class="t-swipe-card__overlay t-swipe-card__overlay--left"><div class="t-swipe-card__overlay-badge"><div class="t-swipe-card__overlay-icon">⏭</div><div class="t-swipe-card__overlay-label">Plus tard</div></div></div>'+
+        '<div class="t-swipe-card__overlay t-swipe-card__overlay--up"><div class="t-swipe-card__overlay-badge"><div class="t-swipe-card__overlay-icon">ℹ</div><div class="t-swipe-card__overlay-label">Détail</div></div></div>';
+      deck.appendChild(card);
+    });
+    wrap.appendChild(deck);
+  }
+
+  // Insertion : avant le path-wrap (qui sera caché en mode stack)
+  var pathWrap=body.querySelector('.t-path-wrap');
+  body.insertBefore(wrap, pathWrap||body.firstChild);
+
+  if(stackItems.length>0){
+    // Actions sous le deck
+    var actions=document.createElement('div');
+    actions.className='t-stack-actions';
+    var firstId=stackItems[0].id;
+    actions.innerHTML=
+      '<button class="t-stack-action t-stack-action--skip" type="button" aria-label="Plus tard" onclick="tStackSkip('+firstId+')">⏭</button>'+
+      '<button class="t-stack-action t-stack-action--info" type="button" aria-label="Détail" onclick="openTarbiyaSwipeDetail('+firstId+')">ℹ</button>'+
+      '<button class="t-stack-action t-stack-action--done" type="button" aria-label="Marquer comme fait" onclick="tStackDone('+firstId+')">✓</button>';
+    body.insertBefore(actions, wrap.nextSibling);
+
+    // Meta : dots + compteur
+    var meta=document.createElement('div');
+    meta.className='t-stack-meta';
+    var dots='';
+    var dotCount=Math.min(stackItems.length,5);
+    for(var d=0; d<dotCount; d++){
+      dots+='<div class="t-stack-dot'+(d===0?' t-stack-dot--active':'')+'"></div>';
+    }
+    meta.innerHTML=
+      '<div class="t-stack-dots">'+dots+'</div>'+
+      '<div>'+done+' / '+totalActive+' validées</div>';
+    body.insertBefore(meta, actions.nextSibling);
+
+    // Bind les gestes sur la carte du dessus
+    setTimeout(function(){ _tBindSwipe(wrap); }, 30);
+  }
+}
+
+function _tBindSwipe(wrap){
+  var top=wrap.querySelector('.t-swipe-card[data-pos="0"]');
+  if(!top || top.__bound) return;
+  top.__bound=true;
+  var startX=0, startY=0, started=false, dragging=false, pid=null, fx=0, fy=0;
+
+  function onDown(e){
+    if(top.classList.contains('is-leaving')) return;
+    if(e.button!==undefined && e.button!==0) return;
+    started=true; pid=e.pointerId;
+    startX=e.clientX; startY=e.clientY; fx=0; fy=0;
+    try{top.setPointerCapture(pid);}catch(_){}
+    top.classList.add('is-dragging');
+  }
+  function onMove(e){
+    if(!started || (pid!=null && e.pointerId!==pid)) return;
+    var dx=e.clientX-startX, dy=e.clientY-startY;
+    if(!dragging && Math.abs(dx)+Math.abs(dy) < 4) return;
+    dragging=true; fx=dx; fy=dy;
+    var rot=Math.max(-20,Math.min(20,dx/9));
+    top.style.transform='translate('+dx+'px,'+dy+'px) rotate('+rot+'deg)';
+    top.classList.remove('is-overlay-right','is-overlay-left','is-overlay-up');
+    var absX=Math.abs(dx), absY=Math.abs(dy);
+    if(dy<-40 && absY>absX){ top.classList.add('is-overlay-up'); }
+    else if(dx>40){ top.classList.add('is-overlay-right'); }
+    else if(dx<-40){ top.classList.add('is-overlay-left'); }
+    // léger feedback sur la 2e carte (parallaxe)
+    var card2=wrap.querySelector('.t-swipe-card[data-pos="1"]');
+    if(card2){
+      var prog=Math.min(1,Math.max(absX,absY)/180);
+      card2.style.transform='translateY('+(14-prog*14)+'px) scale('+(0.94+prog*0.06)+')';
+      card2.style.opacity = (0.9+prog*0.1);
+    }
+  }
+  function onUp(e){
+    if(!started) return;
+    started=false;
+    top.classList.remove('is-dragging');
+    try{top.releasePointerCapture(pid);}catch(_){}
+    var TH_X=110, TH_Y=85;
+    var id=parseInt(top.getAttribute('data-id'),10);
+    var card2=wrap.querySelector('.t-swipe-card[data-pos="1"]');
+    if(fy<-TH_Y && Math.abs(fy)>Math.abs(fx)){
+      // swipe up : reset puis ouvrir détail
+      top.classList.remove('is-overlay-up','is-overlay-left','is-overlay-right');
+      top.style.transform='';
+      if(card2){ card2.style.transform=''; card2.style.opacity=''; }
+      openTarbiyaSwipeDetail(id);
+    } else if(fx>TH_X){
+      _tSwipeOut(top,'right',id);
+    } else if(fx<-TH_X){
+      _tSwipeOut(top,'left',id);
+    } else {
+      top.classList.remove('is-overlay-up','is-overlay-left','is-overlay-right');
+      top.style.transform='';
+      if(card2){ card2.style.transform=''; card2.style.opacity=''; }
+    }
+    dragging=false;
+  }
+  top.addEventListener('pointerdown',onDown);
+  top.addEventListener('pointermove',onMove);
+  top.addEventListener('pointerup',onUp);
+  top.addEventListener('pointercancel',onUp);
+}
+
+function _tSwipeOut(card, dir, id){
+  if(card.classList.contains('is-leaving')) return;
+  card.classList.add('is-leaving');
+  // Désactive les boutons sous le deck pendant l'animation
+  var actions=document.querySelector('.t-stack-actions');
+  if(actions) actions.setAttribute('data-disabled','1');
+  var w=window.innerWidth+340;
+  var tx=dir==='right'?w:-w;
+  var rot=dir==='right'?24:-24;
+  card.style.transition='transform .42s cubic-bezier(.22,.9,.32,1.2),opacity .35s ease';
+  card.style.transform='translate('+tx+'px,80px) rotate('+rot+'deg)';
+  card.style.opacity='0';
+  setTimeout(function(){
+    if(dir==='right'){
+      // Marque comme fait — toggleItem ré-appelle renderTarbiyaPathCards
+      if(!S.checklist[id]) toggleItem(id);
+      else if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
+    } else {
+      window._tStackSkipped[id]=true;
+      if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
+    }
+  }, 360);
+}
+
+function tStackDone(id){
+  var card=document.querySelector('.t-swipe-card[data-pos="0"][data-id="'+id+'"]');
+  if(card) _tSwipeOut(card,'right',id);
+  else if(!S.checklist[id]) toggleItem(id);
+}
+function tStackSkip(id){
+  var card=document.querySelector('.t-swipe-card[data-pos="0"][data-id="'+id+'"]');
+  if(card) _tSwipeOut(card,'left',id);
+  else { window._tStackSkipped[id]=true; if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards(); }
+}
+
+function openTarbiyaSwipeDetail(id){
+  var item=getActiveItems().find(function(it){return it.id===id;});
+  if(!item) return;
+  var modal=document.getElementById('t-swipe-detail-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='t-swipe-detail-modal';
+    modal.innerHTML='<div class="t-swipe-detail" onclick="event.stopPropagation()"><div class="t-swipe-detail__handle"></div><div id="t-swipe-detail-body"></div></div>';
+    modal.onclick=function(e){if(e.target===modal) closeTarbiyaSwipeDetail();};
+    document.body.appendChild(modal);
+  }
+  var why=item.why||'Une action recommandée par le Prophète ﷺ et les pieux prédécesseurs.';
+  var body=document.getElementById('t-swipe-detail-body');
+  body.innerHTML=
+    '<div class="t-swipe-detail__head">'+
+      '<div class="t-swipe-detail__emoji">'+(item.emoji||'✦')+'</div>'+
+      '<div style="flex:1;min-width:0;">'+
+        '<div class="t-swipe-detail__title">'+item.titleFr+'</div>'+
+        '<div class="t-swipe-detail__time">'+(item.time||'')+(item.xp?' · +'+item.xp+' XP':'')+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="t-swipe-detail__section">'+
+      '<div class="t-swipe-detail__section-label">Pourquoi</div>'+
+      '<div class="t-swipe-detail__section-text">'+why+'</div>'+
+    '</div>'+
+    '<div class="t-swipe-detail__cta">'+
+      '<button class="t-swipe-detail__btn t-swipe-detail__btn--ghost" type="button" onclick="closeTarbiyaSwipeDetail();tStackSkip('+id+')">Plus tard</button>'+
+      '<button class="t-swipe-detail__btn t-swipe-detail__btn--primary" type="button" onclick="closeTarbiyaSwipeDetail();openGuided('+id+')">Commencer →</button>'+
+    '</div>';
+  modal.classList.add('show');
+}
+function closeTarbiyaSwipeDetail(){
+  var modal=document.getElementById('t-swipe-detail-modal');
+  if(modal) modal.classList.remove('show');
 }
 
 // Bottom sheet "Toutes les actions du jour"
