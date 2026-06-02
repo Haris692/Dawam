@@ -1493,8 +1493,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] body::before{display:none !important;}
 [data-theme="tarbiya"] #app{background:var(--t-bg) !important;padding-top:0 !important;}
 
-/* Padding bas de path-body pour ne pas cacher le contenu derrière la prayer strip + nav */
-[data-theme="tarbiya"] .path-body{padding-bottom:160px !important;}
+/* Padding bas réduit (prayer strip retirée v3, juste laisser de la place pour la nav) */
+[data-theme="tarbiya"] .path-body{padding-bottom:96px !important;}
 
 /* ─── Carrousel d'actions ─── */
 [data-theme="tarbiya"] .next-action-card,
@@ -2010,15 +2010,18 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
    Swipe → = fait · Swipe ← = plus tard · Swipe ↑ = détail
    ───────────────────────────────────────────────────────── */
 
-/* Toggle Aujourd'hui / Parcours */
+/* Toggle Aujourd'hui / Parcours
+   margin-top compense le margin-bottom:-60px du .path-hero pour ne pas chevaucher */
 [data-theme="tarbiya"] .t-view-toggle{
-  display:flex;background:rgba(255,255,255,.7);
+  display:flex;background:rgba(255,255,255,.78);
   backdrop-filter:blur(14px) saturate(160%);
   -webkit-backdrop-filter:blur(14px) saturate(160%);
   border:1px solid rgba(0,0,0,.04);
   border-radius:var(--t-pill);
-  padding:4px;gap:2px;margin:6px auto 4px;width:fit-content;
+  padding:4px;gap:2px;
+  margin:78px auto 8px;width:fit-content;
   box-shadow:0 6px 20px -10px rgba(20,18,40,.18);
+  position:relative;z-index:3;
 }
 [data-theme="tarbiya"] .t-view-toggle__btn{
   font-family:inherit;font-weight:700;font-size:12.5px;
@@ -5411,17 +5414,9 @@ function _tarbiyaPrayerStripHtml(){
   return html+'</div>';
 }
 
-// Prayer strip flottante en bas (au-dessus de la nav) — uniquement sur l'écran path
+// Prayer strip flottante en bas — désactivée v3 (laisse de la place au deck swipeable)
 function renderTarbiyaPrayerStripBottom(){
   removeTarbiyaPrayerStripBottom();
-  if(!window.tarbiyaTheme || window.tarbiyaTheme.get().theme!=='tarbiya') return;
-  var html=_tarbiyaPrayerStripHtml();
-  if(!html) return;
-  var wrapper=document.createElement('div');
-  wrapper.innerHTML=html;
-  var strip=wrapper.firstChild;
-  strip.classList.add('t-prayer-strip-bottom');
-  document.body.appendChild(strip);
 }
 function removeTarbiyaPrayerStripBottom(){
   document.querySelectorAll('.t-prayer-strip-bottom').forEach(function(el){el.remove();});
