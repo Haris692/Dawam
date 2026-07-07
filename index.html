@@ -1324,12 +1324,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] #app{background:var(--t-hero-grad) !important;}
 
 /* Hero : plus compact + effets flou (zone bleue légèrement agrandie v3.1) */
-[data-theme="tarbiya"] .path-hero{
-  padding-bottom:118px !important;
-  padding-top:max(30px,calc(24px + var(--sat,0px))) !important;
-  margin-bottom:-60px !important;
-  overflow:hidden !important;
-}
+/* Hero supprimé en Tarbiya — l'écran commence directement sur les actions */
+[data-theme="tarbiya"] .path-hero{display:none !important;}
 [data-theme="tarbiya"] .path-hero::before{
   content:"";position:absolute;width:200px;height:200px;
   bottom:-50px;left:-60px;border-radius:50%;
@@ -2101,7 +2097,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   border:1px solid rgba(0,0,0,.04);
   border-radius:var(--t-pill);
   padding:4px;gap:2px;
-  margin:96px auto 8px;width:fit-content;
+  margin:14px auto 8px;width:fit-content;
   box-shadow:0 6px 20px -10px rgba(20,18,40,.18);
   position:relative;z-index:3;
 }
@@ -5570,6 +5566,10 @@ function _tCountLabel(m){
 }
 
 function renderTarbiyaHero(){
+  // Hero retiré en Tarbiya : on nettoie juste l'overlay + le timer s'ils existent
+  removeTarbiyaHero();
+}
+function _renderTarbiyaHeroLegacy(){
   if(window.tarbiyaTheme.get().theme!=='tarbiya') return;
   removeTarbiyaHero();
   var hero=document.querySelector('.path-hero');
