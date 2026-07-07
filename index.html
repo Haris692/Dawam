@@ -938,6 +938,20 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .sa-card-verset-title{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px;}
 .sa-card-ref{font-size:13px;color:var(--text-light);font-weight:400;}
 .sa-card-merit{font-size:13px;color:var(--accent);line-height:1.5;margin-bottom:14px;padding:8px 12px;background:var(--accent-light);border-radius:10px;}
+/* Tap-to-count sur les invocations de la séance */
+.sa-card--tap{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;transition:transform .1s ease;}
+.sa-card--tap:active{transform:scale(.99);}
+.sa-tap-row{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:12px;border-top:.5px solid var(--border);}
+.sa-tap-ring{position:relative;width:44px;height:44px;flex-shrink:0;}
+.sa-tap-ring svg{transform:rotate(-90deg);display:block;}
+.sa-tap-ring-bg{fill:none;stroke:var(--accent-light);stroke-width:4;}
+.sa-tap-ring-bar{fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .25s cubic-bezier(.34,1.2,.64,1);}
+.sa-tap-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--accent);}
+.sa-tap-ring-num.pop{animation:tNumPop .25s cubic-bezier(.34,1.56,.64,1);}
+.sa-tap-hint{font-size:12px;color:var(--text-secondary);line-height:1.4;}
+.sa-card--counted .sa-tap-ring-bar{stroke:var(--green);}
+.sa-card--counted .sa-tap-ring-num{color:var(--green);}
+.sa-card--counted .sa-tap-hint{color:var(--green);font-weight:600;}
 .sa-card-instruction{font-size:15px;color:var(--text);line-height:1.7;padding:14px;background:var(--bg);border-radius:12px;border:1px dashed var(--border);text-align:center;margin-top:4px;}
 .sa-card-hadith{font-family:var(--font-display);font-size:13px;font-style:italic;color:var(--text-secondary);line-height:1.7;margin-top:16px;padding:14px 16px;background:var(--bg);border-radius:12px;border-left:3px solid var(--green);}
 .sa-card-sep{height:1px;background:var(--border);margin:14px 0;}
@@ -1582,6 +1596,13 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] #seance-aube .sa-chourouk-countdown{font-family:var(--t-font-title);font-weight:800;color:var(--t-accent);}
 [data-theme="tarbiya"] #seance-aube .sa-phase-transition-title,
 [data-theme="tarbiya"] #seance-aube .sa-done-title{font-family:var(--t-font-title);font-weight:800;letter-spacing:-.5px;}
+[data-theme="tarbiya"] #seance-aube .sa-tap-ring-bg{stroke:var(--t-accent-soft);}
+[data-theme="tarbiya"] #seance-aube .sa-tap-ring-bar{stroke:var(--t-accent);}
+[data-theme="tarbiya"] #seance-aube .sa-tap-ring-num{color:var(--t-accent);font-family:var(--t-font-title);font-weight:800;}
+[data-theme="tarbiya"] #seance-aube .sa-tap-row{border-top-color:var(--t-line);}
+[data-theme="tarbiya"] #seance-aube .sa-card--counted .sa-tap-ring-bar{stroke:var(--t-success);}
+[data-theme="tarbiya"] #seance-aube .sa-card--counted .sa-tap-ring-num{color:var(--t-success);}
+[data-theme="tarbiya"] #seance-aube .sa-card--counted .sa-tap-hint{color:var(--t-success);}
 [data-theme="tarbiya"] .t-badge-card{flex:1;background:#fff;border-radius:var(--t-radius-sm);padding:14px 12px;box-shadow:var(--t-card-shadow);display:flex;flex-direction:column;gap:6px;min-width:0;}
 [data-theme="tarbiya"] .t-badge-card--locked{opacity:.6;filter:grayscale(.5);}
 [data-theme="tarbiya"] .t-badge-card__icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff;}
@@ -7219,6 +7240,32 @@ function seanceSkip(){
   else if(_sa.phase==='chourouk')seanceFinish();
 }
 
+// Tap sur la carte d'invocation de la séance : décompte les répétitions puis avance
+function saInvocTap(card){
+  if(_sa.phase!=='invocations'||_sa.count<=0)return;
+  _sa.count--;
+  try{if(navigator.vibrate)navigator.vibrate(8);}catch(_){}
+  const inv=(ADHKAR.matin||[])[_sa.invocStep]||{};
+  const rep=inv.repeat||1;
+  const CIR=2*Math.PI*18;
+  const bar=card.querySelector('.sa-tap-ring-bar');
+  if(bar)bar.style.strokeDashoffset=(CIR*(_sa.count/rep)).toFixed(1);
+  const num=card.querySelector('.sa-tap-ring-num');
+  if(num){
+    if(_sa.count>0)num.textContent=_sa.count;
+    else num.innerHTML=gIc('✓','check',15,3);
+    num.classList.remove('pop');void num.offsetWidth;num.classList.add('pop');
+  }
+  const hint=card.querySelector('.sa-tap-hint');
+  if(_sa.count>0){
+    if(hint&&rep>1)hint.textContent='Tape la carte à chaque récitation — encore '+_sa.count;
+  }else{
+    card.classList.add('sa-card--counted');
+    if(hint)hint.textContent='Accompli — barakAllahu fik';
+    setTimeout(()=>{if(_sa.phase==='invocations'&&_sa.count<=0)seanceNextInvoc();},650);
+  }
+}
+
 function seanceNextInvoc(){
   _sa.invocStep++;
   if(_sa.invocStep>=ADHKAR.matin.length){
@@ -7320,15 +7367,26 @@ function renderSeancePhaseContent(){
     const isLast=i>=invocs.length-1;
     fill.style.width=Math.round(i/invocs.length*25)+'%';
     const palierLow=S.palier<=2;
-    body.innerHTML=`<div class="sa-card">
+    // Compteur de répétitions : initialisé à chaque nouvelle invocation
+    if(_sa.countFor!==i){_sa.countFor=i;_sa.count=inv.repeat||1;}
+    const rep=inv.repeat||1;
+    const doneN=rep-_sa.count;
+    const CIR=2*Math.PI*18;
+    body.innerHTML=`<div class="sa-card sa-card--tap${_sa.count<=0?' sa-card--counted':''}" onclick="saInvocTap(this)" role="button" aria-label="Compter une récitation">
       <div class="sa-card-counter">${i+1} / ${invocs.length}</div>
-      ${inv.repeat>1?`<div class="sa-card-repeat">× ${inv.repeat}</div>`:''}
       <div class="sa-card-arabic">${inv.arabic}</div>
       <div class="sa-card-phonetic">${inv.phonetic}</div>
       <div class="sa-card-french">${inv.french}</div>
       ${inv.source?`<div class="sa-card-source">${inv.source}</div>`:''}
       ${inv.note?`<div class="sa-card-note">📍 ${inv.note}</div>`:''}
       ${palierLow&&i===0?`<div class="sa-card-tip">💡 Lis chaque invocation au moins une fois — la constance prime sur la quantité.</div>`:''}
+      <div class="sa-tap-row">
+        <div class="sa-tap-ring">
+          <svg width="44" height="44" viewBox="0 0 44 44"><circle class="sa-tap-ring-bg" cx="22" cy="22" r="18"/><circle class="sa-tap-ring-bar" cx="22" cy="22" r="18" stroke-dasharray="${CIR.toFixed(1)}" stroke-dashoffset="${(CIR*(_sa.count/rep)).toFixed(1)}"/></svg>
+          <div class="sa-tap-ring-num">${_sa.count>0?_sa.count:gIc('✓','check',15,3)}</div>
+        </div>
+        <div class="sa-tap-hint">${_sa.count>0?(rep>1?'Tape la carte à chaque récitation — encore '+_sa.count:'Tape la carte quand tu l\'as récitée'):'Accompli — barakAllahu fik'}</div>
+      </div>
     </div>`;
     cta.textContent=isLast?'Terminer les invocations →':'Suivant →';
   }
