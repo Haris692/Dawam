@@ -2006,8 +2006,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 
 /* ─────────────────────────────────────────────────────────
-   v3 — TODAY STACK : Deck swipeable (Tarbiya uniquement)
-   Swipe → = fait · Swipe ← = plus tard · Swipe ↑ = détail
+   v4 — AUJOURD'HUI : carte "Maintenant" + timeline du jour
+   Une seule action mise en avant, la journée entière lisible dessous
    ───────────────────────────────────────────────────────── */
 
 /* Toggle Aujourd'hui / Parcours
@@ -2043,234 +2043,230 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"][data-path-view="stack"] .t-path-wrap{display:none !important;}
 [data-theme="tarbiya"][data-path-view="stack"] .t-actions-see-all{display:none !important;}
 [data-theme="tarbiya"][data-path-view="stack"] .t-progress-card{display:none !important;}
-[data-theme="tarbiya"][data-path-view="path"] .t-stack-wrap,
-[data-theme="tarbiya"][data-path-view="path"] .t-stack-actions,
-[data-theme="tarbiya"][data-path-view="path"] .t-stack-meta{display:none !important;}
+[data-theme="tarbiya"][data-path-view="path"] .t-stack-wrap{display:none !important;}
 
-/* Deck wrapper */
+/* Wrapper — hauteur auto (remplace le deck fixe) */
 [data-theme="tarbiya"] .t-stack-wrap{
   position:relative;
   margin:8px auto 0;
-  width:100%;max-width:380px;
-  height:440px;
-  perspective:1400px;
-}
-[data-theme="tarbiya"] .t-stack-deck{
-  position:absolute;inset:0;
-  transform-style:preserve-3d;
+  width:100%;max-width:420px;
 }
 
-/* Carte individuelle */
-[data-theme="tarbiya"] .t-swipe-card{
-  position:absolute;inset:0;
+/* ── Carte MAINTENANT ── */
+[data-theme="tarbiya"] .t-now-card{
+  position:relative;
   border-radius:28px;
-  padding:24px 22px 22px;
-  display:flex;flex-direction:column;
-  background:#fff;color:var(--t-ink);
-  box-shadow:0 24px 60px -20px rgba(20,18,40,.28),
-             0 8px 22px -12px rgba(20,18,40,.18);
-  cursor:grab;
-  touch-action:none;
-  user-select:none;-webkit-user-select:none;
-  will-change:transform,opacity;
-  transition:transform .42s cubic-bezier(.22,.9,.32,1.2),opacity .3s ease,box-shadow .3s ease;
-  transform-origin:50% 80%;
-  overflow:hidden;
-}
-[data-theme="tarbiya"] .t-swipe-card:active{cursor:grabbing;}
-[data-theme="tarbiya"] .t-swipe-card.is-dragging{transition:none;}
-
-/* États position dans la pile */
-[data-theme="tarbiya"] .t-swipe-card[data-pos="0"]{z-index:30;transform:translateY(0) scale(1);}
-[data-theme="tarbiya"] .t-swipe-card[data-pos="1"]{z-index:20;transform:translateY(14px) scale(.94);opacity:.9;}
-[data-theme="tarbiya"] .t-swipe-card[data-pos="2"]{z-index:10;transform:translateY(28px) scale(.88);opacity:.7;}
-[data-theme="tarbiya"] .t-swipe-card[data-pos="3"]{z-index:5;transform:translateY(38px) scale(.83);opacity:0;pointer-events:none;}
-
-/* Carte "active" (cat current) = gradient warm */
-[data-theme="tarbiya"] .t-swipe-card--current{
+  padding:20px 20px 16px;
   background:var(--t-warm-grad);
   color:#fff;
-  box-shadow:0 30px 70px -16px rgba(255,107,107,.42),
-             0 10px 24px -10px rgba(255,138,61,.32);
+  box-shadow:0 24px 54px -18px rgba(255,107,107,.40),0 8px 20px -10px rgba(255,138,61,.28);
+  overflow:hidden;
+  cursor:pointer;
+  animation:tNowIn .55s cubic-bezier(.22,1.2,.36,1) both;
+  transition:transform .3s ease,opacity .28s ease;
 }
-[data-theme="tarbiya"] .t-swipe-card--current::before{
-  content:"";position:absolute;
-  width:240px;height:240px;border-radius:50%;
-  background:rgba(255,255,255,.12);
-  top:-90px;right:-70px;pointer-events:none;
-  filter:blur(4px);
+[data-theme="tarbiya"] .t-now-card::before{
+  content:"";position:absolute;width:240px;height:240px;border-radius:50%;
+  background:rgba(255,255,255,.13);top:-100px;right:-70px;pointer-events:none;filter:blur(4px);
 }
-[data-theme="tarbiya"] .t-swipe-card--current::after{
-  content:"";position:absolute;
-  width:140px;height:140px;border-radius:50%;
-  background:rgba(255,255,255,.08);
-  bottom:-50px;left:-40px;pointer-events:none;
-  filter:blur(8px);
+[data-theme="tarbiya"] .t-now-card::after{
+  content:"";position:absolute;width:150px;height:150px;border-radius:50%;
+  background:rgba(255,255,255,.09);bottom:-60px;left:-45px;pointer-events:none;filter:blur(8px);
 }
+@keyframes tNowIn{from{opacity:0;transform:translateY(18px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+[data-theme="tarbiya"] .t-now-card.is-leaving{transform:translateX(70px) scale(.94) rotate(3deg);opacity:0;}
+[data-theme="tarbiya"] .t-now-card.is-leaving--skip{transform:translateX(-70px) scale(.94) rotate(-3deg);opacity:0;}
 
-/* Carte "future" (cat future) = soft accent */
-[data-theme="tarbiya"] .t-swipe-card--future{
+/* Variante rattrapage (action d'un moment passé) */
+[data-theme="tarbiya"] .t-now-card--catch{
   background:linear-gradient(160deg,#fff 0%,var(--t-accent-soft) 100%);
   color:var(--t-ink);
+  box-shadow:0 24px 54px -20px rgba(20,18,40,.20);
 }
 
-/* Header de carte */
-[data-theme="tarbiya"] .t-swipe-card__head{
+[data-theme="tarbiya"] .t-now-card__head{
   display:flex;justify-content:space-between;align-items:center;
   position:relative;z-index:2;
 }
-[data-theme="tarbiya"] .t-swipe-card__kicker{
-  font-size:10.5px;font-weight:800;
-  letter-spacing:1.6px;text-transform:uppercase;
-  opacity:.85;
+[data-theme="tarbiya"] .t-now-card__kicker{
+  font-size:10.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;opacity:.9;
 }
-[data-theme="tarbiya"] .t-swipe-card__xp{
-  font-size:12px;font-weight:800;
-  padding:5px 10px;border-radius:var(--t-pill);
+[data-theme="tarbiya"] .t-now-card__xp{
+  font-size:12px;font-weight:800;padding:5px 10px;border-radius:var(--t-pill);
   background:rgba(255,255,255,.22);
 }
-[data-theme="tarbiya"] .t-swipe-card--future .t-swipe-card__xp{
+[data-theme="tarbiya"] .t-now-card--catch .t-now-card__kicker{color:var(--t-accent);opacity:1;}
+[data-theme="tarbiya"] .t-now-card--catch .t-now-card__xp{background:var(--t-accent-soft);color:var(--t-accent);}
+
+[data-theme="tarbiya"] .t-now-card__main{
+  display:flex;align-items:center;gap:16px;
+  margin:16px 0 4px;position:relative;z-index:2;
+}
+[data-theme="tarbiya"] .t-now-card__emoji{
+  font-size:56px;line-height:1;flex-shrink:0;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.18));
+  animation:tNowBob 4s ease-in-out infinite;
+}
+@keyframes tNowBob{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-5px) rotate(2deg);}}
+[data-theme="tarbiya"] .t-now-card__txt{min-width:0;}
+[data-theme="tarbiya"] .t-now-card__title{
+  font-family:var(--t-font-title);font-weight:800;font-size:25px;line-height:1.08;letter-spacing:-.7px;
+}
+[data-theme="tarbiya"] .t-now-card__time{font-size:13px;font-weight:600;opacity:.8;margin-top:4px;}
+
+[data-theme="tarbiya"] .t-now-card__why{
+  position:relative;z-index:2;
+  font-size:12.5px;font-style:italic;line-height:1.45;opacity:.88;
+  border-left:2.5px solid rgba(255,255,255,.45);
+  padding:2px 0 2px 10px;margin:10px 2px 2px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+[data-theme="tarbiya"] .t-now-card--catch .t-now-card__why{border-left-color:var(--t-accent);color:var(--t-muted);opacity:1;}
+
+[data-theme="tarbiya"] .t-now-card__cta{
+  position:relative;z-index:2;overflow:hidden;
+  width:100%;height:52px;margin-top:14px;
+  border:none;border-radius:16px;cursor:pointer;
+  background:#fff;color:var(--t-coral);
+  font-family:var(--t-font-title);font-weight:800;font-size:16px;letter-spacing:-.2px;
+  box-shadow:0 10px 24px -8px rgba(0,0,0,.28);
+  transition:transform .12s ease;
+}
+[data-theme="tarbiya"] .t-now-card__cta:active{transform:scale(.97);}
+[data-theme="tarbiya"] .t-now-card__cta span{display:inline-block;margin-left:4px;animation:tCtaArrow 1.8s ease-in-out infinite;}
+@keyframes tCtaArrow{0%,100%{transform:translateX(0);}50%{transform:translateX(4px);}}
+[data-theme="tarbiya"] .t-now-card__cta::after{
+  content:"";position:absolute;top:0;bottom:0;width:46px;
+  background:linear-gradient(100deg,transparent,rgba(255,170,90,.22),transparent);
+  left:-60px;animation:tCtaShine 3.2s ease-in-out infinite;
+}
+@keyframes tCtaShine{0%,55%{left:-60px;}85%,100%{left:110%;}}
+[data-theme="tarbiya"] .t-now-card--catch .t-now-card__cta{background:var(--t-accent);color:#fff;box-shadow:0 10px 24px -8px rgba(20,18,40,.30);}
+
+[data-theme="tarbiya"] .t-now-card__row{
+  position:relative;z-index:2;
+  display:flex;gap:8px;margin-top:8px;
+}
+[data-theme="tarbiya"] .t-now-card__ghost{
+  flex:1;height:40px;border:none;border-radius:12px;cursor:pointer;
+  background:rgba(255,255,255,.18);color:#fff;
+  font-family:inherit;font-weight:700;font-size:12.5px;
+  transition:transform .12s ease,background .2s ease;
+}
+[data-theme="tarbiya"] .t-now-card__ghost:active{transform:scale(.96);background:rgba(255,255,255,.3);}
+[data-theme="tarbiya"] .t-now-card--catch .t-now-card__ghost{background:rgba(0,0,0,.05);color:var(--t-ink);}
+
+/* File d'attente sous la carte */
+[data-theme="tarbiya"] .t-now-queue{
+  margin:10px 6px 0;font-size:12px;font-weight:600;color:var(--t-muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Carte "tout est fait" */
+[data-theme="tarbiya"] .t-now-card--done{
+  background:var(--t-hero-grad);color:#fff;cursor:default;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:8px;padding:30px 24px;
+  box-shadow:0 24px 54px -18px rgba(20,18,40,.35);
+}
+[data-theme="tarbiya"] .t-now-card__doneicon{font-size:56px;line-height:1;animation:tNowBob 4s ease-in-out infinite;position:relative;z-index:2;}
+[data-theme="tarbiya"] .t-now-card__donetitle{font-family:var(--t-font-title);font-weight:800;font-size:24px;letter-spacing:-.6px;position:relative;z-index:2;}
+[data-theme="tarbiya"] .t-now-card__donesub{font-size:13.5px;opacity:.85;line-height:1.45;max-width:280px;position:relative;z-index:2;}
+
+/* ── Progression du jour (segments par moment) ── */
+[data-theme="tarbiya"] .t-day-strip{
+  display:flex;align-items:center;gap:12px;
+  margin:18px 4px 4px;
+}
+[data-theme="tarbiya"] .t-day-strip__bar{flex:1;display:flex;gap:4px;}
+[data-theme="tarbiya"] .t-day-seg{height:6px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden;}
+[data-theme="tarbiya"] .t-day-seg__fill{height:100%;border-radius:999px;background:var(--t-accent);transition:width .5s cubic-bezier(.34,1.2,.64,1);}
+[data-theme="tarbiya"] .t-day-strip__label{font-size:12px;font-weight:800;color:var(--t-muted);font-variant-numeric:tabular-nums;}
+
+/* ── Timeline de la journée ── */
+[data-theme="tarbiya"] .t-tl{margin-top:2px;padding-bottom:8px;}
+[data-theme="tarbiya"] .t-tl-moment{margin-top:16px;}
+[data-theme="tarbiya"] .t-tl-moment__head{
+  display:flex;align-items:center;gap:7px;
+  padding:0 4px;margin-bottom:2px;
+  font-size:11.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--t-muted);
+}
+[data-theme="tarbiya"] .t-tl-moment__emoji{font-size:14px;}
+[data-theme="tarbiya"] .t-tl-moment__chip{
+  margin-left:auto;padding:3px 9px;border-radius:999px;
+  background:var(--t-accent);color:#fff;
+  font-size:9.5px;font-weight:800;letter-spacing:.8px;
+  animation:tChipPulse 2.4s ease-in-out infinite;
+}
+@keyframes tChipPulse{0%,100%{opacity:1;}50%{opacity:.72;}}
+[data-theme="tarbiya"] .t-tl-moment__count{margin-left:auto;font-size:11px;letter-spacing:.3px;}
+[data-theme="tarbiya"] .t-tl-moment__count--full{color:var(--t-success);}
+[data-theme="tarbiya"] .t-tl-moment--locked .t-tl-moment__head{opacity:.55;}
+
+[data-theme="tarbiya"] .t-tl-item{
+  display:flex;align-items:center;gap:11px;
+  background:#fff;border:1.5px solid transparent;border-radius:16px;
+  padding:11px 13px;margin-top:8px;
+  box-shadow:0 6px 18px -10px rgba(20,18,40,.14);
+  cursor:pointer;
+  transition:transform .12s ease,box-shadow .2s ease,border-color .2s ease,opacity .2s ease;
+  animation:tTlIn .4s ease both;
+  animation-delay:calc(var(--i,0) * 35ms);
+}
+@keyframes tTlIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+[data-theme="tarbiya"] .t-tl-item:active{transform:scale(.98);}
+[data-theme="tarbiya"] .t-tl-item--current{
+  border-color:var(--t-accent);
+  box-shadow:0 10px 26px -10px rgba(20,18,40,.22),0 0 0 4px var(--t-accent-soft);
+}
+[data-theme="tarbiya"] .t-tl-item--missed{border-color:rgba(255,138,61,.5);}
+[data-theme="tarbiya"] .t-tl-item--missed .t-tl-item__meta{color:var(--t-warm);font-weight:700;}
+[data-theme="tarbiya"] .t-tl-item--done{opacity:.72;box-shadow:none;cursor:default;}
+[data-theme="tarbiya"] .t-tl-item--done .t-tl-item__title{color:var(--t-muted);}
+[data-theme="tarbiya"] .t-tl-item--locked{
+  opacity:.45;pointer-events:none;cursor:default;
+  background:transparent;box-shadow:none;border:1.5px dashed rgba(0,0,0,.14);
+}
+
+[data-theme="tarbiya"] .t-tl-check{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;border:2px solid rgba(0,0,0,.14);
+  font-size:15px;font-weight:800;color:#fff;
+  cursor:pointer;padding:0;font-family:inherit;
+  transition:border-color .2s ease,background .2s ease,transform .15s ease;
+}
+[data-theme="tarbiya"] .t-tl-check:active{transform:scale(.88);}
+[data-theme="tarbiya"] .t-tl-item--current .t-tl-check{border-color:var(--t-accent);}
+[data-theme="tarbiya"] .t-tl-item--done .t-tl-check{
+  background:var(--t-success);border-color:var(--t-success);
+  animation:tCheckPop .35s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes tCheckPop{0%{transform:scale(.5);}60%{transform:scale(1.18);}100%{transform:scale(1);}}
+[data-theme="tarbiya"] .t-tl-item--locked .t-tl-check{border-style:dashed;font-size:12px;background:transparent;}
+
+[data-theme="tarbiya"] .t-tl-item__emoji{font-size:22px;flex-shrink:0;}
+[data-theme="tarbiya"] .t-tl-item__body{flex:1;min-width:0;}
+[data-theme="tarbiya"] .t-tl-item__title{
+  font-family:var(--t-font-title);font-weight:700;font-size:14.5px;letter-spacing:-.2px;color:var(--t-ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+[data-theme="tarbiya"] .t-tl-item__meta{font-size:11.5px;color:var(--t-muted);margin-top:2px;}
+[data-theme="tarbiya"] .t-tl-item__xp{
+  flex-shrink:0;font-size:11px;font-weight:800;
+  padding:4px 8px;border-radius:999px;
   background:var(--t-accent-soft);color:var(--t-accent);
 }
+[data-theme="tarbiya"] .t-tl-item__xp--done{background:transparent;color:var(--t-success);}
 
-/* Icône XL au centre */
-[data-theme="tarbiya"] .t-swipe-card__hero{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:14px;text-align:center;
-  padding:8px 0;position:relative;z-index:2;
-}
-[data-theme="tarbiya"] .t-swipe-card__emoji{
-  font-size:78px;line-height:1;
-  filter:drop-shadow(0 6px 14px rgba(0,0,0,.18));
-  animation:tSwipeBob 4s ease-in-out infinite;
-}
-@keyframes tSwipeBob{
-  0%,100%{transform:translateY(0) rotate(-2deg);}
-  50%{transform:translateY(-6px) rotate(2deg);}
-}
-[data-theme="tarbiya"] .t-swipe-card__title{
-  font-family:var(--t-font-title);
-  font-weight:800;font-size:26px;line-height:1.08;
-  letter-spacing:-.8px;
-  padding:0 8px;
-}
-[data-theme="tarbiya"] .t-swipe-card__time{
-  font-size:13px;font-weight:600;opacity:.78;
-}
-
-/* Hint swipe up */
-[data-theme="tarbiya"] .t-swipe-card__hint{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  font-size:11.5px;font-weight:700;opacity:.7;
-  letter-spacing:.2px;padding:4px 0 2px;
-  position:relative;z-index:2;
-}
-[data-theme="tarbiya"] .t-swipe-card__hint svg{
-  width:14px;height:14px;animation:tSwipeArrow 2s ease-in-out infinite;
-}
-@keyframes tSwipeArrow{
-  0%,100%{transform:translateY(0);opacity:.6;}
-  50%{transform:translateY(-4px);opacity:1;}
-}
-
-/* Overlay de swipe (✓ / ⏭ / ℹ) */
-[data-theme="tarbiya"] .t-swipe-card__overlay{
-  position:absolute;inset:0;border-radius:28px;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;
-  transition:opacity .14s ease;
-  z-index:3;
-}
-[data-theme="tarbiya"] .t-swipe-card__overlay-badge{
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  padding:18px 26px;border-radius:22px;
-  background:rgba(255,255,255,.95);
-  box-shadow:0 12px 40px -10px rgba(0,0,0,.3);
-  transform:scale(.85);
-  transition:transform .14s ease;
-}
-[data-theme="tarbiya"] .t-swipe-card__overlay-icon{
-  font-size:38px;line-height:1;
-}
-[data-theme="tarbiya"] .t-swipe-card__overlay-label{
-  font-weight:800;font-size:13px;letter-spacing:1.4px;text-transform:uppercase;
-}
-[data-theme="tarbiya"] .t-swipe-card__overlay--right .t-swipe-card__overlay-badge{color:#1F8A5B;border:2px solid #1F8A5B;}
-[data-theme="tarbiya"] .t-swipe-card__overlay--left  .t-swipe-card__overlay-badge{color:#FF8A3D;border:2px solid #FF8A3D;}
-[data-theme="tarbiya"] .t-swipe-card__overlay--up    .t-swipe-card__overlay-badge{color:#5B3FE4;border:2px solid #5B3FE4;}
-[data-theme="tarbiya"] .t-swipe-card.is-overlay-right .t-swipe-card__overlay--right,
-[data-theme="tarbiya"] .t-swipe-card.is-overlay-left  .t-swipe-card__overlay--left,
-[data-theme="tarbiya"] .t-swipe-card.is-overlay-up    .t-swipe-card__overlay--up{opacity:1;}
-[data-theme="tarbiya"] .t-swipe-card.is-overlay-right .t-swipe-card__overlay--right .t-swipe-card__overlay-badge,
-[data-theme="tarbiya"] .t-swipe-card.is-overlay-left  .t-swipe-card__overlay--left .t-swipe-card__overlay-badge,
-[data-theme="tarbiya"] .t-swipe-card.is-overlay-up    .t-swipe-card__overlay--up .t-swipe-card__overlay-badge{transform:scale(1);}
-
-/* Actions sous le deck */
-[data-theme="tarbiya"] .t-stack-actions{
-  display:flex;justify-content:center;align-items:center;
-  gap:18px;margin:18px auto 0;
-}
-[data-theme="tarbiya"] .t-stack-action{
-  width:54px;height:54px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;font-weight:800;font-family:inherit;
-  background:#fff;border:1px solid rgba(0,0,0,.06);
-  box-shadow:0 8px 22px -8px rgba(20,18,40,.18);
-  cursor:pointer;transition:transform .12s ease,box-shadow .2s ease;
-}
-[data-theme="tarbiya"] .t-stack-action:active{transform:scale(.92);}
-[data-theme="tarbiya"] .t-stack-action--skip{color:#FF8A3D;}
-[data-theme="tarbiya"] .t-stack-action--info{color:#5B3FE4;width:46px;height:46px;font-size:18px;}
-[data-theme="tarbiya"] .t-stack-action--done{
-  color:#fff;background:linear-gradient(135deg,#1F8A5B 0%,#15673F 100%);
-  border-color:transparent;
-  box-shadow:0 10px 28px -8px rgba(31,138,91,.5);
-  width:62px;height:62px;font-size:26px;
-}
-[data-theme="tarbiya"] .t-stack-actions[data-disabled="1"] .t-stack-action{
-  pointer-events:none;opacity:.45;
-}
-
-/* Indicateurs de pile (dots + compteur) */
-[data-theme="tarbiya"] .t-stack-meta{
-  display:flex;justify-content:space-between;align-items:center;
-  margin:14px 4px 0;
-  font-size:12px;font-weight:700;color:var(--t-muted);
-}
-[data-theme="tarbiya"] .t-stack-dots{display:flex;gap:5px;}
-[data-theme="tarbiya"] .t-stack-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:rgba(0,0,0,.12);transition:background .2s,width .2s;
-}
-[data-theme="tarbiya"] .t-stack-dot--active{background:var(--t-accent);width:18px;border-radius:3px;}
-[data-theme="tarbiya"] .t-stack-dot--done{background:var(--t-success);}
-
-/* État empty (tout fait ou stack vide) */
-[data-theme="tarbiya"] .t-stack-empty{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:14px;padding:30px 24px;text-align:center;
-  border-radius:28px;
-  background:linear-gradient(160deg,#fff 0%,var(--t-accent-soft) 100%);
-  box-shadow:0 24px 60px -20px rgba(20,18,40,.18);
-}
-[data-theme="tarbiya"] .t-stack-empty__icon{
-  font-size:64px;animation:tSwipeBob 4s ease-in-out infinite;
-}
-[data-theme="tarbiya"] .t-stack-empty__title{
-  font-family:var(--t-font-title);font-weight:800;font-size:24px;letter-spacing:-.6px;
-  color:var(--t-ink);
-}
-[data-theme="tarbiya"] .t-stack-empty__sub{
-  font-size:13.5px;color:var(--t-muted);line-height:1.45;max-width:280px;
-}
-[data-theme="tarbiya"] .t-stack-empty__cta{
-  margin-top:6px;height:46px;padding:0 22px;
-  border-radius:14px;border:none;cursor:pointer;
-  background:var(--t-accent);color:#fff;
-  font-family:inherit;font-weight:800;font-size:13.5px;
-  letter-spacing:.3px;
+@media (prefers-reduced-motion: reduce){
+  [data-theme="tarbiya"] .t-now-card,
+  [data-theme="tarbiya"] .t-now-card__emoji,
+  [data-theme="tarbiya"] .t-now-card__doneicon,
+  [data-theme="tarbiya"] .t-now-card__cta span,
+  [data-theme="tarbiya"] .t-now-card__cta::after,
+  [data-theme="tarbiya"] .t-tl-item,
+  [data-theme="tarbiya"] .t-tl-moment__chip{animation:none !important;}
 }
 
 /* Bottom sheet détail */
@@ -2339,19 +2335,6 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   background:rgba(0,0,0,.05);color:var(--t-ink);
 }
 
-/* Animations entrée / sortie */
-@keyframes tSwipeIn{
-  from{opacity:0;transform:translateY(16px) scale(.96);}
-  to{opacity:1;transform:translateY(0) scale(1);}
-}
-[data-theme="tarbiya"] .t-stack-wrap{animation:tSwipeIn .45s ease;}
-
-@media (prefers-reduced-motion: reduce){
-  [data-theme="tarbiya"] .t-swipe-card__emoji,
-  [data-theme="tarbiya"] .t-stack-empty__icon,
-  [data-theme="tarbiya"] .t-swipe-card__hint svg{animation:none !important;}
-  [data-theme="tarbiya"] .t-stack-wrap{animation:none !important;}
-}
 
 /* Bottom sheet "Toutes les actions" */
 [data-theme="tarbiya"] #t-all-actions-modal{
@@ -3837,11 +3820,11 @@ function getCurrentCat(){
 }
 // ═══ PRAYER ITEMS (dynamic, based on S.profile.prayers) ═══
 const PRAYER_META = {
-  fajr:   {id:100,titleFr:"Fajr",      emoji:"🌅",time:"À l'aube",          xp:20,cat:"aube",    ar:"الفجر"},
-  dhuhr:  {id:101,titleFr:"Dhuhr",     emoji:"☀️", time:"À midi",            xp:20,cat:"journee", ar:"الظهر"},
-  asr:    {id:102,titleFr:"Asr",       emoji:"🌤️", time:"Dans l'après-midi", xp:20,cat:"journee", ar:"العصر"},
-  maghrib:{id:103,titleFr:"Maghrib",   emoji:"🌇",time:"Au coucher du soleil",xp:20,cat:"soir",   ar:"المغرب"},
-  isha:   {id:104,titleFr:"Isha",      emoji:"🌙",time:"En soirée",          xp:20,cat:"nuit",    ar:"العشاء"},
+  fajr:   {id:100,titleFr:"Fajr",      emoji:"🌅",time:"À l'aube",          xp:20,cat:"aube",    ar:"الفجر",  why:"« Celui qui prie Fajr est sous la protection d'Allah. » — Muslim"},
+  dhuhr:  {id:101,titleFr:"Dhuhr",     emoji:"☀️", time:"À midi",            xp:20,cat:"journee", ar:"الظهر",  why:"Une pause avec Allah au cœur de ta journée — les portes du ciel s'ouvrent à son heure."},
+  asr:    {id:102,titleFr:"Asr",       emoji:"🌤️", time:"Dans l'après-midi", xp:20,cat:"journee", ar:"العصر",  why:"« Celui qui préserve Fajr et Asr entrera au Paradis. » — Bukhari & Muslim"},
+  maghrib:{id:103,titleFr:"Maghrib",   emoji:"🌇",time:"Au coucher du soleil",xp:20,cat:"soir",   ar:"المغرب", why:"Le Prophète ﷺ se hâtait pour Maghrib dès l'entrée de son temps."},
+  isha:   {id:104,titleFr:"Isha",      emoji:"🌙",time:"En soirée",          xp:20,cat:"nuit",    ar:"العشاء", why:"« Celui qui prie Isha en groupe, c'est comme s'il avait prié la moitié de la nuit. » — Muslim"},
 };
 function getPrayerFlow(id){
   const p=S.palier||1;
@@ -5685,200 +5668,160 @@ function _tStackBuildItems(){
 }
 
 function renderTarbiyaTodayStack(body){
-  // Nettoyage
+  // Nettoyage (anciennes classes deck incluses par sécurité)
   body.querySelectorAll('.t-stack-wrap,.t-stack-actions,.t-stack-meta').forEach(function(el){el.remove();});
 
-  var stackItems=_tStackBuildItems();
+  var items=getActiveItems();
   var catOrder=['qiyam','aube','journee','soir','nuit'];
   var curCat=getCurrentCat();
-  var totalActive=getActiveItems().filter(function(it){
-    var ci=catOrder.indexOf(it.cat);
-    return ci<=catOrder.indexOf(curCat);
-  }).length;
-  var done=totalActive-stackItems.length;
+  var curIdx=catOrder.indexOf(curCat);
+  var queue=_tStackBuildItems();
+  var next=queue.length?queue[0]:null;
+  var checked=items.filter(function(it){return S.checklist[it.id];}).length;
+  var total=items.length;
 
   var wrap=document.createElement('div');
   wrap.className='t-stack-wrap';
+  var html='';
 
-  if(stackItems.length===0){
-    // Empty state
-    var empty=document.createElement('div');
-    empty.className='t-stack-empty';
-    var allDoneNow=Object.values(S.checklist||{}).filter(Boolean).length>0;
-    empty.innerHTML=
-      '<div class="t-stack-empty__icon">✨</div>'+
-      '<div class="t-stack-empty__title">'+(allDoneNow?'Bien joué !':'Rien à faire pour l\'instant')+'</div>'+
-      '<div class="t-stack-empty__sub">'+(allDoneNow?'Tu as accompli toutes les actions disponibles. Reviens plus tard pour les prochaines.':'Les prochaines actions s\'ouvriront au fil de la journée.')+'</div>'+
-      '<button class="t-stack-empty__cta" type="button" onclick="setTarbiyaPathView(\'path\')">Voir le parcours →</button>';
-    wrap.appendChild(empty);
+  // ── 1. Carte "Maintenant" ──
+  if(next){
+    var isCur=next.cat===curCat;
+    var catLabel=(typeof SECTIONS!=='undefined'&&SECTIONS[next.cat])?SECTIONS[next.cat].label:next.cat;
+    var kicker=(isCur?'● Maintenant':'● À rattraper')+' · '+catLabel;
+    var why=next.why||'';
+    var after=queue.slice(1,3);
+    html+=
+      '<div class="t-now-card'+(isCur?'':' t-now-card--catch')+'" onclick="openTarbiyaSwipeDetail('+next.id+')">'+
+        '<div class="t-now-card__head">'+
+          '<div class="t-now-card__kicker">'+kicker+'</div>'+
+          (next.xp?'<div class="t-now-card__xp">+'+next.xp+' XP</div>':'')+
+        '</div>'+
+        '<div class="t-now-card__main">'+
+          '<div class="t-now-card__emoji">'+(next.emoji||'✦')+'</div>'+
+          '<div class="t-now-card__txt">'+
+            '<div class="t-now-card__title">'+next.titleFr+'</div>'+
+            '<div class="t-now-card__time">'+(next.time||'')+'</div>'+
+          '</div>'+
+        '</div>'+
+        (why?'<div class="t-now-card__why">'+why+'</div>':'')+
+        '<button class="t-now-card__cta" type="button" onclick="event.stopPropagation();openGuided('+next.id+')">Commencer <span>→</span></button>'+
+        '<div class="t-now-card__row">'+
+          '<button class="t-now-card__ghost" type="button" onclick="event.stopPropagation();tStackDone('+next.id+')">✓ Déjà fait</button>'+
+          (queue.length>1?'<button class="t-now-card__ghost" type="button" onclick="event.stopPropagation();tStackSkip('+next.id+')">Plus tard ⏭</button>':'')+
+        '</div>'+
+      '</div>'+
+      (after.length?'<div class="t-now-queue">Ensuite&nbsp;: '+after.map(function(q){return (q.emoji||'✦')+' '+q.titleFr;}).join(' · ')+'</div>':'');
   } else {
-    var deck=document.createElement('div');
-    deck.className='t-stack-deck';
-    // 3 cartes max visibles
-    var visible=stackItems.slice(0,3);
-    visible.forEach(function(it,idx){
-      var cat=it.cat;
-      var isCurrent=(cat===curCat);
-      var catLabel=(typeof SECTIONS!=='undefined'&&SECTIONS[cat])?SECTIONS[cat].label:cat;
-      var card=document.createElement('div');
-      card.className='t-swipe-card '+(isCurrent?'t-swipe-card--current':'t-swipe-card--future');
-      card.setAttribute('data-pos',String(idx));
-      card.setAttribute('data-id',String(it.id));
-      var kicker=(isCurrent?'● Maintenant':'● Bientôt')+' · '+catLabel;
-      var xp=it.xp?('+'+it.xp+' XP'):'';
-      card.innerHTML=
-        '<div class="t-swipe-card__head">'+
-          '<div class="t-swipe-card__kicker">'+kicker+'</div>'+
-          (xp?'<div class="t-swipe-card__xp">'+xp+'</div>':'')+
-        '</div>'+
-        '<div class="t-swipe-card__hero">'+
-          '<div class="t-swipe-card__emoji">'+(it.emoji||'✦')+'</div>'+
-          '<div class="t-swipe-card__title">'+it.titleFr+'</div>'+
-          '<div class="t-swipe-card__time">'+(it.time||'')+'</div>'+
-        '</div>'+
-        '<div class="t-swipe-card__hint">'+
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'+
-          'Glisse vers le haut pour le détail'+
-        '</div>'+
-        '<div class="t-swipe-card__overlay t-swipe-card__overlay--right"><div class="t-swipe-card__overlay-badge"><div class="t-swipe-card__overlay-icon">✓</div><div class="t-swipe-card__overlay-label">Validée</div></div></div>'+
-        '<div class="t-swipe-card__overlay t-swipe-card__overlay--left"><div class="t-swipe-card__overlay-badge"><div class="t-swipe-card__overlay-icon">⏭</div><div class="t-swipe-card__overlay-label">Plus tard</div></div></div>'+
-        '<div class="t-swipe-card__overlay t-swipe-card__overlay--up"><div class="t-swipe-card__overlay-badge"><div class="t-swipe-card__overlay-icon">ℹ</div><div class="t-swipe-card__overlay-label">Détail</div></div></div>';
-      deck.appendChild(card);
-    });
-    wrap.appendChild(deck);
+    // Tout est fait pour l'instant (ou journée complète)
+    var nextLockedCat=null;
+    for(var z=curIdx+1;z<catOrder.length;z++){
+      var zc=catOrder[z];
+      if(items.some(function(i){return i.cat===zc&&!S.checklist[i.id];})){nextLockedCat=zc;break;}
+    }
+    var allDone=total>0&&checked===total;
+    var doneTitle=allDone?'Journée accomplie !':'Tout est fait pour ce moment';
+    var doneSub=allDone
+      ?'Qu\'Allah accepte tes œuvres. Reviens demain — petit, mais constant.'
+      :(nextLockedCat&&SECTIONS[nextLockedCat]
+        ?'La suite s\'ouvrira '+SECTIONS[nextLockedCat].label.toLowerCase()+'.'
+        :'Les prochaines actions s\'ouvriront au fil de la journée.');
+    html+=
+      '<div class="t-now-card t-now-card--done">'+
+        '<div class="t-now-card__doneicon">'+(allDone?'🌟':'✨')+'</div>'+
+        '<div class="t-now-card__donetitle">'+doneTitle+'</div>'+
+        '<div class="t-now-card__donesub">'+doneSub+'</div>'+
+      '</div>';
   }
 
+  // ── 2. Progression du jour (segments par moment) ──
+  var segs='';
+  catOrder.forEach(function(cat){
+    var ci=items.filter(function(i){return i.cat===cat;});
+    if(!ci.length) return;
+    var cd=ci.filter(function(i){return S.checklist[i.id];}).length;
+    segs+='<div class="t-day-seg" style="flex:'+ci.length+'"><div class="t-day-seg__fill" style="width:'+Math.round(cd/ci.length*100)+'%"></div></div>';
+  });
+  html+='<div class="t-day-strip"><div class="t-day-strip__bar">'+segs+'</div><div class="t-day-strip__label">'+checked+'/'+total+'</div></div>';
+
+  // ── 3. Timeline de la journée ──
+  var tl='';
+  var ri=0;
+  catOrder.forEach(function(cat){
+    var ci=items.filter(function(i){return i.cat===cat;});
+    if(!ci.length) return;
+    var sec=(typeof SECTIONS!=='undefined'&&SECTIONS[cat])?SECTIONS[cat]:{label:cat,emoji:'•'};
+    var ciDone=ci.filter(function(i){return S.checklist[i.id];}).length;
+    var mIdx=catOrder.indexOf(cat);
+    var locked=mIdx>curIdx;
+    var isCurM=cat===curCat;
+    var chip=isCurM
+      ?'<span class="t-tl-moment__chip">en ce moment</span>'
+      :(locked
+        ?'<span class="t-tl-moment__count">🔒</span>'
+        :'<span class="t-tl-moment__count'+(ciDone===ci.length?' t-tl-moment__count--full':'')+'">'+ciDone+'/'+ci.length+'</span>');
+    tl+='<div class="t-tl-moment'+(isCurM?' t-tl-moment--current':'')+(locked?' t-tl-moment--locked':'')+'">'+
+      '<div class="t-tl-moment__head"><span class="t-tl-moment__emoji">'+sec.emoji+'</span><span class="t-tl-moment__label">'+sec.label+'</span>'+chip+'</div>';
+    ci.forEach(function(it){
+      var done=!!S.checklist[it.id];
+      var isNext=!!(next&&it.id===next.id);
+      var missed=!done&&!locked&&mIdx<curIdx;
+      var cls='t-tl-item'+(done?' t-tl-item--done':'')+(locked?' t-tl-item--locked':'')+(isNext?' t-tl-item--current':'')+(missed?' t-tl-item--missed':'');
+      var rowClick=(locked||done)?'':' onclick="openGuided('+it.id+')"';
+      var ariaTitle=String(it.titleFr||'').replace(/"/g,'&quot;');
+      var check=locked
+        ?'<div class="t-tl-check">🔒</div>'
+        :'<button class="t-tl-check" type="button" aria-label="'+(done?'Décocher':'Valider')+' '+ariaTitle+'" onclick="event.stopPropagation();tTlToggle('+it.id+',this)">'+(done?'✓':'')+'</button>';
+      tl+='<div class="'+cls+'" style="--i:'+ri+'"'+rowClick+'>'+
+        check+
+        '<span class="t-tl-item__emoji">'+(it.emoji||'✦')+'</span>'+
+        '<div class="t-tl-item__body">'+
+          '<div class="t-tl-item__title">'+it.titleFr+'</div>'+
+          '<div class="t-tl-item__meta">'+(it.time||'')+(missed?' · à rattraper':'')+'</div>'+
+        '</div>'+
+        (it.xp?'<span class="t-tl-item__xp'+(done?' t-tl-item__xp--done':'')+'">'+(done?'✓ ':'+')+it.xp+'</span>':'')+
+      '</div>';
+      ri++;
+    });
+    tl+='</div>';
+  });
+  html+='<div class="t-tl">'+tl+'</div>';
+
+  wrap.innerHTML=html;
   // Insertion : avant le path-wrap (qui sera caché en mode stack)
   var pathWrap=body.querySelector('.t-path-wrap');
   body.insertBefore(wrap, pathWrap||body.firstChild);
-
-  if(stackItems.length>0){
-    // Actions sous le deck
-    var actions=document.createElement('div');
-    actions.className='t-stack-actions';
-    var firstId=stackItems[0].id;
-    actions.innerHTML=
-      '<button class="t-stack-action t-stack-action--skip" type="button" aria-label="Plus tard" onclick="tStackSkip('+firstId+')">⏭</button>'+
-      '<button class="t-stack-action t-stack-action--info" type="button" aria-label="Détail" onclick="openTarbiyaSwipeDetail('+firstId+')">ℹ</button>'+
-      '<button class="t-stack-action t-stack-action--done" type="button" aria-label="Marquer comme fait" onclick="tStackDone('+firstId+')">✓</button>';
-    body.insertBefore(actions, wrap.nextSibling);
-
-    // Meta : dots + compteur
-    var meta=document.createElement('div');
-    meta.className='t-stack-meta';
-    var dots='';
-    var dotCount=Math.min(stackItems.length,5);
-    for(var d=0; d<dotCount; d++){
-      dots+='<div class="t-stack-dot'+(d===0?' t-stack-dot--active':'')+'"></div>';
-    }
-    meta.innerHTML=
-      '<div class="t-stack-dots">'+dots+'</div>'+
-      '<div>'+done+' / '+totalActive+' validées</div>';
-    body.insertBefore(meta, actions.nextSibling);
-
-    // Bind les gestes sur la carte du dessus
-    setTimeout(function(){ _tBindSwipe(wrap); }, 30);
-  }
 }
 
-function _tBindSwipe(wrap){
-  var top=wrap.querySelector('.t-swipe-card[data-pos="0"]');
-  if(!top || top.__bound) return;
-  top.__bound=true;
-  var startX=0, startY=0, started=false, dragging=false, pid=null, fx=0, fy=0;
-
-  function onDown(e){
-    if(top.classList.contains('is-leaving')) return;
-    if(e.button!==undefined && e.button!==0) return;
-    started=true; pid=e.pointerId;
-    startX=e.clientX; startY=e.clientY; fx=0; fy=0;
-    try{top.setPointerCapture(pid);}catch(_){}
-    top.classList.add('is-dragging');
+// Toggle rapide depuis la timeline — feedback immédiat, toggleItem re-render ensuite
+function tTlToggle(id, el){
+  var row=el&&el.closest?el.closest('.t-tl-item'):null;
+  if(row&&!S.checklist[id]){
+    row.classList.add('t-tl-item--done');
+    if(el.tagName==='BUTTON') el.textContent='✓';
   }
-  function onMove(e){
-    if(!started || (pid!=null && e.pointerId!==pid)) return;
-    var dx=e.clientX-startX, dy=e.clientY-startY;
-    if(!dragging && Math.abs(dx)+Math.abs(dy) < 4) return;
-    dragging=true; fx=dx; fy=dy;
-    var rot=Math.max(-20,Math.min(20,dx/9));
-    top.style.transform='translate('+dx+'px,'+dy+'px) rotate('+rot+'deg)';
-    top.classList.remove('is-overlay-right','is-overlay-left','is-overlay-up');
-    var absX=Math.abs(dx), absY=Math.abs(dy);
-    if(dy<-40 && absY>absX){ top.classList.add('is-overlay-up'); }
-    else if(dx>40){ top.classList.add('is-overlay-right'); }
-    else if(dx<-40){ top.classList.add('is-overlay-left'); }
-    // léger feedback sur la 2e carte (parallaxe)
-    var card2=wrap.querySelector('.t-swipe-card[data-pos="1"]');
-    if(card2){
-      var prog=Math.min(1,Math.max(absX,absY)/180);
-      card2.style.transform='translateY('+(14-prog*14)+'px) scale('+(0.94+prog*0.06)+')';
-      card2.style.opacity = (0.9+prog*0.1);
-    }
-  }
-  function onUp(e){
-    if(!started) return;
-    started=false;
-    top.classList.remove('is-dragging');
-    try{top.releasePointerCapture(pid);}catch(_){}
-    var TH_X=110, TH_Y=85;
-    var id=parseInt(top.getAttribute('data-id'),10);
-    var card2=wrap.querySelector('.t-swipe-card[data-pos="1"]');
-    if(fy<-TH_Y && Math.abs(fy)>Math.abs(fx)){
-      // swipe up : reset puis ouvrir détail
-      top.classList.remove('is-overlay-up','is-overlay-left','is-overlay-right');
-      top.style.transform='';
-      if(card2){ card2.style.transform=''; card2.style.opacity=''; }
-      openTarbiyaSwipeDetail(id);
-    } else if(fx>TH_X){
-      _tSwipeOut(top,'right',id);
-    } else if(fx<-TH_X){
-      _tSwipeOut(top,'left',id);
-    } else {
-      top.classList.remove('is-overlay-up','is-overlay-left','is-overlay-right');
-      top.style.transform='';
-      if(card2){ card2.style.transform=''; card2.style.opacity=''; }
-    }
-    dragging=false;
-  }
-  top.addEventListener('pointerdown',onDown);
-  top.addEventListener('pointermove',onMove);
-  top.addEventListener('pointerup',onUp);
-  top.addEventListener('pointercancel',onUp);
-}
-
-function _tSwipeOut(card, dir, id){
-  if(card.classList.contains('is-leaving')) return;
-  card.classList.add('is-leaving');
-  // Désactive les boutons sous le deck pendant l'animation
-  var actions=document.querySelector('.t-stack-actions');
-  if(actions) actions.setAttribute('data-disabled','1');
-  var w=window.innerWidth+340;
-  var tx=dir==='right'?w:-w;
-  var rot=dir==='right'?24:-24;
-  card.style.transition='transform .42s cubic-bezier(.22,.9,.32,1.2),opacity .35s ease';
-  card.style.transform='translate('+tx+'px,80px) rotate('+rot+'deg)';
-  card.style.opacity='0';
-  setTimeout(function(){
-    if(dir==='right'){
-      // Marque comme fait — toggleItem ré-appelle renderTarbiyaPathCards
-      if(!S.checklist[id]) toggleItem(id);
-      else if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
-    } else {
-      window._tStackSkipped[id]=true;
-      if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
-    }
-  }, 360);
+  toggleItem(id);
 }
 
 function tStackDone(id){
-  var card=document.querySelector('.t-swipe-card[data-pos="0"][data-id="'+id+'"]');
-  if(card) _tSwipeOut(card,'right',id);
-  else if(!S.checklist[id]) toggleItem(id);
+  var card=document.querySelector('.t-now-card');
+  if(card&&!card.classList.contains('is-leaving')){
+    card.classList.add('is-leaving');
+    setTimeout(function(){
+      if(!S.checklist[id]) toggleItem(id);
+      else if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
+    },300);
+  } else if(!S.checklist[id]) toggleItem(id);
 }
 function tStackSkip(id){
-  var card=document.querySelector('.t-swipe-card[data-pos="0"][data-id="'+id+'"]');
-  if(card) _tSwipeOut(card,'left',id);
-  else { window._tStackSkipped[id]=true; if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards(); }
+  window._tStackSkipped[id]=true;
+  var card=document.querySelector('.t-now-card');
+  if(card&&!card.classList.contains('is-leaving--skip')){
+    card.classList.add('is-leaving--skip');
+    setTimeout(function(){
+      if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
+    },280);
+  } else if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
 }
 
 function openTarbiyaSwipeDetail(id){
