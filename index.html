@@ -1393,7 +1393,31 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .t-series-strip{display:flex;justify-content:space-between;align-items:center;background:var(--t-accent-soft);border-radius:var(--t-radius-sm);padding:10px 14px;margin:0 18px 12px;}
 [data-theme="tarbiya"] .t-series-strip__label{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--t-accent);display:flex;flex-direction:column;gap:2px;}
 [data-theme="tarbiya"] .t-series-strip__label small{font-weight:700;letter-spacing:.5px;text-transform:none;font-size:11px;color:var(--t-ink);}
-[data-theme="tarbiya"] .t-series-strip__xp{padding:5px 10px;border-radius:999px;background:var(--t-accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.3px;}
+[data-theme="tarbiya"] .t-series-strip__xp{padding:5px 10px;border-radius:999px;background:var(--t-accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.3px;font-variant-numeric:tabular-nums;}
+[data-theme="tarbiya"] .t-series-strip__bar{height:4px;border-radius:999px;background:rgba(0,0,0,.08);margin-top:6px;overflow:hidden;min-width:150px;}
+[data-theme="tarbiya"] .t-series-strip__fill{height:100%;border-radius:999px;background:var(--t-accent);transition:width .4s cubic-bezier(.34,1.2,.64,1);}
+[data-theme="tarbiya"] .t-series-strip--done{background:rgba(31,138,91,.10);}
+[data-theme="tarbiya"] .t-series-strip--done .t-series-strip__label{color:var(--t-success);}
+[data-theme="tarbiya"] .t-series-strip--done .t-series-strip__fill{background:var(--t-success);}
+[data-theme="tarbiya"] .t-series-strip__reset{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;background:#fff;color:var(--t-success);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px -4px rgba(0,0,0,.15);transition:transform .12s ease;}
+[data-theme="tarbiya"] .t-series-strip__reset:active{transform:scale(.9) rotate(-40deg);}
+[data-theme="tarbiya"] .t-invoc-hint{font-size:12px;color:var(--t-muted);margin:-4px 20px 10px;line-height:1.4;}
+[data-theme="tarbiya"] #invoc-content .invoc-card{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .25s ease,transform .12s ease;}
+[data-theme="tarbiya"] #invoc-content .invoc-card:active{transform:scale(.99);}
+[data-theme="tarbiya"] .t-invoc-card--done{opacity:.62;}
+[data-theme="tarbiya"] .t-invoc-card--done .t-invoc-card-ring-bar{stroke:var(--t-success);}
+[data-theme="tarbiya"] .t-invoc-card--done .t-invoc-card-ring-num{color:var(--t-success);}
+[data-theme="tarbiya"] .t-invoc-card--done .t-invoc-card-done{color:var(--t-success);}
+[data-theme="tarbiya"] .t-invoc-card-ring-bar{transition:stroke-dashoffset .3s cubic-bezier(.34,1.2,.64,1);}
+[data-theme="tarbiya"] .t-invoc-card-ring-num.pop{animation:tNumPop .25s cubic-bezier(.34,1.56,.64,1);}
+@keyframes tNumPop{0%{transform:scale(.7);}60%{transform:scale(1.25);}100%{transform:scale(1);}}
+[data-theme="tarbiya"] .t-invoc-launch{display:flex;align-items:center;gap:13px;margin:0 18px 14px;padding:15px 16px;border-radius:18px;background:var(--t-hero-grad);color:#fff;cursor:pointer;box-shadow:0 14px 30px -12px rgba(20,18,40,.35);transition:transform .12s ease;}
+[data-theme="tarbiya"] .t-invoc-launch:active{transform:scale(.98);}
+[data-theme="tarbiya"] .t-invoc-launch .t-ico{color:#FFD06B;}
+[data-theme="tarbiya"] .t-invoc-launch__txt{flex:1;min-width:0;}
+[data-theme="tarbiya"] .t-invoc-launch__title{font-family:var(--t-font-title);font-weight:800;font-size:15px;letter-spacing:-.2px;}
+[data-theme="tarbiya"] .t-invoc-launch__sub{font-size:12px;opacity:.8;margin-top:2px;}
+[data-theme="tarbiya"] .t-invoc-launch__arrow{font-size:22px;font-weight:300;opacity:.8;}
 
 [data-theme="tarbiya"] .invoc-card{background:#fff !important;border:none !important;border-radius:var(--t-radius) !important;padding:18px !important;margin:0 18px 12px !important;box-shadow:var(--t-card-shadow) !important;}
 [data-theme="tarbiya"] .t-invoc-card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;}
@@ -4211,12 +4235,25 @@ function renderInvocContent() {
   if (!el) return;
   const isTarbiya = window.tarbiyaTheme && window.tarbiyaTheme.get().theme==='tarbiya';
   if(isTarbiya){
-    let html = _tarbiyaSeriesStripHtml(_invocTab);
-    if(_invocTab==='dhikr'){
-      html += DHIKR_LIST.map((d,i)=>_tarbiyaInvocCardHtml(d,i,true)).join('');
+    const tab=_invocTab;
+    let html = _tarbiyaSeriesStripHtml(tab);
+    // Hint tant que rien n'a été compté dans cet onglet
+    const progT=_invocProgGet(tab);
+    const anyDone=Object.keys(progT).some(k=>progT[k]>0);
+    if(!anyDone) html+='<div class="t-invoc-hint">Tape une carte à chaque récitation — le compteur descend jusqu\'au ✓.</div>';
+    if(tab==='dhikr'){
+      html+=`<div class="t-invoc-launch" onclick="openSeanceDhikr()">
+        ${tIcon('beads',24)}
+        <div class="t-invoc-launch__txt">
+          <div class="t-invoc-launch__title">Séance guidée de dhikr</div>
+          <div class="t-invoc-launch__sub">Istighfar · Salawat · Tahlil — choisis ta durée</div>
+        </div>
+        <span class="t-invoc-launch__arrow">›</span>
+      </div>`;
+      html += DHIKR_LIST.map((d,i)=>_tarbiyaInvocCardHtml(d,i,true,tab)).join('');
     } else {
-      const items=ADHKAR[_invocTab]||[];
-      html += items.map((a,i)=>_tarbiyaInvocCardHtml(a,i,false)).join('');
+      const items=ADHKAR[tab]||[];
+      html += items.map((a,i)=>_tarbiyaInvocCardHtml(a,i,false,tab)).join('');
     }
     el.innerHTML = html;
     return;
@@ -5386,6 +5423,8 @@ var T_ICONS={
   flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
   droplet:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
   check:'<path d="M20 6 9 17l-5-5"/>',
+  reset:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  play:'<polygon points="6 3 20 12 6 21 6 3"/>',
   lock:'<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   skip:'<path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/>',
   circle:'<circle cx="12" cy="12" r="9"/>',
@@ -6298,30 +6337,82 @@ function removeTarbiyaProfilOverlays(){
 }
 
 // ── INVOCATIONS Tarbiya v2 ──
-function _tarbiyaInvocCardHtml(a,i,isDhikr){
+// ── Compteur d'invocations (persisté par jour dans S.invocProg) ──
+function _invocProgGet(tab){
+  var today=new Date().toISOString().split('T')[0];
+  if(!S.invocProg||S.invocProg.date!==today){S.invocProg={date:today,tabs:{}};}
+  if(!S.invocProg.tabs[tab])S.invocProg.tabs[tab]={};
+  return S.invocProg.tabs[tab];
+}
+function _invocList(tab){return tab==='dhikr'?DHIKR_LIST:(ADHKAR[tab]||[]);}
+
+function tInvocTap(tab,i,repeat,card){
+  var prog=_invocProgGet(tab);
+  var done=prog[i]||0;
+  if(done>=repeat) return;
+  done++;prog[i]=done;save();
+  try{if(navigator.vibrate)navigator.vibrate(8);}catch(_){}
+  var cir=2*Math.PI*15;
+  var bar=card.querySelector('.t-invoc-card-ring-bar');
+  if(bar)bar.style.strokeDashoffset=(cir*(1-done/repeat)).toFixed(2);
+  var num=card.querySelector('.t-invoc-card-ring-num');
+  var left=repeat-done;
+  if(num){
+    num.innerHTML=left>0?left:tIcon('check',14,3);
+    num.classList.remove('pop');void num.offsetWidth;num.classList.add('pop');
+  }
+  if(left===0){
+    card.classList.add('t-invoc-card--done');
+    // Scroll doux vers la prochaine carte non faite
+    var next=null,sib=card.nextElementSibling;
+    while(sib){
+      if(sib.classList&&sib.classList.contains('invoc-card')&&!sib.classList.contains('t-invoc-card--done')){next=sib;break;}
+      sib=sib.nextElementSibling;
+    }
+    if(next)setTimeout(function(){try{next.scrollIntoView({behavior:'smooth',block:'center'});}catch(_){}},350);
+  }
+  _invocStripUpdate(tab);
+}
+function tInvocReset(tab){
+  var prog=_invocProgGet(tab);
+  Object.keys(prog).forEach(function(k){delete prog[k];});
+  save();
+  renderInvocContent();
+}
+function _invocStripUpdate(tab){
+  var strip=document.querySelector('.t-series-strip[data-tab="'+tab+'"]');
+  if(strip){
+    var tmp=document.createElement('div');
+    tmp.innerHTML=_tarbiyaSeriesStripHtml(tab);
+    strip.replaceWith(tmp.firstChild);
+  }
+}
+
+function _tarbiyaInvocCardHtml(a,i,isDhikr,tab){
   var idx=String(i+1).padStart(2,'0');
   var repeat=a.repeat||1;
   var cir=2*Math.PI*15;
+  var prog=_invocProgGet(tab);
+  var doneN=Math.min(prog[i]||0,repeat);
+  var left=repeat-doneN;
+  var isDone=left<=0;
+  var offset=(cir*(1-doneN/repeat)).toFixed(2);
   var title=isDhikr?(a.title||'Dhikr'):(a.note?a.note:('Adhkar du '+(window._invocTab==='soir'?'soir':'matin')));
   var kicker=(isDhikr?'DHIKR':'ADHKAR')+' · '+idx;
-  return '<div class="invoc-card" style="animation:fadeUp .3s ease '+(i*0.04)+'s both">'+
+  return '<div class="invoc-card'+(isDone?' t-invoc-card--done':'')+'" style="animation:fadeUp .3s ease '+(i*0.04)+'s both" onclick="tInvocTap(\''+tab+'\','+i+','+repeat+',this)" role="button" aria-label="'+title.replace(/"/g,'&quot;')+' — compter une récitation">'+
     '<div class="t-invoc-card-head">'+
       '<div class="t-invoc-card-head-left">'+
         '<div class="t-invoc-card-ring">'+
           '<svg width="38" height="38" viewBox="0 0 38 38">'+
             '<circle class="t-invoc-card-ring-bg" cx="19" cy="19" r="15"/>'+
-            '<circle class="t-invoc-card-ring-bar" cx="19" cy="19" r="15" stroke-dasharray="'+cir.toFixed(2)+'" stroke-dashoffset="0"/>'+
+            '<circle class="t-invoc-card-ring-bar" cx="19" cy="19" r="15" stroke-dasharray="'+cir.toFixed(2)+'" stroke-dashoffset="'+offset+'"/>'+
           '</svg>'+
-          '<div class="t-invoc-card-ring-num">'+repeat+'</div>'+
+          '<div class="t-invoc-card-ring-num">'+(isDone?tIcon('check',14,3):left)+'</div>'+
         '</div>'+
         '<div class="t-invoc-card-titles">'+
           '<div class="t-invoc-card-kicker">'+kicker+'</div>'+
           '<div class="t-invoc-card-title">'+title+'</div>'+
         '</div>'+
-      '</div>'+
-      '<div class="t-invoc-card-actions">'+
-        '<button class="t-invoc-icon-btn" onclick="tarbiyaInvocAudio(event)" aria-label="Audio">▶</button>'+
-        '<button class="t-invoc-icon-btn" onclick="tarbiyaInvocBookmark(event)" aria-label="Marque-page">☆</button>'+
       '</div>'+
     '</div>'+
     '<div class="t-invoc-arabic">'+(a.arabic||'')+'</div>'+
@@ -6329,31 +6420,39 @@ function _tarbiyaInvocCardHtml(a,i,isDhikr){
     (a.french?'<div class="t-invoc-french">'+a.french+'</div>':'')+
     '<div class="t-invoc-card-foot">'+
       '<span class="t-invoc-card-source">'+(a.source||'')+'</span>'+
-      '<span class="t-invoc-card-done">× '+repeat+'</span>'+
+      '<span class="t-invoc-card-done">'+(isDone?tIcon('check',11,3)+' accompli':'× '+repeat)+'</span>'+
     '</div>'+
   '</div>';
 }
-function tarbiyaInvocAudio(e){
-  if(e&&e.stopPropagation) e.stopPropagation();
-  if(typeof showToast==='function') showToast('Audio · Bientôt disponible');
-}
-function tarbiyaInvocBookmark(e){
-  if(e&&e.stopPropagation) e.stopPropagation();
-  if(typeof showToast==='function') showToast('Marque-page · Bientôt disponible');
-}
 function _tarbiyaSeriesStripHtml(tab){
-  if(tab==='dhikr') return '';
-  var list=ADHKAR[tab]||[];
-  var label=tab==='matin'?'SÉRIE DU MATIN':'SÉRIE DU SOIR';
-  var xp=Math.max(15,list.length*5);
-  return '<div class="t-series-strip">'+
-    '<div class="t-series-strip__label">'+label+'<small>0 / '+list.length+' invocations</small></div>'+
-    '<div class="t-series-strip__xp">+'+xp+' XP</div>'+
+  var list=_invocList(tab);
+  var prog=_invocProgGet(tab);
+  var doneCount=0;
+  for(var i=0;i<list.length;i++){if((prog[i]||0)>=(list[i].repeat||1))doneCount++;}
+  var all=list.length>0&&doneCount>=list.length;
+  var label=tab==='matin'?'SÉRIE DU MATIN':(tab==='soir'?'SÉRIE DU SOIR':'DHIKR QUOTIDIEN');
+  var pct=list.length?Math.round(doneCount/list.length*100):0;
+  return '<div class="t-series-strip'+(all?' t-series-strip--done':'')+'" data-tab="'+tab+'">'+
+    '<div class="t-series-strip__label">'+label+
+      '<small>'+(all?'Série accomplie — qu\'Allah accepte':doneCount+' / '+list.length+' invocations')+'</small>'+
+      '<div class="t-series-strip__bar"><div class="t-series-strip__fill" style="width:'+pct+'%"></div></div>'+
+    '</div>'+
+    (all
+      ?'<button class="t-series-strip__reset" type="button" onclick="tInvocReset(\''+tab+'\')" aria-label="Recommencer la série">'+tIcon('reset',15)+'</button>'
+      :'<div class="t-series-strip__xp">'+doneCount+'/'+list.length+'</div>')+
   '</div>';
+}
+function _syncInvocTabs(isTarbiya){
+  var defs=[['🌅','sunrise','Matin'],['🌙','moonstar','Soir'],['📿','beads','Dhikr']];
+  document.querySelectorAll('#invocations .invoc-tab').forEach(function(t,i){
+    var d=defs[i];if(!d)return;
+    t.innerHTML=isTarbiya?(tIcon(d[1],14)+' '+d[2]):(d[0]+' '+d[2]);
+  });
 }
 function renderTarbiyaInvocHeader(){
   var screen=document.getElementById('invocations');
   if(!screen) return;
+  _syncInvocTabs(true);
   screen.querySelectorAll('.t-invoc-header').forEach(function(el){el.remove();});
   var tab=window._invocTab||'matin';
   var tabLabel=tab==='matin'?'MATIN':(tab==='soir'?'SOIR':'DHIKR');
@@ -6376,6 +6475,7 @@ function renderTarbiyaInvocHeader(){
   else screen.insertBefore(header,screen.firstChild);
 }
 function removeTarbiyaInvocHeader(){
+  _syncInvocTabs(false);
   document.querySelectorAll('#invocations .t-invoc-header').forEach(function(el){el.remove();});
 }
 
@@ -6467,10 +6567,6 @@ function tarbiyaGuidedMenu(e){
   if(e&&e.stopPropagation) e.stopPropagation();
   if(typeof showToast==='function') showToast('Options · Bientôt');
 }
-function tarbiyaGuidedLang(e){
-  if(e&&e.stopPropagation) e.stopPropagation();
-  if(typeof showToast==='function') showToast('Traduction · Bientôt');
-}
 
 function _tarbiyaGuidedStepBodyHtml(s,flow){
   var total=flow.steps.length;
@@ -6489,10 +6585,6 @@ function _tarbiyaGuidedStepBodyHtml(s,flow){
     (tip?'<div class="t-guided-source-row" style="border-top:none;margin-top:8px;padding-top:0"><span class="t-guided-source" style="font-style:normal">💡 '+tip+'</span></div>':'')+
     (hasSource?'<div class="t-guided-source-row">'+
       '<span class="t-guided-source">Source · Hadith authentique</span>'+
-      '<div class="t-guided-source-actions">'+
-        '<button onclick="tarbiyaInvocAudio(event)" aria-label="Audio">▶</button>'+
-        '<button onclick="tarbiyaGuidedLang(event)" aria-label="Langue">FR</button>'+
-      '</div>'+
     '</div>':'')+
   '</div>';
 }
