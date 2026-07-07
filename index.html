@@ -1347,6 +1347,28 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .t-hero-overlay h1{font-size:46px !important;letter-spacing:-1.8px !important;line-height:.95 !important;margin:6px 0 10px !important;}
 [data-theme="tarbiya"] .t-hero-overlay p:first-of-type{font-size:13px !important;margin-bottom:2px !important;}
 
+/* Hero v2 — dates (grég + hijri), streak, prochaine prière, chips */
+[data-theme="tarbiya"] .t-hero-ov__meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+[data-theme="tarbiya"] .t-hero-ov__date{display:block;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.78);}
+[data-theme="tarbiya"] .t-hero-ov__hijri{display:block;margin-top:3px;font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t-warm);}
+[data-theme="tarbiya"] .t-hero-ov__streak{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.14);color:#FFD06B;font-weight:800;font-size:12px;white-space:nowrap;}
+[data-theme="tarbiya"] .t-hero-prayer{
+  display:flex;align-items:center;gap:11px;
+  margin:2px 0 12px;padding:11px 14px;border-radius:16px;
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+[data-theme="tarbiya"] .t-hero-prayer__emoji{font-size:24px;line-height:1;flex-shrink:0;}
+[data-theme="tarbiya"] .t-hero-prayer__txt{flex:1;min-width:0;}
+[data-theme="tarbiya"] .t-hero-prayer__name{font-family:var(--t-font-title);font-weight:800;font-size:14px;color:#fff;letter-spacing:-.2px;}
+[data-theme="tarbiya"] .t-hero-prayer__name small{font-size:10px;font-weight:700;opacity:.75;text-transform:uppercase;letter-spacing:.8px;}
+[data-theme="tarbiya"] .t-hero-prayer__bar{height:4px;border-radius:999px;background:rgba(255,255,255,.22);margin-top:6px;overflow:hidden;}
+[data-theme="tarbiya"] .t-hero-prayer__fill{height:100%;border-radius:999px;background:var(--t-warm-grad);transition:width 1s linear;}
+[data-theme="tarbiya"] .t-hero-prayer__count{font-size:12px;font-weight:800;color:#FFD06B;white-space:nowrap;}
+[data-theme="tarbiya"] .t-hero-ov__chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+[data-theme="tarbiya"] .t-hero-ov__chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-weight:700;font-size:12px;}
+[data-theme="tarbiya"] .t-hero-ov__chip--warm{background:rgba(255,200,90,.22);color:#FFD06B;}
+
 [data-theme="tarbiya"] .next-action-card{padding:26px 22px !important;border-radius:26px !important;margin:0 4px !important;position:relative;overflow:hidden;}
 [data-theme="tarbiya"] .next-action-card::before{content:"";position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.10);top:-60px;right:-50px;pointer-events:none;}
 [data-theme="tarbiya"] .next-action-card .next-action-label{font-size:11px !important;font-weight:800 !important;letter-spacing:1.3px !important;text-transform:uppercase !important;margin-bottom:10px !important;color:rgba(255,255,255,.92) !important;position:relative;z-index:1;}
@@ -5333,8 +5355,52 @@ function toggleTarbiyaTheme(){
 
 // ── Hero Tarbiya injecté ──
 function removeTarbiyaHero(){
+  if(window._tHeroTimer){clearInterval(window._tHeroTimer);window._tHeroTimer=null;}
   document.querySelectorAll('.t-hero-overlay').forEach(function(el){el.remove();});
 }
+
+// Date hijri via le calendrier natif (umm al-qura) — fallback silencieux
+function _tHijriInfo(){
+  try{
+    var d=new Date();
+    var txt=new Intl.DateTimeFormat('fr-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(d);
+    txt=txt.replace(/\s*(ère de l['’]hégire|AH|H)\.?\s*$/i,'').trim();
+    var day=parseInt(new Intl.DateTimeFormat('fr-u-ca-islamic-umalqura',{day:'numeric'}).format(d),10)||0;
+    return {text:txt,day:day};
+  }catch(_){return {text:'',day:0};}
+}
+
+// Prochaine prière : nom, heure, minutes restantes, % du créneau écoulé
+function _tNextPrayer(){
+  var pt=S.prayerTimes;
+  if(!pt||!pt.Fajr) return null;
+  var order=[['Fajr','🌅'],['Dhuhr','☀️'],['Asr','🌤️'],['Maghrib','🌇'],['Isha','🌙']];
+  var now=new Date();
+  var cur=now.getHours()*60+now.getMinutes();
+  var prevT=null;
+  for(var i=0;i<order.length;i++){
+    var t=pt[order[i][0]]?parseTime(pt[order[i][0]]):null;
+    if(t===null) continue;
+    if(t>cur){
+      var from=prevT!==null?prevT:t-90;
+      return {name:order[i][0],emoji:order[i][1],time:pt[order[i][0]],mins:t-cur,
+        pct:Math.max(0,Math.min(100,Math.round((cur-from)/Math.max(1,t-from)*100))),tomorrow:false};
+    }
+    prevT=t;
+  }
+  // Après Isha → Fajr demain
+  var fajr=parseTime(pt.Fajr)+1440;
+  var from2=prevT!==null?prevT:fajr-480;
+  return {name:'Fajr',emoji:'🌅',time:pt.Fajr,mins:fajr-cur,
+    pct:Math.max(0,Math.min(100,Math.round((cur-from2)/Math.max(1,fajr-from2)*100))),tomorrow:true};
+}
+function _tCountLabel(m){
+  if(m<=1) return "c'est l'heure";
+  if(m<60) return 'dans '+m+' min';
+  var h=Math.floor(m/60),r=m%60;
+  return 'dans '+h+'h'+(r?String(r).padStart(2,'0'):'');
+}
+
 function renderTarbiyaHero(){
   if(window.tarbiyaTheme.get().theme!=='tarbiya') return;
   removeTarbiyaHero();
@@ -5345,30 +5411,75 @@ function renderTarbiyaHero(){
   name=name.replace(/^Bonjour,?\s*/i,'')||'toi';
   var motiv=(document.getElementById('hero-motiv')||{}).textContent||'Allah aime les actions les plus régulières, même petites.';
   var palierName=(typeof PALIER!=='undefined' && S.palier && PALIER[S.palier]) ? PALIER[S.palier].name : '';
-  var week=S.weekNumber||1;
   var streak=S.totalDays||0;
   var now=new Date();
   var DAYS=['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'];
   var MONTHS=['JAN','FÉV','MAR','AVR','MAI','JUIN','JUIL','AOÛT','SEP','OCT','NOV','DÉC'];
   var dateMeta=DAYS[now.getDay()]+' '+now.getDate()+' '+MONTHS[now.getMonth()];
+  var hij=_tHijriInfo();
+
+  // Salutation selon le moment de la journée
+  var cat=(typeof getCurrentCat==='function')?getCurrentCat():'journee';
+  var greet=cat==='aube'?'Sabāḥ al-khayr,':(cat==='soir'||cat==='nuit')?'Masā\' al-khayr,':'As-salāmu ʿalaykum,';
+
+  // Badge jour spécial (un seul, par priorité)
+  var dow=now.getDay();
+  var badge='';
+  if(dow===5) badge='🕌 Jumuʿa — lis Al-Kahf';
+  else if(hij.day>=13&&hij.day<=15) badge='🌕 Jours blancs — jeûne recommandé';
+  else if(dow===1) badge='🌙 Lundi — jeûne sunna';
+  else if(dow===4) badge='🌙 Jeudi — jeûne sunna';
+
+  // Pill prochaine prière
+  var np=_tNextPrayer();
+  var prayerHtml='';
+  if(np){
+    prayerHtml=
+      '<div class="t-hero-prayer">'+
+        '<span class="t-hero-prayer__emoji">'+np.emoji+'</span>'+
+        '<div class="t-hero-prayer__txt">'+
+          '<div class="t-hero-prayer__name">'+np.name+(np.tomorrow?' <small>demain</small>':'')+' · '+np.time+'</div>'+
+          '<div class="t-hero-prayer__bar"><div class="t-hero-prayer__fill" style="width:'+np.pct+'%"></div></div>'+
+        '</div>'+
+        '<span class="t-hero-prayer__count">'+_tCountLabel(np.mins)+'</span>'+
+      '</div>';
+  }
+
   var overlay=document.createElement('div');
   overlay.className='t-hero-overlay';
   overlay.style.cssText='display:flex;flex-direction:column;position:relative;z-index:1';
   overlay.innerHTML=
-    '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.78);margin-bottom:14px">'+
-      '<span>'+dateMeta+'</span><span>SEMAINE '+week+'</span>'+
+    '<div class="t-hero-ov__meta">'+
+      '<div>'+
+        '<span class="t-hero-ov__date">'+dateMeta+'</span>'+
+        (hij.text?'<span class="t-hero-ov__hijri">☾ '+hij.text+'</span>':'')+
+      '</div>'+
+      '<span class="t-hero-ov__streak">🔥 '+streak+' j</span>'+
     '</div>'+
-    '<p style="font-size:13px;font-weight:500;color:rgba(255,255,255,.8);margin:0 0 2px;line-height:1.4">As-salāmu ʿalaykum,</p>'+
+    '<p style="font-size:13px;font-weight:500;color:rgba(255,255,255,.8);margin:0 0 2px;line-height:1.4">'+greet+'</p>'+
     '<h1 style="font-family:var(--t-font-title);font-weight:800;font-size:42px;line-height:1;letter-spacing:-1.5px;color:#fff;margin:4px 0 10px">'+
       name+'<span style="color:var(--t-warm)">.</span>'+
     '</h1>'+
-    '<p style="font-size:13px;font-style:italic;color:rgba(255,255,255,.85);line-height:1.5;margin:0 0 16px;max-width:290px">'+motiv+'</p>'+
-    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
-      '<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.13);color:var(--t-warm);font-weight:700;font-size:12px">🔥 '+streak+'j de série</span>'+
-      '<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,200,90,.20);color:#FFD06B;font-weight:700;font-size:12px">Sem. '+week+'</span>'+
-      (palierName?'<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-weight:700;font-size:12px">'+palierName+'</span>':'')+
+    '<p style="font-size:13px;font-style:italic;color:rgba(255,255,255,.85);line-height:1.5;margin:0 0 14px;max-width:290px">'+motiv+'</p>'+
+    prayerHtml+
+    '<div class="t-hero-ov__chips">'+
+      (palierName?'<span class="t-hero-ov__chip">'+palierName+'</span>':'')+
+      (badge?'<span class="t-hero-ov__chip t-hero-ov__chip--warm">'+badge+'</span>':'')+
     '</div>';
   hero.insertBefore(overlay,hero.firstChild);
+
+  // Compte à rebours live (30 s) — re-render complet quand la prière change
+  if(np){
+    window._tHeroTimer=setInterval(function(){
+      var pill=document.querySelector('.t-hero-overlay .t-hero-prayer');
+      if(!pill){clearInterval(window._tHeroTimer);window._tHeroTimer=null;return;}
+      var cur=_tNextPrayer();
+      if(!cur){clearInterval(window._tHeroTimer);window._tHeroTimer=null;return;}
+      if(cur.name!==np.name||cur.tomorrow!==np.tomorrow){renderTarbiyaHero();return;}
+      var c=pill.querySelector('.t-hero-prayer__count');if(c)c.textContent=_tCountLabel(cur.mins);
+      var f=pill.querySelector('.t-hero-prayer__fill');if(f)f.style.width=cur.pct+'%';
+    },30000);
+  }
 }
 
 // Prayer strip injectée en bas du hero Tarbiya
