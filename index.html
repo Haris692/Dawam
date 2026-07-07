@@ -2263,25 +2263,49 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .t-day-seg__fill{height:100%;border-radius:999px;background:var(--t-accent);transition:width .5s cubic-bezier(.34,1.2,.64,1);}
 [data-theme="tarbiya"] .t-day-strip__label{font-size:12px;font-weight:800;color:var(--t-muted);font-variant-numeric:tabular-nums;}
 
-/* ── Timeline de la journée ── */
+/* ── Timeline v2 — spine verticale + moments repliables + ligne Maintenant ── */
 [data-theme="tarbiya"] .t-tl{margin-top:2px;padding-bottom:8px;}
-[data-theme="tarbiya"] .t-tl-moment{margin-top:16px;}
-[data-theme="tarbiya"] .t-tl-moment__head{
-  display:flex;align-items:center;gap:7px;
-  padding:0 4px;margin-bottom:2px;
-  font-size:11.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--t-muted);
-}
-[data-theme="tarbiya"] .t-tl-moment__emoji{font-size:14px;}
 [data-theme="tarbiya"] .t-tl-moment__chip{
-  margin-left:auto;padding:3px 9px;border-radius:999px;
+  padding:3px 9px;border-radius:999px;
   background:var(--t-accent);color:#fff;
   font-size:9.5px;font-weight:800;letter-spacing:.8px;
   animation:tChipPulse 2.4s ease-in-out infinite;
 }
 @keyframes tChipPulse{0%,100%{opacity:1;}50%{opacity:.72;}}
-[data-theme="tarbiya"] .t-tl-moment__count{margin-left:auto;font-size:11px;letter-spacing:.3px;}
-[data-theme="tarbiya"] .t-tl-moment__count--full{color:var(--t-success);}
-[data-theme="tarbiya"] .t-tl-moment--locked .t-tl-moment__head{opacity:.55;}
+[data-theme="tarbiya"] .t-tl2-m{position:relative;padding-left:40px;margin-top:14px;}
+[data-theme="tarbiya"] .t-tl2-m::before{content:"";position:absolute;left:13px;top:32px;bottom:-16px;width:2px;border-radius:1px;background:rgba(0,0,0,.08);}
+[data-theme="tarbiya"] .t-tl2-m:last-child::before{display:none;}
+[data-theme="tarbiya"] .t-tl2-m--done::before{background:var(--t-success);opacity:.35;}
+[data-theme="tarbiya"] .t-tl2-node{
+  position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;
+  background:#fff;border:2px solid rgba(0,0,0,.1);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t-muted);z-index:1;
+}
+[data-theme="tarbiya"] .t-tl2-m--done .t-tl2-node{background:var(--t-success);border-color:var(--t-success);color:#fff;}
+[data-theme="tarbiya"] .t-tl2-m--missed .t-tl2-node{border-color:var(--t-warm);color:var(--t-warm);}
+[data-theme="tarbiya"] .t-tl2-m--current .t-tl2-node{background:var(--t-accent);border-color:var(--t-accent);color:#fff;box-shadow:0 0 0 4px var(--t-accent-soft);}
+[data-theme="tarbiya"] .t-tl2-m--future .t-tl2-node{border-style:dashed;opacity:.6;}
+[data-theme="tarbiya"] .t-tl2-head{
+  display:flex;align-items:center;gap:8px;width:100%;
+  background:none;border:none;padding:4px 2px;cursor:pointer;
+  font-family:inherit;min-height:28px;text-align:left;
+}
+[data-theme="tarbiya"] .t-tl2-head__label{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--t-ink);}
+[data-theme="tarbiya"] .t-tl2-m--future .t-tl2-head__label{color:var(--t-muted);}
+[data-theme="tarbiya"] .t-tl2-head__time{font-size:11px;font-weight:700;color:var(--t-muted);font-variant-numeric:tabular-nums;}
+[data-theme="tarbiya"] .t-tl2-head__right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+[data-theme="tarbiya"] .t-tl2-chev{color:var(--t-muted);transition:transform .25s ease;flex-shrink:0;}
+[data-theme="tarbiya"] .t-tl2-m.is-open .t-tl2-chev{transform:rotate(180deg);}
+[data-theme="tarbiya"] .t-tl2-count{font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:3px;}
+[data-theme="tarbiya"] .t-tl2-count--ok{background:rgba(31,138,91,.12);color:var(--t-success);}
+[data-theme="tarbiya"] .t-tl2-count--warn{background:rgba(255,138,61,.16);color:var(--t-warm);}
+[data-theme="tarbiya"] .t-tl2-opens{font-size:11px;font-weight:700;color:var(--t-muted);display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums;}
+[data-theme="tarbiya"] .t-tl2-items{padding:0 0 4px;}
+[data-theme="tarbiya"] .t-tl2-now{display:flex;align-items:center;gap:8px;margin:10px 2px 0;}
+[data-theme="tarbiya"] .t-tl2-now__dot{width:8px;height:8px;border-radius:50%;background:var(--t-coral);box-shadow:0 0 0 3px rgba(255,107,107,.22);animation:tChipPulse 2s ease-in-out infinite;flex-shrink:0;}
+[data-theme="tarbiya"] .t-tl2-now__label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--t-coral);white-space:nowrap;}
+[data-theme="tarbiya"] .t-tl2-now__line{flex:1;height:2px;border-radius:1px;background:linear-gradient(90deg,var(--t-coral),transparent);}
 
 [data-theme="tarbiya"] .t-tl-item{
   display:flex;align-items:center;gap:11px;
@@ -6013,7 +6037,13 @@ function renderTarbiyaTodayStack(body){
   });
   html+='<div class="t-day-strip"><div class="t-day-strip__bar">'+segs+'</div><div class="t-day-strip__label">'+checked+'/'+total+'</div></div>';
 
-  // ── 3. Timeline de la journée ──
+  // ── 3. Timeline de la journée — spine verticale (style Structured),
+  //    moments repliables, ligne MAINTENANT, heures d'ouverture réelles ──
+  var startKeys={qiyam:'Midnight',aube:'Fajr',journee:'Sunrise',soir:'Maghrib',nuit:'Isha'};
+  var ptt=S.prayerTimes||null;
+  if(!window._tTlOpen)window._tTlOpen={};
+  var nowD=new Date();
+  var nowStr=String(nowD.getHours()).padStart(2,'0')+':'+String(nowD.getMinutes()).padStart(2,'0');
   var tl='';
   var ri=0;
   catOrder.forEach(function(cat){
@@ -6024,34 +6054,59 @@ function renderTarbiyaTodayStack(body){
     var mIdx=catOrder.indexOf(cat);
     var locked=mIdx>curIdx;
     var isCurM=cat===curCat;
-    var chip=isCurM
-      ?'<span class="t-tl-moment__chip">en ce moment</span>'
-      :(locked
-        ?'<span class="t-tl-moment__count">'+tIcon('lock',11)+'</span>'
-        :'<span class="t-tl-moment__count'+(ciDone===ci.length?' t-tl-moment__count--full':'')+'">'+ciDone+'/'+ci.length+'</span>');
-    tl+='<div class="t-tl-moment'+(isCurM?' t-tl-moment--current':'')+(locked?' t-tl-moment--locked':'')+'">'+
-      '<div class="t-tl-moment__head"><span class="t-tl-moment__emoji">'+tIcon(sec.emoji,14)+'</span><span class="t-tl-moment__label">'+sec.label+'</span>'+chip+'</div>';
-    ci.forEach(function(it){
-      var done=!!S.checklist[it.id];
-      var isNext=!!(next&&it.id===next.id);
-      var missed=!done&&!locked&&mIdx<curIdx;
-      var cls='t-tl-item'+(done?' t-tl-item--done':'')+(locked?' t-tl-item--locked':'')+(isNext?' t-tl-item--current':'')+(missed?' t-tl-item--missed':'');
-      var rowClick=(locked||done)?'':' onclick="openGuided('+it.id+')"';
-      var ariaTitle=String(it.titleFr||'').replace(/"/g,'&quot;');
-      var check=locked
-        ?'<div class="t-tl-check">'+tIcon('lock',13)+'</div>'
-        :'<button class="t-tl-check" type="button" aria-label="'+(done?'Décocher':'Valider')+' '+ariaTitle+'" onclick="event.stopPropagation();tTlToggle('+it.id+',this)">'+(done?tIcon('check',15,3):'')+'</button>';
-      tl+='<div class="'+cls+'" style="--i:'+ri+'"'+rowClick+'>'+
-        check+
-        '<span class="t-tl-item__emoji">'+tIcon(it.emoji||'✦',21)+'</span>'+
-        '<div class="t-tl-item__body">'+
-          '<div class="t-tl-item__title">'+it.titleFr+'</div>'+
-          '<div class="t-tl-item__meta">'+(it.time||'')+(missed?' · à rattraper':'')+'</div>'+
-        '</div>'+
-        (it.xp?'<span class="t-tl-item__xp'+(done?' t-tl-item__xp--done':'')+'">'+(done?tIcon('check',10,3)+' ':'+')+it.xp+'</span>':'')+
-      '</div>';
-      ri++;
-    });
+    var past=mIdx<curIdx;
+    var missedC=past?(ci.length-ciDone):0;
+    var allDoneM=ciDone===ci.length;
+    // Repli par défaut : passé replié (résumé dans l'en-tête), présent/futur/à-rattraper dépliés
+    var open=(cat in window._tTlOpen)?!!window._tTlOpen[cat]:(isCurM||locked||missedC>0);
+    var startT=(ptt&&ptt[startKeys[cat]])?ptt[startKeys[cat]]:'';
+    var mState=isCurM?'current':(locked?'future':(allDoneM?'done':'missed'));
+    var nodeIcon=(!locked&&allDoneM)?tIcon('check',13,3):tIcon(sec.emoji,14);
+    var status;
+    if(isCurM) status='<span class="t-tl-moment__chip">en ce moment</span>';
+    else if(locked) status='<span class="t-tl2-opens">'+tIcon('lock',10)+(startT?' '+startT:'')+'</span>';
+    else if(allDoneM) status='<span class="t-tl2-count t-tl2-count--ok">'+tIcon('check',10,3)+' '+ciDone+'/'+ci.length+'</span>';
+    else status='<span class="t-tl2-count t-tl2-count--warn">'+missedC+' à rattraper</span>';
+    tl+='<div class="t-tl2-m t-tl2-m--'+mState+(open?' is-open':'')+'">'+
+      '<div class="t-tl2-node">'+nodeIcon+'</div>'+
+      '<button class="t-tl2-head" type="button" onclick="tTlMomentToggle(\''+cat+'\','+(open?1:0)+')" aria-expanded="'+(open?'true':'false')+'">'+
+        '<span class="t-tl2-head__label">'+sec.label+'</span>'+
+        (startT&&!locked?'<span class="t-tl2-head__time">'+startT+'</span>':'')+
+        '<span class="t-tl2-head__right">'+status+
+          '<svg class="t-tl2-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'+
+        '</span>'+
+      '</button>';
+    if(open){
+      tl+='<div class="t-tl2-items">';
+      var nowShown=false;
+      ci.forEach(function(it){
+        var done=!!S.checklist[it.id];
+        var isNext=!!(next&&it.id===next.id);
+        // Ligne "Maintenant" façon calendrier, avant la 1re action restante du moment en cours
+        if(isCurM&&!done&&!nowShown){
+          tl+='<div class="t-tl2-now"><span class="t-tl2-now__dot"></span><span class="t-tl2-now__label">Maintenant · '+nowStr+'</span><span class="t-tl2-now__line"></span></div>';
+          nowShown=true;
+        }
+        var missed=!done&&past;
+        var cls='t-tl-item'+(done?' t-tl-item--done':'')+(locked?' t-tl-item--locked':'')+(isNext?' t-tl-item--current':'')+(missed?' t-tl-item--missed':'');
+        var rowClick=(locked||done)?'':' onclick="openGuided('+it.id+')"';
+        var ariaTitle=String(it.titleFr||'').replace(/"/g,'&quot;');
+        var check=locked
+          ?'<div class="t-tl-check">'+tIcon('lock',13)+'</div>'
+          :'<button class="t-tl-check" type="button" aria-label="'+(done?'Décocher':'Valider')+' '+ariaTitle+'" onclick="event.stopPropagation();tTlToggle('+it.id+',this)">'+(done?tIcon('check',15,3):'')+'</button>';
+        tl+='<div class="'+cls+'" style="--i:'+ri+'"'+rowClick+'>'+
+          check+
+          '<span class="t-tl-item__emoji">'+tIcon(it.emoji||'✦',21)+'</span>'+
+          '<div class="t-tl-item__body">'+
+            '<div class="t-tl-item__title">'+it.titleFr+'</div>'+
+            '<div class="t-tl-item__meta">'+(missed?'à rattraper':(it.time||''))+'</div>'+
+          '</div>'+
+          (it.xp&&!locked?'<span class="t-tl-item__xp'+(done?' t-tl-item__xp--done':'')+'">'+(done?tIcon('check',10,3)+' ':'+')+it.xp+'</span>':'')+
+        '</div>';
+        ri++;
+      });
+      tl+='</div>';
+    }
     tl+='</div>';
   });
   html+='<div class="t-tl">'+tl+'</div>';
@@ -6060,6 +6115,13 @@ function renderTarbiyaTodayStack(body){
   // Insertion : avant le path-wrap (qui sera caché en mode stack)
   var pathWrap=body.querySelector('.t-path-wrap');
   body.insertBefore(wrap, pathWrap||body.firstChild);
+}
+
+// Replie / déplie un moment de la timeline
+function tTlMomentToggle(cat,curOpen){
+  if(!window._tTlOpen)window._tTlOpen={};
+  window._tTlOpen[cat]=!curOpen;
+  if(typeof renderTarbiyaPathCards==='function')renderTarbiyaPathCards();
 }
 
 // Toggle rapide depuis la timeline — feedback immédiat, toggleItem re-render ensuite
