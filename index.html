@@ -1522,6 +1522,12 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 
 [data-theme="tarbiya"] .t-badges-section{padding:0 18px;margin-top:8px;}
 [data-theme="tarbiya"] .t-badges-row{display:flex;gap:10px;}
+[data-theme="tarbiya"] .t-badges-row--grid{display:grid;grid-template-columns:repeat(3,1fr);}
+[data-theme="tarbiya"] .t-grid-30__cell[data-today]{outline:2px solid var(--t-accent);outline-offset:1.5px;}
+[data-theme="tarbiya"] .t-profil-topbar-actions{display:flex;gap:8px;align-items:center;}
+[data-theme="tarbiya"] .profil-menu-icon{color:var(--t-accent);}
+[data-theme="tarbiya"] .danger-icon{color:#b02020;display:flex;align-items:center;justify-content:center;}
+[data-theme="tarbiya"] .t-profil-chip .t-ico{vertical-align:-.12em;}
 [data-theme="tarbiya"] .t-badge-card{flex:1;background:#fff;border-radius:var(--t-radius-sm);padding:14px 12px;box-shadow:var(--t-card-shadow);display:flex;flex-direction:column;gap:6px;min-width:0;}
 [data-theme="tarbiya"] .t-badge-card--locked{opacity:.6;filter:grayscale(.5);}
 [data-theme="tarbiya"] .t-badge-card__icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff;}
@@ -5425,6 +5431,14 @@ var T_ICONS={
   check:'<path d="M20 6 9 17l-5-5"/>',
   reset:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
   play:'<polygon points="6 3 20 12 6 21 6 3"/>',
+  zap:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  palette:'<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  message:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+  trash:'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  pencil:'<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>',
+  calendar:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
   lock:'<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   skip:'<path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/>',
   circle:'<circle cx="12" cy="12" r="9"/>',
@@ -6113,13 +6127,17 @@ function removeTarbiyaAllActionsModal(){
 }
 
 // ── PROFIL Tarbiya v2 ──
-var TARBIYA_PALIER_XP={
-  1:{cur:480,next:600,nextName:"Le Marcheur"},
-  2:{cur:950,next:1200,nextName:"Le Constant"},
-  3:{cur:1700,next:2000,nextName:"Le Déterminé"},
-  4:{cur:2800,next:3200,nextName:"Le Vaillant"},
-  5:{cur:3500,next:3500,nextName:"—"}
-};
+function _tarbiyaActiveDays30(){
+  var today=new Date(),count=0;
+  for(var i=29;i>=1;i--){
+    var d=new Date(today);d.setDate(d.getDate()-i);
+    var key=d.toISOString().split('T')[0];
+    var e=(S.history||[]).find(function(h){return h.date===key;});
+    if(e&&(e.checked||0)>0)count++;
+  }
+  if(Object.values(S.checklist||{}).filter(Boolean).length>0)count++;
+  return count;
+}
 function _tarbiyaBestStreak(){
   var hist=(S.history||[]).slice();
   var todayDone=Object.values(S.checklist||{}).filter(Boolean).length>0;
@@ -6166,9 +6184,9 @@ function renderTarbiyaProfilHero(){
   if(!hero) return;
   hero.querySelectorAll('.t-profil-hero-overlay').forEach(function(el){el.remove();});
   var pi=(typeof PALIER!=='undefined'&&S.palier&&PALIER[S.palier])?PALIER[S.palier]:{name:"L'Éveillé"};
-  var xp=TARBIYA_PALIER_XP[S.palier]||TARBIYA_PALIER_XP[1];
-  var pct=Math.max(0,Math.min(100,Math.round(xp.cur/xp.next*100)));
   var streak=calcStreak();
+  var m30=_tarbiyaActiveDays30();
+  var pct=Math.max(0,Math.min(100,Math.round(m30/30*100)));
   var avatar=(S.name&&S.name[0])?S.name[0].toUpperCase():'?';
   var name=S.name||'—';
   var overlay=document.createElement('div');
@@ -6176,9 +6194,12 @@ function renderTarbiyaProfilHero(){
   overlay.innerHTML=
     '<div class="t-profil-topbar">'+
       '<span class="t-profil-topbar-label">PROFIL</span>'+
-      '<button class="t-profil-share-btn" onclick="tarbiyaShareProfil()" aria-label="Partager">'+
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'+
-      '</button>'+
+      '<div class="t-profil-topbar-actions">'+
+        '<button class="t-profil-share-btn" onclick="openProfilEdit()" aria-label="Modifier le profil">'+tIcon('pencil',15)+'</button>'+
+        '<button class="t-profil-share-btn" onclick="tarbiyaShareProfil()" aria-label="Partager">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'+
+        '</button>'+
+      '</div>'+
     '</div>'+
     '<div class="t-profil-id">'+
       '<div class="t-profil-avatar">'+avatar+'</div>'+
@@ -6186,14 +6207,14 @@ function renderTarbiyaProfilHero(){
         '<div class="t-profil-name">'+name+'</div>'+
         '<div class="t-profil-chips-row">'+
           '<span class="t-profil-chip">● '+pi.name+'</span>'+
-          '<span class="t-profil-chip t-profil-chip--warm">↑ '+streak+' j</span>'+
+          '<span class="t-profil-chip t-profil-chip--warm">'+tIcon('flame',11,2.5)+' '+streak+' j</span>'+
         '</div>'+
       '</div>'+
     '</div>'+
     '<div class="t-xp-bar-block">'+
       '<div class="t-xp-bar-labels">'+
-        '<span>'+pi.name+' '+xp.cur+' XP</span>'+
-        '<span class="right">'+xp.nextName+' '+xp.next+' XP</span>'+
+        '<span>Constance · 30 derniers jours</span>'+
+        '<span class="right">'+m30+' / 30 jours</span>'+
       '</div>'+
       '<div class="t-xp-bar"><div class="t-xp-bar__fill" style="width:'+pct+'%"></div></div>'+
     '</div>';
@@ -6220,19 +6241,19 @@ function renderTarbiyaProfilStats(){
   row.className='t-stats-row fade-up';
   row.innerHTML=
     '<div class="t-stat">'+
-      '<div class="t-stat__icon t-stat__icon--check">✓</div>'+
+      '<div class="t-stat__icon t-stat__icon--check">'+tIcon('check',14,2.5)+'</div>'+
       '<div class="t-stat__value">'+active+'</div>'+
       '<div class="t-stat__label">Jours actifs</div>'+
       '<div class="t-stat__sub">cette sem.</div>'+
     '</div>'+
     '<div class="t-stat">'+
-      '<div class="t-stat__icon t-stat__icon--fire">🔥</div>'+
+      '<div class="t-stat__icon t-stat__icon--fire">'+tIcon('flame',14)+'</div>'+
       '<div class="t-stat__value">'+streak+'j</div>'+
       '<div class="t-stat__label">Streak</div>'+
       '<div class="t-stat__sub">record '+best+'j</div>'+
     '</div>'+
     '<div class="t-stat">'+
-      '<div class="t-stat__icon t-stat__icon--gauge">⚡</div>'+
+      '<div class="t-stat__icon t-stat__icon--gauge">'+tIcon('zap',14)+'</div>'+
       '<div class="t-stat__value">'+wk.pct+'%</div>'+
       '<div class="t-stat__label">Semaine</div>'+
       '<div class="t-stat__sub">'+deltaTxt+'</div>'+
@@ -6259,7 +6280,15 @@ function renderTarbiyaProfilHeatmap(){
     var dd=new Date(today);dd.setDate(dd.getDate()-d);
     var key=dd.toISOString().split('T')[0];
     var state='empty';
-    if(d===0){state='today';}
+    var todayAttr='';
+    if(d===0){
+      // Reflète la vraie progression du jour (au lieu d'une case toujours vide)
+      todayAttr=' data-today="1"';
+      var itemsT=getActiveItems();
+      var doneT=itemsT.filter(function(it){return S.checklist[it.id];}).length;
+      var pT=itemsT.length?doneT/itemsT.length:0;
+      state=pT>=0.9?'complete':(pT>0?'partial':'today');
+    }
     else{
       var e=(S.history||[]).find(function(h){return h.date===key;});
       if(e&&e.total>0){
@@ -6269,7 +6298,7 @@ function renderTarbiyaProfilHeatmap(){
         else state='missed';
       }
     }
-    cells+='<div class="t-grid-30__cell" data-state="'+state+'"></div>';
+    cells+='<div class="t-grid-30__cell" data-state="'+state+'"'+todayAttr+'></div>';
   }
   var grid=document.createElement('div');
   grid.className='t-grid-30';
@@ -6293,33 +6322,46 @@ function renderTarbiyaProfilBadges(){
     if(raw.indexOf('Paramètres')===0){paramsTitle=titles[i];break;}
   }
   if(!paramsTitle) return;
-  var streak=calcStreak();
-  var seanceDone=(S.history||[]).length>0||(S.totalDays||0)>=1||Object.values(S.checklist||{}).filter(Boolean).length>0;
-  var pi=(typeof PALIER!=='undefined'&&S.palier&&PALIER[S.palier])?PALIER[S.palier]:{name:"L'Éveillé",emoji:'🌑'};
+  var best=_tarbiyaBestStreak();
+  var wk=_tarbiyaActiveDaysWeek();
+  var m30=_tarbiyaActiveDays30();
+  var seanceDone=(S.history||[]).some(function(h){return (h.checked||0)>0;})||Object.values(S.checklist||{}).filter(Boolean).length>0;
+  var badges=[
+    {icon:'sparkles',tint:'warm',  title:'Première séance', ok:seanceDone, sub:seanceDone?'Débloqué':'Fais ta 1ère action'},
+    {icon:'flame',   tint:'warm',  title:'3 jours de suite',ok:best>=3,    sub:best>=3?'Débloqué':'Meilleure série : '+best+' j'},
+    {icon:'flame',   tint:'warm',  title:'7 jours de suite',ok:best>=7,    sub:best>=7?'Débloqué':'Meilleure série : '+best+' j'},
+    {icon:'calendar',tint:'accent',title:'Semaine assidue', ok:wk>=7,      sub:wk>=7?'Débloqué':wk+'/7 cette semaine'},
+    {icon:'moonstar',tint:'accent',title:'Mois de constance',ok:m30>=25,   sub:m30>=25?'Débloqué':m30+'/25 jours actifs'},
+    {icon:'star',    tint:'accent',title:'30 jours de suite',ok:best>=30,  sub:best>=30?'Débloqué':'Meilleure série : '+best+' j'},
+  ];
+  var cards=badges.map(function(b){
+    var iconCls=b.ok?('t-badge-card__icon--'+b.tint):'t-badge-card__icon--locked';
+    return '<div class="t-badge-card'+(b.ok?'':' t-badge-card--locked')+'">'+
+      '<div class="t-badge-card__icon '+iconCls+'">'+(b.ok?tIcon(b.icon,16):tIcon('lock',14))+'</div>'+
+      '<div class="t-badge-card__title">'+b.title+'</div>'+
+      '<div class="t-badge-card__sub">'+b.sub+'</div>'+
+    '</div>';
+  }).join('');
   var block=document.createElement('div');
   block.className='t-badges-block';
   block.innerHTML=
-    '<div class="profil-section-title fade-up" data-tarbiya-injected="1"><span>Badges récents</span></div>'+
+    '<div class="profil-section-title fade-up" data-tarbiya-injected="1"><span>Badges</span><span class="profil-section-title-sub">'+badges.filter(function(b){return b.ok;}).length+' / '+badges.length+'</span></div>'+
     '<div class="t-badges-section fade-up">'+
-      '<div class="t-badges-row">'+
-        '<div class="t-badge-card'+(seanceDone?'':' t-badge-card--locked')+'">'+
-          '<div class="t-badge-card__icon t-badge-card__icon--warm">✨</div>'+
-          '<div class="t-badge-card__title">Première séance</div>'+
-          '<div class="t-badge-card__sub">'+(seanceDone?"Aujourd'hui":'Verrouillé')+'</div>'+
-        '</div>'+
-        '<div class="t-badge-card">'+
-          '<div class="t-badge-card__icon t-badge-card__icon--accent">'+(pi.emoji||'🌑')+'</div>'+
-          '<div class="t-badge-card__title">'+pi.name+'</div>'+
-          '<div class="t-badge-card__sub">Niveau '+(S.palier||1)+'</div>'+
-        '</div>'+
-        '<div class="t-badge-card'+(streak>=7?'':' t-badge-card--locked')+'">'+
-          '<div class="t-badge-card__icon '+(streak>=7?'t-badge-card__icon--warm':'t-badge-card__icon--locked')+'">🔥</div>'+
-          '<div class="t-badge-card__title">7 jours</div>'+
-          '<div class="t-badge-card__sub">'+(streak>=7?'Débloqué':'Verrouillé')+'</div>'+
-        '</div>'+
-      '</div>'+
+      '<div class="t-badges-row t-badges-row--grid">'+cards+'</div>'+
     '</div>';
   paramsTitle.parentNode.insertBefore(block,paramsTitle);
+}
+function _syncProfilIcons(isT){
+  var menu=[['🔔','bell'],['🌙','moon'],['🎨','palette'],['📖','book'],['💬','message']];
+  document.querySelectorAll('#profil .profil-menu-icon').forEach(function(el,i){
+    var d=menu[i];if(!d)return;
+    el.innerHTML=isT?tIcon(d[1],16):d[0];
+  });
+  var danger=[['🗑️','trash'],['🚪','logout']];
+  document.querySelectorAll('#profil .danger-icon').forEach(function(el,i){
+    var d=danger[i];if(!d)return;
+    el.innerHTML=isT?tIcon(d[1],16):d[0];
+  });
 }
 function renderTarbiyaProfilOverlays(){
   if(!window.tarbiyaTheme||window.tarbiyaTheme.get().theme!=='tarbiya') return;
@@ -6327,8 +6369,10 @@ function renderTarbiyaProfilOverlays(){
   renderTarbiyaProfilStats();
   renderTarbiyaProfilHeatmap();
   renderTarbiyaProfilBadges();
+  _syncProfilIcons(true);
 }
 function removeTarbiyaProfilOverlays(){
+  _syncProfilIcons(false);
   document.querySelectorAll('#profil .t-profil-hero-overlay,#profil .t-stats-row,#profil .t-badges-block').forEach(function(el){el.remove();});
   document.querySelectorAll('#profil .card .t-grid-30,#profil .card .t-heatmap-legend').forEach(function(el){el.remove();});
   document.querySelectorAll('#profil .profil-section-title').forEach(function(t){
