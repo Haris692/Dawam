@@ -2281,6 +2281,19 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 [data-theme="tarbiya"] .t-tl-item__xp--done{background:transparent;color:var(--t-success);}
 
+/* ── Icônes SVG ── */
+[data-theme="tarbiya"] .t-ico{flex-shrink:0;vertical-align:-.18em;display:inline-block;}
+[data-theme="tarbiya"] .t-tl-item__emoji{display:flex;align-items:center;color:var(--t-accent);}
+[data-theme="tarbiya"] .t-tl-item--done .t-tl-item__emoji{color:var(--t-muted);}
+[data-theme="tarbiya"] .t-tl-item--locked .t-tl-item__emoji{color:var(--t-muted);}
+[data-theme="tarbiya"] .t-tl-check .t-ico{vertical-align:0;}
+[data-theme="tarbiya"] .t-tl-item--locked .t-tl-check{color:var(--t-muted);}
+[data-theme="tarbiya"] .t-now-card__emoji .t-ico{display:block;}
+[data-theme="tarbiya"] .t-now-card--catch .t-now-card__emoji{color:var(--t-accent);}
+[data-theme="tarbiya"] .t-now-queue .t-ico{color:var(--t-accent);}
+[data-theme="tarbiya"] .t-hero-prayer__emoji{display:flex;align-items:center;color:#FFD06B;}
+[data-theme="tarbiya"] .t-swipe-detail__emoji{color:var(--t-accent);}
+
 @media (prefers-reduced-motion: reduce){
   [data-theme="tarbiya"] .t-now-card,
   [data-theme="tarbiya"] .t-now-card__emoji,
@@ -2406,7 +2419,9 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .t-all-actions-check.checked{
   background:var(--t-success);border-color:var(--t-success);color:#fff;
 }
-[data-theme="tarbiya"] .t-all-actions-emoji{font-size:20px;flex-shrink:0;}
+[data-theme="tarbiya"] .t-all-actions-emoji{font-size:20px;flex-shrink:0;display:flex;align-items:center;color:var(--t-accent);}
+[data-theme="tarbiya"] .t-all-actions-item.done .t-all-actions-emoji,
+[data-theme="tarbiya"] .t-all-actions-item.locked .t-all-actions-emoji{color:var(--t-muted);}
 [data-theme="tarbiya"] .t-all-actions-info{flex:1;min-width:0;}
 [data-theme="tarbiya"] .t-all-actions-name{font-size:14px;font-weight:700;color:var(--t-ink);line-height:1.3;}
 [data-theme="tarbiya"] .t-all-actions-meta{font-size:11px;color:var(--t-muted);margin-top:2px;}
@@ -5353,6 +5368,37 @@ function toggleTarbiyaTheme(){
   renderApparenceModal();
 }
 
+// ── Icônes SVG (style ligne, currentColor) — remplace les emojis en thème Tarbiya ──
+var T_ICONS={
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  sunrise:'<path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/>',
+  sunset:'<path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/>',
+  cloudsun:'<path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>',
+  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  moonstar:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M19 3v4"/><path d="M21 5h-4"/>',
+  mountainsun:'<circle cx="17.5" cy="6" r="2.5"/><path d="m2 20 7-12 4 6.5"/><path d="M10.5 15.5 14 10l8 10H2"/>',
+  book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+  hands:'<path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="m7 15-1.76-1.76a2 2 0 0 0-2.83 2.82l3.6 3.6C7.5 21.14 9.2 22 12 22h2a8 8 0 0 0 8-8V7a2 2 0 0 0-4 0v5"/>',
+  beads:'<circle cx="12" cy="4" r="1.7"/><circle cx="18" cy="6.3" r="1.7"/><circle cx="20" cy="12" r="1.7"/><circle cx="18" cy="17.7" r="1.7"/><circle cx="12" cy="20" r="1.7"/><circle cx="6" cy="17.7" r="1.7"/><circle cx="4" cy="12" r="1.7"/><circle cx="6" cy="6.3" r="1.7"/>',
+  mosque:'<path d="M4 22V11c0-3.5 3-5 8-8 5 3 8 4.5 8 8v11"/><path d="M2 22h20"/><path d="M9.5 22v-4a2.5 2.5 0 0 1 5 0v4"/>',
+  sparkles:'<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/>',
+  star:'<path d="M11.5 2.4a.55.55 0 0 1 1 0l2.4 4.85a2.1 2.1 0 0 0 1.6 1.16l5.35.78a.55.55 0 0 1 .3.94l-3.87 3.77a2.1 2.1 0 0 0-.6 1.86l.9 5.33a.55.55 0 0 1-.8.58l-4.78-2.51a2.1 2.1 0 0 0-1.96 0l-4.78 2.51a.55.55 0 0 1-.8-.58l.9-5.33a2.1 2.1 0 0 0-.6-1.86L2.4 10.13a.55.55 0 0 1 .3-.94l5.35-.78a2.1 2.1 0 0 0 1.6-1.16z"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  droplet:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  lock:'<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  skip:'<path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/>',
+  circle:'<circle cx="12" cy="12" r="9"/>',
+};
+var T_EMO_MAP={'🌅':'sunrise','🌄':'mountainsun','☀':'sun','🌤':'cloudsun','🌇':'sunset','🌆':'sunset','🌙':'moonstar','📖':'book','📚':'book','📗':'book','📿':'beads','🤲':'hands','💫':'sparkles','✨':'sparkles','🌟':'star','⭐':'star','🕌':'mosque','🌕':'circle','💧':'droplet','🌊':'droplet','✦':'sparkles','🔥':'flame','🔒':'lock','✓':'check','⏭':'skip'};
+function tIcon(key,size,sw){
+  if(!key) return '';
+  var k=String(key).replace(/️/g,'').trim();
+  var name=T_ICONS[k]?k:T_EMO_MAP[k];
+  if(!name||!T_ICONS[name]) return key; // fallback : emoji inchangé si non mappé
+  return '<svg class="t-ico" width="'+(size||20)+'" height="'+(size||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||2)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+T_ICONS[name]+'</svg>';
+}
+
 // ── Hero Tarbiya injecté ──
 function removeTarbiyaHero(){
   if(window._tHeroTimer){clearInterval(window._tHeroTimer);window._tHeroTimer=null;}
@@ -5374,7 +5420,7 @@ function _tHijriInfo(){
 function _tNextPrayer(){
   var pt=S.prayerTimes;
   if(!pt||!pt.Fajr) return null;
-  var order=[['Fajr','🌅'],['Dhuhr','☀️'],['Asr','🌤️'],['Maghrib','🌇'],['Isha','🌙']];
+  var order=[['Fajr','sunrise'],['Dhuhr','sun'],['Asr','cloudsun'],['Maghrib','sunset'],['Isha','moonstar']];
   var now=new Date();
   var cur=now.getHours()*60+now.getMinutes();
   var prevT=null;
@@ -5383,7 +5429,7 @@ function _tNextPrayer(){
     if(t===null) continue;
     if(t>cur){
       var from=prevT!==null?prevT:t-90;
-      return {name:order[i][0],emoji:order[i][1],time:pt[order[i][0]],mins:t-cur,
+      return {name:order[i][0],icon:order[i][1],time:pt[order[i][0]],mins:t-cur,
         pct:Math.max(0,Math.min(100,Math.round((cur-from)/Math.max(1,t-from)*100))),tomorrow:false};
     }
     prevT=t;
@@ -5391,7 +5437,7 @@ function _tNextPrayer(){
   // Après Isha → Fajr demain
   var fajr=parseTime(pt.Fajr)+1440;
   var from2=prevT!==null?prevT:fajr-480;
-  return {name:'Fajr',emoji:'🌅',time:pt.Fajr,mins:fajr-cur,
+  return {name:'Fajr',icon:'sunrise',time:pt.Fajr,mins:fajr-cur,
     pct:Math.max(0,Math.min(100,Math.round((cur-from2)/Math.max(1,fajr-from2)*100))),tomorrow:true};
 }
 function _tCountLabel(m){
@@ -5425,10 +5471,10 @@ function renderTarbiyaHero(){
   // Badge jour spécial (un seul, par priorité)
   var dow=now.getDay();
   var badge='';
-  if(dow===5) badge='🕌 Jumuʿa — lis Al-Kahf';
-  else if(hij.day>=13&&hij.day<=15) badge='🌕 Jours blancs — jeûne recommandé';
-  else if(dow===1) badge='🌙 Lundi — jeûne sunna';
-  else if(dow===4) badge='🌙 Jeudi — jeûne sunna';
+  if(dow===5) badge=tIcon('mosque',13)+' Jumuʿa — lis Al-Kahf';
+  else if(hij.day>=13&&hij.day<=15) badge=tIcon('circle',13)+' Jours blancs — jeûne recommandé';
+  else if(dow===1) badge=tIcon('moon',13)+' Lundi — jeûne sunna';
+  else if(dow===4) badge=tIcon('moon',13)+' Jeudi — jeûne sunna';
 
   // Pill prochaine prière
   var np=_tNextPrayer();
@@ -5436,7 +5482,7 @@ function renderTarbiyaHero(){
   if(np){
     prayerHtml=
       '<div class="t-hero-prayer">'+
-        '<span class="t-hero-prayer__emoji">'+np.emoji+'</span>'+
+        '<span class="t-hero-prayer__emoji">'+tIcon(np.icon,24)+'</span>'+
         '<div class="t-hero-prayer__txt">'+
           '<div class="t-hero-prayer__name">'+np.name+(np.tomorrow?' <small>demain</small>':'')+' · '+np.time+'</div>'+
           '<div class="t-hero-prayer__bar"><div class="t-hero-prayer__fill" style="width:'+np.pct+'%"></div></div>'+
@@ -5452,9 +5498,9 @@ function renderTarbiyaHero(){
     '<div class="t-hero-ov__meta">'+
       '<div>'+
         '<span class="t-hero-ov__date">'+dateMeta+'</span>'+
-        (hij.text?'<span class="t-hero-ov__hijri">☾ '+hij.text+'</span>':'')+
+        (hij.text?'<span class="t-hero-ov__hijri">'+tIcon('moon',11)+' '+hij.text+'</span>':'')+
       '</div>'+
-      '<span class="t-hero-ov__streak">🔥 '+streak+' j</span>'+
+      '<span class="t-hero-ov__streak">'+tIcon('flame',13)+' '+streak+' j</span>'+
     '</div>'+
     '<p style="font-size:13px;font-weight:500;color:rgba(255,255,255,.8);margin:0 0 2px;line-height:1.4">'+greet+'</p>'+
     '<h1 style="font-family:var(--t-font-title);font-weight:800;font-size:42px;line-height:1;letter-spacing:-1.5px;color:#fff;margin:4px 0 10px">'+
@@ -5643,14 +5689,14 @@ function renderTarbiyaPathCards(){
     if(el.type==='header'){
       var hdelay=(headerRenderIdx*150+200);
       inner+='<div class="t-path-zone-header" style="top:'+el.y+'px;animation-delay:'+hdelay+'ms">'+
-        '<span class="t-path-zone-icon">'+el.emoji+'</span>'+
+        '<span class="t-path-zone-icon">'+tIcon(el.emoji,14)+'</span>'+
         '<span>'+el.label+'</span>'+
         '<span class="t-path-zone-count">'+el.count+'</span>'+
       '</div>';
       headerRenderIdx++;
     } else {
       var item=el.item, status=el.status;
-      var btnEmoji=(status==='locked')?'🔒':(status==='done'?'✓':item.emoji);
+      var btnEmoji=(status==='locked')?tIcon('lock',20):(status==='done'?tIcon('check',22,2.5):tIcon(item.emoji,24));
       var btnAttr=(status==='locked')?' disabled':(' onclick="openGuided('+item.id+')"');
       var aria=(item.titleFr||'').replace(/"/g,'&quot;')+(status==='locked'?' (verrouillée)':'');
       var tag=el.isCurrent?'<div class="t-path-node-tag">PROCHAINE</div>':'';
@@ -5809,7 +5855,7 @@ function renderTarbiyaTodayStack(body){
           (next.xp?'<div class="t-now-card__xp">+'+next.xp+' XP</div>':'')+
         '</div>'+
         '<div class="t-now-card__main">'+
-          '<div class="t-now-card__emoji">'+(next.emoji||'✦')+'</div>'+
+          '<div class="t-now-card__emoji">'+tIcon(next.emoji||'✦',46,1.75)+'</div>'+
           '<div class="t-now-card__txt">'+
             '<div class="t-now-card__title">'+next.titleFr+'</div>'+
             '<div class="t-now-card__time">'+(next.time||'')+'</div>'+
@@ -5818,11 +5864,11 @@ function renderTarbiyaTodayStack(body){
         (why?'<div class="t-now-card__why">'+why+'</div>':'')+
         '<button class="t-now-card__cta" type="button" onclick="event.stopPropagation();openGuided('+next.id+')">Commencer <span>→</span></button>'+
         '<div class="t-now-card__row">'+
-          '<button class="t-now-card__ghost" type="button" onclick="event.stopPropagation();tStackDone('+next.id+')">✓ Déjà fait</button>'+
-          (queue.length>1?'<button class="t-now-card__ghost" type="button" onclick="event.stopPropagation();tStackSkip('+next.id+')">Plus tard ⏭</button>':'')+
+          '<button class="t-now-card__ghost" type="button" onclick="event.stopPropagation();tStackDone('+next.id+')">'+tIcon('check',13,2.5)+' Déjà fait</button>'+
+          (queue.length>1?'<button class="t-now-card__ghost" type="button" onclick="event.stopPropagation();tStackSkip('+next.id+')">Plus tard '+tIcon('skip',13,2.5)+'</button>':'')+
         '</div>'+
       '</div>'+
-      (after.length?'<div class="t-now-queue">Ensuite&nbsp;: '+after.map(function(q){return (q.emoji||'✦')+' '+q.titleFr;}).join(' · ')+'</div>':'');
+      (after.length?'<div class="t-now-queue">Ensuite&nbsp;: '+after.map(function(q){return tIcon(q.emoji||'✦',13)+' '+q.titleFr;}).join(' · ')+'</div>':'');
   } else {
     // Tout est fait pour l'instant (ou journée complète)
     var nextLockedCat=null;
@@ -5839,7 +5885,7 @@ function renderTarbiyaTodayStack(body){
         :'Les prochaines actions s\'ouvriront au fil de la journée.');
     html+=
       '<div class="t-now-card t-now-card--done">'+
-        '<div class="t-now-card__doneicon">'+(allDone?'🌟':'✨')+'</div>'+
+        '<div class="t-now-card__doneicon">'+tIcon(allDone?'star':'sparkles',46,1.75)+'</div>'+
         '<div class="t-now-card__donetitle">'+doneTitle+'</div>'+
         '<div class="t-now-card__donesub">'+doneSub+'</div>'+
       '</div>';
@@ -5869,10 +5915,10 @@ function renderTarbiyaTodayStack(body){
     var chip=isCurM
       ?'<span class="t-tl-moment__chip">en ce moment</span>'
       :(locked
-        ?'<span class="t-tl-moment__count">🔒</span>'
+        ?'<span class="t-tl-moment__count">'+tIcon('lock',11)+'</span>'
         :'<span class="t-tl-moment__count'+(ciDone===ci.length?' t-tl-moment__count--full':'')+'">'+ciDone+'/'+ci.length+'</span>');
     tl+='<div class="t-tl-moment'+(isCurM?' t-tl-moment--current':'')+(locked?' t-tl-moment--locked':'')+'">'+
-      '<div class="t-tl-moment__head"><span class="t-tl-moment__emoji">'+sec.emoji+'</span><span class="t-tl-moment__label">'+sec.label+'</span>'+chip+'</div>';
+      '<div class="t-tl-moment__head"><span class="t-tl-moment__emoji">'+tIcon(sec.emoji,14)+'</span><span class="t-tl-moment__label">'+sec.label+'</span>'+chip+'</div>';
     ci.forEach(function(it){
       var done=!!S.checklist[it.id];
       var isNext=!!(next&&it.id===next.id);
@@ -5881,16 +5927,16 @@ function renderTarbiyaTodayStack(body){
       var rowClick=(locked||done)?'':' onclick="openGuided('+it.id+')"';
       var ariaTitle=String(it.titleFr||'').replace(/"/g,'&quot;');
       var check=locked
-        ?'<div class="t-tl-check">🔒</div>'
-        :'<button class="t-tl-check" type="button" aria-label="'+(done?'Décocher':'Valider')+' '+ariaTitle+'" onclick="event.stopPropagation();tTlToggle('+it.id+',this)">'+(done?'✓':'')+'</button>';
+        ?'<div class="t-tl-check">'+tIcon('lock',13)+'</div>'
+        :'<button class="t-tl-check" type="button" aria-label="'+(done?'Décocher':'Valider')+' '+ariaTitle+'" onclick="event.stopPropagation();tTlToggle('+it.id+',this)">'+(done?tIcon('check',15,3):'')+'</button>';
       tl+='<div class="'+cls+'" style="--i:'+ri+'"'+rowClick+'>'+
         check+
-        '<span class="t-tl-item__emoji">'+(it.emoji||'✦')+'</span>'+
+        '<span class="t-tl-item__emoji">'+tIcon(it.emoji||'✦',21)+'</span>'+
         '<div class="t-tl-item__body">'+
           '<div class="t-tl-item__title">'+it.titleFr+'</div>'+
           '<div class="t-tl-item__meta">'+(it.time||'')+(missed?' · à rattraper':'')+'</div>'+
         '</div>'+
-        (it.xp?'<span class="t-tl-item__xp'+(done?' t-tl-item__xp--done':'')+'">'+(done?'✓ ':'+')+it.xp+'</span>':'')+
+        (it.xp?'<span class="t-tl-item__xp'+(done?' t-tl-item__xp--done':'')+'">'+(done?tIcon('check',10,3)+' ':'+')+it.xp+'</span>':'')+
       '</div>';
       ri++;
     });
@@ -5909,7 +5955,7 @@ function tTlToggle(id, el){
   var row=el&&el.closest?el.closest('.t-tl-item'):null;
   if(row&&!S.checklist[id]){
     row.classList.add('t-tl-item--done');
-    if(el.tagName==='BUTTON') el.textContent='✓';
+    if(el.tagName==='BUTTON') el.innerHTML=tIcon('check',15,3);
   }
   toggleItem(id);
 }
@@ -5950,7 +5996,7 @@ function openTarbiyaSwipeDetail(id){
   var body=document.getElementById('t-swipe-detail-body');
   body.innerHTML=
     '<div class="t-swipe-detail__head">'+
-      '<div class="t-swipe-detail__emoji">'+(item.emoji||'✦')+'</div>'+
+      '<div class="t-swipe-detail__emoji">'+tIcon(item.emoji||'✦',28,1.75)+'</div>'+
       '<div style="flex:1;min-width:0;">'+
         '<div class="t-swipe-detail__title">'+item.titleFr+'</div>'+
         '<div class="t-swipe-detail__time">'+(item.time||'')+(item.xp?' · +'+item.xp+' XP':'')+'</div>'+
@@ -6006,11 +6052,11 @@ function openTarbiyaAllActions(){
       var cls='t-all-actions-item'+(done?' done':'')+(locked?' locked':'');
       var onClick=locked?'':' onclick="closeTarbiyaAllActions();openGuided('+it.id+')"';
       html+='<div class="'+cls+'"'+onClick+'>'+
-        '<div class="t-all-actions-check'+(done?' checked':'')+'">'+(done?'✓':'')+'</div>'+
-        '<span class="t-all-actions-emoji">'+it.emoji+'</span>'+
+        '<div class="t-all-actions-check'+(done?' checked':'')+'">'+(done?tIcon('check',12,3):'')+'</div>'+
+        '<span class="t-all-actions-emoji">'+tIcon(it.emoji,18)+'</span>'+
         '<div class="t-all-actions-info">'+
           '<div class="t-all-actions-name">'+it.titleFr+'</div>'+
-          '<div class="t-all-actions-meta">'+it.time+(locked?' · 🔒':'')+'</div>'+
+          '<div class="t-all-actions-meta">'+it.time+(locked?' · '+tIcon('lock',10):'')+'</div>'+
         '</div>'+
       '</div>';
     }
