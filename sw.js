@@ -1,4 +1,4 @@
-const CACHE = "dawam-v73";
+const CACHE = "dawam-v74";
 const ASSETS = [
   "./manifest.json",
   "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap"
