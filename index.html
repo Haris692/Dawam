@@ -1554,6 +1554,34 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .grp-dhikr-opt{background:#fff;border-radius:14px;}
 [data-theme="tarbiya"] .grp-dhikr-opt.selected{border-color:var(--t-accent);background:var(--t-accent-soft);}
 [data-theme="tarbiya"] .grp-tap-btn .t-ico,[data-theme="tarbiya"] .grp-qiyam-btn .t-ico{vertical-align:-.18em;}
+
+/* ── SÉANCE DE L'AUBE Tarbiya ── */
+[data-theme="tarbiya"] #seance-aube{background:var(--t-bg);}
+[data-theme="tarbiya"] #seance-aube .sa-header-title{font-family:var(--t-font-title);font-weight:800;letter-spacing:-.3px;color:var(--t-ink);}
+[data-theme="tarbiya"] #seance-aube .sa-close{background:#fff;border:none;border-radius:50%;box-shadow:0 4px 12px -4px rgba(0,0,0,.15);color:var(--t-ink);}
+[data-theme="tarbiya"] #seance-aube .sa-progress{background:var(--t-accent-soft);border-radius:999px;}
+[data-theme="tarbiya"] #seance-aube .sa-progress-fill{background:var(--t-accent);border-radius:999px;}
+[data-theme="tarbiya"] #seance-aube .sa-step-dot{background:#fff;border:2px solid rgba(0,0,0,.1);color:var(--t-muted);}
+[data-theme="tarbiya"] #seance-aube .sa-step.active .sa-step-dot{background:var(--t-accent);border-color:var(--t-accent);color:#fff;box-shadow:0 0 0 4px var(--t-accent-soft);}
+[data-theme="tarbiya"] #seance-aube .sa-step.done .sa-step-dot{background:var(--t-success);border-color:var(--t-success);color:#fff;}
+[data-theme="tarbiya"] #seance-aube .sa-step.active .sa-step-label{color:var(--t-accent);font-weight:800;}
+[data-theme="tarbiya"] #seance-aube .sa-card{background:#fff;border:none;border-radius:22px;box-shadow:var(--t-card-shadow);}
+[data-theme="tarbiya"] #seance-aube .sa-card-counter{color:var(--t-muted);font-weight:800;letter-spacing:1.2px;text-transform:uppercase;font-size:10.5px;}
+[data-theme="tarbiya"] #seance-aube .sa-card-repeat{background:var(--t-accent-soft);color:var(--t-accent);border-radius:999px;font-weight:800;}
+[data-theme="tarbiya"] #seance-aube .sa-card-arabic{color:var(--t-ink);}
+[data-theme="tarbiya"] #seance-aube .sa-card-merit{background:var(--t-accent-soft);color:var(--t-accent);border-radius:12px;}
+[data-theme="tarbiya"] #seance-aube .sa-card-hadith{background:var(--t-accent-soft);border-radius:14px;color:var(--t-ink);}
+[data-theme="tarbiya"] #seance-aube #sa-cta{background:var(--t-accent);border-radius:16px;font-family:var(--t-font-title);font-weight:800;box-shadow:0 10px 24px -8px var(--t-accent);}
+[data-theme="tarbiya"] #seance-aube .sa-verset-item{background:#fff;border-radius:16px;border:1.5px solid transparent;box-shadow:0 6px 18px -10px rgba(20,18,40,.14);}
+[data-theme="tarbiya"] #seance-aube .sa-verset-item.selected{border-color:var(--t-accent);background:var(--t-accent-soft);}
+[data-theme="tarbiya"] #seance-aube .sa-verset-item.selected .sa-verset-check{background:var(--t-accent);border-color:var(--t-accent);color:#fff;}
+[data-theme="tarbiya"] #seance-aube .sa-phase-transition-emoji .t-ico,
+[data-theme="tarbiya"] #seance-aube .sa-done-emoji .t-ico,
+[data-theme="tarbiya"] #seance-aube .sa-card-big-emoji .t-ico{color:var(--t-accent);}
+[data-theme="tarbiya"] #seance-aube .sa-chourouk-icon .t-ico{color:var(--t-warm);}
+[data-theme="tarbiya"] #seance-aube .sa-chourouk-countdown{font-family:var(--t-font-title);font-weight:800;color:var(--t-accent);}
+[data-theme="tarbiya"] #seance-aube .sa-phase-transition-title,
+[data-theme="tarbiya"] #seance-aube .sa-done-title{font-family:var(--t-font-title);font-weight:800;letter-spacing:-.5px;}
 [data-theme="tarbiya"] .t-badge-card{flex:1;background:#fff;border-radius:var(--t-radius-sm);padding:14px 12px;box-shadow:var(--t-card-shadow);display:flex;flex-direction:column;gap:6px;min-width:0;}
 [data-theme="tarbiya"] .t-badge-card--locked{opacity:.6;filter:grayscale(.5);}
 [data-theme="tarbiya"] .t-badge-card__icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff;}
@@ -3607,7 +3635,7 @@ function signOutUser() {
 // ═══ DATA ═══
 const PROGRAM = [
   {id:1,  titleFr:"Prière de nuit",                emoji:"🌙", time:"Avant le Fajr",    xp:25, cat:"qiyam",   paliers:[5],       why:"Le Prophète ﷺ ne l'abandonnait jamais — ni en voyage ni à la maison."},
-  {id:2,  titleFr:"Séance après l'aube",           emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[1,2,3,4,5], why:"Récompense d'un pèlerinage et d'une ʿumra complète. Complète."},
+  {id:2,  titleFr:"Séance de l'aube",              emoji:"🌄", time:"Après le Fajr",     xp:20, cat:"aube",    paliers:[1,2,3,4,5], why:"Récompense d'un pèlerinage et d'une ʿumra complète. Complète."},
   {id:5,  titleFr:"Lecture du Coran",               emoji:"📖", time:"Dans la journée",   xp:15, cat:"journee", paliers:[2,3,4,5], why:"Récite le Coran régulièrement — même quelques versets par jour valent mieux qu'une lecture irrégulière."},
   {id:4,  titleFr:"Prières complémentaires",       emoji:"🤲", time:"Dans la journée",   xp:15, cat:"journee", paliers:[4,5],     why:"Une maison au Paradis pour chaque jour où tu les accomplis."},
   {id:7,  titleFr:"Témoignage d'unicité — 3×15min",emoji:"💫", time:"Dans la journée",   xp:20, cat:"journee", paliers:[4,5],     why:"« Renouvelez votre foi en répétant Lâ ilâha illâ Llâh. » — Ahmad"},
@@ -5518,11 +5546,12 @@ var T_ICONS={
   calendar:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
   users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   copy:'<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+  heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
   lock:'<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   skip:'<path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/>',
   circle:'<circle cx="12" cy="12" r="9"/>',
 };
-var T_EMO_MAP={'🌅':'sunrise','🌄':'mountainsun','☀':'sun','🌤':'cloudsun','🌇':'sunset','🌆':'sunset','🌙':'moonstar','📖':'book','📚':'book','📗':'book','📿':'beads','🤲':'hands','💫':'sparkles','✨':'sparkles','🌟':'star','⭐':'star','🕌':'mosque','🌕':'circle','💧':'droplet','🌊':'droplet','✦':'sparkles','🔥':'flame','🔒':'lock','✓':'check','⏭':'skip'};
+var T_EMO_MAP={'🌅':'sunrise','🌄':'mountainsun','☀':'sun','🌤':'cloudsun','🌇':'sunset','🌆':'sunset','🌙':'moonstar','📖':'book','📚':'book','📗':'book','📿':'beads','🤲':'hands','💫':'sparkles','✨':'sparkles','🌟':'star','⭐':'star','🕌':'mosque','🌕':'circle','💧':'droplet','🌊':'droplet','✦':'sparkles','🔥':'flame','🔒':'lock','✓':'check','⏭':'skip','💚':'heart','❤':'heart'};
 function tIcon(key,size,sw){
   if(!key) return '';
   var k=String(key).replace(/️/g,'').trim();
@@ -7248,7 +7277,7 @@ function renderSaStepper(){
   document.getElementById('sa-stepper').innerHTML=SA_PHASES.map((p,i)=>{
     const state=i<curIdx?'done':i===curIdx?'active':'';
     return`<div class="sa-step${state?' '+state:''}">
-      <div class="sa-step-dot">${i<curIdx?'✓':p.emoji}</div>
+      <div class="sa-step-dot">${i<curIdx?gIc('✓','check',11,3):gIc(p.emoji,p.emoji,13)}</div>
       <div class="sa-step-label">${p.label}</div>
     </div>`;
   }).join('');
@@ -7267,7 +7296,7 @@ function renderSeancePhase(){
   if(phaseChanged){
     const meta=SA_PHASES.find(p=>p.key===curKey);
     body.innerHTML=`<div class="sa-phase-transition">
-      <div class="sa-phase-transition-emoji">${meta.emoji}</div>
+      <div class="sa-phase-transition-emoji">${gIc(meta.emoji,meta.emoji,46,1.75)}</div>
       <div class="sa-phase-transition-title">${meta.intro}</div>
       <div class="sa-phase-transition-sub">${meta.sub}</div>
     </div>`;
@@ -7310,7 +7339,7 @@ function renderSeancePhaseContent(){
       <div class="sa-verset-select-title">Quels versets lis-tu le matin ?</div>
       <p class="sa-verset-select-sub">L'app mémorise ta sélection et te permettra de reprendre là où tu t'es arrêté.</p>
       ${VERSETS_CATALOG.map(v=>`<div class="sa-verset-item${sel.includes(v.id)?' selected':''}" onclick="toggleVersetSel('${v.id}')">
-        <div class="sa-verset-check">${sel.includes(v.id)?'✓':''}</div>
+        <div class="sa-verset-check">${sel.includes(v.id)?gIc('✓','check',11,3):''}</div>
         <div>
           <div class="sa-verset-item-title">${v.title}</div>
           <div class="sa-verset-item-ref">${v.ref}</div>
@@ -7332,11 +7361,11 @@ function renderSeancePhaseContent(){
     let inner='';
     if(v.longSura){
       inner=`<div class="sa-card-verset-title">${v.title} <span class="sa-card-ref">${v.ref}</span></div>
-        <div class="sa-card-merit">🌟 ${v.merit}</div>
+        <div class="sa-card-merit">${gIc('🌟','star',12)} ${v.merit}</div>
         <div class="sa-card-instruction">${v.instruction}</div>`;
     }else if(v.arabic2){
       inner=`<div class="sa-card-verset-title">${v.title} <span class="sa-card-ref">${v.ref}</span></div>
-        <div class="sa-card-merit">🌟 ${v.merit}</div>
+        <div class="sa-card-merit">${gIc('🌟','star',12)} ${v.merit}</div>
         ${v.repeat?`<div class="sa-card-repeat">× ${v.repeat} chacune</div>`:''}
         <div class="sa-card-arabic">${v.arabic}</div>
         <div class="sa-card-sep"></div>
@@ -7346,7 +7375,7 @@ function renderSeancePhaseContent(){
         <div class="sa-card-french">${v.french}</div>`;
     }else{
       inner=`<div class="sa-card-verset-title">${v.title} <span class="sa-card-ref">${v.ref}</span></div>
-        <div class="sa-card-merit">🌟 ${v.merit}</div>
+        <div class="sa-card-merit">${gIc('🌟','star',12)} ${v.merit}</div>
         <div class="sa-card-arabic">${v.arabic}</div>
         <div class="sa-card-phonetic">${v.phonetic}</div>
         <div class="sa-card-french">${v.french}</div>`;
@@ -7362,7 +7391,7 @@ function renderSeancePhaseContent(){
     fill.style.width=(50+Math.round(i/DUA_RABITA_STEPS.length*25))+'%';
     body.innerHTML=`<div class="sa-card">
       <div class="sa-card-counter">Étape ${i+1} / ${DUA_RABITA_STEPS.length}</div>
-      <div class="sa-card-big-emoji">${step.emoji}</div>
+      <div class="sa-card-big-emoji">${gIc(step.emoji,step.emoji,38,1.75)}</div>
       <div class="sa-card-step-title">${step.title}</div>
       <div class="sa-card-desc">${step.desc}</div>
       ${step.arabic?`<div class="sa-card-arabic">${step.arabic}</div>`:''}
@@ -7375,7 +7404,6 @@ function renderSeancePhaseContent(){
   }
   else if(_sa.phase==='chourouk'){
     fill.style.width='75%';
-    pill.textContent='Chourouk';
     const pt=S.prayerTimes;
     let chouroukHtml='';
     if(pt&&pt.Sunrise){
@@ -7386,7 +7414,7 @@ function renderSeancePhaseContent(){
       if(diff>15){
         const h=Math.floor(diff/60),m=diff%60;
         chouroukHtml=`<div class="sa-chourouk-block">
-          <div class="sa-chourouk-icon">🌅</div>
+          <div class="sa-chourouk-icon">${gIc('🌅','sunrise',40,1.75)}</div>
           <div class="sa-chourouk-label">Chourouk dans</div>
           <div class="sa-chourouk-countdown">${h>0?h+'h ':''} ${m} min</div>
           <div class="sa-chourouk-time">${pt.Sunrise}</div>
@@ -7394,20 +7422,20 @@ function renderSeancePhaseContent(){
         <p class="sa-chourouk-desc">Reste en dhikr ou récitation jusqu'au lever du soleil. Attends encore 10–15 min après, puis prie tes 2 raka'at.</p>`;
       }else if(diff>-45){
         chouroukHtml=`<div class="sa-chourouk-block">
-          <div class="sa-chourouk-icon">☀️</div>
+          <div class="sa-chourouk-icon">${gIc('☀️','sun',40,1.75)}</div>
           <div class="sa-chourouk-label">${diff>0?'Lever du soleil imminent — dans '+diff+' min':"C'est l'heure du Chourouk"}</div>
         </div>
         <p class="sa-chourouk-desc">Prie maintenant tes 2 raka'at du Chourouk. Récompense égale à un pèlerinage et une ʿumra complète, complète, complète. ﷺ</p>`;
       }else{
         chouroukHtml=`<div class="sa-chourouk-block">
-          <div class="sa-chourouk-icon">☀️</div>
+          <div class="sa-chourouk-icon">${gIc('☀️','sun',40,1.75)}</div>
           <div class="sa-chourouk-label">Chourouk passé</div>
         </div>
         <p class="sa-chourouk-desc">Le moment idéal est passé — tu peux quand même prier 2 raka'at nafl pour clôturer ta séance. L'intention sincère compte.</p>`;
       }
     }else{
       chouroukHtml=`<div class="sa-chourouk-block">
-        <div class="sa-chourouk-icon">☀️</div>
+        <div class="sa-chourouk-icon">${gIc('☀️','sun',40,1.75)}</div>
         <div class="sa-chourouk-label">Prière du Chourouk</div>
       </div>
       <p class="sa-chourouk-desc">10 à 15 min après le lever du soleil — prie 2 raka'at. Récompense d'un pèlerinage et d'une ʿumra complète.</p>`;
@@ -7423,11 +7451,11 @@ function renderSeancePhaseContent(){
     renderSaStepper();
     const msgs=['Que Allah l\'accepte de toi.','Barakallahu fik.','Petit mais constant — c\'est le secret.','Les anges sont témoins de ta constance.','Continue ainsi — chaque jour compte.'];
     body.innerHTML=`<div class="sa-done-block">
-      <div class="sa-done-emoji">✨</div>
+      <div class="sa-done-emoji">${gIc('✨','sparkles',46,1.75)}</div>
       <div class="sa-done-title">Séance accomplie</div>
       <div class="sa-done-sub">${msgs[Math.floor(Math.random()*msgs.length)]}</div>
       <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center">
-        ${SA_PHASES.map(p=>`<div style="background:var(--bg-card);border:.5px solid var(--green);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--green)">${p.emoji} ${p.label}</div>`).join('')}
+        ${SA_PHASES.map(p=>`<div style="background:var(--bg-card);border:.5px solid var(--green);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--green)">${gIc(p.emoji,p.emoji,12)} ${p.label}</div>`).join('')}
       </div>
     </div>`;
     cta.textContent='Fermer →';
@@ -7536,6 +7564,8 @@ const GUIDED_FLOWS = {
 let _gId=null,_gStep=0,_gChecked=new Set(),_gCount=0,_gTimerSec=0,_gTimerTotal=0,_gSession=0,_gInterval=null,_gRunning=false;
 
 function openGuided(id){
+  // La Séance de l'aube a son propre flow complet (4 phases) — toujours l'ouvrir, quel que soit le moment
+  if(id===2){openSeanceGuidee();return;}
   const item=PROGRAM.find(p=>p.id===id)||getPrayerItems().find(p=>p.id===id);
   const flow=GUIDED_FLOWS[id]||getPrayerFlow(id);
   if(!item||!flow){openDetail(id);return;}
@@ -7728,8 +7758,21 @@ function renderGuidedDone(){
   </div>`;
   const cta=document.getElementById('guided-cta');
   if((_gId===3||_gId===100)&&!S.checklist[2]){
-    cta.textContent='Commencer la séance →';
+    cta.textContent='Séance de l\'aube →';
     cta.onclick=()=>{closeGuided();setTimeout(()=>openSeanceGuidee(),450);};
+    // Enchaînement automatique Fajr → Séance de l'aube, une seule fois par jour :
+    // si l'utilisateur ferme la séance, on ne la relance plus automatiquement.
+    const _saToday=new Date().toISOString().split('T')[0];
+    if(S.saAutoDate!==_saToday){
+      S.saAutoDate=_saToday;save();
+      setTimeout(()=>{
+        const gs=document.getElementById('guided-screen');
+        if(gs&&gs.classList.contains('show')&&!S.checklist[2]){
+          closeGuided();
+          setTimeout(()=>openSeanceGuidee(),450);
+        }
+      },1400);
+    }
   }else{
     cta.textContent='Retour →';
     cta.onclick=()=>closeGuided();
