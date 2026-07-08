@@ -351,6 +351,11 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .notif-banner-text{flex:1;font-size:13px;color:var(--text);line-height:1.4;}
 .notif-banner-btn{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-light);border:none;border-radius:20px;padding:6px 12px;cursor:pointer;white-space:nowrap;}
 .notif-banner-close{font-size:16px;color:var(--text-light);background:none;border:none;cursor:pointer;padding:0 2px;}
+/* Bannière don du vendredi — style Tarbiya */
+.don-banner{display:flex;align-items:center;gap:12px;margin:0 16px 12px;padding:14px 16px;background:var(--t-warm-grad,linear-gradient(135deg,#EAC876,#B4842E));color:#fff;border-radius:var(--t-radius-sm,14px);box-shadow:0 12px 24px -10px color-mix(in srgb,var(--t-warm,#D9A94E) 65%,transparent);}
+.don-banner-text{flex:1;font-size:13px;font-weight:600;line-height:1.45;color:#fff;}
+.don-banner-btn{font-size:12px;font-weight:800;color:var(--t-coral,#8A6020);background:#fff;border:none;border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.don-banner-close{font-size:16px;color:rgba(255,255,255,.85);background:none;border:none;cursor:pointer;padding:0 2px;flex-shrink:0;}
 .path-hero-chip { display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:var(--accent-light);border:.5px solid var(--border); }
 .path-hero-chip span { font-size:11px;font-weight:600;color:var(--accent-dark); }
 .path-hero-name { font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);margin-bottom:6px; }
@@ -2963,6 +2968,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   <div class="ob-page ob-page-full" data-page="5" id="ob-paywall-page"></div>
   <!-- P6: Notifications -->
   <div class="ob-page" data-page="6">
+    <div style="margin-top:auto"></div>
     <div class="ob-emoji-circle">🔔</div>
     <p class="ob-label">Dernière étape</p>
     <h1 class="ob-title">Active tes rappels</h1>
@@ -3094,6 +3100,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       <div class="profil-menu-item" onclick="showApparenceModal()"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Apparence</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showFeedbackModal()"><div class="profil-menu-icon" style="background:rgba(74,158,218,.1)">💬</div><span class="profil-menu-text">Donner mon avis</span><span class="profil-menu-arrow">›</span></div>
+      <div class="profil-menu-item" onclick="openDonation()"><div class="profil-menu-icon" style="background:rgba(212,53,126,.1)">🤲</div><span class="profil-menu-text">Faire un don</span><span class="profil-menu-arrow">›</span></div>
     </div>
 
     <!-- Zone sensible -->
@@ -3874,26 +3881,23 @@ function obSumToggle(i) {
   step.parentElement.classList.toggle('open');
 }
 
-// ─── Paywall (P4) ───
+// ─── Page soutien par le don (P5) — l'app est gratuite, don facultatif reversé à une association ───
 function renderPaywallPage() {
   const el = document.getElementById('ob-paywall-page');
   if (!el) return;
-  el.innerHTML = `<div class="ob-pay-wrap" id="ob-pay-root"><div class="ob-pay-top"><button class="ob-back" onclick="obBack()">←</button></div><div class="ob-pay-scroll"><div class="ob-pay-hero" id="ob-pay-hero"><div class="ob-pay-badge-coming">✦ Prochainement</div><div class="ob-pay-icon"><svg width="72" height="72" viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="6 9" opacity=".35"/><circle cx="40" cy="40" r="26" fill="none" stroke="var(--accent)" stroke-width=".8" stroke-dasharray="3 6" opacity=".25"/><circle cx="40" cy="40" r="16" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.2" opacity=".6"/><text x="40" y="47" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="var(--accent)">✦</text><circle cx="40" cy="4" r="3" fill="var(--accent)" opacity=".5"/><circle cx="76" cy="40" r="3" fill="var(--accent)" opacity=".5"/><circle cx="40" cy="76" r="3" fill="var(--accent)" opacity=".5"/><circle cx="4" cy="40" r="3" fill="var(--accent)" opacity=".5"/></svg></div><h2 class="ob-pay-title">Dawam <em>Premium</em></h2><p class="ob-pay-sub">Séances guidées, statistiques et accès complet — en cours de développement.</p></div><div class="ob-pay-card"><div class="ob-pay-card-bg">🕌</div><div class="ob-pay-price-lbl">Essai gratuit · À venir</div><div class="ob-pay-price-ttl">7 jours gratuits,<br>puis <em>2,99€</em> / mois</div><div class="ob-pay-price-note">Annulable à tout moment · sans engagement</div><div class="ob-pay-feats"><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Séances guidées du matin et du soir</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Statistiques de constance sur 30 jours</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Rappels avancés personnalisés</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Accès à toutes les étapes du programme</span></div></div><div class="ob-pay-split-ttl" style="margin-top:16px">Où va l'abonnement</div><div class="ob-pay-split-bar"><div class="ob-pay-split-seg" id="pay-seg-0" style="flex-grow:0;min-width:0;background:#9ca3af"></div><div class="ob-pay-split-seg" id="pay-seg-1" style="flex-grow:0;min-width:0;background:var(--green)"></div><div class="ob-pay-split-seg" id="pay-seg-2" style="flex-grow:0;min-width:0;background:var(--accent)"></div></div><div id="pay-row-0" style="opacity:0;display:flex;justify-content:space-between;align-items:center;margin-top:9px"><span style="font-size:11px;color:var(--text-secondary)">Frais de fonctionnement</span><span style="font-size:11.5px;font-weight:700;color:var(--accent)">✦ Projets communautaires</span></div><p class="ob-pay-dona" id="ob-pay-dona" style="opacity:0">L'essentiel soutient des projets islamiques — mosquées, éducation, associations.</p></div><div style="height:16px"></div></div><div class="ob-pay-cta-zone" id="ob-pay-cta" style="opacity:0"><button class="ob-pay-cta" onclick="obNext()">Continuer gratuitement →</button><p class="ob-pay-cta-note">Le paiement sera disponible prochainement.<br>Tu as accès à tout dès maintenant.</p></div></div>`;
+  el.innerHTML = `<div class="ob-pay-wrap" id="ob-pay-root"><div class="ob-pay-top"><button class="ob-back" onclick="obBack()">←</button></div><div class="ob-pay-scroll"><div class="ob-pay-hero" id="ob-pay-hero"><div class="ob-pay-badge-coming">✦ Gratuit, pour tous</div><div class="ob-pay-icon"><svg width="72" height="72" viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" fill="none" stroke="var(--t-accent,#BA7517)" stroke-width="1" stroke-dasharray="6 9" opacity=".35"/><circle cx="40" cy="40" r="26" fill="none" stroke="var(--t-accent,#BA7517)" stroke-width=".8" stroke-dasharray="3 6" opacity=".25"/><circle cx="40" cy="40" r="16" fill="#fff" stroke="var(--t-accent,#BA7517)" stroke-width="1.2" opacity=".6"/><text x="40" y="47" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="var(--t-accent,#BA7517)">✦</text><circle cx="40" cy="4" r="3" fill="var(--t-accent,#BA7517)" opacity=".5"/><circle cx="76" cy="40" r="3" fill="var(--t-accent,#BA7517)" opacity=".5"/><circle cx="40" cy="76" r="3" fill="var(--t-accent,#BA7517)" opacity=".5"/><circle cx="4" cy="40" r="3" fill="var(--t-accent,#BA7517)" opacity=".5"/></svg></div><h2 class="ob-pay-title">Dawam est <em>gratuit</em></h2><p class="ob-pay-sub">Toutes les fonctionnalités sont accessibles librement — aujourd'hui comme demain.</p></div><div class="ob-pay-card" id="ob-pay-card"><div class="ob-pay-card-bg">🤲</div><div class="ob-pay-price-lbl">Envie de contribuer ?</div><div class="ob-pay-price-ttl">Si tu le souhaites,<br>tu peux faire <em>un don</em></div><div class="ob-pay-price-note">Libre et facultatif — l'app reste gratuite pour tous.</div><div class="ob-pay-feats"><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Ton don est reversé à une association</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Aucune fonctionnalité bloquée, jamais</span></div><div class="ob-pay-feat"><div class="ob-pay-feat-dot"></div><span>Qu'Allah te récompense pour ta générosité</span></div></div><button class="ob-pay-cta" style="margin-bottom:0;background:var(--t-warm-grad,linear-gradient(135deg,#EAC876,#B4842E))" onclick="openDonation()">Faire un don 🤲</button></div><div style="height:16px"></div></div><div class="ob-pay-cta-zone" id="ob-pay-cta" style="opacity:0"><button class="ob-pay-cta" onclick="obNext()">Continuer →</button><p class="ob-pay-cta-note">Tu as accès à tout, gratuitement.</p></div></div>`;
   requestAnimationFrame(() => {
     if (typeof gsap === 'undefined') {
-      ['pay-row-0','ob-pay-dona','ob-pay-cta'].forEach(id => { const e=document.getElementById(id); if(e) e.style.opacity='1'; });
-      [['pay-seg-0',15],['pay-seg-1',15],['pay-seg-2',70]].forEach(([id,v]) => { const e=document.getElementById(id); if(e) e.style.flexGrow=v; });
+      const e = document.getElementById('ob-pay-cta'); if (e) e.style.opacity = '1';
       return;
     }
-    gsap.set('#pay-row-0', {x: -6});
+    gsap.set('#ob-pay-hero', {opacity: 0, y: 10});
+    gsap.set('#ob-pay-card', {opacity: 0, y: 14});
     gsap.set('#ob-pay-cta', {y: 12});
-    const tl = gsap.timeline({delay: 0.25, defaults: {ease: 'power2.out'}});
-    tl.to('#pay-seg-0',  {flexGrow: 15, duration: 0.42})
-      .to('#pay-seg-1',  {flexGrow: 15, duration: 0.42}, '+=0.04')
-      .to('#pay-seg-2',  {flexGrow: 70, duration: 0.78, ease: 'power3.out'}, '+=0.04')
-      .to('#pay-row-0',  {opacity: 1, x: 0, duration: 0.3}, '-=0.3')
-      .to('#ob-pay-dona',{opacity: 1, duration: 0.35}, '-=0.05')
-      .to('#ob-pay-cta', {opacity: 1, y: 0, duration: 0.4, ease: 'power2.out'}, '-=0.1');
+    const tl = gsap.timeline({delay: 0.15, defaults: {ease: 'power2.out'}});
+    tl.to('#ob-pay-hero', {opacity: 1, y: 0, duration: 0.5})
+      .to('#ob-pay-card', {opacity: 1, y: 0, duration: 0.5}, '-=0.25')
+      .to('#ob-pay-cta',  {opacity: 1, y: 0, duration: 0.4}, '-=0.2');
   });
 }
 
@@ -4125,6 +4129,17 @@ function renderPath(){
       <span class="notif-banner-text">3 jours avec Dawam — ton avis nous aide à améliorer l'app.</span>
       <button class="notif-banner-btn" style="background:rgba(59,109,17,.1);color:var(--green)" onclick="S.feedbackNudgeDismissed=true;save();showFeedbackModal()">Donner mon avis</button>
       <button class="notif-banner-close" onclick="this.closest('.notif-banner').remove();S.feedbackNudgeDismissed=true;save()">✕</button>
+    </div>`;
+  }
+
+  // Bannière don du vendredi — message in-app uniquement, refermable pour la journée
+  const _donDay=new Date();
+  if(_donDay.getDay()===5 && localStorage.getItem('donFriDismissed')!==_donDay.toDateString()){
+    body.innerHTML+=`<div class="don-banner fade-up">
+      <span style="font-size:22px">🤲</span>
+      <span class="don-banner-text">Jumu'a mubarak ! Si tu souhaites contribuer, ton don sera reversé à une association.</span>
+      <button class="don-banner-btn" onclick="openDonation()">Faire un don</button>
+      <button class="don-banner-close" onclick="this.closest('.don-banner').remove();localStorage.setItem('donFriDismissed','${_donDay.toDateString()}')">✕</button>
     </div>`;
   }
 
@@ -6897,6 +6912,14 @@ function renderNotifToggle() {
 
 // ═══ DARK MODE (retiré — Tarbiya est le seul thème) ═══
 function isDarkMode(){return false;}
+
+// ═══ DON ═══
+const DONATION_URL='https://alairdutemps.com/je-fais-un-don/';
+function openDonation(){
+  track('don_open');
+  const w=window.open(DONATION_URL,'_blank','noopener');
+  if(!w) location.href=DONATION_URL;
+}
 
 // ═══ ABOUT ═══
 function showAbout(){document.getElementById("about-modal").classList.add("show");}
