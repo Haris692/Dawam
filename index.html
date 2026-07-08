@@ -1028,7 +1028,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 <!-- tarbiya-theme.css intégré inline -->
 <style id="tarbiya-theme-css">
 /* ============================================================================
-   TOKENS — palette par défaut "Violet & Coral"
+   TOKENS — base "Violet & Coral" (la palette par défaut est "sableDore", surchargée ci-dessous)
    ============================================================================ */
 [data-theme="tarbiya"] {
   --t-accent:#5B3FE4;--t-accent-soft:#EFEAFE;--t-warm:#FF8A3D;--t-coral:#FF6B6B;
@@ -1043,10 +1043,16 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   --t-font-body:"Plus Jakarta Sans",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   --t-font-arabic:"Amiri","Scheherazade New",serif;
 }
+[data-theme="tarbiya"][data-palette="sableDore"]{--t-accent:#BA7517;--t-accent-soft:#FAEEDA;--t-warm:#D9A94E;--t-coral:#8A6020;--t-hero-grad:linear-gradient(160deg,#C8871F 0%,#9A6013 60%,#7A4C0E 100%);--t-warm-grad:linear-gradient(135deg,#EAC876 0%,#D9A94E 55%,#B4842E 100%);--t-bg:#F5EDE0;--t-ink:#3D2A0A;}
 [data-theme="tarbiya"][data-palette="emeraldAmber"]{--t-accent:#1F8A5B;--t-accent-soft:#DEEFE3;--t-warm:#FFB23A;--t-coral:#FF8A3D;--t-hero-grad:linear-gradient(160deg,#1F8A5B 0%,#15673F 60%,#0E5C3A 100%);--t-warm-grad:linear-gradient(135deg,#FFD16B 0%,#FFB23A 55%,#FF8A3D 100%);}
 [data-theme="tarbiya"][data-palette="rubyGold"]{--t-accent:#C8344B;--t-accent-soft:#FBE4E6;--t-warm:#E2B23A;--t-coral:#C29230;--t-hero-grad:linear-gradient(160deg,#D63A55 0%,#B12A45 60%,#8A1C32 100%);--t-warm-grad:linear-gradient(135deg,#F0CE5A 0%,#E2B23A 55%,#C29230 100%);}
 [data-theme="tarbiya"][data-palette="midnightLilac"]{--t-accent:#2B2569;--t-accent-soft:rgba(162,139,255,.18);--t-warm:#D9B26F;--t-coral:#6B4DFF;--t-hero-grad:linear-gradient(160deg,#2B2569 0%,#1A1545 60%,#0E0D24 100%);--t-warm-grad:linear-gradient(135deg,#D9B26F 0%,#A28BFF 60%,#6B4DFF 100%);}
 [data-theme="tarbiya"][data-palette="oceanMint"]{--t-accent:#0B6BB3;--t-accent-soft:#DCEEF8;--t-warm:#4DCCE0;--t-coral:#38B6CC;--t-hero-grad:linear-gradient(160deg,#1689CB 0%,#0E78BD 60%,#0B6BB3 100%);--t-warm-grad:linear-gradient(135deg,#86E1B8 0%,#4DCCE0 60%,#38B6CC 100%);}
+[data-theme="tarbiya"][data-palette="fajr"]{--t-accent:#33418F;--t-accent-soft:#E7EAF9;--t-warm:#F58A56;--t-coral:#E06A3B;--t-hero-grad:linear-gradient(160deg,#3D4CA4 0%,#2A3579 55%,#1D2557 100%);--t-warm-grad:linear-gradient(135deg,#FFC48A 0%,#F58A56 55%,#E06A3B 100%);--t-bg:#F4F5FB;--t-ink:#151A2E;}
+[data-theme="tarbiya"][data-palette="sapinOr"]{--t-accent:#17453B;--t-accent-soft:#E2EEE7;--t-warm:#D9A94E;--t-coral:#8F6B22;--t-hero-grad:linear-gradient(160deg,#1E5749 0%,#17453B 55%,#0F332B 100%);--t-warm-grad:linear-gradient(135deg,#EAC876 0%,#D9A94E 55%,#B4842E 100%);--t-bg:#F5F6F2;--t-ink:#14211C;}
+[data-theme="tarbiya"][data-palette="oliveSafran"]{--t-accent:#5C6B25;--t-accent-soft:#ECEFDD;--t-warm:#E89B2D;--t-coral:#C4711C;--t-hero-grad:linear-gradient(160deg,#6E7F2E 0%,#525F1F 60%,#3E4917 100%);--t-warm-grad:linear-gradient(135deg,#F3BC55 0%,#E89B2D 55%,#C4711C 100%);--t-bg:#F7F6EF;--t-ink:#1F2213;}
+[data-theme="tarbiya"][data-palette="terreSable"]{--t-accent:#A2401F;--t-accent-soft:#F7E5DB;--t-warm:#E8A45B;--t-coral:#B4622A;--t-hero-grad:linear-gradient(160deg,#B84E27 0%,#93381A 60%,#6F2A13 100%);--t-warm-grad:linear-gradient(135deg,#F0BC7E 0%,#E8A45B 55%,#C97B35 100%);--t-bg:#FAF4EE;--t-ink:#28170F;}
+[data-theme="tarbiya"][data-palette="pruneRose"]{--t-accent:#6E2A50;--t-accent-soft:#F6E4EC;--t-warm:#E98A6A;--t-coral:#C75B4A;--t-hero-grad:linear-gradient(160deg,#83345F 0%,#611F44 60%,#471531 100%);--t-warm-grad:linear-gradient(135deg,#F2AE84 0%,#E98A6A 55%,#C75B4A 100%);--t-bg:#FAF3F5;--t-ink:#251119;}
 /* Layout global */
 [data-theme="tarbiya"] .t-app{background:var(--t-bg);color:var(--t-ink);font-family:var(--t-font-body);-webkit-font-smoothing:antialiased;min-height:100dvh;padding-bottom:110px;}
 [data-theme="tarbiya"] .t-page{padding-left:var(--t-page-pad-x);padding-right:var(--t-page-pad-x);display:flex;flex-direction:column;gap:var(--t-card-gap);}
@@ -2160,11 +2166,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 }
 [data-theme="tarbiya"] .t-view-toggle__btn[aria-pressed="true"]{
   background:var(--t-accent);color:#fff;
-  box-shadow:0 4px 12px -4px rgba(31,138,91,.42);
+  box-shadow:0 4px 12px -4px color-mix(in srgb,var(--t-accent) 42%,transparent);
 }
-[data-theme="tarbiya"][data-palette="rubyGold"] .t-view-toggle__btn[aria-pressed="true"]{box-shadow:0 4px 12px -4px rgba(200,52,75,.42);}
-[data-theme="tarbiya"][data-palette="midnightLilac"] .t-view-toggle__btn[aria-pressed="true"]{box-shadow:0 4px 12px -4px rgba(107,77,255,.42);}
-[data-theme="tarbiya"][data-palette="oceanMint"] .t-view-toggle__btn[aria-pressed="true"]{box-shadow:0 4px 12px -4px rgba(11,107,179,.42);}
 [data-theme="tarbiya"] .t-view-toggle__btn:active{transform:scale(.96);}
 
 /* Quand mode=stack on cache le path Duolingo, le seeAll, la progress card */
@@ -2654,7 +2657,8 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   var STORAGE_KEY='app.theme';
   var STORAGE_PALETTE_KEY='app.theme.palette';
   var THEMES=['default','tarbiya'];
-  var PALETTES=['violetCoral','emeraldAmber','rubyGold','midnightLilac','oceanMint'];
+  var PALETTES=['sableDore','violetCoral','emeraldAmber','rubyGold','midnightLilac','oceanMint','fajr','sapinOr','oliveSafran','terreSable','pruneRose'];
+  var PALETTE_ACCENTS={sableDore:'#BA7517',violetCoral:'#5B3FE4',emeraldAmber:'#1F8A5B',rubyGold:'#C8344B',midnightLilac:'#2B2569',oceanMint:'#0B6BB3',fajr:'#33418F',sapinOr:'#17453B',oliveSafran:'#5C6B25',terreSable:'#A2401F',pruneRose:'#6E2A50'};
   function read(key,fallback,allowed){try{var v=localStorage.getItem(key);if(v&&(!allowed||allowed.indexOf(v)!==-1))return v;}catch(_){}return fallback;}
   function write(key,v){try{localStorage.setItem(key,v);}catch(_){}}
   var subs=[];
@@ -2671,7 +2675,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       html.setAttribute('data-path-view', savedView);
       if(meta){
         if(!meta.dataset.tarbOrig) meta.dataset.tarbOrig=meta.getAttribute('content')||'';
-        meta.setAttribute('content','#5B3FE4');
+        meta.setAttribute('content',PALETTE_ACCENTS[palette]||'#BA7517');
       }
     } else {
       html.removeAttribute('data-theme');
@@ -2685,7 +2689,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   var api={
     THEMES:THEMES.slice(),
     PALETTES:PALETTES.slice(),
-    get:function(){return{theme:read(STORAGE_KEY,'default',THEMES),palette:read(STORAGE_PALETTE_KEY,'violetCoral',PALETTES)};},
+    get:function(){return{theme:read(STORAGE_KEY,'tarbiya',THEMES),palette:read(STORAGE_PALETTE_KEY,'sableDore',PALETTES)};},
     setTheme:function(theme){if(THEMES.indexOf(theme)===-1)return;write(STORAGE_KEY,theme);var s=api.get();apply(s.theme,s.palette);emit();},
     setPalette:function(palette){if(PALETTES.indexOf(palette)===-1)return;write(STORAGE_PALETTE_KEY,palette);var s=api.get();apply(s.theme,s.palette);emit();},
     subscribe:function(fn){subs.push(fn);return function(){subs=subs.filter(function(f){return f!==fn;});};},
@@ -5473,11 +5477,17 @@ document.getElementById('theme-modal').addEventListener('click',function(e){if(e
 
 // ═══ APPARENCE MODAL (Tarbiya + couleurs de base) ═══
 const PALETTES_META = {
+  sableDore:    {name:'Sable doré',accent:'#BA7517', warm:'#D9A94E', soft:'#FAEEDA'},
   violetCoral:  {name:'Violet',    accent:'#5B3FE4', warm:'#FF8A3D', soft:'#EFEAFE'},
   emeraldAmber: {name:'Émeraude',  accent:'#1F8A5B', warm:'#FFB23A', soft:'#DEEFE3'},
   rubyGold:     {name:'Rubis',     accent:'#C8344B', warm:'#E2B23A', soft:'#FBE4E6'},
   midnightLilac:{name:'Minuit',    accent:'#2B2569', warm:'#D9B26F', soft:'rgba(162,139,255,.25)'},
   oceanMint:    {name:'Océan',     accent:'#0B6BB3', warm:'#4DCCE0', soft:'#DCEEF8'},
+  fajr:         {name:'Fajr',      accent:'#33418F', warm:'#F58A56', soft:'#E7EAF9'},
+  sapinOr:      {name:'Sapin',     accent:'#17453B', warm:'#D9A94E', soft:'#E2EEE7'},
+  oliveSafran:  {name:'Olive',     accent:'#5C6B25', warm:'#E89B2D', soft:'#ECEFDD'},
+  terreSable:   {name:'Terre',     accent:'#A2401F', warm:'#E8A45B', soft:'#F7E5DB'},
+  pruneRose:    {name:'Prune',     accent:'#6E2A50', warm:'#E98A6A', soft:'#F6E4EC'},
 };
 
 function renderApparenceModal() {
@@ -5485,9 +5495,21 @@ function renderApparenceModal() {
   const isTarbiya = t.theme === 'tarbiya';
   const toggle = document.getElementById('tarbiya-toggle');
   if (toggle) toggle.classList.toggle('on', isTarbiya);
-  // Tarbiya = thème verrouillé : on masque la palette ET les couleurs de base
+  // Palette de couleurs : visible uniquement quand Tarbiya est actif
   const paletteWrap = document.getElementById('apparence-palette-wrap');
-  if (paletteWrap) paletteWrap.style.display = 'none';
+  if (paletteWrap) {
+    paletteWrap.style.display = isTarbiya ? '' : 'none';
+    if (isTarbiya) {
+      const pg = document.getElementById('apparence-palette-grid');
+      if (pg) pg.innerHTML = Object.entries(PALETTES_META).map(([key,p]) =>
+        `<div class="apparence-palette-cell${key===t.palette?' active':''}" onclick="selectTarbiyaPalette('${key}')">
+          <div class="apparence-palette-swatch" style="background:${p.accent}">
+            <div class="apparence-palette-dot" style="background:${p.warm}"></div>
+          </div>
+          <div class="apparence-palette-name">${p.name}</div>
+        </div>`).join('');
+    }
+  }
   const baseSection = document.getElementById('apparence-base-section');
   if (baseSection) baseSection.style.display = isTarbiya ? 'none' : '';
   const current = localStorage.getItem('dawam_theme') || 'default';
