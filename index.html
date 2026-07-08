@@ -154,174 +154,195 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 .splash-quote { font-family:var(--font-display);font-size:clamp(13px,3.5vw,16px);font-style:italic;font-weight:400;color:var(--text);line-height:1.65;text-align:center;animation:fadeUp .5s .4s ease both; }
 .splash-actions { margin-top:auto;flex-shrink:0;width:100%;display:flex;flex-direction:column;gap:8px;padding:16px 0 clamp(16px,4vh,32px);animation:fadeUp .5s .6s ease both; }
 
-/* ONBOARDING */
-#onboarding { background:var(--bg);overflow:hidden; }
-.ob-page { display:none;flex-direction:column;padding:clamp(20px,5vh,40px) 24px 0;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch; }
+/* ONBOARDING — habillage Tarbiya */
+#onboarding { background:var(--t-bg,#F5EDE0);overflow:hidden;font-family:var(--t-font-body,var(--font-body)); }
+.ob-page { display:none;flex-direction:column;padding:clamp(20px,5vh,40px) 22px 0;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch; }
 .ob-page.active { display:flex; }
-.ob-page.ob-slide-in { animation:obSlideIn .26s ease forwards; }
-.ob-page.ob-slide-back { animation:obSlideInBack .26s ease forwards; }
+.ob-page.ob-slide-in { animation:obSlideIn .3s cubic-bezier(.22,1,.36,1) forwards; }
+.ob-page.ob-slide-back { animation:obSlideInBack .3s cubic-bezier(.22,1,.36,1) forwards; }
 @keyframes obSlideIn { from{opacity:0;transform:translateX(26px)} to{opacity:1;transform:none} }
 @keyframes obSlideInBack { from{opacity:0;transform:translateX(-26px)} to{opacity:1;transform:none} }
-.ob-dots { display:flex;gap:5px;justify-content:center;margin-bottom:clamp(14px,3vh,28px); }
-.ob-dot { width:6px;height:6px;border-radius:3px;background:var(--border);transition:all .3s; }
-.ob-dot.active { width:20px;background:var(--green); }
-.ob-dot.done { background:rgba(59,109,17,.35); }
-.ob-emoji-circle { width:clamp(56px,14vw,80px);height:clamp(56px,14vw,80px);border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:clamp(24px,7vw,36px);margin:0 auto clamp(10px,2.5vh,20px);box-shadow:0 0 0 8px rgba(186,117,23,.08); }
-.ob-label { font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--green);text-align:center;margin-bottom:6px; }
-.ob-title { font-family:var(--font-display);font-size:clamp(20px,5.5vw,26px);font-weight:600;color:var(--text);text-align:center;line-height:1.3;margin-bottom:clamp(8px,2vh,14px); }
-.ob-desc { font-size:13px;color:var(--text-secondary);text-align:center;line-height:1.6;margin-bottom:clamp(12px,2.5vh,20px);padding:10px 14px;background:var(--bg-card);border-radius:14px;border:.5px solid var(--border-light); }
-.ob-options { display:flex;flex-direction:column;gap:8px;width:100%; }
-.ob-option { display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
-.ob-option.selected { border-color:var(--green);background:rgba(59,109,17,.07); }
+/* Hero pleine largeur (page Bienvenue) */
+.ob-page-hero { padding:0; }
+.ob-hero { position:relative;overflow:hidden;color:#fff;background:var(--t-hero-grad,linear-gradient(160deg,#C8871F,#7A4C0E));padding:max(clamp(24px,6vh,44px),calc(var(--sat,0px) + 20px)) 24px 72px;border-bottom-left-radius:var(--t-radius,26px);border-bottom-right-radius:var(--t-radius,26px);flex-shrink:0; }
+.ob-hero::before,.ob-hero::after { content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.10);pointer-events:none; }
+.ob-hero::before { width:210px;height:210px;top:-80px;right:-60px; }
+.ob-hero::after { width:140px;height:140px;bottom:-46px;left:-46px;filter:blur(8px);background:rgba(255,255,255,.12); }
+.ob-hero-kicker { font-size:11px;font-weight:800;letter-spacing:2.4px;text-transform:uppercase;opacity:.85;position:relative; }
+.ob-hero-title { font-family:var(--t-font-title,inherit);font-weight:800;font-size:clamp(30px,9vw,40px);line-height:1.08;letter-spacing:-1.2px;margin:10px 0 12px;position:relative; }
+.ob-hero-title span { color:var(--t-warm,#D9A94E); }
+.ob-hero-quote { font-size:13px;font-style:italic;opacity:.88;line-height:1.55;max-width:300px;position:relative; }
+.ob-hero-body { display:flex;flex-direction:column;flex:1;padding:0 22px;margin-top:-50px;position:relative;z-index:2; }
+.ob-dots { display:flex;gap:5px;justify-content:center;margin-bottom:clamp(14px,3vh,28px);flex-shrink:0; }
+.ob-dot { width:6px;height:6px;border-radius:3px;background:rgba(0,0,0,.12);transition:all .3s; }
+.ob-dot.active { width:22px;background:var(--t-accent,#BA7517); }
+.ob-dot.done { background:var(--t-accent,#BA7517);opacity:.4; }
+.ob-hero .ob-dots { justify-content:flex-start;margin-bottom:16px;position:relative; }
+.ob-hero .ob-dot { background:rgba(255,255,255,.35); }
+.ob-hero .ob-dot.active { background:#fff; }
+.ob-hero .ob-dot.done { background:rgba(255,255,255,.75);opacity:1; }
+.ob-emoji-circle { width:clamp(56px,14vw,76px);height:clamp(56px,14vw,76px);border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(24px,7vw,34px);margin:0 auto clamp(10px,2.5vh,20px);box-shadow:0 14px 24px -10px color-mix(in srgb,var(--t-accent,#BA7517) 35%,transparent); }
+.ob-label { font-size:10.5px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--t-accent,#BA7517);text-align:center;margin-bottom:6px; }
+.ob-title { font-family:var(--t-font-title,inherit);font-size:clamp(22px,6vw,28px);font-weight:800;letter-spacing:-.6px;color:var(--t-ink,#3D2A0A);text-align:center;line-height:1.2;margin-bottom:clamp(8px,2vh,14px); }
+.ob-desc { font-size:13px;color:var(--t-muted,#7A748A);text-align:center;line-height:1.6;margin-bottom:clamp(12px,2.5vh,20px);padding:12px 16px;background:#fff;border-radius:var(--t-radius-sm,14px);box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-options { display:flex;flex-direction:column;gap:10px;width:100%; }
+.ob-option { display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--t-radius-sm,14px);background:#fff;border:2px solid transparent;cursor:pointer;transition:all .2s;box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-option.selected { border-color:var(--t-accent,#BA7517);background:var(--t-accent-soft,#FAEEDA); }
 .ob-option-emoji { font-size:24px; }
 .ob-option-text { flex:1; }
-.ob-option-label { font-size:15px;font-weight:600;color:var(--text); }
-.ob-option-desc { font-size:12px;color:var(--text-light);margin-top:2px; }
-.ob-radio { width:20px;height:20px;border-radius:10px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
-.ob-option.selected .ob-radio { border-color:var(--green); }
-.ob-radio-dot { width:10px;height:10px;border-radius:5px;background:var(--green);display:none; }
+.ob-option-label { font-size:15px;font-weight:700;color:var(--t-ink,#3D2A0A); }
+.ob-option-desc { font-size:12px;color:var(--t-muted,#7A748A);margin-top:2px; }
+.ob-radio { width:22px;height:22px;border-radius:11px;border:2px solid color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.ob-option.selected .ob-radio { border-color:var(--t-accent,#BA7517); }
+.ob-radio-dot { width:10px;height:10px;border-radius:5px;background:var(--t-accent,#BA7517);display:none; }
 .ob-option.selected .ob-radio-dot { display:block;animation:checkPop .25s ease; }
-.ob-name-input { width:100%;padding:16px;border-radius:14px;border:1.5px solid var(--border);background:var(--bg-card);font-family:var(--font-body);font-size:18px;font-weight:600;color:var(--text);outline:none;transition:border-color .2s; }
-.ob-name-input:focus { border-color:var(--accent); }
-.ob-bottom { margin-top:auto;flex-shrink:0;padding:12px 0 clamp(16px,3.5vh,28px);display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;bottom:0;z-index:2; }
-.ob-back { width:44px;height:44px;border-radius:22px;background:rgba(186,117,23,.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px; }
-.ob-counter { font-size:13px;font-weight:500;color:var(--text-light); }
-.ob-next { display:flex;align-items:center;gap:8px;padding:12px 22px;border-radius:20px;border:none;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:600;color:#fff;transition:opacity .15s; }
-.ob-next:disabled { opacity:.4;cursor:not-allowed; }
-.ob-features { display:flex;flex-direction:column;gap:8px;width:100%; }
-.ob-feature { display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg-card);border-radius:12px;border:.5px solid var(--border-light); }
-.ob-feature-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px; }
-.ob-feature-text { font-size:14px;font-weight:600;color:var(--text); }
+.ob-name-input { width:100%;padding:16px 18px;border-radius:var(--t-radius-btn,16px);border:2px solid transparent;background:#fff;font-family:inherit;font-size:17px;font-weight:700;color:var(--t-ink,#3D2A0A);outline:none;transition:border-color .2s;box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-name-input:focus { border-color:var(--t-accent,#BA7517); }
+.ob-name-input::placeholder { color:var(--t-muted,#7A748A);font-weight:600; }
+.ob-bottom { margin-top:auto;flex-shrink:0;padding:12px 0 clamp(16px,3.5vh,28px);display:flex;align-items:center;justify-content:space-between;background:var(--t-bg,#F5EDE0);position:sticky;bottom:0;z-index:2; }
+.ob-back { width:46px;height:46px;border-radius:50%;background:var(--t-accent-soft,#FAEEDA);color:var(--t-accent,#BA7517);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;transition:transform .12s ease; }
+.ob-back:active { transform:scale(.94); }
+.ob-counter { font-size:10.5px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--t-muted,#7A748A); }
+.ob-next { display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 22px;border-radius:var(--t-radius-btn,16px);border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:800;letter-spacing:.2px;color:#fff;background:var(--t-accent,#BA7517);box-shadow:0 10px 22px -10px color-mix(in srgb,var(--t-accent,#BA7517) 60%,transparent);transition:transform .12s ease,opacity .15s; }
+.ob-next:active { transform:scale(.97); }
+.ob-next:disabled { opacity:.35;cursor:not-allowed;box-shadow:none; }
+#onboarding .btn-primary { background:var(--t-accent,#BA7517);color:#fff;border-radius:var(--t-radius-btn,16px);font-weight:800;font-size:15px;padding:16px;box-shadow:0 10px 22px -10px color-mix(in srgb,var(--t-accent,#BA7517) 60%,transparent); }
+.ob-features { display:flex;flex-direction:column;gap:10px;width:100%; }
+.ob-feature { display:flex;align-items:center;gap:12px;padding:13px 14px;background:#fff;border-radius:var(--t-radius-sm,14px);box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-feature-icon { width:38px;height:38px;border-radius:12px;background:var(--t-accent-soft,#FAEEDA);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.ob-feature-text { font-size:14px;font-weight:700;color:var(--t-ink,#3D2A0A); }
 /* Social proof */
-.ob-social-stat { text-align:center;padding:22px 20px;background:var(--accent-light);border-radius:20px;border:.5px solid var(--border);margin-bottom:16px; }
-.ob-social-number { font-family:var(--font-display);font-size:42px;font-weight:700;color:var(--accent-dark);line-height:1; }
-.ob-social-label { font-size:13px;color:var(--text-secondary);margin-top:6px;line-height:1.5; }
-.ob-social-quote { background:var(--bg-card);border-radius:14px;border-left:3px solid var(--accent);padding:14px 16px;margin-bottom:10px; }
-.ob-social-quote-text { font-size:13px;color:var(--text);line-height:1.6;font-style:italic; }
-.ob-social-quote-name { font-size:11px;color:var(--text-light);margin-top:6px;font-weight:600; }
+.ob-social-stat { text-align:center;padding:22px 20px;background:#fff;border-radius:var(--t-radius,26px);box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent);margin-bottom:16px; }
+.ob-social-number { font-family:var(--t-font-title,inherit);font-size:42px;font-weight:800;letter-spacing:-1px;color:var(--t-accent,#BA7517);line-height:1; }
+.ob-social-label { font-size:13px;color:var(--t-muted,#7A748A);margin-top:6px;line-height:1.5; }
+.ob-social-quote { background:#fff;border-radius:var(--t-radius-sm,14px);border-left:3px solid var(--t-accent,#BA7517);padding:14px 16px;margin-bottom:10px;box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-social-quote-text { font-size:13px;color:var(--t-ink,#3D2A0A);line-height:1.6;font-style:italic; }
+.ob-social-quote-name { font-size:11px;color:var(--t-muted,#7A748A);margin-top:6px;font-weight:700; }
 /* Commitment */
-.ob-commit-options { display:flex;flex-direction:column;gap:8px;width:100%; }
-.ob-commit-slot { display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
-.ob-commit-slot.selected { border-color:var(--accent);background:var(--accent-light); }
+.ob-commit-options { display:flex;flex-direction:column;gap:10px;width:100%; }
+.ob-commit-slot { display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--t-radius-sm,14px);background:#fff;border:2px solid transparent;cursor:pointer;transition:all .2s;box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-commit-slot.selected { border-color:var(--t-accent,#BA7517);background:var(--t-accent-soft,#FAEEDA); }
 .ob-commit-slot-emoji { font-size:22px;flex-shrink:0; }
-.ob-commit-slot-label { font-size:15px;font-weight:600;color:var(--text);flex:1; }
-.ob-commit-slot-sub { font-size:12px;color:var(--text-secondary);margin-top:2px; }
-.ob-pledge { background:rgba(59,109,17,.08);border:1px solid var(--green);border-radius:14px;padding:14px 16px;text-align:center;margin-top:12px;font-size:13px;color:var(--text);line-height:1.6;display:none; }
+.ob-commit-slot-label { font-size:15px;font-weight:700;color:var(--t-ink,#3D2A0A);flex:1; }
+.ob-commit-slot-sub { font-size:12px;color:var(--t-muted,#7A748A);margin-top:2px; }
+.ob-pledge { background:var(--t-accent-soft,#FAEEDA);border:1px solid var(--t-accent,#BA7517);border-radius:var(--t-radius-sm,14px);padding:14px 16px;text-align:center;margin-top:12px;font-size:13px;color:var(--t-ink,#3D2A0A);line-height:1.6;display:none; }
 .ob-pledge.visible { display:block; }
 /* Palier reason */
-.ob-palier-why { background:var(--bg-card);border-radius:14px;border-left:3px solid var(--green);padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--text-secondary);line-height:1.6; }
-.ob-duration-badge { display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--accent-dark);margin-bottom:14px; }
+.ob-palier-why { background:#fff;border-radius:var(--t-radius-sm,14px);border-left:3px solid var(--t-accent,#BA7517);padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--t-muted,#7A748A);line-height:1.6; }
+.ob-duration-badge { display:inline-flex;align-items:center;gap:6px;background:var(--t-accent-soft,#FAEEDA);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--t-accent,#BA7517);margin-bottom:14px; }
 /* Notif prompt */
-.notif-prompt { position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 24px calc(24px + env(safe-area-inset-bottom));z-index:200;transform:translateY(100%);transition:transform .35s cubic-bezier(.3,1,.4,1); }
+.notif-prompt { position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:var(--t-radius,26px) var(--t-radius,26px) 0 0;padding:24px 24px calc(24px + env(safe-area-inset-bottom));z-index:200;transform:translateY(100%);transition:transform .35s cubic-bezier(.3,1,.4,1);box-shadow:0 -12px 40px -16px rgba(20,18,40,.30); }
 .notif-prompt.show { transform:translateY(0); }
-.ob-result-palier { text-align:center;padding:20px;background:var(--accent-light);border-radius:16px;border:.5px solid var(--border);margin-bottom:20px; }
+.ob-result-palier { text-align:center;padding:20px;background:var(--t-accent-soft,#FAEEDA);border-radius:var(--t-radius,26px);margin-bottom:20px; }
 .ob-result-emoji { font-size:48px;margin-bottom:8px; }
-.ob-result-name { font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--accent-dark);margin-bottom:4px; }
-.ob-result-desc { font-size:13px;color:var(--text-secondary);line-height:1.5; }
-.ob-result-msg { font-family:var(--font-display);font-size:14px;font-style:italic;color:var(--text-secondary);text-align:center;line-height:1.6;padding:16px;background:rgba(59,109,17,.06);border-radius:12px;margin-top:16px; }
+.ob-result-name { font-family:var(--t-font-title,inherit);font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--t-accent,#BA7517);margin-bottom:4px; }
+.ob-result-desc { font-size:13px;color:var(--t-muted,#7A748A);line-height:1.5; }
+.ob-result-msg { font-size:14px;font-style:italic;color:var(--t-muted,#7A748A);text-align:center;line-height:1.6;padding:16px;background:#fff;border-radius:var(--t-radius-sm,14px);margin-top:16px; }
 /* RESULT PAGE */
-.ob-result-step { display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg-card);border-radius:12px;border:.5px solid var(--border-light);margin-bottom:8px; }
+.ob-result-step { display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:var(--t-radius-sm,14px);border:2px solid transparent;margin-bottom:8px;box-shadow:0 6px 14px -10px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
 .ob-result-step-emoji { font-size:20px;flex-shrink:0; }
 .ob-result-step-info { flex:1;min-width:0; }
-.ob-result-step-title { font-size:13px;font-weight:600;color:var(--text); }
-.ob-result-step-time { font-size:11px;color:var(--text-light);margin-top:2px; }
-.ob-result-step-xp { font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0; }
+.ob-result-step-title { font-size:13px;font-weight:700;color:var(--t-ink,#3D2A0A); }
+.ob-result-step-time { font-size:11px;color:var(--t-muted,#7A748A);margin-top:2px; }
+.ob-result-step-xp { font-size:11px;font-weight:700;color:var(--t-accent,#BA7517);flex-shrink:0; }
 .ob-result-step.edit-mode { cursor:pointer;transition:all .2s; }
-.ob-result-step.edit-mode.selected { border-color:var(--green);background:rgba(59,109,17,.06); }
-.ob-result-check { width:20px;height:20px;border-radius:10px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--bg-card);transition:all .2s; }
-.ob-result-step.selected .ob-result-check { background:var(--green);border-color:var(--green); }
+.ob-result-step.edit-mode.selected { border-color:var(--t-accent,#BA7517);background:var(--t-accent-soft,#FAEEDA); }
+.ob-result-check { width:20px;height:20px;border-radius:10px;border:2px solid color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;transition:all .2s; }
+.ob-result-step.selected .ob-result-check { background:var(--t-accent,#BA7517);border-color:var(--t-accent,#BA7517); }
 /* SLIDER SALAT */
 .ob-slider-wrap { width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0; }
-.ob-slider-value { font-family:var(--font-display);font-size:clamp(48px,14vw,72px);font-weight:700;color:var(--accent);line-height:1; }
-.ob-slider-sub { font-size:13px;color:var(--text-secondary);text-align:center;min-height:20px; }
-.ob-slider { width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer;margin:4px 0; }
-.ob-slider::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(186,117,23,.4); }
+.ob-slider-value { font-family:var(--t-font-title,inherit);font-size:clamp(48px,14vw,72px);font-weight:800;letter-spacing:-2px;color:var(--t-accent,#BA7517);line-height:1; }
+.ob-slider-sub { font-size:13px;color:var(--t-muted,#7A748A);text-align:center;min-height:20px; }
+.ob-slider { width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:color-mix(in srgb,var(--t-accent,#BA7517) 18%,transparent);outline:none;cursor:pointer;margin:4px 0; }
+.ob-slider::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--t-accent,#BA7517);cursor:pointer;box-shadow:0 6px 14px -4px color-mix(in srgb,var(--t-accent,#BA7517) 60%,transparent); }
 .ob-slider-ticks { width:100%;display:flex;justify-content:space-between;padding:0 2px; }
-.ob-slider-ticks span { font-size:11px;color:var(--text-light);font-weight:600; }
+.ob-slider-ticks span { font-size:11px;color:var(--t-muted,#7A748A);font-weight:700; }
 /* PRAYER CHECKBOXES */
-.ob-prayer-grid { display:flex;flex-direction:column;gap:8px;width:100%; }
-.ob-prayer-card { display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);cursor:pointer;transition:all .2s; }
-.ob-prayer-card.selected { border-color:var(--green);background:rgba(59,109,17,.07); }
-.ob-prayer-name { font-size:15px;font-weight:600;color:var(--text);flex:1; }
-.ob-prayer-ar { font-family:'Amiri',serif;font-size:17px;color:var(--accent);margin-right:4px; }
-.ob-prayer-chk { width:22px;height:22px;border-radius:11px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s; }
-.ob-prayer-card.selected .ob-prayer-chk { border-color:var(--green);background:var(--green); }
+.ob-prayer-grid { display:flex;flex-direction:column;gap:10px;width:100%; }
+.ob-prayer-card { display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:var(--t-radius-sm,14px);background:#fff;border:2px solid transparent;cursor:pointer;transition:all .2s;box-shadow:0 8px 18px -12px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-prayer-card.selected { border-color:var(--t-accent,#BA7517);background:var(--t-accent-soft,#FAEEDA); }
+.ob-prayer-name { font-size:15px;font-weight:700;color:var(--t-ink,#3D2A0A);flex:1; }
+.ob-prayer-ar { font-family:var(--t-font-arabic,'Amiri',serif);font-size:17px;color:var(--t-accent,#BA7517);margin-right:4px; }
+.ob-prayer-chk { width:22px;height:22px;border-radius:11px;border:2px solid color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s; }
+.ob-prayer-card.selected .ob-prayer-chk { border-color:var(--t-accent,#BA7517);background:var(--t-accent,#BA7517); }
 .ob-prayer-chk svg { display:none; }
 .ob-prayer-card.selected .ob-prayer-chk svg { display:block; }
 /* CITY AUTOCOMPLETE */
 .city-sug-wrap { width:100%;position:relative;margin-top:0; }
-.city-sug-list { position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg-card);border:1.5px solid var(--green);border-radius:12px;overflow:hidden;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.12); }
-.city-sug-item { padding:13px 14px;cursor:pointer;font-size:14px;color:var(--text);border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:8px; }
+.city-sug-list { position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:2px solid var(--t-accent,#BA7517);border-radius:var(--t-radius-sm,14px);overflow:hidden;z-index:20;box-shadow:0 14px 30px -12px color-mix(in srgb,var(--t-accent,#BA7517) 40%,transparent); }
+.city-sug-item { padding:13px 14px;cursor:pointer;font-size:14px;color:var(--t-ink,#3D2A0A);font-weight:600;border-bottom:1px solid var(--t-line,rgba(0,0,0,.06));display:flex;align-items:center;gap:8px; }
 .city-sug-item:last-child { border-bottom:none; }
-.city-sug-item:active { background:var(--bg-glass); }
-.city-sug-none { padding:12px 14px;font-size:13px;color:var(--text-light);text-align:center; }
+.city-sug-item:active { background:var(--t-accent-soft,#FAEEDA); }
+.city-sug-none { padding:12px 14px;font-size:13px;color:var(--t-muted,#7A748A);text-align:center; }
 
 /* CORAN SUB-OPTIONS */
 .ob-coran-sub { width:100%;margin-top:10px; }
-.ob-coran-sub-label { font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
-.ob-edit-toggle { width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--text-secondary);margin-top:10px;transition:all .2s; }
-.ob-edit-toggle.active { border-color:var(--green);color:var(--green);background:rgba(59,109,17,.06); }
-.ob-step-badge { font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:2px 7px;border-radius:8px;flex-shrink:0; }
+.ob-coran-sub-label { font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-accent,#BA7517);margin-bottom:8px; }
+.ob-edit-toggle { width:100%;padding:13px;border-radius:var(--t-radius-sm,14px);border:2px solid color-mix(in srgb,var(--t-accent,#BA7517) 25%,transparent);background:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:var(--t-muted,#7A748A);margin-top:10px;transition:all .2s; }
+.ob-edit-toggle.active { border-color:var(--t-accent,#BA7517);color:var(--t-accent,#BA7517);background:var(--t-accent-soft,#FAEEDA); }
+.ob-step-badge { font-size:10px;font-weight:700;color:var(--t-accent,#BA7517);background:var(--t-accent-soft,#FAEEDA);padding:2px 8px;border-radius:999px;flex-shrink:0; }
 /* OB SUMMARY + PAYWALL */
 .ob-page-full { padding:0;overflow:hidden; }
 .ob-sum-wrap,.ob-pay-wrap { height:100%;display:flex;flex-direction:column; }
 .ob-sum-scroll,.ob-pay-scroll { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch; }
-.ob-sum-top,.ob-pay-top { padding:16px 20px 0; }
+.ob-sum-top,.ob-pay-top { padding:max(16px,calc(var(--sat,0px) + 10px)) 20px 0; }
 .ob-sum-hero { padding:20px 24px 0; }
-.ob-sum-eyebrow { font-size:10.5px;font-weight:700;letter-spacing:2.5px;color:var(--green);text-transform:uppercase;margin:0 0 14px;text-align:center; }
-.ob-sum-badge { display:inline-flex;align-items:center;gap:9px;background:var(--accent-light);border:1.5px solid rgba(186,117,23,.35);border-radius:40px;padding:7px 18px 7px 11px;margin-bottom:18px; }
+.ob-sum-eyebrow { font-size:10.5px;font-weight:800;letter-spacing:2.5px;color:var(--t-accent,#BA7517);text-transform:uppercase;margin:0 0 14px;text-align:center; }
+.ob-sum-badge { display:inline-flex;align-items:center;gap:9px;background:#fff;border-radius:999px;padding:8px 18px 8px 12px;margin-bottom:18px;box-shadow:0 10px 20px -10px color-mix(in srgb,var(--t-accent,#BA7517) 40%,transparent); }
 .ob-sum-badge-e { font-size:22px;line-height:1; }
-.ob-sum-badge-l { font-size:13px;font-weight:700;color:var(--accent-dark); }
-.ob-sum-title { font-family:var(--font-display);font-size:clamp(22px,6vw,28px);font-weight:700;color:var(--text);line-height:1.28;margin:0 0 10px; }
-.ob-sum-title span { color:var(--accent); }
-.ob-sum-sub { font-size:13.5px;color:var(--text-secondary);line-height:1.65;margin:0 0 20px; }
-.ob-sum-sep { height:1px;background:linear-gradient(to right,transparent,rgba(186,117,23,.4),rgba(59,109,17,.2),transparent);margin:4px 24px 18px; }
+.ob-sum-badge-l { font-size:13px;font-weight:800;color:var(--t-accent,#BA7517); }
+.ob-sum-title { font-family:var(--t-font-title,inherit);font-size:clamp(23px,6.4vw,29px);font-weight:800;letter-spacing:-.7px;color:var(--t-ink,#3D2A0A);line-height:1.22;margin:0 0 10px; }
+.ob-sum-title span { color:var(--t-accent,#BA7517); }
+.ob-sum-sub { font-size:13.5px;color:var(--t-muted,#7A748A);line-height:1.65;margin:0 0 20px; }
+.ob-sum-sep { height:1px;background:linear-gradient(to right,transparent,color-mix(in srgb,var(--t-accent,#BA7517) 45%,transparent),color-mix(in srgb,var(--t-warm,#D9A94E) 35%,transparent),transparent);margin:4px 24px 18px; }
 .ob-sum-tl { padding:0 24px; }
-.ob-sum-tl-lbl { font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-secondary);margin:0 0 12px; }
-.ob-sum-step-grp { margin-bottom:8px; }
-.ob-sum-step { display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg-card);border-radius:10px;border:.5px solid var(--border-light);cursor:pointer;transition:border-radius .15s; }
-.ob-sum-step-grp.open .ob-sum-step { border-radius:10px 10px 0 0;border-bottom-color:transparent; }
+.ob-sum-tl-lbl { font-size:10.5px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--t-muted,#7A748A);margin:0 0 12px; }
+.ob-sum-step-grp { margin-bottom:10px; }
+.ob-sum-step { display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-radius:var(--t-radius-sm,14px);cursor:pointer;transition:border-radius .15s;box-shadow:0 6px 14px -10px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
+.ob-sum-step-grp.open .ob-sum-step { border-radius:var(--t-radius-sm,14px) var(--t-radius-sm,14px) 0 0; }
 .ob-sum-step-e { font-size:20px;flex-shrink:0; }
-.ob-sum-step-l { font-size:13px;font-weight:600;color:var(--text); }
-.ob-sum-step-t { font-size:11px;color:var(--text-light);margin-top:2px; }
+.ob-sum-step-l { font-size:13px;font-weight:700;color:var(--t-ink,#3D2A0A); }
+.ob-sum-step-t { font-size:11px;color:var(--t-muted,#7A748A);margin-top:2px; }
 .ob-sum-chev { flex-shrink:0;transition:transform .25s ease; }
 .ob-sum-step-grp.open .ob-sum-chev { transform:rotate(180deg); }
-.ob-sum-detail { display:none;padding:10px 14px 12px;background:var(--bg-card);border:.5px solid var(--border-light);border-top:none;border-radius:0 0 10px 10px; }
+.ob-sum-detail { display:none;padding:10px 14px 12px;background:#fff;border-top:1px solid var(--t-line,rgba(0,0,0,.06));border-radius:0 0 var(--t-radius-sm,14px) var(--t-radius-sm,14px);box-shadow:0 6px 14px -10px color-mix(in srgb,var(--t-accent,#BA7517) 30%,transparent); }
 .ob-sum-step-grp.open .ob-sum-detail { display:block; }
-.ob-sum-detail p { font-size:12px;color:var(--text-secondary);line-height:1.65;margin:0;font-style:italic; }
+.ob-sum-detail p { font-size:12px;color:var(--t-muted,#7A748A);line-height:1.65;margin:0;font-style:italic; }
 .ob-sum-orn { display:flex;justify-content:center;padding:18px 0 4px; }
 .ob-sum-cta-zone { padding:14px 24px 36px; }
-.ob-sum-cta { width:100%;padding:17px;background:var(--accent);color:#fff8e8;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 24px rgba(186,117,23,.35);font-family:var(--font-body); }
+.ob-sum-cta { width:100%;height:54px;background:var(--t-accent,#BA7517);color:#fff;border:none;border-radius:var(--t-radius-btn,16px);font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.2px;box-shadow:0 14px 28px -12px color-mix(in srgb,var(--t-accent,#BA7517) 65%,transparent);font-family:inherit;transition:transform .12s ease; }
+.ob-sum-cta:active { transform:scale(.98); }
 .ob-pay-hero { padding:20px 24px 0;text-align:center; }
-.ob-pay-badge-coming { display:inline-flex;align-items:center;gap:6px;background:rgba(59,109,17,.1);border:1px solid rgba(59,109,17,.3);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:16px; }
+.ob-pay-badge-coming { display:inline-flex;align-items:center;gap:6px;background:var(--t-accent-soft,#FAEEDA);border-radius:999px;padding:6px 14px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t-accent,#BA7517);margin-bottom:16px; }
 .ob-pay-icon { font-size:52px;margin-bottom:12px;line-height:1; }
-.ob-pay-title { font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text);margin:0 0 8px;line-height:1.3; }
-.ob-pay-title em { font-style:normal;color:var(--accent); }
-.ob-pay-sub { font-size:13px;color:var(--text-secondary);margin:0 0 20px;line-height:1.6; }
-.ob-pay-card { margin:0 24px;border-radius:16px;background:var(--bg-card);border:1.5px solid rgba(186,117,23,.25);padding:20px;position:relative;overflow:hidden; }
+.ob-pay-title { font-family:var(--t-font-title,inherit);font-size:27px;font-weight:800;letter-spacing:-.6px;color:var(--t-ink,#3D2A0A);margin:0 0 8px;line-height:1.25; }
+.ob-pay-title em { font-style:normal;color:var(--t-accent,#BA7517); }
+.ob-pay-sub { font-size:13px;color:var(--t-muted,#7A748A);margin:0 0 20px;line-height:1.6; }
+.ob-pay-card { margin:0 24px;border-radius:var(--t-radius,26px);background:#fff;padding:20px;position:relative;overflow:hidden;box-shadow:var(--t-card-shadow,0 14px 18px -8px rgba(186,117,23,.28)); }
 .ob-pay-card-bg { position:absolute;right:-4px;top:-4px;font-size:64px;opacity:.05;line-height:1;pointer-events:none; }
-.ob-pay-price-lbl { font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--accent);margin-bottom:6px; }
-.ob-pay-price-ttl { font-size:21px;font-weight:800;color:var(--text);line-height:1.25;margin-bottom:6px; }
-.ob-pay-price-ttl em { font-style:normal;color:var(--accent); }
-.ob-pay-price-note { font-size:11.5px;color:var(--text-secondary);margin-bottom:16px; }
+.ob-pay-price-lbl { font-size:10px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--t-accent,#BA7517);margin-bottom:6px; }
+.ob-pay-price-ttl { font-family:var(--t-font-title,inherit);font-size:21px;font-weight:800;letter-spacing:-.3px;color:var(--t-ink,#3D2A0A);line-height:1.25;margin-bottom:6px; }
+.ob-pay-price-ttl em { font-style:normal;color:var(--t-accent,#BA7517); }
+.ob-pay-price-note { font-size:11.5px;color:var(--t-muted,#7A748A);margin-bottom:16px; }
 .ob-pay-feats { display:flex;flex-direction:column;gap:8px;margin-bottom:14px; }
-.ob-pay-feat { display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text); }
-.ob-pay-feat-dot { width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0; }
-.ob-pay-split-ttl { font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;opacity:.7; }
+.ob-pay-feat { display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--t-ink,#3D2A0A); }
+.ob-pay-feat-dot { width:6px;height:6px;border-radius:50%;background:var(--t-warm,#D9A94E);flex-shrink:0; }
+.ob-pay-split-ttl { font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--t-muted,#7A748A);margin-bottom:8px;opacity:.8; }
 .ob-pay-split-bar { display:flex;height:7px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:10px; }
 .ob-pay-split-seg { border-radius:4px; }
 .ob-pay-split-rows { display:flex;flex-direction:column;gap:6px; }
 .ob-pay-split-row { display:flex;align-items:center;gap:8px; }
 .ob-pay-split-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
-.ob-pay-split-lbl { flex:1;font-size:11.5px;color:var(--text-secondary); }
-.ob-pay-split-pct { font-size:10px;color:var(--text-light);margin-right:4px;opacity:.55; }
-.ob-pay-split-amt { font-size:12px;font-weight:600;color:var(--text);flex-shrink:0; }
-.ob-pay-split-hi .ob-pay-split-lbl { color:var(--text);font-weight:600; }
-.ob-pay-split-hi .ob-pay-split-amt { color:var(--accent);font-size:13px;font-weight:700; }
-.ob-pay-dona { font-size:11.5px;font-style:italic;color:var(--accent);text-align:center;margin:10px 0 0;opacity:.85;line-height:1.5; }
-.ob-pay-cta-zone { padding:14px 24px;background:var(--bg);border-top:1px solid var(--border-light);flex-shrink:0; }
-.ob-pay-cta { width:100%;padding:17px;background:var(--green);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 24px rgba(59,109,17,.3);font-family:var(--font-body);margin-bottom:10px;display:block; }
-.ob-pay-cta-note { text-align:center;font-size:11.5px;color:var(--text-light);line-height:1.5; }
+.ob-pay-split-lbl { flex:1;font-size:11.5px;color:var(--t-muted,#7A748A); }
+.ob-pay-split-pct { font-size:10px;color:var(--t-muted,#7A748A);margin-right:4px;opacity:.55; }
+.ob-pay-split-amt { font-size:12px;font-weight:700;color:var(--t-ink,#3D2A0A);flex-shrink:0; }
+.ob-pay-split-hi .ob-pay-split-lbl { color:var(--t-ink,#3D2A0A);font-weight:700; }
+.ob-pay-split-hi .ob-pay-split-amt { color:var(--t-accent,#BA7517);font-size:13px;font-weight:800; }
+.ob-pay-dona { font-size:11.5px;font-style:italic;color:var(--t-accent,#BA7517);text-align:center;margin:10px 0 0;opacity:.85;line-height:1.5; }
+.ob-pay-cta-zone { padding:14px 24px;background:var(--t-bg,#F5EDE0);border-top:1px solid var(--t-line,rgba(0,0,0,.06));flex-shrink:0; }
+.ob-pay-cta { width:100%;height:54px;background:var(--t-accent,#BA7517);color:#fff;border:none;border-radius:var(--t-radius-btn,16px);font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.2px;box-shadow:0 14px 28px -12px color-mix(in srgb,var(--t-accent,#BA7517) 65%,transparent);font-family:inherit;margin-bottom:10px;display:block;transition:transform .12s ease; }
+.ob-pay-cta:active { transform:scale(.98); }
+.ob-pay-cta-note { text-align:center;font-size:11.5px;color:var(--t-muted,#7A748A);line-height:1.5; }
 
 /* PATH */
 #path { background:var(--bg); }
@@ -2656,7 +2677,7 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   'use strict';
   var STORAGE_KEY='app.theme';
   var STORAGE_PALETTE_KEY='app.theme.palette';
-  var THEMES=['default','tarbiya'];
+  var THEMES=['tarbiya']; // Tarbiya est le seul thème de l'app
   var PALETTES=['sableDore','violetCoral','emeraldAmber','rubyGold','midnightLilac','oceanMint','fajr','sapinOr','oliveSafran','terreSable','pruneRose'];
   var PALETTE_ACCENTS={sableDore:'#BA7517',violetCoral:'#5B3FE4',emeraldAmber:'#1F8A5B',rubyGold:'#C8344B',midnightLilac:'#2B2569',oceanMint:'#0B6BB3',fajr:'#33418F',sapinOr:'#17453B',oliveSafran:'#5C6B25',terreSable:'#A2401F',pruneRose:'#6E2A50'};
   function read(key,fallback,allowed){try{var v=localStorage.getItem(key);if(v&&(!allowed||allowed.indexOf(v)!==-1))return v;}catch(_){}return fallback;}
@@ -2854,23 +2875,26 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 
 <!-- ONBOARDING -->
 <div class="screen" id="onboarding">
-  <!-- P0: Welcome -->
-  <div class="ob-page active" data-page="0">
-    <div class="ob-dots" id="dots-0"></div>
-    <div class="ob-emoji-circle">🕌</div>
-    <p class="ob-label">Bismillah</p>
-    <h1 class="ob-title">Bienvenue dans Dawam</h1>
-    <p class="ob-desc">"L'enjeu n'est pas d'agir comme tu veux, quand tu veux, mais d'accomplir l'action appropriée au moment opportun."</p>
-    <div class="ob-features">
-      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(59,109,17,.1)">🌙</div><span class="ob-feature-text">Prières de la nuit</span></div>
-      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(186,117,23,.1)">📿</div><span class="ob-feature-text">Invocations du matin et du soir</span></div>
-      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(74,144,217,.1)">📖</div><span class="ob-feature-text">Lecture du Coran</span></div>
-      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(212,53,126,.1)">🌱</div><span class="ob-feature-text">Constance — sans pression</span></div>
+  <!-- P0: Welcome — héro Tarbiya -->
+  <div class="ob-page ob-page-hero active" data-page="0">
+    <div class="ob-hero">
+      <div class="ob-dots" id="dots-0"></div>
+      <p class="ob-hero-kicker">Bismillah</p>
+      <h1 class="ob-hero-title">Bienvenue dans<br>Dawam<span>.</span></h1>
+      <p class="ob-hero-quote">« L'enjeu n'est pas d'agir comme tu veux, quand tu veux, mais d'accomplir l'action appropriée au moment opportun. »</p>
     </div>
-    <div class="ob-bottom">
-      <div style="width:44px"></div>
-      <span class="ob-counter">1 / 4</span>
-      <button class="ob-next" style="background:var(--green)" onclick="obNext()">Suivant →</button>
+    <div class="ob-hero-body">
+      <div class="ob-features">
+        <div class="ob-feature"><div class="ob-feature-icon">🌙</div><span class="ob-feature-text">Prières de la nuit</span></div>
+        <div class="ob-feature"><div class="ob-feature-icon">📿</div><span class="ob-feature-text">Invocations du matin et du soir</span></div>
+        <div class="ob-feature"><div class="ob-feature-icon">📖</div><span class="ob-feature-text">Lecture du Coran</span></div>
+        <div class="ob-feature"><div class="ob-feature-icon">🌱</div><span class="ob-feature-text">Constance — sans pression</span></div>
+      </div>
+      <div class="ob-bottom">
+        <div style="width:46px"></div>
+        <span class="ob-counter">1 / 4</span>
+        <button class="ob-next" onclick="obNext()">Suivant →</button>
+      </div>
     </div>
   </div>
   <!-- P1: Prénom + Ville -->
@@ -2907,11 +2931,11 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       <div class="ob-option" onclick="obSelectPrayerLevel(this,'some')"><span class="ob-option-emoji">🌿</span><div class="ob-option-text"><div class="ob-option-label">2 à 4 prières</div><div class="ob-option-desc">Pas encore les 5 régulièrement</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
       <div class="ob-option" onclick="obSelectPrayerLevel(this,'all')"><span class="ob-option-emoji">🌳</span><div class="ob-option-text"><div class="ob-option-label">Les 5 prières</div><div class="ob-option-desc">Régulièrement, alhamdulillah</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
     </div>
-    <div id="ob-prayer-feedback" style="font-size:13px;color:var(--green);text-align:center;min-height:22px;margin-top:10px;font-style:italic;font-weight:500;padding:0 8px;line-height:1.5"></div>
+    <div id="ob-prayer-feedback" style="font-size:13px;color:var(--t-accent,#BA7517);text-align:center;min-height:22px;margin-top:10px;font-style:italic;font-weight:600;padding:0 8px;line-height:1.5"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
       <span class="ob-counter">3 / 4</span>
-      <button class="ob-next" id="prayer-level-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+      <button class="ob-next" id="prayer-level-next" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
   <!-- P3: Dhikr -->
@@ -2926,11 +2950,11 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       <div class="ob-option" onclick="obSelectDhikrLevel(this,'sometimes')"><span class="ob-option-emoji">📿</span><div class="ob-option-text"><div class="ob-option-label">Parfois</div><div class="ob-option-desc">Le matin ou le soir, de temps en temps</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
       <div class="ob-option" onclick="obSelectDhikrLevel(this,'regular')"><span class="ob-option-emoji">✨</span><div class="ob-option-text"><div class="ob-option-label">Régulièrement</div><div class="ob-option-desc">Matin et soir, alhamdulillah</div></div><div class="ob-radio"><div class="ob-radio-dot"></div></div></div>
     </div>
-    <div id="ob-dhikr-feedback" style="font-size:13px;color:var(--green);text-align:center;min-height:22px;margin-top:10px;font-style:italic;font-weight:500;padding:0 8px;line-height:1.5"></div>
+    <div id="ob-dhikr-feedback" style="font-size:13px;color:var(--t-accent,#BA7517);text-align:center;min-height:22px;margin-top:10px;font-style:italic;font-weight:600;padding:0 8px;line-height:1.5"></div>
     <div class="ob-bottom">
       <button class="ob-back" onclick="obBack()">←</button>
       <span class="ob-counter">4 / 4</span>
-      <button class="ob-next" id="dhikr-level-next" style="background:var(--green)" onclick="obNext()" disabled>Suivant →</button>
+      <button class="ob-next" id="dhikr-level-next" onclick="obNext()" disabled>Suivant →</button>
     </div>
   </div>
   <!-- P4: Résumé animé (rendu par JS) -->
@@ -2944,9 +2968,9 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <h1 class="ob-title">Active tes rappels</h1>
     <p class="ob-desc">Reçois une notification après chaque prière — calée sur tes horaires — pour ne jamais oublier tes actes.</p>
     <div class="ob-features">
-      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(186,117,23,.1)">🌅</div><span class="ob-feature-text">Rappel après le Fajr</span></div>
-      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(74,144,217,.1)">☀️</div><span class="ob-feature-text">Rappel à midi et l'après-midi</span></div>
-      <div class="ob-feature"><div class="ob-feature-icon" style="background:rgba(59,109,17,.1)">🌙</div><span class="ob-feature-text">Rappel le soir avant de dormir</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon">🌅</div><span class="ob-feature-text">Rappel après le Fajr</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon">☀️</div><span class="ob-feature-text">Rappel à midi et l'après-midi</span></div>
+      <div class="ob-feature"><div class="ob-feature-icon">🌙</div><span class="ob-feature-text">Rappel le soir avant de dormir</span></div>
     </div>
     <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:16px">
       <button class="btn-primary" id="ob-notif-btn" onclick="obNotifActivateAndFinish()">Activer les rappels 🔔</button>
@@ -3067,7 +3091,6 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
     <div class="profil-section-title fade-up" style="animation-delay:.25s">Paramètres</div>
     <div class="profil-menu fade-up" style="animation-delay:.3s">
       <div class="profil-menu-item" onclick="toggleNotifs()"><div class="profil-menu-icon" style="background:rgba(186,117,23,.1)">🔔</div><span class="profil-menu-text">Rappels quotidiens</span><div class="toggle-switch" id="notif-toggle"></div></div>
-      <div class="profil-menu-item" onclick="toggleDarkMode()"><div class="profil-menu-icon" style="background:rgba(15,25,35,.1)">🌙</div><span class="profil-menu-text">Mode sombre</span><div class="toggle-switch" id="dark-toggle"></div></div>
       <div class="profil-menu-item" onclick="showApparenceModal()"><div class="profil-menu-icon" style="background:rgba(107,79,160,.1)">🎨</div><span class="profil-menu-text">Apparence</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showAbout()"><div class="profil-menu-icon" style="background:rgba(59,109,17,.1)">📖</div><span class="profil-menu-text">À propos de Dawam</span><span class="profil-menu-arrow">›</span></div>
       <div class="profil-menu-item" onclick="showFeedbackModal()"><div class="profil-menu-icon" style="background:rgba(74,158,218,.1)">💬</div><span class="profil-menu-text">Donner mon avis</span><span class="profil-menu-arrow">›</span></div>
@@ -3243,22 +3266,6 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
   </div>
 </div>
 
-<!-- THEME MODAL -->
-<div id="theme-modal">
-  <div class="theme-sheet">
-    <div class="about-handle"></div>
-    <div style="padding:20px 20px 12px;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text)">Apparence</div>
-      <button onclick="closeThemeModal()" style="background:rgba(128,128,128,.12);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
-    </div>
-    <p style="font-size:13px;color:var(--text-secondary);padding:0 20px 16px;line-height:1.5">Choisis un thème pour personnaliser ton expérience.</p>
-    <div class="theme-grid" id="theme-grid"></div>
-    <div style="padding:12px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom))">
-      <button class="btn-primary" onclick="closeThemeModal()">Fermer</button>
-    </div>
-  </div>
-</div>
-
 <!-- APPARENCE MODAL -->
 <div id="apparence-modal">
   <div class="apparence-sheet">
@@ -3268,29 +3275,12 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
       <button onclick="closeApparenceModal()" style="background:rgba(128,128,128,.12);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
 
-    <!-- Section Tarbiya -->
+    <!-- Palettes Tarbiya -->
     <div style="padding:0 20px 16px">
-      <div class="profil-section-title" style="margin-bottom:10px">Interface</div>
-      <div class="apparence-tarbiya-row" onclick="toggleTarbiyaTheme()">
-        <div>
-          <div style="font-size:15px;font-weight:600;color:var(--text)">Tarbiya gamifié ✦</div>
-          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Direction artistique moderne</div>
-        </div>
-        <div class="toggle-switch" id="tarbiya-toggle"></div>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px">Choisis ta palette de couleurs.</p>
+      <div id="apparence-palette-wrap">
+        <div id="apparence-palette-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
       </div>
-      <div id="apparence-palette-wrap" style="display:none;margin-top:12px">
-        <div style="font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:10px">Palette de couleurs</div>
-        <div id="apparence-palette-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px"></div>
-      </div>
-    </div>
-
-    <!-- Section couleurs de base (masquée quand Tarbiya actif) -->
-    <div id="apparence-base-section">
-      <div style="height:.5px;background:var(--border);margin:0 20px 16px"></div>
-      <div style="padding:0 20px 4px">
-        <div class="profil-section-title" style="margin-bottom:4px">Couleur de base</div>
-      </div>
-      <div class="theme-grid" id="apparence-theme-grid"></div>
     </div>
 
     <div style="padding:12px 20px;padding-bottom:max(28px,env(safe-area-inset-bottom))">
@@ -5456,26 +5446,8 @@ function applyTheme(key){
   }
   localStorage.setItem('dawam_theme',key);
 }
-function loadTheme(){applyTheme(localStorage.getItem('dawam_theme')||'default');}
-function renderThemeGrid(){
-  const current=localStorage.getItem('dawam_theme')||'default';
-  document.getElementById('theme-grid').innerHTML=Object.entries(THEMES).map(([key,t])=>`
-    <div class="theme-card${key===current?' active':''}" onclick="selectTheme('${key}')">
-      <div class="theme-card-emoji">${t.emoji}</div>
-      <div class="theme-card-swatches">
-        <div class="theme-swatch" style="background:${t.bg}"></div>
-        <div class="theme-swatch" style="background:${t.accent}"></div>
-        <div class="theme-swatch" style="background:${t.green}"></div>
-      </div>
-      <div class="theme-card-name">${t.name}</div>
-    </div>`).join('');
-}
-function selectTheme(key){applyTheme(key);renderThemeGrid();}
-function showThemeModal(){renderThemeGrid();document.getElementById('theme-modal').classList.add('show');}
-function closeThemeModal(){document.getElementById('theme-modal').classList.remove('show');}
-document.getElementById('theme-modal').addEventListener('click',function(e){if(e.target===this)closeThemeModal();});
-
-// ═══ APPARENCE MODAL (Tarbiya + couleurs de base) ═══
+function loadTheme(){applyTheme('default');} // base Sable doré fixe — l'habillage vient du thème Tarbiya
+// ═══ APPARENCE MODAL (palettes Tarbiya) ═══
 const PALETTES_META = {
   sableDore:    {name:'Sable doré',accent:'#BA7517', warm:'#D9A94E', soft:'#FAEEDA'},
   violetCoral:  {name:'Violet',    accent:'#5B3FE4', warm:'#FF8A3D', soft:'#EFEAFE'},
@@ -5492,72 +5464,16 @@ const PALETTES_META = {
 
 function renderApparenceModal() {
   const t = window.tarbiyaTheme.get();
-  const isTarbiya = t.theme === 'tarbiya';
-  const toggle = document.getElementById('tarbiya-toggle');
-  if (toggle) toggle.classList.toggle('on', isTarbiya);
-  // Palette de couleurs : visible uniquement quand Tarbiya est actif
-  const paletteWrap = document.getElementById('apparence-palette-wrap');
-  if (paletteWrap) {
-    paletteWrap.style.display = isTarbiya ? '' : 'none';
-    if (isTarbiya) {
-      const pg = document.getElementById('apparence-palette-grid');
-      if (pg) pg.innerHTML = Object.entries(PALETTES_META).map(([key,p]) =>
-        `<div class="apparence-palette-cell${key===t.palette?' active':''}" onclick="selectTarbiyaPalette('${key}')">
-          <div class="apparence-palette-swatch" style="background:${p.accent}">
-            <div class="apparence-palette-dot" style="background:${p.warm}"></div>
-          </div>
-          <div class="apparence-palette-name">${p.name}</div>
-        </div>`).join('');
-    }
-  }
-  const baseSection = document.getElementById('apparence-base-section');
-  if (baseSection) baseSection.style.display = isTarbiya ? 'none' : '';
-  const current = localStorage.getItem('dawam_theme') || 'default';
-  const cg = document.getElementById('apparence-theme-grid');
-  if (cg) cg.innerHTML = Object.entries(THEMES).map(([key,th]) =>
-    `<div class="theme-card${key===current?' active':''}" onclick="selectThemeFromApparence('${key}')">
-      <div class="theme-card-emoji">${th.emoji}</div>
-      <div class="theme-card-swatches">
-        <div class="theme-swatch" style="background:${th.bg}"></div>
-        <div class="theme-swatch" style="background:${th.accent}"></div>
-        <div class="theme-swatch" style="background:${th.green}"></div>
+  const pg = document.getElementById('apparence-palette-grid');
+  if (pg) pg.innerHTML = Object.entries(PALETTES_META).map(([key,p]) =>
+    `<div class="apparence-palette-cell${key===t.palette?' active':''}" onclick="selectTarbiyaPalette('${key}')">
+      <div class="apparence-palette-swatch" style="background:${p.accent}">
+        <div class="apparence-palette-dot" style="background:${p.warm}"></div>
       </div>
-      <div class="theme-card-name">${th.name}</div>
+      <div class="apparence-palette-name">${p.name}</div>
     </div>`).join('');
 }
-function selectThemeFromApparence(key){applyTheme(key);renderApparenceModal();}
 function selectTarbiyaPalette(key){window.tarbiyaTheme.setPalette(key);renderApparenceModal();}
-function toggleTarbiyaTheme(){
-  const current=window.tarbiyaTheme.get().theme;
-  const next=current==='tarbiya'?'default':'tarbiya';
-  window.tarbiyaTheme.setTheme(next);
-  if(next==='tarbiya'){
-    renderTarbiyaHero();
-    if(typeof renderTarbiyaPathCards==='function') renderTarbiyaPathCards();
-    if(typeof renderTarbiyaProfilOverlays==='function') renderTarbiyaProfilOverlays();
-    if(typeof renderTarbiyaInvocHeader==='function') renderTarbiyaInvocHeader();
-    if(typeof renderInvocContent==='function') renderInvocContent();
-    // Affiche la prayer strip basse uniquement si on est sur path
-    var activeScreen=document.querySelector('.screen.active');
-    if(activeScreen && activeScreen.id==='path' && typeof renderTarbiyaPrayerStripBottom==='function') renderTarbiyaPrayerStripBottom();
-  } else {
-    removeTarbiyaHero();
-    if(typeof removeTarbiyaProfilOverlays==='function') removeTarbiyaProfilOverlays();
-    if(typeof removeTarbiyaInvocHeader==='function') removeTarbiyaInvocHeader();
-    if(typeof removeTarbiyaGuidedInjections==='function') removeTarbiyaGuidedInjections();
-    if(typeof removeTarbiyaPrayerStripBottom==='function') removeTarbiyaPrayerStripBottom();
-    if(typeof removeTarbiyaAllActionsModal==='function') removeTarbiyaAllActionsModal();
-    // Nettoie aussi les injections path (carrousel + progress card + chips)
-    document.querySelectorAll('#path-body .t-progress-card, #path-body .t-actions-carousel-wrap, #path-body .t-seance-chips-row').forEach(function(el){el.remove();});
-    // Force renderPath pour rétablir la next-action-card (qui est cachée en CSS Tarbiya)
-    if(typeof renderPath==='function') renderPath();
-    // Re-render invocations en mode default
-    if(typeof renderInvocContent==='function') renderInvocContent();
-  }
-  // Groupes : header + icônes selon le thème
-  if(typeof renderGroupes==='function') renderGroupes();
-  renderApparenceModal();
-}
 
 // ── Icônes SVG (style ligne, currentColor) — remplace les emojis en thème Tarbiya ──
 var T_ICONS={
@@ -6979,19 +6895,8 @@ function renderNotifToggle() {
   if (toggle) toggle.classList.toggle('on', !!(S.notifs?.pushSub));
 }
 
-// ═══ DARK MODE ═══
-function isDarkMode(){return !!(THEMES[localStorage.getItem('dawam_theme')||'default']?.dark);}
-function toggleDarkMode(){
-  const current=localStorage.getItem('dawam_theme')||'default';
-  if(isDarkMode()){
-    applyTheme(localStorage.getItem('dawam_last_light')||'default');
-  } else {
-    localStorage.setItem('dawam_last_light',current);
-    applyTheme('nuit');
-  }
-  const toggle=document.getElementById('dark-toggle');
-  if(toggle)toggle.classList.toggle('on',isDarkMode());
-}
+// ═══ DARK MODE (retiré — Tarbiya est le seul thème) ═══
+function isDarkMode(){return false;}
 
 // ═══ ABOUT ═══
 function showAbout(){document.getElementById("about-modal").classList.add("show");}
