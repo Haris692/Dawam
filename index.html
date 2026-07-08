@@ -6917,6 +6917,13 @@ function isDarkMode(){return false;}
 const DONATION_URL='https://alairdutemps.com/je-fais-un-don/';
 function openDonation(){
   track('don_open');
+  if(window.isNativeIOSApp){
+    // Le wrapper Swift intercepte window.open (createWebViewWith) et ouvre Safari.
+    // Pas de fallback location.href ici : il coincerait l'utilisateur dans la WebView (pas de bouton retour).
+    window.open(DONATION_URL,'_blank');
+    return;
+  }
+  // Android TWA / PWA : nouvel onglet ou Custom Tab du navigateur
   const w=window.open(DONATION_URL,'_blank','noopener');
   if(!w) location.href=DONATION_URL;
 }

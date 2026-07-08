@@ -270,6 +270,17 @@ struct DawamWebView: UIViewRepresentable {
 
         // MARK: WKUIDelegate
 
+        // window.open(url, '_blank') côté JS (ex: page de don) → ouvre Safari, jamais la WebView
+        func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
+                     for navigationAction: WKNavigationAction,
+                     windowFeatures: WKWindowFeatures) -> WKWebView? {
+            if let url = navigationAction.request.url,
+               url.scheme == "http" || url.scheme == "https" {
+                UIApplication.shared.open(url)
+            }
+            return nil
+        }
+
         func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
                      initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
             presentAlert(message: message, confirm: false) { _ in completionHandler() }
@@ -390,6 +401,11 @@ struct DawamWebView: UIViewRepresentable {
             } else if navigationAction.request.url?.scheme == "mailto" ||
                       navigationAction.request.url?.scheme == "tel" {
                 UIApplication.shared.open(navigationAction.request.url!)
+                decisionHandler(.cancel)
+            } else if let url = navigationAction.request.url,
+                      url.host?.contains("alairdutemps.com") == true {
+                // Page de don : toujours dans Safari, jamais dans la WebView
+                UIApplication.shared.open(url)
                 decisionHandler(.cancel)
             } else {
                 decisionHandler(.allow)
