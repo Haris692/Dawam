@@ -2648,20 +2648,31 @@ body { font-family: var(--font-body); background: var(--bg); height: 100vh; heig
 [data-theme="tarbiya"] .nav-tab{
   position:relative;
   flex-direction:row !important;
-  gap:6px !important;
-  padding:8px 10px !important;
+  justify-content:center;
+  gap:5px !important;
+  padding:8px 4px !important;
   background:transparent !important;
   height:auto !important;
-  flex:0 1 auto !important;
+  flex:1 1 0 !important;
+  min-width:0;
 }
 [data-theme="tarbiya"] .nav-tab svg{
   width:18px !important;height:18px !important;
   stroke:var(--t-muted) !important;stroke-width:1.8 !important;
   fill:none !important;
+  flex-shrink:0;
 }
 [data-theme="tarbiya"] .nav-tab span{
-  font-size:12.5px !important;font-weight:600 !important;
+  font-size:12px !important;font-weight:600 !important;
   color:var(--t-muted) !important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  min-width:0;
+}
+/* Téléphones : icônes seules pour les onglets inactifs, label uniquement sur l'actif */
+@media (max-width:430px){
+  [data-theme="tarbiya"] .nav-tab:not(.active) span{ display:none; }
+  [data-theme="tarbiya"] .nav-tab:not(.active) svg{ width:21px !important;height:21px !important; }
+  [data-theme="tarbiya"] .nav-tab.active{ flex:0 0 auto !important;padding:8px 12px !important; }
 }
 [data-theme="tarbiya"] .nav-tab.active svg{stroke:var(--t-accent) !important;}
 [data-theme="tarbiya"] .nav-tab.active span{color:var(--t-accent) !important;font-weight:700 !important;}
