@@ -29,7 +29,7 @@
   <div id="warm" class="L full"></div>
   <div class="tapring" id="tapring"></div><div class="tap" id="tap"></div>
 </div></div>
-<script src="../lib/engine.js"></script><script src="../lib/people.js"></script><script src="../lib/decor.js"></script><script src="tk.js"></script>
+<script src="../lib/engine.js"></script><script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="tk.js"></script>
 <script>
 'use strict';
 const R = {};
@@ -46,27 +46,63 @@ const PAL = {
 };
 const ALARMS = [[1.2, 2.0, '05:52'], [3.3, 4.0, '05:57']];
 const toStage = (x, y, k) => [560 + (x - 560) * k, 1240 + (y - 1240) * k];
+// la lanterne du logo, en mascotte : yeux, joues, bouche
 function lanternSVG(parent) {
   const g = el('g', {}, parent);
+  const OL = 'stroke="#3A2A26" stroke-width="5" stroke-linejoin="round"';
   g.innerHTML = `<defs><radialGradient id="lnG"><stop offset="0" stop-color="#FFD98A" stop-opacity=".75"/><stop offset=".45" stop-color="#FFC060" stop-opacity=".25"/><stop offset="1" stop-color="#FFC060" stop-opacity="0"/></radialGradient>
     <radialGradient id="lnGlass" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#FFF6D6"/><stop offset="1" stop-color="#F2B648"/></radialGradient></defs>
     <circle class="halo" r="260" fill="url(#lnG)"/>
-    <circle cx="0" cy="-132" r="15" fill="none" stroke="#B4842E" stroke-width="6"/>
-    <path d="M-48 -90Q0 -156 48 -90Z" fill="#C8871F"/><circle cx="0" cy="-118" r="7" fill="#EAC876"/>
-    <rect x="-54" y="-96" width="108" height="16" rx="7" fill="#B4742A"/>
-    <rect x="-46" y="-80" width="92" height="134" rx="16" fill="#8A5A1E"/>
-    <rect x="-36" y="-70" width="72" height="114" rx="9" fill="url(#lnGlass)"/>
-    <ellipse class="flame" cx="0" cy="-8" rx="13" ry="24" fill="#FFE9A6"/>
-    <path d="M-12 -70V44M12 -70V44" stroke="#8A5A1E" stroke-width="6"/>
-    <rect x="-54" y="50" width="108" height="16" rx="7" fill="#B4742A"/>
-    <path d="M-38 66L38 66L26 94L-26 94Z" fill="#C8871F"/>`;
-  return { g, halo: g.querySelector('.halo'), flame: g.querySelector('.flame') };
+    <circle cx="0" cy="-138" r="14" fill="none" stroke="#3A2A26" stroke-width="11"/><circle cx="0" cy="-138" r="14" fill="none" stroke="#B4842E" stroke-width="5"/>
+    <path d="M-50 -92Q0 -162 50 -92Z" fill="#C8871F" ${OL}/><circle cx="0" cy="-121" r="7" fill="#EAC876" ${OL}/>
+    <rect x="-56" y="-100" width="112" height="16" rx="7" fill="#B4742A" ${OL}/>
+    <rect x="-48" y="-84" width="96" height="140" rx="18" fill="#8A5A1E" ${OL}/>
+    <rect x="-40" y="-74" width="80" height="120" rx="12" fill="url(#lnGlass)"/>
+    <path class="flame" d="M0 -70C9 -57 11 -48 0 -39C-11 -48 -9 -57 0 -70Z" fill="#FFF8DC"/>
+    <g class="face"></g>
+    <rect x="-56" y="52" width="112" height="16" rx="7" fill="#B4742A" ${OL}/>
+    <path d="M-40 68L40 68L28 96L-28 96Z" fill="#C8871F" ${OL}/>`;
+  const face = g.querySelector('.face'), dark = '#3A2416';
+  const cheeks = [-1, 1].map(sg => el('ellipse', { cx: sg * 26, cy: 6, rx: 7, ry: 4.5, fill: '#FF8A6A', opacity: .6 }, face));
+  const eyes = [-1, 1].map(sg => {
+    const e = { sg, g: el('g', {}, face) };
+    e.open = el('g', {}, e.g);
+    el('ellipse', { rx: 7, ry: 9.5, fill: dark }, e.open);
+    el('circle', { cx: 2.4, cy: -3.4, r: 2.8, fill: '#fff' }, e.open);
+    el('circle', { cx: -2.2, cy: 3.2, r: 1.3, fill: '#fff' }, e.open);
+    e.lid = el('path', { d: '', fill: '#FBE3A6' }, e.g);
+    e.closed = el('path', { d: '', fill: 'none', stroke: dark, 'stroke-width': 3.4, 'stroke-linecap': 'round' }, e.g);
+    e.brow = el('path', { d: '', fill: 'none', stroke: dark, 'stroke-width': 3.4, 'stroke-linecap': 'round' }, e.g);
+    return e;
+  });
+  const mouth = el('path', { d: '', fill: 'none', stroke: dark, 'stroke-width': 3.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, face);
+  return { g, halo: g.querySelector('.halo'), flame: g.querySelector('.flame'), eyes, mouth, cheeks };
+}
+// f : { eyes:'open'|'closed'|'happy', lid, worry, mouth:'smile'|'flat'|'frown'|'open'|'o', look:[x,y] }
+function lanternFace(L, f, t) {
+  const ph = (t + .7) % 3.3, blink = ph < .16 ? Math.sin(ph / .16 * Math.PI) : 0;
+  const lid = f.lid || 0, w = f.worry || 0, look = f.look || [0, 0];
+  for (const e of L.eyes) {
+    e.g.setAttribute('transform', `translate(${f1(e.sg * 15 + look[0])} ${f1(-8 + look[1])})`);
+    const open = (f.eyes || 'open') === 'open' && blink < .8 && lid < .9;
+    vis(e.open, open); vis(e.closed, !open); vis(e.lid, open && lid > .01); vis(e.brow, w > .01);
+    if (open) {
+      e.open.setAttribute('transform', `scale(1 ${(1 - blink).toFixed(3)})`);
+      const ly = lerp(-11, 9, lid);
+      e.lid.setAttribute('d', `M-10 -13H10V${f1(ly)}Q0 ${f1(ly + 3)} -10 ${f1(ly)}Z`);
+    } else e.closed.setAttribute('d', f.eyes === 'happy' ? 'M-8 4Q0 -7 8 4' : 'M-8 -1Q0 6 8 -1');
+    e.brow.setAttribute('d', `M${-e.sg * 3} ${f1(-17 - 4 * w)}L${e.sg * 9} ${f1(-15 + 2 * w)}`);
+  }
+  const m = { smile: ['M-9 8Q0 17 9 8', 'none'], flat: ['M-6 12L6 12', 'none'], frown: ['M-7 14Q0 8 7 14', 'none'],
+    open: ['M-9 7Q0 9 9 7Q8 20 0 20Q-8 20 -9 7Z', '#7A3020'], o: ['M-5 11a5 6 0 1 0 10 0a5 6 0 1 0 -10 0Z', '#7A3020'] }[f.mouth || 'smile'];
+  L.mouth.setAttribute('d', m[0]); L.mouth.setAttribute('fill', m[1]);
 }
 function build() {
   const st = $('#stage');
   R.A = bedroom($('#sceneA'), PAL);
-  R.y = new Person(R.A.person, { view: 'front', skin: '#B97A55', hair: '#1F1610', beard: true, top: '#6F8FB3', legs: 'none' });
-  R.L = lanternSVG($('#sceneA'));
+  R.y = new Toon(R.A.person, { skin: '#C98A5E', hair: '#33221A', beard: true, top: '#7FA7D6', collar: 'pyjama', legs: 'none' });
+  R.zz = buildZzz(R.A.front);
+  R.L = lanternSVG(R.A.front);
   R.alarm = el2(st, '<div class="alarm"><div class="ah">⏰ Alarme</div><div class="at">Fajr · <b>05:52</b></div><div class="ab"><span class="rep">Répéter</span><span class="stop">Arrêter</span></div></div>');
   R.b1 = el2(st, '<div class="bubble">…</div>');
   R.b2 = el2(st, '<div class="bubble">😶</div>');
@@ -80,39 +116,56 @@ function render(t) {
   const k = 1.24 + .06 * P(t, 0, 9, E.lin);
   $('#sceneA').style.transform = `scale(${k.toFixed(4)})`;
   paint(R.A.pal, .05);
-  // lanterne : flotte près de la fenêtre, puis vient au-dessus du lit et brille
+  // lanterne : flotte près de la fenêtre (triste quand on repousse), puis vient au-dessus du lit et brille
   const fly = P(t, 5.2, 1.0, E.ioC);
-  const lx = lerp(850, 470, fly) + Math.sin(t * 1.3) * 10, ly = lerp(780, 1060, fly) + Math.sin(t * 2.1) * 14;
+  const lx = lerp(850, 390, fly) + Math.sin(t * 1.3) * 10, ly = lerp(800, 940, fly) + Math.sin(t * 2.1) * 14;
   const dimmed = (t > 2.2 && t < 5.2) ? .55 : 1;
   const bright = lerp(dimmed, 1.6, P(t, 5.6, .8, E.outC));
-  R.L.g.setAttribute('transform', `translate(${f1(lx)} ${f1(ly)}) rotate(${(Math.sin(t * 1.7) * 6).toFixed(2)}) scale(.95)`);
+  R.L.g.setAttribute('transform', `translate(${f1(lx)} ${f1(ly)}) rotate(${(Math.sin(t * 1.7) * 6).toFixed(2)}) scale(1.15)`);
   R.L.halo.setAttribute('opacity', clamp(.55 * bright, 0, 1).toFixed(3));
   R.L.halo.setAttribute('r', f1(220 + 90 * P(t, 5.6, .8, E.outC)));
-  R.L.flame.setAttribute('ry', f1(22 + Math.sin(t * 17) * 2.5 + Math.sin(t * 11) * 1.5));
+  const fl = 1 + Math.sin(t * 17) * .08 + Math.sin(t * 11) * .05;
+  R.L.flame.setAttribute('transform', `translate(0 -39) scale(${(1 / fl).toFixed(3)} ${fl.toFixed(3)}) translate(0 39)`);
+  let lf = { mouth: 'smile', look: [-4, 3] };
+  if (t > 2.2 && t < 5.2) lf = { lid: .45, worry: 1, mouth: t > 4.4 ? 'flat' : 'frown', look: [-4, 4] };
+  else if (t >= 5.2 && t < 6.15) lf = { mouth: 'o', look: [-3, 4] };
+  else if (t >= 6.15 && t < 7.7) lf = { mouth: Math.sin((t - 6.15) * 40) > 0 ? 'open' : 'smile', look: [3, 5] };
+  else if (t >= 7.7) lf = { eyes: 'happy', mouth: 'open' };
+  lanternFace(R.L, lf, t);
   T($('#warm'), { op: .9 * P(t, 5.7, .9, E.ioC) });
-  // téléphone qui sonne près de l'oreiller, puis Yacine se redresse
+  // téléphone qui sonne sous son menton ; il repousse en dormant, puis se redresse
   const ring = ALARMS.some(([a, b]) => t > a && t < b + .15);
   const up = P(t, 7.2, 1.2, E.ioC), picked = t >= 7.2;
   const buzz = ring ? Math.sin(t * 80) * 2.4 : 0;
-  R.A.phoneBed.setAttribute('transform', `translate(${f1(258 + buzz)} 1286) rotate(-78)`);
-  R.A.phoneBed.style.display = picked ? 'none' : '';
-  R.A.phoneScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', ring || picked ? 1 : 0));
-  const bed = [258 - 640, 1286 - 1290], reach = P(t, 6.7, .5, E.ioC);
-  let hR = [lerp(-110, bed[0], reach), lerp(-20, bed[1], reach)];
-  hR = [lerp(hR[0], 26, up), lerp(hR[1], -138, up)];
-  const hL = [lerp(-90, -22, P(t, 7.4, 1.0, E.ioC)), lerp(50, -134, P(t, 7.4, 1.0, E.ioC))];
-  const pose = { x: 640, y: 1290, s: 1, lean: lerp(-88, -4, up) + Math.sin(t * 2.2) * .5 * (1 - up), dy: 8 * up, hands: { L: hL, R: hR },
-    phone: picked ? (up > .85 ? 'both' : 'R') : null, phoneAng: lerp(-60, 0, up), glow: 1 };
+  R.A.setPhone(buzz, ring || picked ? 1 : 0, !picked);
+  const b0 = bedBase(0), b = bedBase(up);
+  const onPhone = toHip(b0, 434, 1286), restL = toHip(b0, 452, 1290), lieR = toHip(b0, 560, 1215);
+  const snooze = Math.max(...ALARMS.map(([, z]) => P(t, z - .22, .2, E.ioC) * (1 - P(t, z + .05, .3, E.ioC))));
+  const reach = P(t, 6.7, .5, E.ioC);
+  const gL = Math.max(snooze, reach);
+  let hL = [lerp(restL[0], onPhone[0], gL), lerp(restL[1], onPhone[1], gL)];
+  hL = [lerp(hL[0], -18, up), lerp(hL[1], -64, up)];
+  const ur = P(t, 7.4, 1.0, E.ioC);
+  const hR = [lerp(lieR[0], 18, ur), lerp(lieR[1], -66, ur)];
+  R.A.setBlanket(1 - up);
+  let face = { eyes: 'closed', mouth: 'small' };
+  if (ring || snooze > .05) face = { eyes: 'closed', worry: .8, mouth: 'wavy' };
+  if (t > 5.8 && t < 7.2) face = { lid: t < 6.3 ? .95 : .5, worry: .3, mouth: 'flat', look: [-2, -3] };
+  if (t >= 7.2) face = { eyes: up > .6 ? 'happy' : 'open', lid: up > .6 ? 0 : .3, mouth: 'smile', blush: 1, look: [-5, -4] };
+  const pose = Object.assign(b, { lean: b.lean + Math.sin(t * 2.2) * .5 * (1 - up), dy: 4 * up, t, face, hands: { L: hL, R: hR },
+    phone: picked ? (up > .85 ? 'both' : 'L') : null, phoneAng: lerp(-80, 0, up), glow: 1, faceLight: .5 });
   R.y.set(pose);
-  R.y.tint('#141A3C', lerp(.5, .2, P(t, 5.7, .9)));
-  const pw = picked ? R.y.phoneWorld(pose) : [258 + buzz, 1286];
+  R.y.tint('#141A3C', lerp(.48, .2, P(t, 5.7, .9)));
+  const hw = R.y.headWorld(pose);
+  drawZzz(R.zz, t, hw[0] + 60, hw[1] - 110, 1 - P(t, 5.6, .4));
+  const pw = picked ? R.y.phoneWorld(pose) : [BED.phone[0] + buzz, BED.phone[1]];
   for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1])); }
   R.A.glow.setAttribute('opacity', (ring || picked ? .8 : 0).toFixed(3));
   R.A.glow2.setAttribute('opacity', (.3 * up).toFixed(3));
   // alarme + toucher « Répéter »
-  const al = ALARMS.find(([a, b]) => t > a - .05 && t < b + .4);
+  const al = ALARMS.find(([a, z]) => t > a - .05 && t < z + .4);
   if (al) { R.alarm.querySelector('b').textContent = al[2]; pop(R.alarm, t, al[0], al[1] + .2); } else T(R.alarm, { op: 0 });
-  const tp = ALARMS.find(([, b]) => t > b - .05 && t < b + .7);
+  const tp = ALARMS.find(([, z]) => t > z - .05 && t < z + .7);
   const tap = $('#tap'), ring2 = $('#tapring');
   if (tp) {
     const lt = t - tp[1];
@@ -122,10 +175,10 @@ function render(t) {
     T(ring2, { s: 1 + 1.4 * rp, op: rp > 0 ? 1 - rp : 0 });
   } else { T(tap, { op: 0 }); T(ring2, { op: 0 }); }
   // bulles de la lanterne (placées au-dessus d'elle, en coordonnées écran)
-  const [bx, by] = toStage(lx, ly - 150, k);
-  for (const [b, a, z] of [[R.b1, 2.4, 3.2], [R.b2, 4.45, 5.05], [R.b3, 6.15, 8.75]]) {
-    b.style.left = (bx - b.offsetWidth / 2).toFixed(1) + 'px'; b.style.top = (by - b.offsetHeight - 30).toFixed(1) + 'px';
-    pop(b, t, a, z);
+  const [bx, by] = toStage(lx, ly - 180, k);
+  for (const [bb, a, z] of [[R.b1, 2.4, 3.2], [R.b2, 4.45, 5.05], [R.b3, 6.15, 8.75]]) {
+    bb.style.left = (bx - bb.offsetWidth / 2).toFixed(1) + 'px'; bb.style.top = (by - bb.offsetHeight - 30).toFixed(1) + 'px';
+    pop(bb, t, a, z);
   }
   pop(R.c1, t, .1, 5.0); pop(R.c2, t, 5.0, 7.2); pop(R.c3, t, 7.4, 8.85);
   const [ex, ey] = toStage(lx, ly, k);

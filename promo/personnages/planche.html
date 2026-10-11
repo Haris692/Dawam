@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="planche.mp4">
+<title>Dawam — Les personnages</title>
+<link rel="stylesheet" href="../lib/base.css">
+<!-- Planche des personnages cartoon (référence de style pour les vidéos). -->
+<style>
+#stage{background:radial-gradient(120% 80% at 50% 20%,#FBF3E6 0%,#F5EDE0 45%,#EAD9BE 100%)}
+.ttl{position:absolute;left:0;top:70px;width:1080px;text-align:center;font:800 64px/1 var(--sans);letter-spacing:-2px;color:var(--ink)}
+.ttl em{font:italic 500 66px/1 var(--serif);color:var(--accent)}
+.lbl{position:absolute;width:270px;margin-left:-135px;text-align:center;font:800 26px/1.2 var(--sans);color:var(--ink)}
+.lbl span{display:block;margin-top:6px;font:600 20px/1.2 var(--sans);color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div class="ttl">Les personnages <em>de Dawam</em></div>
+  <svg id="sv" class="L" width="1080" height="1920"></svg>
+</div></div>
+<script src="../lib/engine.js"></script>
+<script src="../lib/cartoon.js"></script>
+<script>
+'use strict';
+const YAC = { skin: '#C98A5E', hair: '#33221A', beard: true };
+const SAM = { head: 'hijab', skin: '#E2A77E', lashes: true };
+const INES = { head: 'hijab', skin: '#D49A6A', lashes: true, hijab: '#E59AA0' };
+const X = [135, 405, 675, 945], Y = [560, 1100, 1640], S = .85;
+const CAST = [
+  { cfg: Object.assign({ top: '#7FA7D6', bottom: '#6B8FBF', collar: 'pyjama', shoe: '#F4F1EA' }, YAC), lbl: ['Yacine', 'en pyjama'],
+    pose: { hands: { L: [-16, -56], R: [16, -58] }, phone: 'both', glow: 1, faceLight: .4, dy: 4, face: { look: [0, 4], mouth: 'smile' } } },
+  { cfg: Object.assign({ top: '#F4EFE6', bottom: '#F4EFE6', collar: 'qamis', kufi: '#FFFFFF', legs: 'cross', sock: '#FFFFFF' }, YAC), lbl: ['Yacine', 'après le Fajr'],
+    pose: { hands: { L: [-34, -64], R: [34, -64] }, face: { eyes: 'closed', mouth: 'small' } } },
+  { cfg: Object.assign({ top: '#8FB4DE', bottom: '#3E4A63', collar: 'shirt' }, YAC), lbl: ['Yacine', 'au bureau'],
+    pose: { hands: { L: [-42, -10], R: [96, -196] }, face: { mouth: 'grin', brow: .4 } } },
+  { cfg: Object.assign({ top: '#F4EFE6', bottom: '#F4EFE6', collar: 'qamis', kufi: '#FFFFFF', legs: 'cross', sock: '#FFFFFF' }, YAC), lbl: ['Yacine', 'séance validée !'],
+    pose: { hands: { L: [-40, -8], R: [36, -40] }, phone: 'R', glow: .4, face: { eyes: 'happy', mouth: 'grin', brow: .3 } } },
+  { cfg: Object.assign({ hijab: '#3E9B8A', top: '#E8C9A0', dress: true, apron: '#FBF6EC', shoe: '#8C5A3C' }, SAM), lbl: ['Samira', 'à la maison'],
+    pose: { hands: { L: [-40, -12], R: [24, -76] }, phone: 'R', glow: .8, face: { look: [2, 3] } } },
+  { cfg: Object.assign({ hijab: '#EBDDC8', under: '#FFFFFF', top: '#B784A7', bottom: '#9C6B8E', collar: 'pyjama', shoe: '#F4F1EA' }, SAM), lbl: ['Samira', 'avant de dormir'],
+    pose: { hands: { L: [-38, -8], R: [38, -8] }, tilt: -6, face: { eyes: 'closed', mouth: 'small' } } },
+  { cfg: Object.assign({ top: '#3F6AA0', bottom: '#2E4B78', shoe: '#F4F2EC', straps: '#E0B252' }, INES), lbl: ['Inès', 'dans le métro'],
+    pose: { hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, face: { eyes: 'happy', mouth: 'smile' } } },
+  { cfg: Object.assign({ top: '#3F6AA0', bottom: '#2E4B78', shoe: '#F4F2EC', straps: '#E0B252' }, INES), lbl: ['Inès', 'objectif atteint !'],
+    pose: { hands: { L: [-96, -200], R: [96, -200] }, face: { eyes: 'wide', mouth: 'grin', brow: .6 } } },
+  { cfg: { skin: '#F0C7A0', hair: '#6B4A30', top: '#9C7A5A', bottom: '#3E3A36', glasses: true }, lbl: ['Un voyageur', 'avec son journal'],
+    pose: { hands: { L: [-38, -10], R: [38, -10] }, face: { mouth: 'smile', look: [3, 0] } } },
+  { cfg: { head: 'hijab', hijab: '#7B62A8', skin: '#9C6644', top: '#D9C4A2', dress: true, shoe: '#3A2A20', lashes: true }, lbl: ['Une voyageuse', 'qui lit ses adhkar'],
+    pose: { hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, dy: 3, face: { look: [0, 4], mouth: 'small' } } },
+  { cfg: Object.assign({ top: '#7FA7D6', bottom: '#6B8FBF', collar: 'pyjama', shoe: '#F4F1EA' }, YAC), lbl: ['Yacine', 'encore endormi'],
+    pose: { hands: { L: [-38, -8], R: [38, -8] }, tilt: 8, face: { lid: .62, mouth: 'flat', brow: -.2 } } },
+  { cfg: Object.assign({ top: '#7FA7D6', bottom: '#6B8FBF', collar: 'pyjama', shoe: '#F4F1EA' }, YAC), lbl: ['Yacine', 'la notification !'],
+    pose: { hands: { L: [-40, -10], R: [20, -64] }, phone: 'R', glow: 1, faceLight: .4, face: { eyes: 'wide', mouth: 'o', brow: 1 } } },
+];
+const R = [];
+function build() {
+  CAST.forEach((ch, i) => {
+    const x = X[i % 4], y = Y[Math.floor(i / 4)];
+    R.push({ toon: new Toon($('#sv'), ch.cfg), x, y, pose: ch.pose });
+    const l = document.createElement('div');
+    l.className = 'lbl'; l.style.left = x + 'px'; l.style.top = (y + 150) + 'px';
+    l.innerHTML = `${ch.lbl[0]}<span>${ch.lbl[1]}</span>`;
+    $('#stage').appendChild(l);
+  });
+}
+function render(t) {
+  for (const r of R) r.toon.set(Object.assign({ x: r.x, y: r.y, s: S, face: {} }, r.pose, { face: Object.assign({ blink: 0 }, r.pose.face || {}) }));
+}
+boot({ duration: 1, build, render });
+</script>
+</body>
+</html>

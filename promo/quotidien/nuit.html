@@ -54,7 +54,7 @@
 </div></div>
 
 <script src="../lib/engine.js"></script>
-<script src="../lib/people.js"></script>
+<script src="../lib/cartoon.js"></script>
 <script src="../lib/decor.js"></script>
 <script>
 'use strict';
@@ -71,7 +71,6 @@ const PAL = {
   bedWood: ['#262035', '#5E4232', '#5E4232'], bedWoodDark: ['#1D182A', '#4A3226', '#4A3226'],
   sheet: ['#2E3560', '#C9B8A0', '#C9B8A0'], pillow: ['#384070', '#E4D3BB', '#E4D3BB'], blanket: ['#2A3E62', '#9A5E4C', '#9A5E4C'], blanketLine: ['#22355A', '#86503F', '#86503F'],
 };
-const HIP = [640, 1290], PHONE_BED = [258 - 640, 1286 - 1290];
 const STEPS = [
   ['📋', 'Bilan de ta journée', "Qu'as-tu accompli ? Qu'as-tu manqué ? Sois honnête, sans sévérité excessive.", 'Bilan'],
   ['🤲', 'Renouvelle ta tawba', 'Demande sincèrement pardon pour les manquements. Allah est Tawwāb — Il se retourne vers celui qui revient vers Lui.', 'Tawba'],
@@ -84,7 +83,8 @@ const DONE = 11.45;                        // toucher « Terminer ✓ »
 
 function build() {
   R.A = bedroom($('#sceneA'), PAL);
-  R.s = new Person(R.A.person, { view: 'front', head: 'hijab', hijab: '#E9DCC6', skin: '#D29C75', top: '#9C6B8E', legs: 'none' });
+  R.s = new Toon(R.A.person, { head: 'hijab', hijab: '#EBDDC8', under: '#FFFFFF', skin: '#E2A77E', lashes: true, top: '#B784A7', collar: 'pyjama', legs: 'none' });
+  R.zz = buildZzz(R.A.front);
   const gs = `<div class="layer gs" id="gs">
     <div class="gs-head"><div class="gs-top"><i class="gs-btn">←</i><i class="gs-btn">⋯</i></div>
       <div class="gs-kick">Avant de dormir · +15 XP</div><div class="gs-title">Convenances du sommeil</div>
@@ -106,27 +106,32 @@ function bedScene(t) {
   paint(R.A.pal, .5 * lamp);
   R.A.lampGlow.setAttribute('opacity', (.95 * lamp).toFixed(3));
   R.A.stars.setAttribute('opacity', (.6 + .4 * (1 - lamp)).toFixed(3));
-  // Samira : lit dans son lit, puis repose le téléphone près de l'oreiller et s'allonge
+  // Samira lit dans son lit, baisse le téléphone, s'allonge sur le côté droit et le pose près d'elle
   const lower = P(t, 13.2, .5, E.ioC), down = P(t, 14.1, 1.35, E.ioC), placed = t >= 15.45;
-  const holdR = [26, -138], holdL = [-22, -134], restR = [-130, 12], restL = [-90, 50];
-  let hR = [lerp(holdR[0], 34, lower), lerp(holdR[1], -62, lower)];
-  hR = [lerp(hR[0], PHONE_BED[0], down), lerp(hR[1], PHONE_BED[1], down)];
-  if (placed) hR = [lerp(PHONE_BED[0], restR[0], P(t, 15.45, .6, E.ioC)), lerp(PHONE_BED[1], restR[1], P(t, 15.45, .6, E.ioC))];
-  let hL = [lerp(holdL[0], -30, lower), lerp(holdL[1], -60, lower)];
-  hL = [lerp(hL[0], restL[0], down), lerp(hL[1], restL[1], down)];
+  const u = 1 - down, b0 = bedBase(0), b = bedBase(u);
+  const onBed = toHip(b0, 434, 1286), restL = toHip(b0, 452, 1290), lieR = toHip(b0, 560, 1215);
+  let hL = [lerp(-18, -34, lower), lerp(-64, -40, lower)];
+  hL = [lerp(hL[0], onBed[0], down), lerp(hL[1], onBed[1], down)];
+  if (placed) hL = [lerp(onBed[0], restL[0], P(t, 15.45, .5, E.ioC)), lerp(onBed[1], restL[1], P(t, 15.45, .5, E.ioC))];
+  let hR = [lerp(18, 40, lower), lerp(-66, -20, lower)];
+  hR = [lerp(hR[0], lieR[0], down), lerp(hR[1], lieR[1], down)];
+  R.A.setBlanket(down);
+  let face = { look: [0, 4], mouth: 'small' };
+  if (t > 2.1 && t < 4.8) face = { look: [0, 4], mouth: 'smile', brow: .4 * P(t, 2.2, .3) };
+  else if (t >= 4.8 && t < 11.6) face = { look: [0, 4], mouth: 'smile' };
+  else if (t >= 11.6 && t < 13.3) face = { eyes: 'happy', mouth: 'grin' };
+  else if (t >= 13.3 && t < 14.1) face = { mouth: 'smile', look: [0, 1] };
+  else if (t >= 14.1) face = t < 15.1 ? { lid: P(t, 14.2, .9), mouth: 'small' } : { eyes: 'closed', mouth: 'small' };
   const glow = lerp(.95, .35, lower) * (placed ? 1 - P(t, 15.45, .5) : 1);
-  const pose = { x: HIP[0], y: HIP[1], s: 1, lean: lerp(-3, -88, down) + Math.sin(t * 2) * .4 * down, dy: lerp(8, 0, lower), tilt: 0,
-    hands: { L: hL, R: hR }, phone: placed ? null : (lower > .5 ? 'R' : 'both'), phoneAng: lerp(0, -60, down), glow };
+  const pose = Object.assign(b, { lean: b.lean + Math.sin(t * 2) * .4 * down, dy: lerp(6, 0, lower), t, face,
+    hands: { L: hL, R: hR }, phone: placed ? null : (lower > .5 ? 'L' : 'both'), phoneAng: lerp(0, -80, down), glow, faceLight: .5 * lamp + .3 });
   R.s.set(pose);
-  R.s.tint(mix('#141A3C', '#5A3A20', lamp), lerp(.5, .18, lamp));
-  R.A.phoneBed.style.display = placed ? '' : 'none';
-  // la couverture remonte sur elle une fois allongée
-  const tuck = P(t, 15.0, .8, E.ioC);
-  R.A.cover.setAttribute('opacity', tuck.toFixed(3));
-  R.A.cover.setAttribute('transform', `translate(${f1(90 * (1 - tuck))} 0)`);
-  R.A.phoneScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', glow));
-  const pw = placed ? [258, 1286] : R.s.phoneWorld(pose);
-  for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1] - (placed ? 0 : 40))); }
+  R.s.tint(mix('#141A3C', '#5A3A20', lamp), lerp(.5, .16, lamp));
+  R.A.setPhone(0, glow, placed);
+  const hw = R.s.headWorld(pose);
+  drawZzz(R.zz, t, hw[0] + 60, hw[1] - 110, P(t, 15.9, .6));
+  const pw = placed ? BED.phone : R.s.phoneWorld(pose);
+  for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1] - (placed ? 0 : 30))); }
   R.A.glow.setAttribute('opacity', (.7 * glow).toFixed(3));
   R.A.glow2.setAttribute('opacity', (.3 * glow * (1 - down)).toFixed(3));
 }

@@ -19,6 +19,29 @@ const starsMarkup = (seed, n, x0, y0, w, h) => {
 };
 
 // ───────── chambre (lit vu de côté, fenêtre, lampe de chevet) ─────────
+// Contour léger des objets, pour aller avec les personnages cartoon.
+const OLA = 'stroke="#2A1E2C" stroke-opacity=".5" stroke-width="5" stroke-linejoin="round"';
+// bassin du personnage allongé / assis dans le lit, téléphone posé sur le matelas (sous le menton)
+const BED = { s: 1.25, lie: [634, 1243], sit: [634, 1300], phone: [430, 1290] };
+// pose de base dans le lit : u = 0 allongé sur le côté droit (tête sur l'oreiller), u = 1 assis
+function bedBase(u) {
+  return { x: lerp(BED.lie[0], BED.sit[0], u), y: lerp(BED.lie[1], BED.sit[1], u), s: BED.s, lean: lerp(-88, -4, u), tilt: lerp(24, 0, u) };
+}
+// point de la scène → coordonnées de main du personnage (repère du bassin, avant mise à l'échelle)
+const toHip = (b, wx, wy) => [(wx - b.x) / b.s, (wy - b.y) / b.s];
+// couverture : du « bombé » (k = 1, personnage allongé dessous) au « à plat » (k = 0, personnage assis)
+const BLANKET = {
+  flat: [488, 1300, 500, 1270, 560, 1260, 650, 1262, 760, 1264, 900, 1264, 962, 1270, 986, 1290, 986, 1440, 956, 1440, 512, 1440, 484, 1440, 482, 1320],
+  mound: [484, 1300, 472, 1186, 522, 1118, 634, 1124, 734, 1132, 784, 1232, 962, 1244, 990, 1250, 986, 1440, 956, 1440, 508, 1440, 482, 1440, 478, 1330],
+  l1: [[612, 1300, 650, 1360, 628, 1436], [628, 1150, 676, 1300, 640, 1436]],
+  l2: [[772, 1290, 800, 1360, 778, 1438], [774, 1238, 806, 1340, 778, 1438]],
+};
+function blanketD(k) {
+  const a = BLANKET.flat.map((v, i) => f1(lerp(v, BLANKET.mound[i], k)));
+  return `M${a[0]} ${a[1]}C${a[2]} ${a[3]} ${a[4]} ${a[5]} ${a[6]} ${a[7]}C${a[8]} ${a[9]} ${a[10]} ${a[11]} ${a[12]} ${a[13]}` +
+    `C${a[14]} ${a[15]} ${a[16]} ${a[17]} ${a[18]} ${a[19]}L${a[20]} ${a[21]}C${a[22]} ${a[23]} ${a[24]} ${a[25]} ${a[0]} ${a[1]}Z`;
+}
+const foldD = (L, k) => { const a = L[0].map((v, i) => f1(lerp(v, L[1][i], k))); return `M${a[0]} ${a[1]}Q${a[2]} ${a[3]} ${a[4]} ${a[5]}`; };
 // pal : rôles → [c0, c1, c2]
 function bedroom(svgNode, pal) {
   svgNode.innerHTML = `
@@ -38,7 +61,7 @@ function bedroom(svgNode, pal) {
   <ellipse cx="560" cy="1760" rx="440" ry="96" ${C(pal.rug)}/>
   <ellipse cx="560" cy="1760" rx="380" ry="72" fill="none" stroke-width="6" data-p="stroke" ${C(pal.rugLine)}/>
   <!-- fenêtre -->
-  <rect x="600" y="560" width="350" height="480" rx="16" ${C(pal.frame)}/>
+  <rect x="600" y="560" width="350" height="480" rx="16" ${C(pal.frame)} ${OLA}/>
   <g clip-path="url(#brGlass)">
     <rect x="618" y="578" width="314" height="444" fill="url(#brSky)"/>
     <g id="brStars">${starsMarkup(4, 26, 620, 580, 310, 300)}</g>
@@ -46,44 +69,57 @@ function bedroom(svgNode, pal) {
     <path d="M618 1022V960L660 960L660 930L700 930L700 975L742 975L742 900L770 900L770 960L812 960L812 940L850 940L850 985L890 985L890 950L932 950V1022Z" ${C(pal.city)}/>
   </g>
   <rect x="771" y="578" width="8" height="444" ${C(pal.frame)}/><rect x="618" y="796" width="314" height="8" ${C(pal.frame)}/>
-  <rect x="584" y="1032" width="382" height="24" rx="8" ${C(pal.sill)}/>
-  <rect x="560" y="526" width="430" height="12" rx="6" ${C(pal.rod)}/>
-  <path d="M566 538L646 538Q634 760 614 1000Q604 1080 616 1124L560 1124Q550 820 566 538Z" ${C(pal.curtain)}/>
+  <rect x="584" y="1032" width="382" height="24" rx="8" ${C(pal.sill)} ${OLA}/>
+  <rect x="560" y="526" width="430" height="12" rx="6" ${C(pal.rod)} ${OLA}/>
+  <path d="M566 538L646 538Q634 760 614 1000Q604 1080 616 1124L560 1124Q550 820 566 538Z" ${C(pal.curtain)} ${OLA}/>
   <path d="M590 560Q584 820 586 1110M614 560Q606 820 600 1110" fill="none" stroke-width="3" opacity=".5" data-p="stroke" ${C(pal.curtainLine)}/>
-  <path d="M984 538L904 538Q916 760 936 1000Q946 1080 934 1124L990 1124Q1000 820 984 538Z" ${C(pal.curtain)}/>
+  <path d="M984 538L904 538Q916 760 936 1000Q946 1080 934 1124L990 1124Q1000 820 984 538Z" ${C(pal.curtain)} ${OLA}/>
   <path d="M960 560Q966 820 964 1110M936 560Q944 820 950 1110" fill="none" stroke-width="3" opacity=".5" data-p="stroke" ${C(pal.curtainLine)}/>
   <!-- cadre au mur -->
-  <rect x="250" y="620" width="200" height="250" rx="10" ${C(pal.artFrame)}/>
+  <rect x="250" y="620" width="200" height="250" rx="10" ${C(pal.artFrame)} ${OLA}/>
   <rect x="266" y="636" width="168" height="218" rx="4" ${C(pal.art)}/>
   <g transform="translate(350 745)" fill="none" stroke-width="3" data-p="stroke" ${C(pal.artLine)}><rect x="-38" y="-38" width="76" height="76"/><rect x="-38" y="-38" width="76" height="76" transform="rotate(45)"/><circle r="16"/></g>
   <!-- chevet + lampe -->
-  <rect x="20" y="1252" width="130" height="248" rx="10" ${C(pal.stand)}/>
-  <rect x="8" y="1238" width="154" height="20" rx="7" ${C(pal.standTop)}/>
+  <rect x="20" y="1252" width="130" height="248" rx="10" ${C(pal.stand)} ${OLA}/>
+  <rect x="8" y="1238" width="154" height="20" rx="7" ${C(pal.standTop)} ${OLA}/>
   <path d="M40 1330H130M40 1410H130" stroke-width="4" fill="none" data-p="stroke" ${C(pal.standTop)}/>
   <rect x="71" y="1150" width="8" height="90" ${C(pal.lampStem)}/>
-  <path d="M52 1240Q75 1222 98 1240Z" ${C(pal.lampStem)}/>
-  <path id="brShade" d="M28 1152L122 1152L106 1078L44 1078Z" ${C(pal.lampShade)}/>
+  <path d="M52 1240Q75 1222 98 1240Z" ${C(pal.lampStem)} ${OLA}/>
+  <path id="brShade" d="M28 1152L122 1152L106 1078L44 1078Z" ${C(pal.lampShade)} ${OLA}/>
   <circle id="brLampGlow" cx="75" cy="1130" r="430" fill="url(#brLampG)" opacity="0"/>
   <!-- lit -->
-  <path d="M150 1484L150 1080Q150 1040 190 1040Q220 1040 220 1080L220 1484Z" ${C(pal.bedWood)}/>
-  <rect x="190" y="1400" width="790" height="76" rx="20" ${C(pal.bedWood)}/>
-  <rect x="210" y="1470" width="28" height="40" rx="6" ${C(pal.bedWoodDark)}/><rect x="930" y="1470" width="28" height="40" rx="6" ${C(pal.bedWoodDark)}/>
-  <rect x="205" y="1298" width="770" height="112" rx="32" ${C(pal.sheet)}/>
-  <path d="M228 1272Q228 1238 300 1236L400 1236Q452 1238 452 1272Q452 1304 400 1306L300 1306Q228 1304 228 1272Z" ${C(pal.pillow)}/>
-  <g id="brPhoneBed" transform="translate(258 1286) rotate(-78)"><rect x="-14" y="-28" width="28" height="56" rx="6" fill="#1d1d1f"/><rect id="brPhoneScr" x="-11" y="-25" width="22" height="50" rx="4" fill="#2b2b30"/></g>
-  <circle id="brPhoneGlow" cx="0" cy="0" r="240" fill="url(#brPhoneG)" opacity="0"/>
+  <path d="M150 1484L150 1080Q150 1040 190 1040Q220 1040 220 1080L220 1484Z" ${C(pal.bedWood)} ${OLA}/>
+  <rect x="190" y="1400" width="790" height="76" rx="20" ${C(pal.bedWood)} ${OLA}/>
+  <rect x="210" y="1470" width="28" height="40" rx="6" ${C(pal.bedWoodDark)} ${OLA}/><rect x="930" y="1470" width="28" height="40" rx="6" ${C(pal.bedWoodDark)} ${OLA}/>
+  <rect x="205" y="1298" width="770" height="112" rx="32" ${C(pal.sheet)} ${OLA}/>
+  <path d="M224 1262C220 1222 290 1212 350 1214C420 1216 470 1222 468 1262C470 1300 420 1310 350 1308C280 1308 222 1302 224 1262Z" ${C(pal.pillow)} ${OLA}/>
+  <path d="M262 1290Q350 1302 440 1288" fill="none" stroke-width="4" opacity=".35" data-p="stroke" ${C(pal.blanketLine)}/>
   <g id="brPerson"></g>
-  <path d="M500 1288Q560 1258 650 1262L950 1266Q982 1270 982 1300L982 1416Q978 1440 950 1440L520 1440Q488 1436 486 1400L486 1330Q486 1296 500 1288Z" ${C(pal.blanket)}/>
-  <path d="M610 1300Q650 1360 628 1436M770 1290Q800 1360 778 1438" fill="none" stroke-width="5" stroke-linecap="round" opacity=".55" data-p="stroke" ${C(pal.blanketLine)}/>
-  <g id="brCover" opacity="0"><path d="M408 1292Q458 1260 560 1262L640 1264L640 1440L432 1440Q398 1436 396 1400L396 1330Q396 1300 408 1292Z" ${C(pal.blanket)}/>
-    <path d="M470 1300Q500 1360 482 1436" fill="none" stroke-width="5" stroke-linecap="round" opacity=".55" data-p="stroke" ${C(pal.blanketLine)}/></g>
-  <circle id="brPhoneGlow2" cx="0" cy="0" r="200" fill="url(#brPhoneG)" opacity="0"/>`;
-  return {
-    pal: palette(svgNode), person: svgNode.querySelector('#brPerson'), stars: svgNode.querySelector('#brStars'), moon: svgNode.querySelector('#brMoon'),
-    phoneBed: svgNode.querySelector('#brPhoneBed'), phoneScr: svgNode.querySelector('#brPhoneScr'),
-    glow: svgNode.querySelector('#brPhoneGlow'), glow2: svgNode.querySelector('#brPhoneGlow2'),
-    lampGlow: svgNode.querySelector('#brLampGlow'), shade: svgNode.querySelector('#brShade'), cover: svgNode.querySelector('#brCover'),
+  <g id="brPhoneBed" transform="translate(${BED.phone[0]} ${BED.phone[1]}) rotate(-80)"><rect x="-15" y="-29" width="30" height="58" rx="7" fill="#1d1d1f" stroke="#2A1E2C" stroke-width="4"/><rect id="brPhoneScr" x="-11" y="-25" width="22" height="50" rx="4" fill="#2b2b30"/></g>
+  <circle id="brPhoneGlow" cx="0" cy="0" r="240" fill="url(#brPhoneG)" opacity="0"/>
+  <path id="brBlanket" d="${blanketD(0)}" ${C(pal.blanket)} ${OLA}/>
+  <path id="brFold1" d="${foldD(BLANKET.l1, 0)}" fill="none" stroke-width="5" stroke-linecap="round" opacity=".55" data-p="stroke" ${C(pal.blanketLine)}/>
+  <path id="brFold2" d="${foldD(BLANKET.l2, 0)}" fill="none" stroke-width="5" stroke-linecap="round" opacity=".55" data-p="stroke" ${C(pal.blanketLine)}/>
+  <circle id="brPhoneGlow2" cx="0" cy="0" r="200" fill="url(#brPhoneG)" opacity="0"/>
+  <g id="brFront"></g>`;
+  const q = sel => svgNode.querySelector(sel);
+  const R = {
+    pal: palette(svgNode), person: q('#brPerson'), front: q('#brFront'), stars: q('#brStars'), moon: q('#brMoon'),
+    phoneBed: q('#brPhoneBed'), phoneScr: q('#brPhoneScr'), glow: q('#brPhoneGlow'), glow2: q('#brPhoneGlow2'),
+    lampGlow: q('#brLampGlow'), shade: q('#brShade'), blanket: q('#brBlanket'), folds: [q('#brFold1'), q('#brFold2')],
   };
+  // couverture bombée (k = 1) ou à plat (k = 0)
+  R.setBlanket = k => {
+    R.blanket.setAttribute('d', blanketD(k));
+    R.folds[0].setAttribute('d', foldD(BLANKET.l1, k)); R.folds[1].setAttribute('d', foldD(BLANKET.l2, k));
+  };
+  // téléphone posé sur le matelas : vibration (px), écran allumé (0–1), visible ou non
+  R.setPhone = (buzz, lit, on = true) => {
+    R.phoneBed.style.display = on ? '' : 'none';
+    R.phoneBed.setAttribute('transform', `translate(${f1(BED.phone[0] + buzz)} ${BED.phone[1]}) rotate(-80)`);
+    R.phoneScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', lit));
+  };
+  return R;
 }
 
 // ───────── pièce à l'aube : grande fenêtre en arc, tapis de prière ─────────
@@ -108,7 +144,7 @@ function dawnRoom(svgNode) {
   <rect width="1080" height="1262" ${C(p.wall)}/>
   <rect y="1250" width="1080" height="670" ${C(p.floor)}/>
   <path d="M540 1250L-200 1920M540 1250L180 1920M540 1250L540 1920M540 1250L900 1920M540 1250L1280 1920M0 1420H1080M0 1640H1080" stroke-width="3" fill="none" data-p="stroke" ${C(p.plank)}/>
-  <path d="M228 1206L228 700A312 312 0 0 1 852 700L852 1206Z" ${C(p.frame)}/>
+  <path d="M228 1206L228 700A312 312 0 0 1 852 700L852 1206Z" ${C(p.frame)} ${OLA}/>
   <g clip-path="url(#dwGlass)">
     <rect x="250" y="400" width="580" height="800" fill="url(#dwSky)"/>
     <g id="dwStars">${starsMarkup(9, 34, 255, 410, 570, 480)}</g>
@@ -118,22 +154,24 @@ function dawnRoom(svgNode) {
     <path d="M250 1190V1110H292V1080H336V1120H372V1050H404V1100H446V1070L476 1070L476 1004Q506 960 536 1004L536 1070H558L558 1030L566 1030L566 940L572 926L578 940L578 1030L586 1030L586 1080H630V1040H668V1100H712V1060H748V1095H790V1068H830V1190Z" ${C(p.city)}/>
     <rect x="536" y="400" width="8" height="800" ${C(p.frame)}/><rect x="250" y="860" width="580" height="8" ${C(p.frame)}/>
   </g>
-  <rect x="206" y="1186" width="668" height="28" rx="9" ${C(p.sill)}/>
+  <rect x="206" y="1186" width="668" height="28" rx="9" ${C(p.sill)} ${OLA}/>
   <path d="M150 -20L262 -20Q240 700 236 1240L150 1250Q132 700 150 -20Z" opacity=".5" ${C(p.curtain)}/>
   <path d="M930 -20L818 -20Q840 700 844 1240L930 1250Q948 700 930 -20Z" opacity=".5" ${C(p.curtain)}/>
   <path id="dwShaft" d="M262 1214L818 1214L1010 1920L70 1920Z" fill="url(#dwShaft)" opacity="0"/>
-  <!-- tapis de prière -->
-  <path d="M352 1332L728 1332L912 1884L168 1884Z" fill="#2E5E58"/>
+  <!-- tapis de prière (motifs sans direction : le personnage y est assis face à nous) -->
+  <path d="M352 1332L728 1332L912 1884L168 1884Z" fill="#2E5E58" ${OLA}/>
   <path d="M368 1346L712 1346L884 1866L196 1866Z" fill="none" stroke="#D9A94E" stroke-width="10"/>
   <path d="M384 1360L696 1360L860 1850L220 1850Z" fill="#24504B"/>
-  <path d="M470 1470L470 1420Q540 1352 610 1420L610 1470" fill="none" stroke="#D9A94E" stroke-width="6"/>
-  <path d="M540 1650l26 26l-26 26l-26 -26z" fill="none" stroke="#D9A94E" stroke-width="5"/>
+  <path d="M540 1398l34 30l-34 30l-34 -30z M540 1780l46 40l-46 40l-46 -40z" fill="none" stroke="#D9A94E" stroke-width="6"/>
+  <path d="M420 1440h240M300 1800h480" stroke="#D9A94E" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round"/>
   <path d="M168 1884v20M206 1884v20M244 1884v20M282 1884v20M320 1884v20M358 1884v20M396 1884v20M434 1884v20M472 1884v20M510 1884v20M548 1884v20M586 1884v20M624 1884v20M662 1884v20M700 1884v20M738 1884v20M776 1884v20M814 1884v20M852 1884v20M890 1884v20" stroke="#E8D6B0" stroke-width="4"/>
-  <ellipse cx="540" cy="1668" rx="230" ry="46" fill="#000" opacity=".18"/>
+  <path d="M362 1332v-14M392 1332v-14M422 1332v-14M452 1332v-14M482 1332v-14M512 1332v-14M542 1332v-14M572 1332v-14M602 1332v-14M632 1332v-14M662 1332v-14M692 1332v-14M720 1332v-14" stroke="#E8D6B0" stroke-width="3.5"/>
+  <ellipse cx="540" cy="1712" rx="196" ry="34" fill="#000" opacity=".2"/>
   <circle id="dwPhoneGlow" cx="540" cy="1430" r="260" fill="url(#dwPhoneG)" opacity="0"/>
-  <g id="dwPerson"></g>`;
+  <g id="dwPerson"></g>
+  <g id="dwFront"></g>`;
   return {
-    pal: palette(svgNode), person: svgNode.querySelector('#dwPerson'), stars: svgNode.querySelector('#dwStars'), moon: svgNode.querySelector('#dwMoon'),
+    pal: palette(svgNode), person: svgNode.querySelector('#dwPerson'), front: svgNode.querySelector('#dwFront'), stars: svgNode.querySelector('#dwStars'), moon: svgNode.querySelector('#dwMoon'),
     sun: svgNode.querySelector('#dwSun'), sunGlow: svgNode.querySelector('#dwSunGlow'), shaft: svgNode.querySelector('#dwShaft'), glow: svgNode.querySelector('#dwPhoneGlow'),
   };
 }
@@ -230,7 +268,7 @@ function kitchenPanel(svgNode) {
     <rect x="640" y="22" width="250" height="186" rx="12" fill="#FBF7F0"/><rect x="654" y="36" width="222" height="158" rx="6" fill="#CFE5EF"/><path d="M765 36V194M654 114H876" stroke="#FBF7F0" stroke-width="7"/>
     <circle cx="700" cy="90" r="26" fill="#FFF4D8" opacity=".9"/>
     <rect x="740" y="176" width="44" height="34" rx="6" fill="#C46E4A"/><path d="M762 176Q742 140 752 120M762 176Q780 136 796 128M762 176Q762 140 766 112" stroke="#5E9C76" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <circle cx="560" cy="62" r="34" fill="#FBF7F0"/><circle cx="560" cy="62" r="34" fill="none" stroke="#B48F63" stroke-width="5"/><path class="clock" d="M560 62V40M560 62L576 70" stroke="#5B4A3A" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="596" cy="62" r="34" fill="#FBF7F0"/><circle cx="596" cy="62" r="34" fill="none" stroke="#B48F63" stroke-width="5"/><path class="clock" d="M596 62V40M596 62L612 70" stroke="#5B4A3A" stroke-width="4" stroke-linecap="round"/>
     <g class="person"></g>
     <rect y="262" width="1000" height="22" fill="#A98260"/><rect y="282" width="1000" height="48" fill="#8C6A4E"/>
     <path d="M250 288V330M500 288V330M750 288V330" stroke="#7A5A42" stroke-width="4"/>

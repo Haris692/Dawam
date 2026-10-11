@@ -11,14 +11,14 @@
 </head>
 <body>
 <div id="viewport"><div id="stage"><svg id="scene" class="L" width="1080" height="1920"></svg></div></div>
-<script src="../lib/engine.js"></script><script src="../lib/people.js"></script><script src="../lib/decor.js"></script><script src="tk.js"></script>
+<script src="../lib/engine.js"></script><script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="tk.js"></script>
 <script>
 'use strict';
 const R = {};
 function build() {
   const st = $('#stage');
   R.B = dawnRoom($('#scene'));
-  R.y = new Person(R.B.person, { view: 'back', skin: '#B97A55', hair: '#1F1610', top: '#F2EDE3', bottom: '#E9E2D4', kufi: '#FBF8F1', legs: 'cross' });
+  R.y = new Toon(R.B.person, { skin: '#C98A5E', hair: '#33221A', beard: true, top: '#F4EFE6', bottom: '#F4EFE6', collar: 'qamis', kufi: '#FFFFFF', legs: 'cross', sock: '#FFFFFF' });
   R.c1 = cap(st, 'POV : tu ne rates\nplus le Fajr depuis\n3 semaines 🤍', 'w', 280);
   R.c2 = cap(st, 'et tout a commencé par\nune simple notification 📲', 'w', 300);
   R.streak = el2(st, '<div class="c" style="top:660px"><div class="sticker gold" style="position:relative;display:inline-block">🔥 21 jours de suite</div></div>');
@@ -34,9 +34,20 @@ function render(t) {
   R.B.sun.setAttribute('cy', f1(sy)); R.B.sunGlow.setAttribute('cy', f1(sy));
   R.B.sunGlow.setAttribute('opacity', (.4 + .6 * sun).toFixed(3));
   R.B.shaft.setAttribute('opacity', (.8 * sun).toFixed(3));
-  R.B.glow.setAttribute('opacity', (.5 * (1 - .6 * sun)).toFixed(3));
-  R.y.set({ x: 540, y: 1640, s: 1.3, lean: Math.sin(t * 2) * .35, dy: 6, hands: { L: [-46, -48], R: [46, -48] } });
-  R.y.tint(mix('#191B3A', '#4A2E28', sun), lerp(.45, .28, sun));
+  R.B.glow.setAttribute('opacity', (.6 * P(t, 5.75, .3) * (1 - .5 * sun)).toFixed(3));
+  // invocation les yeux fermés ; à la notification, il prend son téléphone et sourit
+  const lap = P(t, 5.3, .35, E.ioC), rise = P(t, 5.75, .45, E.ioC), hold = t >= 5.7;
+  const hL = [lerp(lerp(-14, -36, lap), -16, rise), lerp(lerp(-80, -8, lap), -60, rise)];
+  const hR = [lerp(lerp(14, 36, lap), 16, rise), lerp(lerp(-80, -8, lap), -62, rise)];
+  let face = { eyes: 'closed', mouth: 'small' };
+  if (t > 5.45) face = { look: [0, 4], mouth: 'smile', brow: .5 * P(t, 5.5, .2) * (1 - P(t, 6.1, .4)) };
+  if (t > 6.5) face = { eyes: 'happy', mouth: 'grin' };
+  const pose = { x: 540, y: 1680, s: 1.4, t, lean: Math.sin(t * 2) * .35, dy: hold ? 4 * rise : 0, face, hands: { L: hL, R: hR },
+    phone: hold ? 'both' : null, glow: P(t, 5.75, .3), faceLight: .45 };
+  R.y.set(pose);
+  R.y.tint(mix('#191B3A', '#4A2E28', sun), lerp(.34, .16, sun));
+  const pw = R.y.phoneWorld(pose);
+  R.B.glow.setAttribute('cx', f1(pw[0])); R.B.glow.setAttribute('cy', f1(pw[1]));
   pop(R.c1, t, .1, 4.9);
   pop(R.streak, t, 2.6, 4.9);
   pop(R.c2, t, 4.9, 7.45);

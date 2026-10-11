@@ -11,7 +11,7 @@ Vidéos verticales (1080×1920, 60 i/s) de 8 à 19 s, chacune construite sur un 
 | 5 | `dawam-tiktok-05-top5.mp4` (19 s) | **Top 5**, à enregistrer pour plus tard (existe aussi en carrousel) | « 5 petites habitudes qui ont changé ma vie de musulman 🤍 (la 5e est la plus importante) » |
 | 6 | `dawam-tiktok-06-secret.mp4` (9,6 s) | **App secrète** (FOMO) : écran flouté puis révélé | « L'app que les gens réguliers dans leurs adorations ne partagent pas… 🤫 » → « Bon… je vous la donne 👇 » |
 | 7 | `dawam-tiktok-07-tuto.mp4` (14,5 s) | **Accroche + démo** en 3 étapes | « Mes adhkar du matin en 3 minutes ⏱️ » |
-| 8 | `dawam-tiktok-08-lanterne.mp4` (11 s) | **Personnage qui incarne le problème** (à la Duolingo, en version douce) : la lanterne du logo | « Quand tu repousses ton réveil pour le Fajr… » → « …pour la 3e fois 😅 » → la lanterne : « Allez… juste 2 minutes avec Allah 🤍 » |
+| 8 | `dawam-tiktok-08-lanterne.mp4` (11 s) | **Personnage qui incarne le problème** (à la Duolingo, en version douce) : la lanterne du logo, devenue une mascotte avec un visage | « Quand tu repousses ton réveil pour le Fajr… » → « …pour la 3e fois 😅 » → la lanterne : « Allez… juste 2 minutes avec Allah 🤍 » |
 | 9 | `dawam-tiktok-09-hadith.mp4` (12,6 s) | **Long texte** qui se lit, s'enregistre et fait commenter | « Personne ne m'avait dit ça… 🥹 » → le hadith sur la constance (al-Bukhari et Muslim) → « Un peu. Mais chaque jour. 🤍 » |
 | 10 | `dawam-tiktok-10-satisfaisant.mp4` (8,6 s) | **Micro-vidéo satisfaisante** (≤ 10 s, se regarde en boucle) | « 30 jours de constance en 8 secondes ✨ » |
 

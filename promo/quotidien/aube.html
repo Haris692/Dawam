@@ -40,7 +40,7 @@
 </div></div>
 
 <script src="../lib/engine.js"></script>
-<script src="../lib/people.js"></script>
+<script src="../lib/cartoon.js"></script>
 <script src="../lib/decor.js"></script>
 <script>
 'use strict';
@@ -56,14 +56,18 @@ const PAL = {
   bedWood: ['#30283F', '#5B4858', '#8E5E44'], bedWoodDark: ['#251F33', '#4A3A48', '#6E4632'],
   sheet: ['#3A4270', '#7A7FA6', '#F2EEE6'], pillow: ['#46507E', '#8A8FB5', '#FBF8F2'], blanket: ['#2E4C6E', '#4F6F94', '#3E7C9A'], blanketLine: ['#253F5E', '#44628A', '#356C88'],
 };
-const HIP_A = [640, 1290], PHONE_BED = [258 - 640, 1286 - 1290];
-const YACINE = { skin: '#B97A55', hair: '#1F1610', beard: true };
+const YACINE = { skin: '#C98A5E', hair: '#33221A', beard: true };
+const MAT = { x: 540, y: 1660, s: 1.35 };   // Yacine assis sur le tapis, face à nous
 
 function build() {
   R.A = bedroom($('#sceneA'), PAL);
-  R.yA = new Person(R.A.person, Object.assign({ view: 'front', top: '#6F8FB3', legs: 'none' }, YACINE));
+  R.yA = new Toon(R.A.person, Object.assign({ top: '#7FA7D6', collar: 'pyjama', legs: 'none' }, YACINE));
+  R.zz = buildZzz(R.A.front);
   R.B = dawnRoom($('#sceneB'));
-  R.yB = new Person(R.B.person, Object.assign({ view: 'back', top: '#F2EDE3', bottom: '#E9E2D4', kufi: '#FBF8F1', legs: 'cross' }, YACINE));
+  R.yB = new Toon(R.B.person, Object.assign({ top: '#F4EFE6', bottom: '#F4EFE6', collar: 'qamis', kufi: '#FFFFFF', legs: 'cross', sock: '#FFFFFF' }, YACINE));
+  // téléphone reposé sur les genoux pendant l'invocation
+  R.lapPhone = el('g', {}, R.B.front);
+  R.lapPhone.innerHTML = '<rect x="-30" y="-11" width="60" height="22" rx="7" fill="#2B2A33" stroke="#3A2A26" stroke-width="5"/><rect x="-24" y="-6" width="48" height="12" rx="4" fill="#45444F"/>';
   const ctr = `<div class="ctr" id="ctr"><span id="ctrN">3</span><div class="ok" id="ctrOk"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div></div>`;
   R.phone = makePhone(['adhkar-matin'], ctr);
   $('#phoneWrap').appendChild(R.phone);
@@ -76,27 +80,33 @@ function sceneA(t) {
   $('#sceneA').style.transform = `scale(${(1.24 + .08 * P(t, 0, 7.6, E.lin)).toFixed(4)})`;
   paint(R.A.pal, .06 + .22 * P(t, 0, 7, E.ioS));
   R.A.stars.setAttribute('opacity', (1 - .4 * P(t, 2, 5)).toFixed(3));
-  // le téléphone posé près de l'oreiller s'allume et vibre
+  // le téléphone posé sous son menton s'allume et vibre
   const lit = P(t, 1.3, .2), picked = t >= 3.15;
   const buzz = t > 1.3 && t < 2.2 ? Math.sin(t * 80) * 2.2 : 0;
-  R.A.phoneBed.setAttribute('transform', `translate(${f1(258 + buzz)} 1286) rotate(-78)`);
-  R.A.phoneScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', lit));
-  R.A.phoneBed.style.display = picked ? 'none' : '';
-  // Yacine : allongé → attrape le téléphone → se redresse et lit
-  const reach = P(t, 2.6, .55, E.ioC), up = P(t, 3.15, 1.25, E.ioC), read = P(t, 4.2, .6, E.ioC);
-  const breath = Math.sin(t * 2.2) * .5 * (1 - up);
-  const restR = [-110, -20], restL = [-90, 50];
-  const holdR = [26, -138], holdL = [-22, -134];
-  let hR = [lerp(restR[0], PHONE_BED[0], reach), lerp(restR[1], PHONE_BED[1], reach)];
-  hR = [lerp(hR[0], holdR[0], up), lerp(hR[1], holdR[1], up)];
-  const hL = [lerp(restL[0], holdL[0], P(t, 3.4, 1.0, E.ioC)), lerp(restL[1], holdL[1], P(t, 3.4, 1.0, E.ioC))];
-  const pose = { x: HIP_A[0], y: HIP_A[1], s: 1, lean: lerp(-88, -4, up) + breath, tilt: 0, dy: 8 * read,
-    hands: { L: hL, R: hR }, phone: picked ? (up > .85 ? 'both' : 'R') : null, phoneAng: lerp(-60, 0, up), glow: lit };
+  R.A.setPhone(buzz, lit, !picked);
+  // Yacine : dort → entrouvre les yeux → attrape le téléphone → se redresse et lit
+  const grab = P(t, 2.6, .55, E.ioC), up = P(t, 3.15, 1.25, E.ioC), read = P(t, 4.2, .6, E.ioC);
+  const b0 = bedBase(0), b = bedBase(up);
+  const lieL = toHip(b0, 452, 1290), onPhone = toHip(b0, 434, 1286), lieR = toHip(b0, 560, 1215);
+  const holdL = [-18, -64], holdR = [18, -66];
+  let hL = [lerp(lieL[0], onPhone[0], grab), lerp(lieL[1], onPhone[1], grab)];
+  hL = [lerp(hL[0], holdL[0], up), lerp(hL[1], holdL[1], up)];
+  const ur = P(t, 3.4, 1.0, E.ioC);
+  const hR = [lerp(lieR[0], holdR[0], ur), lerp(lieR[1], holdR[1], ur)];
+  R.A.setBlanket(1 - up);
+  let face;
+  if (t < 1.5) face = { eyes: 'closed', mouth: 'small' };
+  else if (t < 3.6) face = { lid: lerp(.92, .45, P(t, 1.5, .5)) - .15 * P(t, 2.9, .5), worry: .45, mouth: 'flat', look: [0, 3] };
+  else face = { lid: .3 * (1 - P(t, 3.6, .35)), brow: .7 * P(t, 3.75, .25) * (1 - P(t, 4.7, .5)), mouth: t < 4.35 ? 'o' : 'smile', look: [0, lerp(2, 5, read)] };
+  const pose = Object.assign(b, { lean: b.lean + Math.sin(t * 2.2) * .5 * (1 - up), dy: 6 * read, t, face,
+    hands: { L: hL, R: hR }, phone: picked ? (up > .85 ? 'both' : 'L') : null, phoneAng: lerp(-80, 0, up), glow: lit, faceLight: .55 });
   R.yA.set(pose);
-  R.yA.tint('#141A3C', lerp(.52, .42, up));
+  R.yA.tint('#141A3C', lerp(.46, .34, up));
+  const hw = R.yA.headWorld(pose);
+  drawZzz(R.zz, t, hw[0] + 60, hw[1] - 110, 1 - P(t, 1.3, .3));
   // halo du téléphone (sur le lit, puis dans les mains)
-  const pw = picked ? R.yA.phoneWorld(pose) : [258 + buzz, 1286];
-  for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1] - (picked ? 40 : 0))); }
+  const pw = picked ? R.yA.phoneWorld(pose) : [BED.phone[0] + buzz, BED.phone[1]];
+  for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1] - (picked ? 30 : 0))); }
   R.A.glow.setAttribute('opacity', (.9 * lit).toFixed(3));
   R.A.glow2.setAttribute('opacity', (.32 * lit * up).toFixed(3));
 }
@@ -116,10 +126,22 @@ function sceneB(t) {
   R.B.sun.setAttribute('cy', f1(sy)); R.B.sunGlow.setAttribute('cy', f1(sy));
   R.B.sunGlow.setAttribute('opacity', (.35 + .65 * sun).toFixed(3));
   R.B.shaft.setAttribute('opacity', (.85 * sun).toFixed(3));
-  R.B.glow.setAttribute('opacity', (.55 * (1 - .6 * sun)).toFixed(3));
-  const br = Math.sin(t * 2) * .35;
-  R.yB.set({ x: 540, y: 1640, s: 1.3, lean: br, dy: 6, hands: { L: [-46, -48], R: [46, -48] } });
-  R.yB.tint(mix('#191B3A', '#4A2E28', sun), lerp(.5, .3, sun));
+  // Yacine lit sa séance, lève les yeux (séance validée), pose le téléphone puis fait une invocation
+  const low = P(t, 13.3, .5, E.ioC), dua = P(t, 15.25, .7, E.ioC), placed = t >= 15.25;
+  const L = [lerp(-16, -40, low), lerp(-60, -8, low)], Rr = [lerp(16, 36, low), lerp(-62, -8, low)];
+  const hL = [lerp(L[0], -14, dua), lerp(L[1], -80, dua)], hR = [lerp(Rr[0], 14, dua), lerp(Rr[1], -80, dua)];
+  let face = { look: [0, 4], mouth: 'smile' };
+  if (t > 13.4) face = { eyes: 'happy', mouth: 'grin', brow: .3 };
+  if (t > 15.35) face = { eyes: 'closed', mouth: 'small' };
+  const pose = Object.assign({}, MAT, { lean: Math.sin(t * 2) * .35, dy: lerp(4, 0, low), t, face, hands: { L: hL, R: hR },
+    phone: placed ? null : (low > .5 ? 'R' : 'both'), glow: 1 - .7 * low, faceLight: .45 * (1 - low) });
+  R.yB.set(pose);
+  R.yB.tint(mix('#191B3A', '#4A2E28', sun), lerp(.34, .14, sun));
+  vis(R.lapPhone, placed);
+  R.lapPhone.setAttribute('transform', `translate(${f1(MAT.x + 36 * MAT.s)} ${f1(MAT.y - 4 * MAT.s)}) rotate(-6)`);
+  const pw = R.yB.phoneWorld(pose);
+  R.B.glow.setAttribute('cx', f1(pw[0])); R.B.glow.setAttribute('cy', f1(pw[1]));
+  R.B.glow.setAttribute('opacity', placed ? 0 : (.55 * (1 - .6 * sun) * (1 - low)).toFixed(3));
 }
 
 function render(t) {
