@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-tiktok-08-lanterne.mp4">
+<title>Dawam TikTok 08 — La lanterne et le réveil</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="tk.css">
+<!-- Format « personnage qui incarne le problème » (à la Duolingo), en version douce : la lanterne du logo et le réveil repoussé. -->
+<style>
+#sceneA{transform-origin:560px 1240px}
+#warm{background:radial-gradient(60% 40% at 40% 62%,rgba(255,200,110,.5),rgba(255,200,110,0))}
+.alarm{position:absolute;left:110px;top:720px;width:860px;padding:34px 40px 30px;border-radius:44px;background:rgba(250,247,242,.97);
+  box-shadow:0 30px 70px -20px rgba(10,12,30,.6);font-family:Inter,var(--sans)}
+.alarm .ah{font:600 30px/1 Inter,var(--sans);color:#8a8580}
+.alarm .at{margin-top:14px;font:700 54px/1 Inter,var(--sans);color:#111}
+.alarm .ab{margin-top:28px;display:flex;gap:20px}
+.alarm .ab span{flex:1;height:88px;border-radius:44px;font:700 34px/88px Inter,var(--sans);text-align:center}
+.alarm .rep{background:#E9E4DC;color:#111}.alarm .stop{background:#C8871F;color:#fff}
+.bubble{position:absolute;padding:24px 34px;border-radius:40px;background:#fff;color:#141414;font:800 44px/1.3 var(--tk);text-align:center;
+  box-shadow:0 20px 40px -16px rgba(0,0,0,.5);white-space:nowrap;transform-origin:50% 100%}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-18px;margin-left:-18px;border:18px solid transparent;border-top-color:#fff;border-bottom:0}
+#tap,#tapring{position:absolute}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="sceneA" class="L" width="1080" height="1920"></svg>
+  <div id="warm" class="L full"></div>
+  <div class="tapring" id="tapring"></div><div class="tap" id="tap"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/people.js"></script><script src="../lib/decor.js"></script><script src="tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const PAL = {
+  wall: ['#232849', '#4F4A70', '#E9D8C4'], base: ['#1D2140', '#433E60', '#D9C4AA'], floor: ['#1A1E3E', '#3F3A58', '#C49E7B'],
+  floorLine: ['#20244A', '#47415F', '#B38D6B'], rug: ['#2B2F57', '#5B4F6E', '#D8B48A'], rugLine: ['#363A66', '#6E5F7C', '#E6C79E'],
+  frame: ['#30355E', '#625C82', '#F2E8DA'], sill: ['#2B3058', '#5A5479', '#EADFCF'], rod: ['#3A3F68', '#6B6488', '#B8936A'],
+  curtain: ['#2F4A6A', '#4F6F8A', '#7FA3B8'], curtainLine: ['#25405E', '#456480', '#6E92A8'],
+  skyTop: ['#0E1433', '#2A2F66', '#8EC5E8'], skyBot: ['#2A2A5C', '#7A5689', '#DDEFF7'], city: ['#0A0E26', '#1F1B3D', '#7E8AA0'],
+  artFrame: ['#3A3557', '#6A5E7A', '#B8936A'], art: ['#2C3155', '#5E587C', '#F5EDE0'], artLine: ['#6B6286', '#A08C9C', '#BA7517'],
+  stand: ['#2F2A45', '#5A4A5E', '#9C6B4A'], standTop: ['#383250', '#655467', '#B07D58'], lampStem: ['#3C3652', '#665A70', '#8C6A50'], lampShade: ['#4A4466', '#8A7E92', '#F2E3C8'],
+  bedWood: ['#30283F', '#5B4858', '#8E5E44'], bedWoodDark: ['#251F33', '#4A3A48', '#6E4632'],
+  sheet: ['#3A4270', '#7A7FA6', '#F2EEE6'], pillow: ['#46507E', '#8A8FB5', '#FBF8F2'], blanket: ['#2E4C6E', '#4F6F94', '#3E7C9A'], blanketLine: ['#253F5E', '#44628A', '#356C88'],
+};
+const ALARMS = [[1.2, 2.0, '05:52'], [3.3, 4.0, '05:57']];
+const toStage = (x, y, k) => [560 + (x - 560) * k, 1240 + (y - 1240) * k];
+function lanternSVG(parent) {
+  const g = el('g', {}, parent);
+  g.innerHTML = `<defs><radialGradient id="lnG"><stop offset="0" stop-color="#FFD98A" stop-opacity=".75"/><stop offset=".45" stop-color="#FFC060" stop-opacity=".25"/><stop offset="1" stop-color="#FFC060" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lnGlass" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#FFF6D6"/><stop offset="1" stop-color="#F2B648"/></radialGradient></defs>
+    <circle class="halo" r="260" fill="url(#lnG)"/>
+    <circle cx="0" cy="-132" r="15" fill="none" stroke="#B4842E" stroke-width="6"/>
+    <path d="M-48 -90Q0 -156 48 -90Z" fill="#C8871F"/><circle cx="0" cy="-118" r="7" fill="#EAC876"/>
+    <rect x="-54" y="-96" width="108" height="16" rx="7" fill="#B4742A"/>
+    <rect x="-46" y="-80" width="92" height="134" rx="16" fill="#8A5A1E"/>
+    <rect x="-36" y="-70" width="72" height="114" rx="9" fill="url(#lnGlass)"/>
+    <ellipse class="flame" cx="0" cy="-8" rx="13" ry="24" fill="#FFE9A6"/>
+    <path d="M-12 -70V44M12 -70V44" stroke="#8A5A1E" stroke-width="6"/>
+    <rect x="-54" y="50" width="108" height="16" rx="7" fill="#B4742A"/>
+    <path d="M-38 66L38 66L26 94L-26 94Z" fill="#C8871F"/>`;
+  return { g, halo: g.querySelector('.halo'), flame: g.querySelector('.flame') };
+}
+function build() {
+  const st = $('#stage');
+  R.A = bedroom($('#sceneA'), PAL);
+  R.y = new Person(R.A.person, { view: 'front', skin: '#B97A55', hair: '#1F1610', beard: true, top: '#6F8FB3', legs: 'none' });
+  R.L = lanternSVG($('#sceneA'));
+  R.alarm = el2(st, '<div class="alarm"><div class="ah">⏰ Alarme</div><div class="at">Fajr · <b>05:52</b></div><div class="ab"><span class="rep">Répéter</span><span class="stop">Arrêter</span></div></div>');
+  R.b1 = el2(st, '<div class="bubble">…</div>');
+  R.b2 = el2(st, '<div class="bubble">😶</div>');
+  R.b3 = el2(st, '<div class="bubble">Allez… juste 2 minutes<br>avec Allah 🤍</div>');
+  R.c1 = cap(st, 'Quand tu repousses\nton réveil pour le Fajr…', 'w', 280);
+  R.c2 = cap(st, '…pour la 3e fois 😅', 'w', 280);
+  R.c3 = cap(st, 'Ok ok… j\'arrive 😭🤍', 'w', 280);
+  R.end = tkEnd(st);
+}
+function render(t) {
+  const k = 1.24 + .06 * P(t, 0, 9, E.lin);
+  $('#sceneA').style.transform = `scale(${k.toFixed(4)})`;
+  paint(R.A.pal, .05);
+  // lanterne : flotte près de la fenêtre, puis vient au-dessus du lit et brille
+  const fly = P(t, 5.2, 1.0, E.ioC);
+  const lx = lerp(850, 470, fly) + Math.sin(t * 1.3) * 10, ly = lerp(780, 1060, fly) + Math.sin(t * 2.1) * 14;
+  const dimmed = (t > 2.2 && t < 5.2) ? .55 : 1;
+  const bright = lerp(dimmed, 1.6, P(t, 5.6, .8, E.outC));
+  R.L.g.setAttribute('transform', `translate(${f1(lx)} ${f1(ly)}) rotate(${(Math.sin(t * 1.7) * 6).toFixed(2)}) scale(.95)`);
+  R.L.halo.setAttribute('opacity', clamp(.55 * bright, 0, 1).toFixed(3));
+  R.L.halo.setAttribute('r', f1(220 + 90 * P(t, 5.6, .8, E.outC)));
+  R.L.flame.setAttribute('ry', f1(22 + Math.sin(t * 17) * 2.5 + Math.sin(t * 11) * 1.5));
+  T($('#warm'), { op: .9 * P(t, 5.7, .9, E.ioC) });
+  // téléphone qui sonne près de l'oreiller, puis Yacine se redresse
+  const ring = ALARMS.some(([a, b]) => t > a && t < b + .15);
+  const up = P(t, 7.2, 1.2, E.ioC), picked = t >= 7.2;
+  const buzz = ring ? Math.sin(t * 80) * 2.4 : 0;
+  R.A.phoneBed.setAttribute('transform', `translate(${f1(258 + buzz)} 1286) rotate(-78)`);
+  R.A.phoneBed.style.display = picked ? 'none' : '';
+  R.A.phoneScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', ring || picked ? 1 : 0));
+  const bed = [258 - 640, 1286 - 1290], reach = P(t, 6.7, .5, E.ioC);
+  let hR = [lerp(-110, bed[0], reach), lerp(-20, bed[1], reach)];
+  hR = [lerp(hR[0], 26, up), lerp(hR[1], -138, up)];
+  const hL = [lerp(-90, -22, P(t, 7.4, 1.0, E.ioC)), lerp(50, -134, P(t, 7.4, 1.0, E.ioC))];
+  const pose = { x: 640, y: 1290, s: 1, lean: lerp(-88, -4, up) + Math.sin(t * 2.2) * .5 * (1 - up), dy: 8 * up, hands: { L: hL, R: hR },
+    phone: picked ? (up > .85 ? 'both' : 'R') : null, phoneAng: lerp(-60, 0, up), glow: 1 };
+  R.y.set(pose);
+  R.y.tint('#141A3C', lerp(.5, .2, P(t, 5.7, .9)));
+  const pw = picked ? R.y.phoneWorld(pose) : [258 + buzz, 1286];
+  for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1])); }
+  R.A.glow.setAttribute('opacity', (ring || picked ? .8 : 0).toFixed(3));
+  R.A.glow2.setAttribute('opacity', (.3 * up).toFixed(3));
+  // alarme + toucher « Répéter »
+  const al = ALARMS.find(([a, b]) => t > a - .05 && t < b + .4);
+  if (al) { R.alarm.querySelector('b').textContent = al[2]; pop(R.alarm, t, al[0], al[1] + .2); } else T(R.alarm, { op: 0 });
+  const tp = ALARMS.find(([, b]) => t > b - .05 && t < b + .7);
+  const tap = $('#tap'), ring2 = $('#tapring');
+  if (tp) {
+    const lt = t - tp[1];
+    tap.style.left = ring2.style.left = '340px'; tap.style.top = ring2.style.top = '924px';
+    const a = P(lt, -.05, .15), press = P(lt, .1, .1) - P(lt, .22, .12), fo = P(lt, .3, .25), rp = P(lt, .22, .5, E.outC);
+    T(tap, { s: lerp(1.3, 1, a) - .14 * press, op: a * (1 - fo) });
+    T(ring2, { s: 1 + 1.4 * rp, op: rp > 0 ? 1 - rp : 0 });
+  } else { T(tap, { op: 0 }); T(ring2, { op: 0 }); }
+  // bulles de la lanterne (placées au-dessus d'elle, en coordonnées écran)
+  const [bx, by] = toStage(lx, ly - 150, k);
+  for (const [b, a, z] of [[R.b1, 2.4, 3.2], [R.b2, 4.45, 5.05], [R.b3, 6.15, 8.75]]) {
+    b.style.left = (bx - b.offsetWidth / 2).toFixed(1) + 'px'; b.style.top = (by - b.offsetHeight - 30).toFixed(1) + 'px';
+    pop(b, t, a, z);
+  }
+  pop(R.c1, t, .1, 5.0); pop(R.c2, t, 5.0, 7.2); pop(R.c3, t, 7.4, 8.85);
+  const [ex, ey] = toStage(lx, ly, k);
+  drawEnd(R.end, t, 8.9, ex, ey);
+}
+boot({ duration: 11, build, render });
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-tiktok-02-contraste.mp4">
+<title>Dawam TikTok 02 — 2 h de scroll vs 5 min de dhikr</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="tk.css">
+<!-- Format « contraste » (script répétable sur plusieurs sons tendance) : une habitude du quotidien face à une phrase de foi. -->
+<style>#dim{background:#120E08}</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:560px;width:592px;height:1246px"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/people.js"></script><script src="../lib/decor.js"></script><script src="../lib/screens.js"></script><script src="tk.js"></script>
+<script>
+'use strict';
+const R = {};
+function build() {
+  const st = $('#stage');
+  R.M = metro($('#scene'));
+  R.phone = makePhone([feedScreen('feed'), sessionScreen('ses')]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.c1 = cap(st, 'Tu passes 2 h par jour\nà scroller…', 'w', 290);
+  R.c2 = cap(st, '…mais 5 minutes de dhikr,\nc\'est trop ? 🥲', 'w', 290);
+  R.c3 = cap(st, '5 minutes.\nC\'est tout. 🤍', 'g', 290);
+  R.end = tkEnd(st);
+}
+function render(t) {
+  const sh = Math.sin(t * 9.1) * 1.4 + Math.sin(t * 13.7) * .8;
+  $('#scene').style.transform = `translateY(${sh.toFixed(2)}px) scale(1.06)`;
+  const d = t * 1500;
+  for (const s of R.M.streaks) s.n.setAttribute('x', f1(((s.x - d * s.v) % 1500 + 1500) % 1500 - 300));
+  for (const l of R.M.lamps) l.n.setAttribute('transform', `translate(${f1(((l.x - d) % 1560 + 1560) % 1560 - 200)} 0)`);
+  R.M.platform.setAttribute('transform', 'translate(2000 0)');
+  T($('#dim'), { op: .58 });
+  // le téléphone : fil qui défile, puis l'app s'ouvre sur la séance guidée
+  T($('#phoneWrap'), { y: Math.sin(t * 1.6) * 6, r: lerp(-3, 0, P(t, 4.4, .6, E.ioC)), s: .98 + .04 * P(t, 4.4, .8, E.outC) });
+  drawFeed($('#feed'), t, 0, .5);
+  $('#ses').style.transform = `translateY(${((1 - P(t, 4.45, .55, E.outQ)) * 100).toFixed(2)}%)`;
+  drawSession($('#ses'), t, 5.0);
+  pop(R.c1, t, .1, 3.3);
+  pop(R.c2, t, 3.3, 6.1);
+  pop(R.c3, t, 6.1, 8.35);
+  drawEnd(R.end, t, 8.4, 540, 1100);
+}
+boot({ duration: 10.5, build, render });
+</script>
+</body>
+</html>

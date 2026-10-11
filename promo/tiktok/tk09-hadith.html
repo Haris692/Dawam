@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-tiktok-09-hadith.mp4">
+<title>Dawam TikTok 09 — Personne ne m'avait dit ça</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="tk.css">
+<!-- Format « long texte » (on lit, on enregistre, on commente) autour du hadith sur la constance. -->
+<style>
+.pattern path{fill:none;stroke-width:1.6}
+#card{position:absolute;left:80px;top:470px;width:920px;padding:56px 56px 50px;border-radius:44px;background:#FFF8EC;text-align:center;
+  box-shadow:0 40px 80px -30px rgba(0,0,0,.6)}
+#card .k{font:800 24px/1 var(--sans);letter-spacing:5px;text-transform:uppercase;color:var(--accent)}
+#card .k span{font-family:var(--ar);font-size:1.7em;letter-spacing:0;vertical-align:-.12em}
+#card .ar{margin-top:34px;font:400 66px/1.75 var(--ar);color:var(--ink);direction:rtl}
+#card .ar b{font-weight:400;color:var(--accent)}
+#card .fr{margin-top:26px;font:italic 500 44px/1.42 var(--serif);color:#4A3A22}
+#card .src{margin-top:30px;font:700 22px/1 var(--sans);letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div class="L nightbg"></div>
+  <svg id="pat" class="L pattern" width="1080" height="1920"></svg>
+  <svg id="sparks" class="L" width="1080" height="1920"></svg>
+  <div id="card">
+    <div class="k">Le Prophète <span>ﷺ</span> a dit</div>
+    <div class="ar" lang="ar">أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ <b>أَدْوَمُهَا</b> وَإِنْ قَلَّ</div>
+    <div class="fr">« Les œuvres les plus aimées d'Allah sont les plus constantes, même si elles sont peu nombreuses. »</div>
+    <div class="src">Rapporté par al-Bukhari et Muslim</div>
+  </div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="tk.js"></script>
+<script>
+'use strict';
+const R = {};
+function build() {
+  const st = $('#stage');
+  R.pat = buildPattern($('#pat'), '#B7A6F0');
+  R.sp = buildSparks($('#sparks'), '#FFE7B0', 13, 24);
+  R.c1 = cap(st, 'Personne ne m\'avait\ndit ça… 🥹', 'w', 330);
+  R.c2 = cap(st, 'Alors j\'ai arrêté de vouloir\ntout faire d\'un coup.', 'w', 330);
+  R.c3 = cap(st, 'Un peu.\nMais chaque jour. 🤍', 'g', 330);
+  R.streak = el2(st, '<div class="c" style="top:540px"><div class="sticker white" style="position:relative;display:inline-block;font-size:48px">🔥 Petit, mais constant.</div></div>');
+  R.end = tkEnd(st);
+}
+function render(t) {
+  drawPattern(R.pat, t, 0, .1, $('#pat'));
+  drawSparks(R.sp, t, .9, $('#sparks'));
+  pop(R.c1, t, .1, 2.6);
+  const a = P(t, 2.6, .5, E.outB), o = P(t, 7.45, .3, E.inC);
+  T($('#card'), { y: (1 - a) * 60 - 40 * o, s: lerp(.9, 1, a), op: P(t, 2.6, .2) * (1 - o) });
+  pop(R.c2, t, 7.6, 9.6);
+  pop(R.c3, t, 9.6, 10.55);
+  pop(R.streak, t, 9.8, 10.55);
+  drawEnd(R.end, t, 10.6, 540, 900);
+}
+boot({ duration: 12.6, build, render });
+</script>
+</body>
+</html>

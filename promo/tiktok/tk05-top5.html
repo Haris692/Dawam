@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-tiktok-05-top5.mp4">
+<title>Dawam TikTok 05 — 5 petites habitudes</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="tk.css">
+<!-- Format « top 5 » (contenu qu'on enregistre) ; existe aussi en carrousel d'images. -->
+<style>.vis{position:absolute;left:0;top:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div class="L softbg"></div>
+  <svg id="pattern" class="L" width="1080" height="1920"></svg>
+  <svg id="sparks" class="L" width="1080" height="1920"></svg>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const T0 = 2.7, STEP = 2.6;
+const ITEMS = [
+  ['Les invocations du matin,\njuste après le Fajr', 'phone', ['adhkar-matin']],
+  ['5 minutes de dhikr\ndans les transports', 'phone', [sessionScreen('ses')]],
+  ['Un objectif de dhikr\navec ma famille', 'group'],
+  ['Un vrai bilan\navant de dormir', 'phone', [sleepStepScreen('sleep')]],
+  ['Viser la constance,\npas la perfection', 'grid'],
+];
+function phoneVis(st, layers) {
+  const w = el2(st, '<div class="L" style="left:244px;top:600px;width:592px;height:1246px"></div>');
+  w.appendChild(makePhone(layers));
+  return w;
+}
+function build() {
+  const st = $('#stage');
+  R.pat = buildPattern($('#pattern'), '#BA7517');
+  R.sp = buildSparks($('#sparks'), '#C99A3E', 7, 20);
+  R.title = cap(st, '5 petites habitudes\nqui ont changé ma vie\nde musulman 🤍', 'w xl', 560);
+  R.sub = cap(st, '(la 5e est la plus importante)', 'k sm', 930);
+  R.items = ITEMS.map(([txt, kind, layers], i) => {
+    const num = el2(st, `<div class="num" style="left:485px;top:236px">${i + 1}</div>`);
+    const c = cap(st, txt, 'w', 380);
+    let v;
+    if (kind === 'phone') v = phoneVis(st, layers);
+    else if (kind === 'group') v = el2(st, `<div class="vis">${groupCard('grp', 70, 860)}</div>`);
+    else v = el2(st, `<div class="vis">${gridCard('grd', 90, 760, 900)}</div>`);
+    return { num, c, v, t0: T0 + i * STEP };
+  });
+  R.last = cap(st, 'Tout ça, dans une seule app 👇', 'g', 380);
+  R.lastPhone = phoneVis(st, ['parcours']);
+  R.end = tkEnd(st);
+}
+function render(t) {
+  drawPattern(R.pat, t, 0, .09, $('#pattern'));
+  drawSparks(R.sp, t, .8, $('#sparks'));
+  pop(R.title, t, .1, T0 - .05); pop(R.sub, t, .9, T0 - .05);
+  R.items.forEach((it, i) => {
+    const a = it.t0, b = it.t0 + STEP;
+    pop(it.num, t, a, b - .05); pop(it.c, t, a + .05, b - .05);
+    const pin = P(t, a, .55, E.outQ), pout = P(t, b - .25, .35, E.inC);
+    const isPhone = ITEMS[i][1] === 'phone';
+    T(it.v, { x: 1150 * (1 - pin) - 1150 * pout, r: isPhone ? 6 * (1 - pin) - 6 * pout : 0, s: isPhone ? .72 : 1, op: pin > 0 && pout < 1 ? 1 : 0 });
+  });
+  drawSession($('#ses'), t, T0 + STEP, 20);
+  drawGroup($('#grp'), t, T0 + 2 * STEP + .3, 1.9);
+  drawGrid($('#grd'), t, T0 + 4 * STEP + .2, .055);
+  const L0 = T0 + 5 * STEP;
+  pop(R.last, t, L0 + .05, L0 + 1.2);
+  const lp = P(t, L0, .55, E.outQ);
+  T(R.lastPhone, { y: 700 * (1 - lp), s: .72, op: lp > 0 ? 1 : 0 });
+  drawEnd(R.end, t, L0 + 1.2, 540, 1200);
+}
+boot({ duration: T0 + 5 * STEP + 3.3, build, render });
+</script>
+</body>
+</html>

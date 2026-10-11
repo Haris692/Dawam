@@ -15,8 +15,8 @@ const E = {
   outQ: p => 1 - Math.pow(1 - p, 5),
   outX: p => p >= 1 ? 1 : 1 - Math.pow(2, -10 * p),
   inX: p => p <= 0 ? 0 : Math.pow(2, 10 * p - 10),
-  outB: p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
-  outB2: p => { const c1 = 2.4, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+  outB: p => { if (p <= 0) return 0; const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+  outB2: p => { if (p <= 0) return 0; const c1 = 2.4, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
 };
 // progression 0→1 entre s et s+d, avec easing
 const P = (t, s, d, e = E.outC) => e(clamp((t - s) / d));
@@ -171,7 +171,7 @@ function drawEnd(R, t, t0, cx = 540, cy = 1400) {
 // ───────── démarrage : préchargement, aperçu temps réel ou rendu image par image ─────────
 async function boot({ duration, build, render }) {
   window.DURATION = duration;
-  const faces = ['800 40px "Plus Jakarta Sans"', '600 40px "Plus Jakarta Sans"', 'italic 500 40px Lora', '400 40px Amiri', '700 40px Amiri'];
+  const faces = ['800 40px "Plus Jakarta Sans"', '600 40px "Plus Jakarta Sans"', 'italic 500 40px Lora', '400 40px Amiri', '700 40px Amiri', '800 40px "TikTok Sans"', '600 40px "TikTok Sans"'];
   await Promise.all(faces.map(f => document.fonts.load(f, 'Dawam دَوَام ﷺ')));
   await document.fonts.ready;
   build();

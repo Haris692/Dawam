@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-tiktok-07-tuto.mp4">
+<title>Dawam TikTok 07 — Mes adhkar du matin en 3 minutes</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="tk.css">
+<!-- Format « accroche + démo » : un tutoriel en 3 étapes sur l'écran de l'app. -->
+<style>
+.ctr{position:absolute;left:68.8px;top:423.2px;width:46px;height:46px;border-radius:50%;background:#fff;border:4px solid #FAEEDA;
+  display:flex;align-items:center;justify-content:center;font:800 17px/1 var(--sans);color:var(--accent)}
+.ctr .ok{position:absolute;inset:-4px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center}
+.ctr .ok svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div class="L softbg"></div>
+  <svg id="sparks" class="L" width="1080" height="1920"></svg>
+  <div id="phoneWrap" class="L" style="left:244px;top:560px;width:592px;height:1246px"></div>
+  <svg id="burst" class="L" width="1080" height="1920"></svg>
+</div></div>
+<script src="../lib/engine.js"></script><script src="tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const TAPS = [[2.2, 196, 1146], [4.6, 280, 640], [5.1, 280, 640], [5.6, 280, 640]];
+function build() {
+  const st = $('#stage');
+  R.sp = buildSparks($('#sparks'), '#C99A3E', 7, 18);
+  const ctr = `<div class="ctr" id="ctr"><span id="ctrN">3</span><div class="ok" id="ctrOk"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div></div>`;
+  R.phone = makePhone(['parcours', 'adhkar-matin'], ctr);
+  $('#phoneWrap').appendChild(R.phone);
+  R.hook = cap(st, 'Mes adhkar du matin\nen 3 minutes ⏱️', 'w', 230);
+  R.steps = [
+    [cap(st, '1️⃣ J\'ouvre « Invocations »', 'k sm', 420), 1.4, 4.0],
+    [cap(st, '2️⃣ Je tape la carte à chaque récitation', 'k sm', 420), 4.0, 7.4],
+    [cap(st, '3️⃣ Et ma série continue 🔥', 'k sm', 420), 7.4, 10.4],
+  ];
+  R.streak = el2(st, '<div class="c" style="top:880px"><div class="sticker gold" style="position:relative;display:inline-block;font-size:56px">🔥 22 jours de suite</div></div>');
+  R.motto = cap(st, 'Petit, mais constant. 🤍', 'g', 420);
+  const rr = mulberry32(8); R.burst = [];
+  for (let i = 0; i < 20; i++) R.burst.push({ el: el('path', { d: SPARK, fill: '#D9A94E' }, $('#burst')), an: i / 20 * Math.PI * 2 + rr() * .3, d: 200 + rr() * 220, s: 10 + rr() * 12 });
+  R.end = tkEnd(st);
+}
+function render(t) {
+  drawSparks(R.sp, t, .7, $('#sparks'));
+  const imgs = R.phone.querySelectorAll('.screen>img');
+  imgs[1].style.opacity = P(t, 2.4, .2, E.lin).toFixed(3);
+  const n = t < 4.8 ? 3 : t < 5.3 ? 2 : 1;
+  $('#ctrN').textContent = n;
+  T($('#ctrOk'), { s: P(t, 5.95, .4, E.outB2), op: P(t, 5.95, .15) });
+  $('#ctr').style.opacity = P(t, 2.4, .2).toFixed(3);
+  drawTaps(R.phone, t, TAPS);
+  const zoom = P(t, 7.4, .6, E.ioC);
+  T($('#phoneWrap'), { y: lerp(0, 120, zoom), s: lerp(.86, .8, zoom), r: Math.sin(t * .8) * .6 });
+  pop(R.hook, t, .1, 10.35);
+  for (const [c, a, b] of R.steps) pop(c, t, a, b);
+  pop(R.streak, t, 7.7, 10.35);
+  for (const b of R.burst) {
+    const pr = P(t, 7.75, 1.0, E.outC), f = P(t, 8.15, .6);
+    b.el.setAttribute('transform', `translate(${f1(540 + Math.cos(b.an) * b.d * pr)} ${f1(920 + Math.sin(b.an) * b.d * pr * .6)}) scale(${(b.s * (pr > 0 ? 1 - .5 * f : 0)).toFixed(2)})`);
+    b.el.setAttribute('opacity', (pr > 0 ? 1 - f : 0).toFixed(3));
+  }
+  pop(R.motto, t, 10.4, 12.35);
+  drawEnd(R.end, t, 12.4, 540, 1200);
+}
+boot({ duration: 14.5, build, render });
+</script>
+</body>
+</html>

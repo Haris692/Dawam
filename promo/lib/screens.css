@@ -1,0 +1,58 @@
+/* Écrans et cartes de l'app recréés en HTML (thème Tarbiya, Sable doré), pour les vidéos. */
+/* séance de dhikr guidée (écran 560×1214) */
+.sds{background:var(--bg);display:flex;flex-direction:column}
+.sds-top{height:150px;padding:96px 36px 0;display:flex;justify-content:space-between;align-items:center}
+.sds-top .dots{display:flex;gap:11px}
+.sds-top .dots i{width:12px;height:12px;border-radius:6px;background:#E4D8C4}
+.sds-top .dots i.on{width:32px;background:var(--accent)}
+.sds-top .tt{font:600 19px/1 var(--sans);letter-spacing:.6px;color:var(--muted2)}
+.sds-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px;text-align:center}
+.sds .lbl{font:800 16px/1 var(--sans);letter-spacing:2.4px;text-transform:uppercase;color:var(--muted2);margin-bottom:26px}
+.sds .ar{font:400 40px/1.9 var(--ar);direction:rtl;color:var(--ink);margin-bottom:10px}
+.sds .ph{font:italic 500 19px/1.45 var(--sans);color:var(--accent);margin-bottom:10px}
+.sds .fr{font:500 19px/1.55 var(--sans);color:#6E6352;margin:0 auto 34px;max-width:430px}
+.sds .cd{font:800 100px/1 var(--sans);letter-spacing:-3px;color:var(--ink);font-variant-numeric:tabular-nums;margin-bottom:18px}
+.sds .bar{width:440px;height:8px;margin:0 auto;border-radius:99px;background:#EADFCB;overflow:hidden}
+.sds .bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.sds-cta{margin:0 32px 64px;height:80px;border-radius:26px;background:var(--accent);color:#fff;font:800 25px/80px var(--sans);text-align:center;box-shadow:0 16px 30px -14px var(--accent)}
+/* fil de réseau social générique (écran 560×1214) */
+.feed{background:#0E0E10;overflow:hidden}
+.feed .post{position:absolute;left:0;width:560px;height:1214px}
+.feed .post i{position:absolute;border-radius:50%;background:rgba(255,255,255,.9)}
+.feed .side{position:absolute;right:22px;width:56px;display:flex;flex-direction:column;gap:30px}
+.feed .side b{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.85)}
+.feed .meta{position:absolute;left:26px;bottom:120px;width:380px}
+.feed .meta b{display:block;height:20px;border-radius:10px;background:rgba(255,255,255,.85);margin-top:12px}
+.feed .time{position:absolute;left:50%;top:96px;transform:translateX(-50%);padding:10px 20px;border-radius:999px;background:rgba(0,0,0,.55);
+  color:#fff;font:700 22px/1 var(--sans);white-space:nowrap}
+/* carte de groupe */
+.gcard{position:absolute;width:940px;height:300px;border-radius:42px;background:#fff;overflow:hidden;
+  box-shadow:0 34px 60px -26px rgba(80,48,8,.45),0 3px 10px rgba(80,48,8,.07)}
+.gcard .gk{position:absolute;left:40px;top:36px;font:800 18px/1 var(--sans);letter-spacing:3px;color:var(--muted2);text-transform:uppercase}
+.gcard .gl{position:absolute;left:40px;top:66px;font:800 32px/1.1 var(--sans);letter-spacing:-.6px;color:var(--ink)}
+.gcard .gar{position:absolute;left:40px;top:108px;font:700 46px/1.3 var(--ar);color:var(--accent);direction:rtl}
+.gcard .gnumW{position:absolute;right:40px;top:30px;text-align:right}
+.gcard .gnum{font:800 104px/1 var(--sans);letter-spacing:-4px;color:var(--ink)}
+.gcard .gof{margin-top:6px;font:600 24px/1 var(--sans);color:var(--muted)}
+.gcard .gbar{position:absolute;left:40px;right:40px;top:198px;height:14px;border-radius:99px;background:var(--accent-soft)}
+.gcard .gbar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.gcard .gmem{position:absolute;left:40px;top:232px;display:flex;align-items:center}
+.gcard .gmem b{width:46px;height:46px;border-radius:50%;margin-right:-10px;display:flex;align-items:center;justify-content:center;font:800 19px/1 var(--sans);color:#fff;box-shadow:0 0 0 4px #fff}
+.gcard .gmem span{margin-left:26px;font:700 22px/1 var(--sans);color:var(--muted)}
+.gcard .gpct{position:absolute;right:40px;top:240px;font:800 24px/1 var(--sans);color:var(--accent)}
+/* grille de constance */
+.grid{position:absolute;background:#fff;border-radius:40px;box-shadow:0 34px 60px -26px rgba(80,48,8,.42)}
+.grid .gt{font:800 30px/1 var(--sans);color:var(--ink)}
+.grid .gs{font:800 18px/1 var(--sans);letter-spacing:3px;color:var(--muted2);text-transform:uppercase}
+.grid .sq{position:absolute;border-radius:22%;background:#F4F1FC}
+.grid .sq i{position:absolute;inset:0;border-radius:22%}
+/* étape guidée « convenances du sommeil » (écran 560×1214) */
+.gs-h{position:absolute;left:0;top:0;width:560px;height:356px;background:var(--warm-grad);color:#fff;padding:96px 30px 0;overflow:hidden}
+.gs-h .k{margin-top:74px;font:800 16px/1 var(--sans);letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.88)}
+.gs-h .t{margin-top:12px;font:800 37px/1.05 var(--sans);letter-spacing:-.8px}
+.gs-b{position:absolute;left:40px;right:40px;top:440px;text-align:center}
+.gs-b .l{font:800 16px/1 var(--sans);letter-spacing:2.2px;text-transform:uppercase;color:var(--muted2)}
+.gs-b .e{margin-top:34px;font-size:96px;line-height:1}
+.gs-b .tt{margin-top:30px;font:800 36px/1.12 var(--sans);letter-spacing:-.6px;color:var(--ink)}
+.gs-b .d{margin:18px auto 0;max-width:430px;font:500 21px/1.55 var(--sans);color:#6E6352}
+.gs-f{position:absolute;left:26px;right:26px;bottom:64px;height:72px;border-radius:24px;background:var(--accent);color:#fff;font:800 25px/72px var(--sans);text-align:center}
