@@ -9,7 +9,7 @@ Quatre vidéos verticales (1080×1920, 60 i/s, ~20 s) qui montrent l'app dans de
 | `dawam-famille.mp4` (19 s) | 12 h 45 | Samira à la maison, Yacine au bureau, Inès à la fac : chaque « +1 » rejoint la carte du groupe en temps réel jusqu'à « Ma sha Allah ! Objectif atteint — 1 000 Salawat ». |
 | `dawam-nuit.mp4` (21 s) | 22 h 40 | Samira reçoit « Avant de dormir — tes invocations du soir t'attendent », suit les 5 convenances du sommeil (bilan, tawba, ablutions, invocations, côté droit), journée complète, lumière éteinte : « Demain, on recommence. » |
 
-Chaque vidéo s'ouvre sur « Une journée avec Dawam · n/4 » et se termine sur la carte Dawam (logo, « Petit, mais constant. », iPhone · Android · Web). Piste audio silencieuse : à compléter par une voix off ou un nashid sur la plateforme de publication.
+Chaque vidéo s'ouvre sur « Une journée avec Dawam · n/4 » et se termine sur la carte Dawam (logo, « Petit, mais constant. », iPhone · Android · Web). Chaque vidéo existe en deux versions : sans voix (`dawam-*.mp4`, piste silencieuse, pour y poser un nashid) et avec la voix off (`dawam-*-voix.mp4`). Textes et voix : voir `../voix-off/`.
 
 ## Fichiers
 
