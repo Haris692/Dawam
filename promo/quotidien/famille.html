@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-famille.mp4">
+<title>Dawam — En famille</title>
+<link rel="stylesheet" href="../lib/base.css">
+<!-- Une journée avec Dawam · 3/4 — Samira, Yacine et Inès remplissent ensemble un objectif de 1 000 Salawat, chacun de son côté. -->
+<style>
+.glow{width:1500px;height:1500px;border-radius:50%}
+#glowA{background:radial-gradient(closest-side,rgba(234,200,118,.5),rgba(234,200,118,0))}
+#glowB{background:radial-gradient(closest-side,rgba(217,169,78,.32),rgba(217,169,78,0))}
+.panel{position:absolute;left:40px;width:1000px;height:330px;border-radius:38px;overflow:hidden;
+  box-shadow:0 30px 60px -28px rgba(80,48,8,.5),0 2px 8px rgba(80,48,8,.08);transform:translateZ(0)}
+.panel svg{display:block}
+.plabel{position:absolute;left:22px;top:20px;height:56px;padding:0 24px;border-radius:999px;background:rgba(255,252,246,.95);
+  font:800 26px/56px var(--sans);color:var(--ink);box-shadow:0 8px 18px -10px rgba(40,24,4,.5);white-space:nowrap}
+.plabel span{color:var(--accent)}
+/* carte de groupe (style de l'app) */
+#gcard{position:absolute;left:70px;top:420px;width:940px;height:300px;border-radius:42px;background:#fff;
+  box-shadow:0 34px 60px -26px rgba(122,76,14,.4),0 3px 10px rgba(122,76,14,.07);overflow:hidden}
+#gcard .gk{position:absolute;left:40px;top:36px;font:800 18px/1 var(--sans);letter-spacing:3px;color:var(--muted2);text-transform:uppercase}
+#gcard .gl{position:absolute;left:40px;top:66px;font:800 32px/1.1 var(--sans);letter-spacing:-.6px;color:var(--ink)}
+#gcard .gar{position:absolute;left:40px;top:108px;font:700 46px/1.3 var(--ar);color:var(--accent);direction:rtl}
+#gnumW{position:absolute;right:40px;top:30px;text-align:right}
+#gnum{font:800 104px/1 var(--sans);letter-spacing:-4px;color:var(--ink)}
+#gof{margin-top:6px;font:600 24px/1 var(--sans);color:var(--muted)}
+#gbar{position:absolute;left:40px;right:40px;top:198px;height:14px;border-radius:99px;background:var(--accent-soft)}
+#gbar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+#gmem{position:absolute;left:40px;top:232px;display:flex;align-items:center;gap:0}
+#gmem b{width:46px;height:46px;border-radius:50%;margin-right:-10px;display:flex;align-items:center;justify-content:center;font:800 19px/1 var(--sans);color:#fff;box-shadow:0 0 0 4px #fff}
+#gmem span{margin-left:26px;font:700 22px/1 var(--sans);color:var(--muted)}
+#gmem span i{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--green);margin-right:10px;vertical-align:1px}
+#gpct{position:absolute;right:40px;top:240px;font:800 24px/1 var(--sans);color:var(--accent)}
+#gdone{position:absolute;inset:0;background:#fff;display:flex;align-items:center;gap:30px;padding:0 44px}
+#gdone .st{width:112px;height:112px;border-radius:50%;background:var(--warm-grad);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 16px 30px -12px rgba(122,76,14,.6)}
+#gdone .st svg{width:58px;height:58px;fill:#fff}
+#gdone .mt{font:800 64px/1 var(--sans);letter-spacing:-2px;color:var(--ink)}
+#gdone .ms{margin-top:14px;font:600 28px/1.2 var(--sans);color:var(--muted)}
+#gdone .gbar2{margin-top:20px;width:560px;height:14px;border-radius:99px;background:var(--green)}
+.plus1{position:absolute;left:0;top:0;margin:-24px 0 0 -38px;width:76px;height:48px;border-radius:999px;background:#fff;color:var(--accent);
+  font:800 24px/48px var(--sans);text-align:center;box-shadow:0 10px 22px -10px rgba(80,48,8,.5)}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div id="glowA" class="L glow"></div><div id="glowB" class="L glow"></div>
+  <svg id="sparks" class="L" width="1080" height="1920"></svg>
+
+  <div id="stamp" class="stamp dark" style="top:150px"><div class="k" style="color:var(--accent);opacity:1">Une journée avec Dawam · 3/4</div><div class="h">12 h 45</div><div class="s">La pause de midi.</div></div>
+  <div id="hA" class="headline" style="top:150px"><div class="mask"><div class="ln">Une famille,</div></div><div class="mask"><div class="ln em">trois endroits.</div></div></div>
+  <div id="hB" class="headline" style="top:150px"><div class="mask"><div class="ln">Un même objectif,</div></div><div class="mask"><div class="ln em">en temps réel.</div></div></div>
+  <div id="hC" class="headline" style="top:150px"><div class="mask"><div class="ln">Ensemble,</div></div><div class="mask"><div class="ln em">même à distance.</div></div></div>
+
+  <div id="p0" class="panel" style="top:760px"><svg width="1000" height="330"></svg><div class="plabel">Samira · <span>à la maison</span></div></div>
+  <div id="p1" class="panel" style="top:1110px"><svg width="1000" height="330"></svg><div class="plabel">Yacine · <span>au bureau</span></div></div>
+  <div id="p2" class="panel" style="top:1460px"><svg width="1000" height="330"></svg><div class="plabel">Inès · <span>à la fac</span></div></div>
+
+  <div id="gcard">
+    <div class="gk">Groupe famille</div>
+    <div class="gl">Salawat sur le Prophète ﷺ</div>
+    <div class="gar" lang="ar">صَلَّى ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ</div>
+    <div id="gnumW"><div id="gnum">640</div><div id="gof">sur 1 000</div></div>
+    <div id="gbar"><i id="gfill"></i></div>
+    <div id="gmem"><b style="background:#3E7C74">S</b><b style="background:#41597A">Y</b><b style="background:#C98B86">I</b><span><i></i>3 membres · en temps réel</span></div>
+    <div id="gpct">64%</div>
+    <div id="gdone"><div class="st"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z"/></svg></div>
+      <div><div class="mt">Ma sha Allah !</div><div class="ms">Objectif atteint — 1 000 Salawat.</div><div class="gbar2"></div></div></div>
+  </div>
+  <div id="bubs"></div>
+  <svg id="burst" class="L" width="1080" height="1920"></svg>
+  <div id="black" class="L full" style="background:#F5EDE0"></div>
+</div></div>
+
+<script src="../lib/engine.js"></script>
+<script src="../lib/people.js"></script>
+<script src="../lib/decor.js"></script>
+<script>
+'use strict';
+const R = {};
+const PANELS = [
+  { id: '#p0', top: 760, from: -1, hip: [520, 342], who: { head: 'hijab', hijab: '#3E7C74', skin: '#D29C75', top: '#D8B48A' },
+    hands: { L: [-86, -98], R: [24, -150] }, phone: 'R', every: .55, start: 4.2 },
+  { id: '#p1', top: 1110, from: 1, hip: [480, 345], who: { head: 'hair', hair: '#1F1610', beard: true, skin: '#B97A55', top: '#41597A' },
+    hands: { L: [-76, -126], R: [26, -160] }, phone: 'R', every: .5, start: 4.4 },
+  { id: '#p2', top: 1460, from: -1, hip: [520, 355], who: { head: 'hijab', hijab: '#C98B86', skin: '#C9875E', top: '#2D4A6B' },
+    hands: { L: [-22, -150], R: [24, -154] }, phone: 'both', every: .45, start: 4.3 },
+];
+const S = .8, T_END_TAPS = 11.4, COUNTER = [890, 470];
+
+function build() {
+  R.sp = buildSparks($('#sparks'), '#C99A3E', 7, 18);
+  const decor = [kitchenPanel, officePanel, libraryPanel];
+  PANELS.forEach((p, i) => {
+    p.svg = $(p.id + ' svg');
+    p.d = decor[i](p.svg);
+    p.person = new Person(p.d.person, Object.assign({ view: 'front', legs: 'none' }, p.who));
+    p.taps = [];
+    for (let t = p.start; t < T_END_TAPS; t += p.every) p.taps.push(t);
+  });
+  // bulles « +1 » : une par toucher
+  R.bub = [];
+  PANELS.forEach((p, i) => p.taps.forEach(t0 => {
+    const b = document.createElement('div'); b.className = 'plus1'; b.textContent = '+1';
+    $('#bubs').appendChild(b); R.bub.push({ el: b, t0, p: i });
+  }));
+  // éclat autour de la carte quand l'objectif est atteint
+  const rr = mulberry32(23); R.burst = [];
+  for (let i = 0; i < 24; i++) {
+    const n = el('path', { d: SPARK, fill: '#D9A94E' }, $('#burst'));
+    R.burst.push({ el: n, an: i / 24 * Math.PI * 2 + rr() * .3, d: 140 + rr() * 200, s: 9 + rr() * 12 });
+  }
+  R.end = buildEnd($('#stage'), 'Une journée avec Dawam');
+}
+
+// pose de chaque personnage : petit mouvement du pouce à chaque « +1 », main levée à la fin
+function panelPose(p, t) {
+  let tap = 0;
+  for (const t0 of p.taps) { const lt = t - t0; if (lt > 0 && lt < .18) tap = Math.max(tap, Math.sin(lt / .18 * Math.PI)); }
+  const cheer = P(t, 11.85 + PANELS.indexOf(p) * .12, .55, E.outB) * (1 - P(t, 14.6, .6, E.ioC));
+  const L = [lerp(p.hands.L[0], -140, cheer), lerp(p.hands.L[1], -392, cheer)];
+  const Rh = [p.hands.R[0], p.hands.R[1] - 5 * tap];
+    const pose = { x: p.hip[0], y: p.hip[1], s: S, lean: Math.sin(t * 1.3 + p.hip[0]) * .6, dy: 5 * (1 - cheer), tilt: 0,
+    hands: { L, R: Rh }, phone: p.phone === 'both' && cheer > .3 ? 'R' : p.phone, glow: .5 };
+  p.person.set(pose);
+  return pose;
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5) });
+  T($('#glowA'), { x: -420 + Math.sin(t * .35) * 70, y: -480 + Math.cos(t * .3) * 60 });
+  T($('#glowB'), { x: 160 + Math.cos(t * .28) * 80, y: 1000 + Math.sin(t * .33) * 70 });
+  drawSparks(R.sp, t, .7, $('#sparks'));
+  const st = $('#stamp');
+  if (vis(st, t < 2.6)) T(st, { y: (1 - P(t, .3, .8, E.outX)) * 30 - 20 * P(t, 2.0, .45, E.inC), op: P(t, .3, .6) * (1 - P(t, 2.0, .45)) });
+  headline($('#hA'), t, 2.5, 5.55);
+  headline($('#hB'), t, 6.0, 11.6);
+  headline($('#hC'), t, 12.3, 15.3);
+  // panneaux
+  PANELS.forEach((p, i) => {
+    const a = P(t, .7 + i * .2, 1.0, E.outX);
+    T($(p.id), { x: p.from * 1150 * (1 - a), op: 1 });
+    T($(p.id + ' .plabel'), { s: P(t, 1.3 + i * .2, .5, E.outB), op: P(t, 1.3 + i * .2, .2) });
+    p.pose = panelPose(p, t);
+    if (p.d.clock) p.d.clock.setAttribute('transform', `rotate(${(t * 40).toFixed(1)} 560 62)`);
+  });
+  drawSteam(PANELS[0].svg, t); drawSteam(PANELS[1].svg, t);
+  // carte de groupe
+  const g = P(t, 3.0, .8, E.outB);
+  T($('#gcard'), { y: (1 - g) * -60, s: lerp(.9, 1, g), op: P(t, 3.0, .25) });
+  const v = lerp(640, 1000, P(t, 4.5, 7.1, E.ioC));
+  $('#gnum').textContent = fmt(v);
+  $('#gfill').style.width = (v / 10).toFixed(2) + '%';
+  $('#gpct').textContent = Math.round(v / 10) + '%';
+  T($('#gnumW'), { s: 1 + .05 * Math.max(0, Math.sin(t * 14)) * (t > 4.5 && t < 11.6 ? 1 : 0) });
+  T($('#gdone'), { op: P(t, 11.7, .35), s: lerp(.92, 1, P(t, 11.7, .5, E.outB)) });
+  // bulles : du téléphone vers le compteur
+  for (const b of R.bub) {
+    const lt = (t - b.t0) / .85;
+    if (lt <= 0 || lt >= 1) { b.el.style.visibility = 'hidden'; continue; }
+    const p = PANELS[b.p], pw = p.person.phoneWorld(p.pose);
+    const sx = 40 + pw[0] + 46, sy = p.top + pw[1] - 10;
+    const e = E.ioC(lt), cx = lerp(sx, COUNTER[0], .25), cy = Math.min(sy, COUNTER[1]) - 160;
+    const x = (1 - e) * (1 - e) * sx + 2 * (1 - e) * e * cx + e * e * COUNTER[0];
+    const y = (1 - e) * (1 - e) * sy + 2 * (1 - e) * e * cy + e * e * COUNTER[1];
+    T(b.el, { x, y, s: lerp(.6, 1, P(lt, 0, .25, E.outB)) * (1 - .4 * P(lt, .7, .3)), op: 1 - P(lt, .8, .2) });
+  }
+  // éclat
+  for (const b of R.burst) {
+    const pr = P(t, 11.75, 1.0, E.outC), f = P(t, 12.15, .7);
+    const x = 540 + Math.cos(b.an) * b.d * pr * 1.4, y = 570 + Math.sin(b.an) * b.d * pr * .7;
+    b.el.setAttribute('transform', `translate(${f1(x)} ${f1(y)}) scale(${(b.s * (pr > 0 ? 1 - .5 * f : 0)).toFixed(2)})`);
+    b.el.setAttribute('opacity', (pr > 0 ? 1 - f : 0).toFixed(3));
+  }
+  drawEnd(R.end, t, 15.6, 540, 570);
+}
+
+boot({ duration: 19.5, build, render });
+</script>
+</body>
+</html>

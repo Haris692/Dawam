@@ -75,12 +75,14 @@ function bedroom(svgNode, pal) {
   <g id="brPerson"></g>
   <path d="M500 1288Q560 1258 650 1262L950 1266Q982 1270 982 1300L982 1416Q978 1440 950 1440L520 1440Q488 1436 486 1400L486 1330Q486 1296 500 1288Z" ${C(pal.blanket)}/>
   <path d="M610 1300Q650 1360 628 1436M770 1290Q800 1360 778 1438" fill="none" stroke-width="5" stroke-linecap="round" opacity=".55" data-p="stroke" ${C(pal.blanketLine)}/>
+  <g id="brCover" opacity="0"><path d="M408 1292Q458 1260 560 1262L640 1264L640 1440L432 1440Q398 1436 396 1400L396 1330Q396 1300 408 1292Z" ${C(pal.blanket)}/>
+    <path d="M470 1300Q500 1360 482 1436" fill="none" stroke-width="5" stroke-linecap="round" opacity=".55" data-p="stroke" ${C(pal.blanketLine)}/></g>
   <circle id="brPhoneGlow2" cx="0" cy="0" r="200" fill="url(#brPhoneG)" opacity="0"/>`;
   return {
     pal: palette(svgNode), person: svgNode.querySelector('#brPerson'), stars: svgNode.querySelector('#brStars'), moon: svgNode.querySelector('#brMoon'),
     phoneBed: svgNode.querySelector('#brPhoneBed'), phoneScr: svgNode.querySelector('#brPhoneScr'),
     glow: svgNode.querySelector('#brPhoneGlow'), glow2: svgNode.querySelector('#brPhoneGlow2'),
-    lampGlow: svgNode.querySelector('#brLampGlow'), shade: svgNode.querySelector('#brShade'),
+    lampGlow: svgNode.querySelector('#brLampGlow'), shade: svgNode.querySelector('#brShade'), cover: svgNode.querySelector('#brCover'),
   };
 }
 
@@ -207,4 +209,65 @@ function metro(svgNode) {
     lamps: q('.mtLamp').map(n => ({ n, x: +n.dataset.x })), straps: q('.mtStrap').map(n => ({ n, x: +n.dataset.x })),
     platform: svgNode.querySelector('#mtPlatform'),
   };
+}
+
+// ───────── petits décors (panneaux 1000×330) pour la vidéo « En famille » ─────────
+const steam = (x, y) => `<path class="steam" data-x="${x}" data-y="${y}" d="" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity=".7"/>`;
+function drawSteam(svgNode, t) {
+  svgNode.querySelectorAll('.steam').forEach((p, i) => {
+    const x = +p.dataset.x, y = +p.dataset.y, ph = t * 2.2 + i * 1.7;
+    let d = `M${x} ${y}`;
+    for (let k = 1; k <= 4; k++) d += `Q${f1(x + Math.sin(ph + k) * 12)} ${y - k * 16 + 8} ${f1(x + Math.sin(ph + k + .8) * 8)} ${y - k * 16}`;
+    p.setAttribute('d', d);
+    p.setAttribute('opacity', (.35 + .3 * Math.sin(ph * .7)).toFixed(2));
+  });
+}
+function kitchenPanel(svgNode) {
+  let tiles = '';
+  for (let x = 0; x < 1000; x += 46) for (let y = 120; y < 236; y += 38) tiles += `<rect x="${x + 2}" y="${y + 2}" width="42" height="34" rx="5" fill="#F4ECDD"/>`;
+  svgNode.innerHTML = `<rect width="1000" height="330" fill="#EAD6B8"/><rect y="118" width="1000" height="118" fill="#E2D2B8"/>${tiles}
+    <rect x="30" y="0" width="330" height="92" rx="10" fill="#C9A57A"/><path d="M195 0V92" stroke="#B48F63" stroke-width="5"/><rect x="160" y="62" width="26" height="8" rx="4" fill="#8C6A4E"/><rect x="204" y="62" width="26" height="8" rx="4" fill="#8C6A4E"/>
+    <rect x="640" y="22" width="250" height="186" rx="12" fill="#FBF7F0"/><rect x="654" y="36" width="222" height="158" rx="6" fill="#CFE5EF"/><path d="M765 36V194M654 114H876" stroke="#FBF7F0" stroke-width="7"/>
+    <circle cx="700" cy="90" r="26" fill="#FFF4D8" opacity=".9"/>
+    <rect x="740" y="176" width="44" height="34" rx="6" fill="#C46E4A"/><path d="M762 176Q742 140 752 120M762 176Q780 136 796 128M762 176Q762 140 766 112" stroke="#5E9C76" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="560" cy="62" r="34" fill="#FBF7F0"/><circle cx="560" cy="62" r="34" fill="none" stroke="#B48F63" stroke-width="5"/><path class="clock" d="M560 62V40M560 62L576 70" stroke="#5B4A3A" stroke-width="4" stroke-linecap="round"/>
+    <g class="person"></g>
+    <rect y="262" width="1000" height="22" fill="#A98260"/><rect y="282" width="1000" height="48" fill="#8C6A4E"/>
+    <path d="M250 288V330M500 288V330M750 288V330" stroke="#7A5A42" stroke-width="4"/>
+    <ellipse cx="200" cy="262" rx="86" ry="10" fill="#3D3B3A"/><rect x="128" y="202" width="144" height="62" rx="14" fill="#4E5A66"/><rect x="118" y="196" width="164" height="16" rx="8" fill="#5D6A77"/>
+    ${steam(170, 186)}${steam(205, 182)}${steam(238, 188)}`;
+  return { person: svgNode.querySelector('.person'), clock: svgNode.querySelector('.clock') };
+}
+function officePanel(svgNode) {
+  const r = mulberry32(31); let city = '';
+  for (let x = 610; x < 960; x += 30 + r() * 20) { const h = 50 + r() * 120; city += `<rect x="${f1(x)}" y="${f1(230 - h)}" width="${f1(26 + r() * 14)}" height="${f1(h)}" fill="${['#9FB6C8', '#B7C8D6', '#8EA6BA'][Math.floor(r() * 3)]}"/>`; }
+  svgNode.innerHTML = `<rect width="1000" height="330" fill="#E1E7EB"/>
+    <rect x="600" y="16" width="370" height="222" rx="10" fill="#F5F8FA"/><rect x="612" y="28" width="346" height="200" rx="4" fill="#D9ECF6"/>${city}
+    <path d="M612 52H958M612 78H958M612 104H958" stroke="#F5F8FA" stroke-width="4" opacity=".7"/>
+    <rect x="60" y="70" width="270" height="12" rx="6" fill="#B79C80"/>
+    <rect x="80" y="20" width="26" height="50" rx="4" fill="#5E7C9A"/><rect x="110" y="26" width="26" height="44" rx="4" fill="#C8871F"/><rect x="140" y="16" width="26" height="54" rx="4" fill="#8E6FB0"/><rect x="176" y="30" width="60" height="40" rx="6" fill="#D9C7A8"/>
+    <g class="person"></g>
+    <rect y="240" width="1000" height="20" fill="#C79A6B"/><rect y="258" width="1000" height="72" fill="#A97C52"/>
+    <path d="M110 238L104 166Q104 158 112 158L262 158Q270 158 270 166L264 238Z" fill="#4A4F57"/><circle cx="187" cy="198" r="8" fill="#6A707A"/><rect x="88" y="234" width="196" height="10" rx="5" fill="#3A3F46"/>
+    <rect x="352" y="196" width="40" height="44" rx="8" fill="#F3EFE7"/><path d="M392 206Q408 206 408 218Q408 230 392 230" fill="none" stroke="#F3EFE7" stroke-width="6"/>
+    ${steam(364, 188)}${steam(380, 184)}
+    <rect x="724" y="196" width="50" height="44" rx="8" fill="#C46E4A"/><path d="M749 196Q726 150 736 124M749 196Q770 152 788 140M749 196Q750 150 756 116M749 196Q732 170 716 162" stroke="#5E9C76" stroke-width="8" fill="none" stroke-linecap="round"/>`;
+  return { person: svgNode.querySelector('.person') };
+}
+function libraryPanel(svgNode) {
+  const r = mulberry32(41), cols = ['#8E3B46', '#2F6B66', '#C8871F', '#3E5A86', '#7A5C99', '#B5674A', '#D9A94E', '#4E7D5B'];
+  let books = '';
+  for (const y of [8, 92, 176]) {
+    let x = 0;
+    while (x < 1000) { const w = 18 + r() * 22, h = 54 + r() * 22; books += `<rect x="${f1(x)}" y="${f1(y + 78 - h)}" width="${f1(w)}" height="${f1(h)}" rx="3" fill="${cols[Math.floor(r() * cols.length)]}"/>`; x += w + 3 + (r() < .1 ? 30 : 0); }
+    books += `<rect x="0" y="${y + 78}" width="1000" height="10" fill="#7A5638"/>`;
+  }
+  svgNode.innerHTML = `<rect width="1000" height="330" fill="#9C7552"/>${books}<rect width="1000" height="330" fill="#F3E3C6" opacity=".42"/>
+    <g class="person"></g>
+    <rect y="250" width="1000" height="18" fill="#B68858"/><rect y="266" width="1000" height="64" fill="#94683F"/>
+    <path d="M140 250Q200 230 262 246Q322 230 384 250Z" fill="#FBF8F1"/><path d="M262 246V250" stroke="#D9D2C2" stroke-width="3"/>
+    <path d="M160 240Q200 228 250 238M160 232Q200 220 250 230M276 238Q324 226 368 240M276 230Q324 218 368 232" stroke="#CFC6B4" stroke-width="3" fill="none"/>
+    <rect x="690" y="226" width="150" height="24" rx="4" fill="#3E5A86"/><rect x="700" y="204" width="132" height="22" rx="4" fill="#8E3B46"/><rect x="694" y="184" width="140" height="20" rx="4" fill="#D9A94E"/>
+    <rect x="890" y="236" width="70" height="14" rx="6" fill="#6B5A3A"/><rect x="920" y="160" width="10" height="78" fill="#6B5A3A"/><path d="M872 170Q925 110 978 170Z" fill="#2F6B66"/><ellipse cx="925" cy="172" rx="50" ry="8" fill="#FFE7A8" opacity=".8"/>`;
+  return { person: svgNode.querySelector('.person') };
 }

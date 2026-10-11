@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-trajet.mp4">
+<title>Dawam — Le trajet</title>
+<link rel="stylesheet" href="../lib/base.css">
+<!-- Une journée avec Dawam · 2/4 — Inès transforme son trajet en métro en séance de dhikr guidée. -->
+<style>
+#sceneA{transform-origin:540px 1150px}
+#topfade{width:1080px;height:660px;background:linear-gradient(to bottom,rgba(245,237,224,.94) 0%,rgba(245,237,224,.8) 58%,rgba(245,237,224,0) 100%)}
+#dim{background:#1E1810}
+/* séance guidée recréée (écran de l'app, 560×1214) */
+.sds{background:var(--bg);display:flex;flex-direction:column}
+.sds-top{height:150px;padding:96px 36px 0;display:flex;justify-content:space-between;align-items:center}
+.sds-top .dots{display:flex;gap:11px}
+.sds-top .dots i{width:12px;height:12px;border-radius:6px;background:#E4D8C4}
+.sds-top .dots i.on{width:32px;background:var(--accent)}
+.sds-top .dots i.done{background:var(--green)}
+.sds-top .tt{font:600 19px/1 var(--sans);letter-spacing:.6px;color:var(--muted2)}
+.sds-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px;text-align:center;position:relative}
+.sds-step{position:absolute;left:40px;right:40px;top:50%;transform:translateY(-50%)}
+.sds .lbl{font:800 16px/1 var(--sans);letter-spacing:2.4px;text-transform:uppercase;color:var(--muted2);margin-bottom:26px}
+.sds .ar{font:400 40px/1.9 var(--ar);direction:rtl;color:var(--ink);margin-bottom:10px}
+.sds .ar.small{font-size:31px;line-height:1.8}
+.sds .ph{font:italic 500 19px/1.45 var(--sans);color:var(--accent);margin-bottom:10px}
+.sds .fr{font:500 19px/1.55 var(--sans);color:#6E6352;margin:0 auto 34px;max-width:430px}
+.sds .cd{font:800 100px/1 var(--sans);letter-spacing:-3px;color:var(--ink);font-variant-numeric:tabular-nums;margin-bottom:18px}
+.sds .bar{width:440px;height:8px;margin:0 auto;border-radius:99px;background:#EADFCB;overflow:hidden}
+.sds .bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.sds-cta{margin:0 32px 64px;height:80px;border-radius:26px;background:var(--accent);color:#fff;font:800 25px/80px var(--sans);text-align:center;
+  box-shadow:0 16px 30px -14px var(--accent)}
+#dhikrBlur{filter:blur(9px);transform:scale(1.04)}
+#pdim{background:rgba(61,42,10,.45)}
+#sheet{position:absolute;left:0;top:559px;width:560px;height:655px;border-radius:30px 30px 0 0;overflow:hidden}
+#sheet img{width:560px;height:655px;display:block}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="sceneA" class="L" width="1080" height="1920"></svg>
+  <div id="topfade" class="L"></div>
+  <div id="dim" class="L full"></div>
+
+  <div id="stamp" class="stamp dark" style="top:170px"><div class="k" style="color:var(--accent);opacity:1">Une journée avec Dawam · 2/4</div><div class="h">8 h 10</div><div class="s">25 minutes de métro.</div></div>
+  <div id="hA" class="headline" style="top:170px"><div class="mask"><div class="ln">Et si ce trajet</div></div><div class="mask"><div class="ln em">comptait ?</div></div></div>
+  <div id="hB1" class="headline light" style="top:170px"><div class="mask"><div class="ln">Une séance guidée,</div></div><div class="mask"><div class="ln em">à ton rythme.</div></div></div>
+  <div id="hB2" class="headline light" style="top:170px"><div class="mask"><div class="ln">15 minutes de dhikr,</div></div><div class="mask"><div class="ln em">entre deux stations.</div></div></div>
+  <div id="hC" class="headline" style="top:170px"><div class="mask"><div class="ln">Chaque minute</div></div><div class="mask"><div class="ln em">peut compter.</div></div></div>
+
+  <div id="phoneWrap" class="L" style="left:244px;top:560px;width:592px;height:1246px"></div>
+  <div id="cardW" class="c" style="top:640px"><div class="fcard" style="position:relative;display:inline-flex;text-align:left">
+    <div class="ftile ok"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <div><div class="fk">Séance guidée</div><div class="ft">15 min de dhikr</div><div class="fs">Istighfar · Salawat · Tahlil</div></div>
+  </div></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+
+<script src="../lib/engine.js"></script>
+<script src="../lib/people.js"></script>
+<script src="../lib/decor.js"></script>
+<script>
+'use strict';
+const R = {};
+const HIP = 1292;
+const STEPS = [
+  { lbl: '📿 · 1 / 3', ar: 'رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ إِنَّكَ أَنْتَ التَّوَّابُ الرَّحِيمُ', ph: "Rabi ghfir li wa toub 'alayya innaka anta t-tawwabou-r-Rahim",
+    fr: 'Seigneur pardonne-moi et accepte mon repentir. Tu es Celui qui accepte le repentant et le Très Miséricordieux.' },
+  { lbl: '💚 · 2 / 3', ar: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ النَّبِيِّ، وَأَزْوَاجِهِ أُمَّهَاتِ الْمُؤْمِنِينَ، وَذُرِّيَّتِهِ وَأَهْلِ بَيْتِهِ، كَمَا صَلَّيْتَ عَلَى سَيِّدِنَا إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ', small: true,
+    ph: "Allahumma salli 'ala Sayyidina Muhammadin-n-nabi wa azwajihi ummahati-l-mu'minin…", fr: 'Ô Allah ! Prie sur notre maître Muhammad le prophète, sur ses femmes les mères des croyants…' },
+];
+// distance parcourue par la rame : vitesse constante puis freinage jusqu'à l'arrêt en station
+const V = 1500, T_BRAKE = 12.9, BRAKE = 1.7;
+const dist = t => t < T_BRAKE ? V * t : V * T_BRAKE + V * Math.min(t - T_BRAKE, BRAKE) - V / (2 * BRAKE) * Math.pow(Math.min(t - T_BRAKE, BRAKE), 2);
+const D_STOP = dist(T_BRAKE + BRAKE);
+
+function build() {
+  R.M = metro($('#sceneA'));
+  R.man = new Person(R.M.persons, { view: 'front', head: 'hair', hair: '#3A2A20', skin: '#E0B48F', top: '#8C6A4F', bottom: '#3E3A36', legs: 'sit' });
+  R.paper = el('g', {}, R.M.persons);
+  R.paper.innerHTML = `<rect x="-120" y="-345" width="240" height="250" rx="6" fill="#F1EFE8"/><path d="M0 -345V-95" stroke="#D9D5CA" stroke-width="3"/>
+    <rect x="-100" y="-322" width="86" height="16" rx="4" fill="#4A4A4A"/><rect x="14" y="-322" width="86" height="16" rx="4" fill="#4A4A4A"/>
+    ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<rect x="-100" y="${-290 + i * 22}" width="${70 + (i % 3) * 8}" height="8" rx="4" fill="#B9B5AA"/><rect x="14" y="${-290 + i * 22}" width="${78 - (i % 2) * 10}" height="8" rx="4" fill="#B9B5AA"/>`).join('')}`;
+  R.ines = new Person(R.M.persons, { view: 'front', head: 'hijab', hijab: '#C98B86', skin: '#C9875E', top: '#2D4A6B', bottom: '#3B5A86', shoe: '#F2F0EA', legs: 'sit' });
+  R.woman = new Person(R.M.persons, { view: 'front', head: 'hijab', hijab: '#6E5A8A', skin: '#A86E4E', top: '#C9B79C', dress: true, shoe: '#3A2A20', legs: 'sit' });
+  const sds = `<div id="sds" class="layer sds"><div class="sds-top"><div class="dots"><i id="d0" class="on"></i><i id="d1"></i><i id="d2"></i></div><div class="tt" id="sdsTop">05:00</div></div>
+    <div class="sds-body">${STEPS.map((s, i) => `<div class="sds-step" id="st${i}"><div class="lbl">${s.lbl}</div><div class="ar${s.small ? ' small' : ''}">${s.ar}</div><div class="ph">${s.ph}</div><div class="fr">${s.fr}</div>
+      <div class="cd" id="cd${i}">05:00</div><div class="bar"><i id="fill${i}" style="width:100%"></i></div></div>`).join('')}</div>
+    <div class="sds-cta">Passer au suivant →</div></div>`;
+  const extra = `<img id="dhikrBlur" class="layer" src="../assets/screens/dhikr.jpg" alt=""><div id="pdim" class="layer"></div>
+    <div id="sheet"><img src="../assets/screens/seance-sheet.jpg" alt=""></div><img id="seanceFull" class="layer" src="../assets/screens/seance-dhikr.jpg" alt="">` + sds;
+  R.phone = makePhone(['dhikr'], extra);
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = buildEnd($('#stage'), 'Une journée avec Dawam');
+}
+
+const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+function metroScene(t) {
+  const svg = $('#sceneA');
+  // secousses de la rame (s'arrêtent avec elle)
+  const moving = 1 - P(t, T_BRAKE + BRAKE - .3, .5);
+  const shake = (Math.sin(t * 9.1) * 1.6 + Math.sin(t * 13.7) * .9) * moving;
+  const brake = t > T_BRAKE && t < T_BRAKE + BRAKE + .6 ? Math.sin(clamp((t - T_BRAKE) / (BRAKE + .6)) * Math.PI) : 0;
+  svg.style.transform = `translateY(${shake.toFixed(2)}px) scale(${(1.04 + .03 * P(t, 0, 20, E.lin)).toFixed(4)})`;
+  const d = dist(t);
+  for (const s of R.M.streaks) s.n.setAttribute('x', f1(((s.x - d * s.v) % 1500 + 1500) % 1500 - 300));
+  for (const l of R.M.lamps) l.n.setAttribute('transform', `translate(${f1(((l.x - d) % 1560 + 1560) % 1560 - 200)} 0)`);
+  R.M.platform.setAttribute('transform', `translate(${f1(D_STOP - d)} 0)`);
+  R.M.straps.forEach((s, i) => s.n.setAttribute('transform', `rotate(${(Math.sin(t * 2.3 + i) * 3 * moving + 7 * brake).toFixed(2)} ${s.x} 256)`));
+  // passagers
+  const lean = 4 * brake;
+  R.man.set({ x: 250, y: HIP, s: 1.12, lean, dy: 0, hands: { L: [-112, -150], R: [112, -150] } });
+  R.paper.setAttribute('transform', `translate(250 ${HIP}) scale(1.12) rotate(${(lean * .8 + Math.sin(t * 1.3) * .6).toFixed(2)})`);
+  R.woman.set({ x: 830, y: HIP, s: 1.12, lean: lean * .9, dy: 6, tilt: -3, hands: { L: [-22, -116], R: [24, -120] }, phone: 'both', glow: .8 });
+  // Inès : fait défiler, ouvre Dawam, puis baisse le téléphone à l'arrivée
+  const scroll = t > 1.8 && t < 4.4 ? Math.sin((t - 1.8) * 9) * 4 : 0;
+  const down = P(t, 13.4, .7, E.ioC);
+  R.ines.set({ x: 540, y: HIP, s: 1.22, lean, dy: lerp(7, 0, down), tilt: lerp(0, 2, down),
+    hands: { L: [lerp(-24, -40, down), lerp(-120, -54, down)], R: [lerp(26, 42, down), lerp(-124, -58, down) + scroll] },
+    phone: 'both', phoneAng: lerp(0, -8, down), glow: lerp(.9, .2, down) });
+}
+
+function phoneScreens(t) {
+  R.phone.querySelector('[data-k="dhikr"]').style.opacity = 1;
+  const dm = P(t, 7.0, .4, E.outC);
+  $('#dhikrBlur').style.opacity = dm.toFixed(3); $('#pdim').style.opacity = dm.toFixed(3);
+  $('#sheet').style.transform = `translateY(${((1 - P(t, 7.0, .6, E.outQ)) * 100).toFixed(2)}%)`;
+  $('#seanceFull').style.opacity = P(t, 7.65, .25, E.lin).toFixed(3);
+  $('#sds').style.transform = `translateY(${((1 - P(t, 8.5, .55, E.outQ)) * 100).toFixed(2)}%)`;
+  // compte à rebours accéléré de l'étape 1, puis étape 2
+  const prog = P(t, 9.3, 2.3, E.lin), sec = Math.ceil(300 * (1 - prog));
+  const step2 = P(t, 11.75, .35, E.ioC);
+  $('#cd0').textContent = mmss(sec);
+  $('#fill0').style.width = (100 * (1 - prog)).toFixed(2) + '%';
+  $('#sdsTop').textContent = t < 11.75 ? mmss(sec) : '05:00';
+  for (const [id, op, x] of [['#st0', 1 - step2, -40 * step2], ['#st1', step2, 40 * (1 - step2)]]) {
+    $(id).style.transform = `translate(${x.toFixed(1)}px,-50%)`;
+    $(id).style.opacity = op.toFixed(3);
+  }
+  $('#d0').className = step2 > .5 ? 'done' : 'on';
+  $('#d1').className = step2 > .5 ? 'on' : '';
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .7, E.ioC) });
+  metroScene(t);
+  T($('#topfade'), { op: Math.max(P(t, .1, .5) * (1 - P(t, 5.4, .5)), P(t, 14.2, .5) * (1 - P(t, 16.9, .4))) });
+  const st = $('#stamp');
+  if (vis(st, t < 2.6)) T(st, { y: (1 - P(t, .3, .8, E.outX)) * 30 - 20 * P(t, 2.0, .45, E.inC), op: P(t, .3, .6) * (1 - P(t, 2.0, .45)) });
+  headline($('#hA'), t, 2.5, 5.45);
+  headline($('#hB1'), t, 5.85, 8.95);
+  headline($('#hB2'), t, 9.4, 12.55);
+  headline($('#hC'), t, 14.4, 16.8);
+  // gros plan téléphone
+  T($('#dim'), { op: .58 * P(t, 5.35, .5) * (1 - P(t, 12.7, .6)) });
+  const pin = P(t, 5.5, 1.0, E.outX), pout = P(t, 12.6, .7, E.inC);
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.05 });
+  phoneScreens(t);
+  drawTaps(R.phone, t, [[6.85, 280, 442], [8.25, 280, 1111]]);
+  popIn($('#cardW'), t, 13.7, 16.7);
+  drawEnd(R.end, t, 17.0, 540, 1150);
+}
+
+boot({ duration: 20.5, build, render });
+</script>
+</body>
+</html>

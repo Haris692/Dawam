@@ -80,12 +80,12 @@ const STATUSBAR = (color = '#000') => `<div class="sb"><div class="time" style="
   <svg style="left:398px" width="34" height="20" viewBox="0 0 34 20" fill="${color}"><rect x="0" y="12" width="6" height="7" rx="1.6"/><rect x="9" y="9" width="6" height="10" rx="1.6"/><rect x="18" y="5.5" width="6" height="13.5" rx="1.6"/><rect x="27" y="2" width="6" height="17" rx="1.6"/></svg>
   <svg style="left:442px" width="30" height="22" viewBox="0 0 30 22" fill="none" stroke="${color}" stroke-width="3.4" stroke-linecap="round"><path d="M11.46 16.46A5 5 0 0 1 18.54 16.46"/><path d="M7.93 12.93A10 10 0 0 1 22.07 12.93"/><path d="M4.39 9.39A15 15 0 0 1 25.61 9.39"/><circle cx="15" cy="20" r="1.6" fill="${color}" stroke="none"/></svg>
   <svg style="left:482px;top:34px" width="46" height="20" viewBox="0 0 46 20" fill="${color}"><rect x="1" y="1" width="38" height="18" rx="5.5" fill="none" stroke="${color}" stroke-opacity=".4" stroke-width="1.6"/><rect x="3.6" y="3.6" width="32.8" height="12.8" rx="3.4"/><path d="M41.5 7v6c1.2-.4 2-1.6 2-3s-.8-2.6-2-3z" fill-opacity=".45"/></svg></div>`;
-function makePhone(layers, extra = '') {
+function makePhone(layers, extra = '', sbColor = '#000') {
   const ph = document.createElement('div');
   ph.className = 'phone';
   ph.innerHTML = `<i class="pb pb1"></i><i class="pb pb2"></i><i class="pb pb3"></i><i class="pb pb4"></i><div class="screen">` +
     layers.map(s => s.startsWith('<') ? s : `<img data-k="${s}" src="../assets/screens/${s}.jpg" alt="">`).join('') +
-    extra + STATUSBAR() + `<div class="island"></div><div class="tapring"></div><div class="tap"></div></div>`;
+    extra + STATUSBAR(sbColor) + `<div class="island"></div><div class="tapring"></div><div class="tap"></div></div>`;
   return ph;
 }
 // toucher sur l'écran : liste [t, x, y] en coordonnées écran (560×1214)

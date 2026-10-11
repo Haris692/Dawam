@@ -1,0 +1,26 @@
+# « Une journée avec Dawam » — série de 4 vidéos
+
+Quatre vidéos verticales (1080×1920, 60 i/s, ~20 s) qui montrent l'app dans des moments du quotidien, avec une même famille illustrée : Yacine, Samira et leur fille Inès. Les personnages sont **sans visage**, par respect et par choix de style. Les textes affichés dans l'app (rappels, étapes, séance guidée) sont ceux de Dawam.
+
+| Fichier | Moment | Ce qu'on voit |
+|---|---|---|
+| `dawam-aube.mp4` (21 s) | 5 h 52 | Yacine est réveillé par le rappel « La séance de l'aube t'attend », se redresse, puis fait sa séance après le Fajr face au lever du soleil : adhkar du matin (le compteur descend jusqu'au ✓), séance validée +20 XP, 8 jours de suite. |
+| `dawam-trajet.mp4` (20 s) | 8 h 10 | Inès, dans le métro : « Et si ce trajet comptait ? » Écran Dhikr → séance guidée (choix des durées) → compte à rebours Istighfar puis Salawat. Arrivée en station, 15 min de dhikr validées. |
+| `dawam-famille.mp4` (19 s) | 12 h 45 | Samira à la maison, Yacine au bureau, Inès à la fac : chaque « +1 » rejoint la carte du groupe en temps réel jusqu'à « Ma sha Allah ! Objectif atteint — 1 000 Salawat ». |
+| `dawam-nuit.mp4` (21 s) | 22 h 40 | Samira reçoit « Avant de dormir — tes invocations du soir t'attendent », suit les 5 convenances du sommeil (bilan, tawba, ablutions, invocations, côté droit), journée complète, lumière éteinte : « Demain, on recommence. » |
+
+Chaque vidéo s'ouvre sur « Une journée avec Dawam · n/4 » et se termine sur la carte Dawam (logo, « Petit, mais constant. », iPhone · Android · Web). Piste audio silencieuse : à compléter par une voix off ou un nashid sur la plateforme de publication.
+
+## Fichiers
+
+- `aube.html`, `trajet.html`, `famille.html`, `nuit.html` : les compositions (fonction du temps `render(t)`).
+- `../lib/` : moteur commun (`engine.js`), personnages illustrés posés par cinématique inverse (`people.js`), décors SVG (`decor.js`), styles (`base.css`).
+
+## Prévisualiser / réexporter
+
+```bash
+cd promo
+npx serve .                                  # puis ouvrir /quotidien/aube.html (Espace = pause, ←/→ = ±1 s, ?t=8 = image fixe)
+node render.mjs quotidien/aube.html          # → quotidien/dawam-aube.mp4
+node render.mjs quotidien/nuit.html --stills 6,12,16   # images de contrôle dans quotidien/stills
+```

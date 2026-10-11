@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-nuit.mp4">
+<title>Dawam — Avant de dormir</title>
+<link rel="stylesheet" href="../lib/base.css">
+<!-- Une journée avec Dawam · 4/4 — Samira suit les convenances du sommeil pas à pas, puis éteint. -->
+<style>
+#sceneA{transform-origin:500px 1240px}
+#dim{background:#0b0d1f}
+/* étapes guidées recréées (thème Tarbiya de l'app, écran 560×1214) */
+.gs{background:var(--bg)}
+.gs-head{position:absolute;left:0;top:0;width:560px;height:356px;background:var(--warm-grad);color:#fff;padding:96px 30px 0;overflow:hidden}
+.gs-head::before{content:"";position:absolute;width:256px;height:256px;border-radius:50%;background:rgba(255,255,255,.1);top:-86px;right:-56px}
+.gs-top{display:flex;justify-content:space-between;position:relative}
+.gs-btn{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font:800 24px/1 var(--sans);font-style:normal}
+.gs-kick{margin-top:22px;font:800 16px/1 var(--sans);letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.88);position:relative}
+.gs-title{margin-top:12px;font:800 37px/1.05 var(--sans);letter-spacing:-.8px;position:relative}
+.gs-stepper{margin-top:22px;display:flex;gap:18px;position:relative}
+.gs-stepper span{font:800 14px/1 var(--sans);letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.55);padding-bottom:6px;border-bottom:3px solid transparent}
+.gs-stepper span.on{color:#fff;border-bottom-color:#fff}
+.gs-body{position:absolute;left:0;top:356px;width:560px;height:700px;overflow:hidden}
+.gs-step{position:absolute;left:40px;right:40px;top:74px;text-align:center}
+.gs-lbl{font:800 16px/1 var(--sans);letter-spacing:2.2px;text-transform:uppercase;color:var(--muted2)}
+.gs-emo{margin-top:34px;font-size:96px;line-height:1}
+.gs-t{margin-top:30px;font:800 36px/1.12 var(--sans);letter-spacing:-.6px;color:var(--ink)}
+.gs-d{margin:18px auto 0;max-width:430px;font:500 21px/1.55 var(--sans);color:#6E6352}
+.gs-foot{position:absolute;left:0;bottom:0;width:560px;height:158px;border-top:1.5px solid rgba(0,0,0,.06);display:flex;align-items:flex-start;gap:16px;padding:22px 26px 0}
+.gs-back{width:72px;height:72px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font:800 26px/1 var(--sans);font-style:normal;flex:none}
+.gs-next{flex:1;height:72px;border-radius:24px;background:var(--accent);color:#fff;font:800 25px/72px var(--sans);text-align:center;position:relative;overflow:hidden}
+.gs-next span{position:absolute;left:0;right:0;top:0}
+.gs-done{position:absolute;left:0;top:356px;width:560px;height:700px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--bg)}
+.gs-done .emo{font-size:118px;line-height:1}
+.gs-done .t{margin-top:34px;font:800 44px/1.1 var(--sans);letter-spacing:-1px;color:var(--ink)}
+.gs-done .s{margin-top:14px;font:italic 500 28px/1.3 var(--serif);color:var(--accent)}
+.gs-done .x{margin-top:28px;padding:12px 26px;border-radius:999px;background:var(--accent-soft);font:800 24px/1 var(--sans);color:var(--accent)}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="sceneA" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+
+  <div id="stamp" class="stamp" style="top:200px"><div class="k">Une journée avec Dawam · 4/4</div><div class="h">22 h 40</div><div class="s">La journée se termine.</div></div>
+  <div id="notif" class="bignotif" style="top:150px"><img src="../assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌙<span>maintenant</span></div><div class="nb">Avant de dormir — tes invocations du soir t'attendent</div></div></div>
+  <div id="hA" class="headline light" style="top:150px"><div class="mask"><div class="ln">Avant de dormir,</div></div><div class="mask"><div class="ln em">pas à pas.</div></div></div>
+  <div id="hB" class="headline light" style="top:150px"><div class="mask"><div class="ln">Journée complète,</div></div><div class="mask"><div class="ln em">barakAllahu fik.</div></div></div>
+  <div id="hC" class="headline light" style="top:190px"><div class="mask"><div class="ln">Demain,</div></div><div class="mask"><div class="ln em">on recommence.</div></div></div>
+
+  <div id="phoneWrap" class="L" style="left:244px;top:560px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+
+<script src="../lib/engine.js"></script>
+<script src="../lib/people.js"></script>
+<script src="../lib/decor.js"></script>
+<script>
+'use strict';
+const R = {};
+// c0 = lampe éteinte (clair de lune), c1 = lampe de chevet allumée
+const PAL = {
+  wall: ['#1D2140', '#5A4636', '#5A4636'], base: ['#181B36', '#4E3C2F', '#4E3C2F'], floor: ['#15182F', '#46352A', '#46352A'],
+  floorLine: ['#1A1D38', '#4F3D31', '#4F3D31'], rug: ['#23264A', '#6B4E3A', '#6B4E3A'], rugLine: ['#2C2F55', '#7E5D45', '#7E5D45'],
+  frame: ['#2A2E55', '#6E5A4A', '#6E5A4A'], sill: ['#262A50', '#665344', '#665344'], rod: ['#30345C', '#6B5646', '#6B5646'],
+  curtain: ['#253E5C', '#6A5248', '#6A5248'], curtainLine: ['#1F3550', '#5C463D', '#5C463D'],
+  skyTop: ['#0B1030', '#0E1433', '#0E1433'], skyBot: ['#1C1F4A', '#232457', '#232457'], city: ['#080B22', '#0A0E26', '#0A0E26'],
+  artFrame: ['#2E2A48', '#7A5E45', '#7A5E45'], art: ['#262A4C', '#8C7660', '#8C7660'], artLine: ['#5A5278', '#C8A070', '#C8A070'],
+  stand: ['#26223A', '#6A4A36', '#6A4A36'], standTop: ['#2E2944', '#7A563E', '#7A563E'], lampStem: ['#2F2A44', '#5A4532', '#5A4532'], lampShade: ['#3A3556', '#F6D9A0', '#F6D9A0'],
+  bedWood: ['#262035', '#5E4232', '#5E4232'], bedWoodDark: ['#1D182A', '#4A3226', '#4A3226'],
+  sheet: ['#2E3560', '#C9B8A0', '#C9B8A0'], pillow: ['#384070', '#E4D3BB', '#E4D3BB'], blanket: ['#2A3E62', '#9A5E4C', '#9A5E4C'], blanketLine: ['#22355A', '#86503F', '#86503F'],
+};
+const HIP = [640, 1290], PHONE_BED = [258 - 640, 1286 - 1290];
+const STEPS = [
+  ['📋', 'Bilan de ta journée', "Qu'as-tu accompli ? Qu'as-tu manqué ? Sois honnête, sans sévérité excessive.", 'Bilan'],
+  ['🤲', 'Renouvelle ta tawba', 'Demande sincèrement pardon pour les manquements. Allah est Tawwāb — Il se retourne vers celui qui revient vers Lui.', 'Tawba'],
+  ['💧', 'Fais les ablutions', "Pour dormir en état de pureté. L'ange prie pour toi toute la nuit.", 'Ablutions'],
+  ['📿', 'Invocations du sommeil', 'Āyat al-Kursī, les 3 dernières sourates, la supplication du sommeil. Fais-les à voix basse.', 'Invocations'],
+  ['🌙', 'Dors sur le côté droit', 'Et que ta dernière pensée consciente soit une confidence adressée à ton Seigneur. Remets-toi à Lui.', 'Côté droit'],
+];
+const NEXT = [7.55, 8.55, 9.55, 10.55];   // touchers « Suivant »
+const DONE = 11.45;                        // toucher « Terminer ✓ »
+
+function build() {
+  R.A = bedroom($('#sceneA'), PAL);
+  R.s = new Person(R.A.person, { view: 'front', head: 'hijab', hijab: '#E9DCC6', skin: '#D29C75', top: '#9C6B8E', legs: 'none' });
+  const gs = `<div class="layer gs" id="gs">
+    <div class="gs-head"><div class="gs-top"><i class="gs-btn">←</i><i class="gs-btn">⋯</i></div>
+      <div class="gs-kick">Avant de dormir · +15 XP</div><div class="gs-title">Convenances du sommeil</div>
+      <div class="gs-stepper">${STEPS.map((s, i) => `<span id="sp${i}">${s[3]}</span>`).join('')}</div></div>
+    <div class="gs-body">${STEPS.map((s, i) => `<div class="gs-step" id="g${i}"><div class="gs-lbl">Étape ${i + 1} / 5</div><div class="gs-emo">${s[0]}</div><div class="gs-t">${s[1]}</div><div class="gs-d">${s[2]}</div></div>`).join('')}</div>
+    <div class="gs-foot"><i class="gs-back">←</i><div class="gs-next"><span id="nx0">Suivant →</span><span id="nx1">Terminer ✓</span></div></div>
+    <div class="gs-done" id="gsDone"><div class="emo">🌟</div><div class="t">Journée complète</div><div class="s">Ma sha Allah !</div><div class="x">+15 XP</div></div>
+  </div>`;
+  R.phone = makePhone([gs], '', '#fff');
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = buildEnd($('#stage'), 'Une journée avec Dawam');
+}
+
+function bedScene(t) {
+  const svg = $('#sceneA');
+  svg.style.transform = `scale(${(1.13 + .07 * P(t, 0, 17.4, E.lin)).toFixed(4)})`;
+  // la lampe s'éteint, la chambre passe au clair de lune
+  const lamp = 1 - P(t, 13.65, .45, E.ioC);
+  paint(R.A.pal, .5 * lamp);
+  R.A.lampGlow.setAttribute('opacity', (.95 * lamp).toFixed(3));
+  R.A.stars.setAttribute('opacity', (.6 + .4 * (1 - lamp)).toFixed(3));
+  // Samira : lit dans son lit, puis repose le téléphone près de l'oreiller et s'allonge
+  const lower = P(t, 13.2, .5, E.ioC), down = P(t, 14.1, 1.35, E.ioC), placed = t >= 15.45;
+  const holdR = [26, -138], holdL = [-22, -134], restR = [-130, 12], restL = [-90, 50];
+  let hR = [lerp(holdR[0], 34, lower), lerp(holdR[1], -62, lower)];
+  hR = [lerp(hR[0], PHONE_BED[0], down), lerp(hR[1], PHONE_BED[1], down)];
+  if (placed) hR = [lerp(PHONE_BED[0], restR[0], P(t, 15.45, .6, E.ioC)), lerp(PHONE_BED[1], restR[1], P(t, 15.45, .6, E.ioC))];
+  let hL = [lerp(holdL[0], -30, lower), lerp(holdL[1], -60, lower)];
+  hL = [lerp(hL[0], restL[0], down), lerp(hL[1], restL[1], down)];
+  const glow = lerp(.95, .35, lower) * (placed ? 1 - P(t, 15.45, .5) : 1);
+  const pose = { x: HIP[0], y: HIP[1], s: 1, lean: lerp(-3, -88, down) + Math.sin(t * 2) * .4 * down, dy: lerp(8, 0, lower), tilt: 0,
+    hands: { L: hL, R: hR }, phone: placed ? null : (lower > .5 ? 'R' : 'both'), phoneAng: lerp(0, -60, down), glow };
+  R.s.set(pose);
+  R.s.tint(mix('#141A3C', '#5A3A20', lamp), lerp(.5, .18, lamp));
+  R.A.phoneBed.style.display = placed ? '' : 'none';
+  // la couverture remonte sur elle une fois allongée
+  const tuck = P(t, 15.0, .8, E.ioC);
+  R.A.cover.setAttribute('opacity', tuck.toFixed(3));
+  R.A.cover.setAttribute('transform', `translate(${f1(90 * (1 - tuck))} 0)`);
+  R.A.phoneScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', glow));
+  const pw = placed ? [258, 1286] : R.s.phoneWorld(pose);
+  for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1] - (placed ? 0 : 40))); }
+  R.A.glow.setAttribute('opacity', (.7 * glow).toFixed(3));
+  R.A.glow2.setAttribute('opacity', (.3 * glow * (1 - down)).toFixed(3));
+}
+
+function guidedScreen(t) {
+  let cur = 0;
+  for (const n of NEXT) cur += P(t, n + .12, .42, E.ioC);
+  STEPS.forEach((s, i) => {
+    const pos = i - cur;
+    $('#g' + i).style.transform = `translateX(${(pos * 560).toFixed(1)}px)`;
+    $('#g' + i).style.opacity = clamp(1 - Math.abs(pos) * .8).toFixed(3);
+    $('#sp' + i).className = Math.round(cur) === i ? 'on' : '';
+  });
+  const last = P(t, NEXT[3] + .2, .3);
+  $('#nx0').style.opacity = (1 - last).toFixed(3); $('#nx1').style.opacity = last.toFixed(3);
+  const d = P(t, DONE + .15, .45, E.outC);
+  T($('#gsDone'), { op: d, y: (1 - d) * 40 });
+  T($('#gsDone .emo'), { s: lerp(.4, 1, P(t, DONE + .2, .6, E.outB2)) });
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .7, E.ioC) });
+  bedScene(t);
+  const st = $('#stamp');
+  if (vis(st, t < 2.6)) T(st, { y: (1 - P(t, .3, .8, E.outX)) * 30 - 20 * P(t, 2.0, .45, E.inC), op: P(t, .3, .6) * (1 - P(t, 2.0, .45)) });
+  const ni = P(t, 2.1, .6, E.outB), no = P(t, 4.4, .4, E.inC);
+  T($('#notif'), { y: lerp(-420, 0, ni) - 420 * no, op: ni > 0 && no < 1 ? 1 : 0 });
+  headline($('#hA'), t, 4.75, 11.3);
+  headline($('#hB'), t, 11.75, 14.5);
+  headline($('#hC'), t, 15.35, 17.25);
+  // gros plan : les cinq étapes, puis « Journée complète »
+  T($('#dim'), { op: .55 * P(t, 5.5, .6) * (1 - P(t, 12.9, .6)) });
+  const pin = P(t, 5.6, 1.0, E.outX), pout = P(t, 12.85, .7, E.inC);
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: -4 * pin, r: lerp(-7, 0, pin), s: 1.05 });
+  guidedScreen(t);
+  drawTaps(R.phone, t, NEXT.map(n => [n, 324, 1114]).concat([[DONE, 324, 1114]]));
+  drawEnd(R.end, t, 17.45, 950, 500);
+}
+
+boot({ duration: 21, build, render });
+</script>
+</body>
+</html>
