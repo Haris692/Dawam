@@ -4,3 +4,7 @@ package.json
 
 # Fichier de design exploratoire local uniquement
 preprod/v3_design.html
+
+# Vidéo de présentation : fichiers temporaires de rendu
+promo/video/stills/
+promo/video/.render-tmp/
