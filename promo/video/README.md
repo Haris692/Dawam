@@ -3,6 +3,7 @@
 Vidéo motion design verticale (1080×1920, 9:16, 60 i/s, 36 s) pour les Reels, TikTok, Shorts et les stories.
 
 - `dawam-presentation.mp4` : la vidéo exportée (piste audio silencieuse, prête pour ajouter une voix off ou un nashid).
+- `dawam-cover.jpg` : image de couverture (dernière image de la vidéo).
 - `index.html` : la composition. Toute l'animation est une fonction du temps (`renderAt(t)`).
 - `render.mjs` : l'export image par image (Chromium + ffmpeg).
 - `assets/` : captures iPhone (barre d'état nettoyée), emblème de l'icône, polices de l'app (Plus Jakarta Sans, Amiri, Lora — licence SIL OFL 1.1, voir `assets/fonts/OFL-*.txt`).
