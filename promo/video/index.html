@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-presentation.mp4">
 <title>Dawam — Vidéo de présentation</title>
-<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
 <!--
   Composition motion design 1080×1920 (9:16), pilotée par le temps.
   - Ouvrir dans un navigateur (via un serveur local) : lecture en boucle. Espace = pause, ←/→ = ±1 s, ?t=12.5 = image fixe.
@@ -256,7 +257,7 @@ svg{overflow:visible}
   </div>
 
   <!-- emblème partagé S2 → S3 -->
-  <div id="emb" class="L"><img src="assets/img/emblem.png" alt=""></div>
+  <div id="emb" class="L"><img src="../assets/img/emblem.png" alt=""></div>
 
   <!-- ───────── S4 · S5 · téléphone ───────── -->
   <div id="s45" class="scene">
@@ -267,7 +268,7 @@ svg{overflow:visible}
     <div id="s5b-h" class="headline" style="top:190px"><div class="mask"><div class="ln">Des séances</div></div><div class="mask"><div class="ln em">de dhikr guidées.</div></div></div>
     <div id="s5b-sub" class="sub" style="top:432px">Istighfar, Salawat, Tahlil — choisis ta durée.</div>
     <div id="phoneWrap" class="L" style="left:244px;top:560px;width:592px;height:1246px">
-      <div id="rep"><img src="assets/screens/adhkar-card.jpg" alt=""></div>
+      <div id="rep"><img src="../assets/screens/adhkar-card.jpg" alt=""></div>
     </div>
     <div id="s4-card" class="fcard" style="left:560px;top:1150px">
       <div class="ftile"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
@@ -345,7 +346,7 @@ svg{overflow:visible}
   <svg id="sparks2" class="L" width="1080" height="1920"></svg>
   <div id="s8" class="scene">
     <svg id="s8-ring" class="L" width="1080" height="1920"><circle id="ring8" cx="540" cy="415" r="150" pathLength="1" fill="none" stroke="#FFF3D6" stroke-width="2.5" stroke-dasharray="1 1" opacity=".6"/></svg>
-    <div id="emb2" class="L"><img src="assets/img/emblem.png" alt=""></div>
+    <div id="emb2" class="L"><img src="../assets/img/emblem.png" alt=""></div>
     <div id="s8-word" class="c" style="top:590px"></div>
     <div id="s8-tag" class="c" style="top:782px">Petit, mais constant.</div>
     <div id="s8-cta" class="c" style="top:880px">Ton compagnon spirituel quotidien.</div>
@@ -471,7 +472,7 @@ function makePhone(screens, extra = '') {
   const ph = document.createElement('div');
   ph.className = 'phone';
   ph.innerHTML = `<i class="pb pb1"></i><i class="pb pb2"></i><i class="pb pb3"></i><i class="pb pb4"></i><div class="screen">` +
-    screens.map(s => `<img data-k="${s}" src="assets/screens/${s}.jpg" alt="">`).join('') + extra + STATUSBAR + `<div class="island"></div></div>`;
+    screens.map(s => `<img data-k="${s}" src="../assets/screens/${s}.jpg" alt="">`).join('') + extra + STATUSBAR + `<div class="island"></div></div>`;
   return ph;
 }
 function splitWords(el, cls) {
@@ -545,12 +546,12 @@ function build() {
   }
 
   // téléphone principal
-  const extra = `<img id="dhikrBlur" class="layer" src="assets/screens/dhikr.jpg" alt=""><div id="liftDim" class="layer"></div><div id="dim" class="layer"></div>
-    <div id="sheet"><img src="assets/screens/seance-sheet.jpg" alt=""></div><img id="seanceFull" class="layer" src="assets/screens/seance-dhikr.jpg" alt="">`;
+  const extra = `<img id="dhikrBlur" class="layer" src="../assets/screens/dhikr.jpg" alt=""><div id="liftDim" class="layer"></div><div id="dim" class="layer"></div>
+    <div id="sheet"><img src="../assets/screens/seance-sheet.jpg" alt=""></div><img id="seanceFull" class="layer" src="../assets/screens/seance-dhikr.jpg" alt="">`;
   const ph = makePhone(['parcours', 'adhkar-matin', 'dhikr'], extra);
   $('#phoneWrap').insertBefore(ph, $('#rep'));
   const scr = ph.querySelector('.screen');
-  scr.insertAdjacentHTML('beforeend', `<div class="notif" id="notif"><img src="assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌄<span>maintenant</span></div><div class="nb">La séance de l'aube t'attend — Coran, adhkar, constance.</div></div></div>
+  scr.insertAdjacentHTML('beforeend', `<div class="notif" id="notif"><img src="../assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌄<span>maintenant</span></div><div class="nb">La séance de l'aube t'attend — Coran, adhkar, constance.</div></div></div>
     <div class="xp" id="xp">+20 XP</div><div class="tapring" id="tapring"></div><div class="tap" id="tap"></div>`);
   R.scr = {};
   scr.querySelectorAll('img[data-k]').forEach(im => R.scr[im.dataset.k] = im);

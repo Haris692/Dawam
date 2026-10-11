@@ -1,7 +1,9 @@
-// Rendu image par image de index.html → MP4 (H.264, 1080×1920).
-//   node render.mjs                         → dawam-presentation.mp4 (60 i/s)
-//   node render.mjs --fps 30 --out a.mp4    → autre cadence / fichier
-//   node render.mjs --stills 1.5,9,20       → images PNG de contrôle dans ./stills
+// Rendu image par image d'une composition HTML → MP4 (H.264, 1080×1920).
+//   node render.mjs video/index.html                → video/dawam-presentation.mp4
+//   node render.mjs quotidien/aube.html             → quotidien/dawam-aube.mp4
+//   node render.mjs quotidien/aube.html --fps 30    → autre cadence
+//   node render.mjs quotidien/aube.html --stills 2,8.5,14   → PNG de contrôle dans quotidien/stills
+// Le nom du fichier vient de <meta name="video-output"> (sinon : nom de la page .mp4), à côté de la page.
 // Prérequis : Node 18+, ffmpeg, Playwright (Chromium).
 import { createServer } from 'node:http';
 import { readFile, mkdir, rm, writeFile } from 'node:fs/promises';
@@ -11,13 +13,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) => {
+const argv = process.argv.slice(2);
+const PAGE = argv[0] && !argv[0].startsWith('--') ? argv[0] : 'video/index.html';
+const args = Object.fromEntries(argv.reduce((acc, a, i, all) => {
   if (a.startsWith('--')) acc.push([a.slice(2), all[i + 1] && !all[i + 1].startsWith('--') ? all[i + 1] : true]);
   return acc;
 }, []));
 const FPS = Number(args.fps || 60);
-const OUT = path.resolve(ROOT, args.out || 'dawam-presentation.mp4');
 const WORKERS = Number(args.workers || 4);
+const LAUNCH_ARGS = ['--force-color-profile=srgb', '--disable-lcd-text'];
 
 async function loadPlaywright() {
   try { return await import('playwright'); } catch {
@@ -49,14 +53,16 @@ async function openPage(browser, url) {
   return page;
 }
 
-function ffmpeg(argv) {
-  const p = spawn('ffmpeg', argv, { stdio: ['pipe', 'ignore', 'pipe'] });
+function ffmpeg(cmd) {
+  const p = spawn('ffmpeg', cmd, { stdio: ['pipe', 'ignore', 'pipe'] });
   let err = '';
   p.stderr.on('data', d => { err += d; });
   const done = new Promise((res, rej) => p.on('close', c => c === 0 ? res() : rej(new Error('ffmpeg: ' + err.slice(-2000)))));
   return { p, done };
 }
 
+// Un navigateur par segment : le processus principal de Chromium (capture) est mono-cœur.
+// Captures en JPEG q95 : bien plus rapides que le PNG, sans perte visible après H.264.
 async function renderSegment(chromium, url, from, to, file, label) {
   const browser = await chromium.launch({ args: LAUNCH_ARGS });
   const page = await openPage(browser, url);
@@ -75,13 +81,13 @@ async function renderSegment(chromium, url, from, to, file, label) {
 }
 
 const srv = await serve();
-const url = `http://127.0.0.1:${srv.address().port}/index.html?render`;
+const url = `http://127.0.0.1:${srv.address().port}/${PAGE}?render`;
+const pageDir = path.join(ROOT, path.dirname(PAGE));
 const { chromium } = await loadPlaywright();
-const LAUNCH_ARGS = ['--force-color-profile=srgb', '--disable-lcd-text'];
 const browser = await chromium.launch({ args: LAUNCH_ARGS });
 try {
   if (args.stills) {
-    const dir = path.join(ROOT, 'stills');
+    const dir = path.join(pageDir, 'stills');
     await mkdir(dir, { recursive: true });
     const page = await openPage(browser, url);
     for (const s of String(args.stills).split(',')) {
@@ -90,9 +96,15 @@ try {
     }
     console.log('stills →', dir);
   } else {
-    const duration = await (async () => { const p = await openPage(browser, url); const d = await p.evaluate(() => DURATION); await p.close(); return d; })();
-    const total = Math.round(duration * FPS);
-    const tmp = path.join(ROOT, '.render-tmp');
+    const info = await (async () => {
+      const p = await openPage(browser, url);
+      const r = await p.evaluate(() => ({ d: window.DURATION, out: document.querySelector('meta[name="video-output"]')?.content }));
+      await p.close();
+      return r;
+    })();
+    const OUT = path.resolve(pageDir, args.out || info.out || path.basename(PAGE, '.html') + '.mp4');
+    const total = Math.round(info.d * FPS);
+    const tmp = path.join(pageDir, '.render-tmp');
     await rm(tmp, { recursive: true, force: true });
     await mkdir(tmp, { recursive: true });
     const per = Math.ceil(total / WORKERS);
@@ -101,7 +113,7 @@ try {
       const from = w * per, to = Math.min(total, from + per);
       if (from < to) parts.push({ from, to, file: path.join(tmp, `part${w}.mp4`) });
     }
-    console.log(`${total} images à ${FPS} i/s, ${parts.length} segments`);
+    console.log(`${PAGE} : ${total} images à ${FPS} i/s, ${parts.length} segments`);
     await Promise.all(parts.map((s, i) => renderSegment(chromium, url, s.from, s.to, s.file, `[${i}]`)));
     await writeFile(path.join(tmp, 'list.txt'), parts.map(s => `file '${s.file}'`).join('\n'));
     // assemblage + piste audio silencieuse (compatibilité réseaux sociaux)

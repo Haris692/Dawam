@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-aube.mp4">
+<title>Dawam — L'aube</title>
+<link rel="stylesheet" href="../lib/base.css">
+<!-- Une journée avec Dawam · 1/4 — Yacine se réveille avec le rappel, puis fait sa séance après le Fajr. -->
+<style>
+#dim{background:#0b0d1f}
+#sceneA{transform-origin:560px 1240px}
+#sceneB{transform-origin:540px 1300px}
+.ctr{position:absolute;left:68.8px;top:423.2px;width:46px;height:46px;border-radius:50%;background:#fff;border:4px solid #FAEEDA;
+  display:flex;align-items:center;justify-content:center;font:800 17px/1 var(--sans);color:var(--accent)}
+.ctr .ok{position:absolute;inset:-4px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center}
+.ctr .ok svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="sceneA" class="L" width="1080" height="1920"></svg>
+  <svg id="sceneB" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+
+  <div id="stamp" class="stamp" style="top:200px"><div class="k">Une journée avec Dawam · 1/4</div><div class="h">5 h 52</div><div class="s">Le Fajr approche.</div></div>
+  <div id="notif" class="bignotif" style="top:150px"><img src="../assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌄<span>maintenant</span></div><div class="nb">La séance de l'aube t'attend — Coran, adhkar, constance.</div></div></div>
+  <div id="hA" class="headline light" style="top:190px"><div class="mask"><div class="ln">Un rappel,</div></div><div class="mask"><div class="ln em">au bon moment.</div></div></div>
+  <div id="hB" class="headline light" style="top:150px"><div class="mask"><div class="ln">Après le Fajr,</div></div><div class="mask"><div class="ln em">ta séance de l'aube.</div></div></div>
+  <div id="subB" class="sub light" style="top:392px">Adhkar du matin, sourates et Coran.</div>
+  <div id="hC" class="headline light" style="top:150px"><div class="mask"><div class="ln">Ta journée commence</div></div><div class="mask"><div class="ln em">par le rappel.</div></div></div>
+
+  <div id="phoneWrap" class="L" style="left:244px;top:560px;width:592px;height:1246px"></div>
+  <div id="streakW" class="c" style="top:190px"><div class="chip" style="position:relative;display:inline-block">🔥 8 jours de suite</div></div>
+  <div id="cardOkW" class="c" style="top:300px"><div class="fcard" style="position:relative;display:inline-flex;text-align:left">
+    <div class="ftile ok"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <div><div class="fk">Après le Fajr</div><div class="ft">Séance de l'aube</div><div class="fs">Validée · <b>+20 XP</b></div></div>
+  </div></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+
+<script src="../lib/engine.js"></script>
+<script src="../lib/people.js"></script>
+<script src="../lib/decor.js"></script>
+<script>
+'use strict';
+const R = {};
+const PAL = {
+  wall: ['#232849', '#4F4A70', '#E9D8C4'], base: ['#1D2140', '#433E60', '#D9C4AA'], floor: ['#1A1E3E', '#3F3A58', '#C49E7B'],
+  floorLine: ['#20244A', '#47415F', '#B38D6B'], rug: ['#2B2F57', '#5B4F6E', '#D8B48A'], rugLine: ['#363A66', '#6E5F7C', '#E6C79E'],
+  frame: ['#30355E', '#625C82', '#F2E8DA'], sill: ['#2B3058', '#5A5479', '#EADFCF'], rod: ['#3A3F68', '#6B6488', '#B8936A'],
+  curtain: ['#2F4A6A', '#4F6F8A', '#7FA3B8'], curtainLine: ['#25405E', '#456480', '#6E92A8'],
+  skyTop: ['#0E1433', '#2A2F66', '#8EC5E8'], skyBot: ['#2A2A5C', '#7A5689', '#DDEFF7'], city: ['#0A0E26', '#1F1B3D', '#7E8AA0'],
+  artFrame: ['#3A3557', '#6A5E7A', '#B8936A'], art: ['#2C3155', '#5E587C', '#F5EDE0'], artLine: ['#6B6286', '#A08C9C', '#BA7517'],
+  stand: ['#2F2A45', '#5A4A5E', '#9C6B4A'], standTop: ['#383250', '#655467', '#B07D58'], lampStem: ['#3C3652', '#665A70', '#8C6A50'], lampShade: ['#4A4466', '#8A7E92', '#F2E3C8'],
+  bedWood: ['#30283F', '#5B4858', '#8E5E44'], bedWoodDark: ['#251F33', '#4A3A48', '#6E4632'],
+  sheet: ['#3A4270', '#7A7FA6', '#F2EEE6'], pillow: ['#46507E', '#8A8FB5', '#FBF8F2'], blanket: ['#2E4C6E', '#4F6F94', '#3E7C9A'], blanketLine: ['#253F5E', '#44628A', '#356C88'],
+};
+const HIP_A = [640, 1290], PHONE_BED = [258 - 640, 1286 - 1290];
+const YACINE = { skin: '#B97A55', hair: '#1F1610', beard: true };
+
+function build() {
+  R.A = bedroom($('#sceneA'), PAL);
+  R.yA = new Person(R.A.person, Object.assign({ view: 'front', top: '#6F8FB3', legs: 'none' }, YACINE));
+  R.B = dawnRoom($('#sceneB'));
+  R.yB = new Person(R.B.person, Object.assign({ view: 'back', top: '#F2EDE3', bottom: '#E9E2D4', kufi: '#FBF8F1', legs: 'cross' }, YACINE));
+  const ctr = `<div class="ctr" id="ctr"><span id="ctrN">3</span><div class="ok" id="ctrOk"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div></div>`;
+  R.phone = makePhone(['adhkar-matin'], ctr);
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = buildEnd($('#stage'), 'Une journée avec Dawam');
+}
+
+function sceneA(t) {
+  const on = vis($('#sceneA'), t < 7.6);
+  if (!on) return;
+  $('#sceneA').style.transform = `scale(${(1.24 + .08 * P(t, 0, 7.6, E.lin)).toFixed(4)})`;
+  paint(R.A.pal, .06 + .22 * P(t, 0, 7, E.ioS));
+  R.A.stars.setAttribute('opacity', (1 - .4 * P(t, 2, 5)).toFixed(3));
+  // le téléphone posé près de l'oreiller s'allume et vibre
+  const lit = P(t, 1.3, .2), picked = t >= 3.15;
+  const buzz = t > 1.3 && t < 2.2 ? Math.sin(t * 80) * 2.2 : 0;
+  R.A.phoneBed.setAttribute('transform', `translate(${f1(258 + buzz)} 1286) rotate(-78)`);
+  R.A.phoneScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', lit));
+  R.A.phoneBed.style.display = picked ? 'none' : '';
+  // Yacine : allongé → attrape le téléphone → se redresse et lit
+  const reach = P(t, 2.6, .55, E.ioC), up = P(t, 3.15, 1.25, E.ioC), read = P(t, 4.2, .6, E.ioC);
+  const breath = Math.sin(t * 2.2) * .5 * (1 - up);
+  const restR = [-110, -20], restL = [-90, 50];
+  const holdR = [26, -138], holdL = [-22, -134];
+  let hR = [lerp(restR[0], PHONE_BED[0], reach), lerp(restR[1], PHONE_BED[1], reach)];
+  hR = [lerp(hR[0], holdR[0], up), lerp(hR[1], holdR[1], up)];
+  const hL = [lerp(restL[0], holdL[0], P(t, 3.4, 1.0, E.ioC)), lerp(restL[1], holdL[1], P(t, 3.4, 1.0, E.ioC))];
+  const pose = { x: HIP_A[0], y: HIP_A[1], s: 1, lean: lerp(-88, -4, up) + breath, tilt: 0, dy: 8 * read,
+    hands: { L: hL, R: hR }, phone: picked ? (up > .85 ? 'both' : 'R') : null, phoneAng: lerp(-60, 0, up), glow: lit };
+  R.yA.set(pose);
+  R.yA.tint('#141A3C', lerp(.52, .42, up));
+  // halo du téléphone (sur le lit, puis dans les mains)
+  const pw = picked ? R.yA.phoneWorld(pose) : [258 + buzz, 1286];
+  for (const g of [R.A.glow, R.A.glow2]) { g.setAttribute('cx', f1(pw[0])); g.setAttribute('cy', f1(pw[1] - (picked ? 40 : 0))); }
+  R.A.glow.setAttribute('opacity', (.9 * lit).toFixed(3));
+  R.A.glow2.setAttribute('opacity', (.32 * lit * up).toFixed(3));
+}
+
+function sceneB(t) {
+  const fin = P(t, 6.7, .7, E.ioC);
+  const svgB = $('#sceneB');
+  if (!vis(svgB, fin > 0)) return;
+  svgB.style.opacity = fin.toFixed(3);
+  svgB.style.transform = `scale(${(1 + .05 * P(t, 6.7, 10.8, E.lin)).toFixed(4)})`;
+  const k = lerp(.32, .66, P(t, 7, 9.5, E.ioS));
+  paint(R.B.pal, k);
+  R.B.stars.setAttribute('opacity', clamp(1 - (k - .3) * 3.2).toFixed(3));
+  R.B.moon.setAttribute('opacity', clamp(1 - (k - .35) * 3).toFixed(3));
+  const sun = P(t, 13.2, 3.6, E.outC);
+  const sy = lerp(1215, 1015, sun);
+  R.B.sun.setAttribute('cy', f1(sy)); R.B.sunGlow.setAttribute('cy', f1(sy));
+  R.B.sunGlow.setAttribute('opacity', (.35 + .65 * sun).toFixed(3));
+  R.B.shaft.setAttribute('opacity', (.85 * sun).toFixed(3));
+  R.B.glow.setAttribute('opacity', (.55 * (1 - .6 * sun)).toFixed(3));
+  const br = Math.sin(t * 2) * .35;
+  R.yB.set({ x: 540, y: 1640, s: 1.3, lean: br, dy: 6, hands: { L: [-46, -48], R: [46, -48] } });
+  R.yB.tint(mix('#191B3A', '#4A2E28', sun), lerp(.5, .3, sun));
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .8, E.ioC) });
+  sceneA(t); sceneB(t);
+  // textes
+  const st = $('#stamp');
+  if (vis(st, t < 2.6)) T(st, { y: (1 - P(t, .3, .8, E.outX)) * 30 - 20 * P(t, 1.9, .5, E.inC), op: P(t, .3, .6) * (1 - P(t, 1.9, .5)) });
+  const ni = P(t, 2.0, .6, E.outB), no = P(t, 4.3, .4, E.inC);
+  T($('#notif'), { y: lerp(-420, 0, ni) - 420 * no, op: ni > 0 && no < 1 ? 1 : 0 });
+  headline($('#hA'), t, 4.65, 6.55);
+  headline($('#hB'), t, 7.45, 13.55); fadeUp($('#subB'), t, 7.7, 13.55);
+  headline($('#hC'), t, 15.45, 17.45);
+  // gros plan sur le téléphone : adhkar du matin, le compteur descend jusqu'au ✓
+  const pin = P(t, 9.55, 1.0, E.outX), pout = P(t, 13.15, .7, E.inC);
+  T($('#dim'), { op: .5 * P(t, 9.4, .6) * (1 - P(t, 13.2, .6)) });
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: -4 * pin, r: lerp(-7, 0, pin), s: 1.05 });
+  drawTaps(R.phone, t, [[10.65, 280, 640], [11.05, 280, 640], [11.45, 280, 640]]);
+  const n = t < 10.85 ? 3 : t < 11.25 ? 2 : 1;
+  $('#ctrN').textContent = n;
+  T($('#ctrOk'), { s: P(t, 11.75, .4, E.outB2), op: P(t, 11.75, .15) });
+  // validation + série
+  popIn($('#cardOkW'), t, 13.95, 15.1);
+  popIn($('#streakW'), t, 14.3, 15.1);
+  drawEnd(R.end, t, 17.5, 540, 1050);
+}
+
+boot({ duration: 21, build, render });
+</script>
+</body>
+</html>

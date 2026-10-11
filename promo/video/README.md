@@ -5,8 +5,8 @@ Vidéo motion design verticale (1080×1920, 9:16, 60 i/s, 36 s) pour les Reels, 
 - `dawam-presentation.mp4` : la vidéo exportée (piste audio silencieuse, prête pour ajouter une voix off ou un nashid).
 - `dawam-cover.jpg` : image de couverture (dernière image de la vidéo).
 - `index.html` : la composition. Toute l'animation est une fonction du temps (`renderAt(t)`).
-- `render.mjs` : l'export image par image (Chromium + ffmpeg).
-- `assets/` : captures iPhone (barre d'état nettoyée), emblème de l'icône, polices de l'app (Plus Jakarta Sans, Amiri, Lora — licence SIL OFL 1.1, voir `assets/fonts/OFL-*.txt`).
+- `../render.mjs` : l'export image par image (Chromium + ffmpeg), commun à toutes les vidéos.
+- `../assets/` : captures iPhone (barre d'état nettoyée), emblème de l'icône, polices de l'app (Plus Jakarta Sans, Amiri, Lora — licence SIL OFL 1.1, voir `assets/fonts/OFL-*.txt`).
 
 ## Déroulé
 
@@ -24,21 +24,21 @@ Vidéo motion design verticale (1080×1920, 9:16, 60 i/s, 36 s) pour les Reels, 
 ## Prévisualiser
 
 ```bash
-cd promo/video
+cd promo
 npx serve .            # ou : python3 -m http.server
 ```
 
-Ouvrir `http://localhost:3000/` (ou le port affiché). Espace = pause, ←/→ = ±1 s, `?t=12.5` = image fixe à 12,5 s.
+Ouvrir `http://localhost:3000/video/` (ou le port affiché). Espace = pause, ←/→ = ±1 s, `?t=12.5` = image fixe à 12,5 s.
 
 ## Réexporter
 
 Prérequis : Node 18+, ffmpeg et Playwright (`npm i -D playwright && npx playwright install chromium`).
 
 ```bash
-cd promo/video
-node render.mjs                         # → dawam-presentation.mp4
-node render.mjs --fps 30 --out a.mp4    # autre cadence / autre fichier
-node render.mjs --stills 3.9,15.4,25.7  # images PNG de contrôle dans ./stills
+cd promo
+node render.mjs video/index.html                         # → video/dawam-presentation.mp4
+node render.mjs video/index.html --fps 30 --out a.mp4    # autre cadence / autre fichier
+node render.mjs video/index.html --stills 3.9,15.4,25.7  # images PNG de contrôle dans video/stills
 ```
 
 Les textes se modifient directement dans `index.html` (sections S1 à S8) ; le minutage est dans les fonctions `s1()` … `s8()`.
