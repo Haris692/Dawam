@@ -41,7 +41,6 @@ class Toon {
     this.paint = [];
     this.tintKey = '';
     this.H = { L: [0, 0], R: [0, 0] };
-    const front = c.view === 'front';
     this.root = el('g', {}, parent);
     this.defs = el('defs', {}, this.root);
     const lg = el('radialGradient', { id: this.id + '-light' }, this.defs);
@@ -67,7 +66,6 @@ class Toon {
     this.S_('rect', { x: -17, y: -31, width: 34, height: 62, rx: 8 }, this.phone, c.phoneColor, 4);
     this.screen = el('rect', { x: -13, y: -26, width: 26, height: 52, rx: 5, fill: '#2b2b30' }, this.phone);
     el('path', { d: 'M-8 -19L5 -23', stroke: '#FFFFFF', 'stroke-width': 3, 'stroke-linecap': 'round', opacity: .35 }, this.phone);
-    if (!front) { this.gPhone.style.display = 'none'; }
   }
 
   // ───────── outils de dessin ─────────
@@ -173,8 +171,8 @@ class Toon {
     this.tiltG = el('g', {}, neck);
     const h = el('g', { transform: `translate(0 ${-TOON.HEAD})` }, this.tiltG);
     this.F = c.head === 'hijab'
-      ? { cy: 14, ex: 27, ey: 25, k: 1.02, by: 2, ny: 39, my: 51, chx: 47, chy: 42 }
-      : { cy: 0, ex: 30, ey: 10, k: 1.06, by: -17, ny: 28, my: 43, chx: 52, chy: 32 };
+      ? { ex: 27, ey: 25, k: 1.02, by: 2, ny: 39, my: 51, chx: 47, chy: 42 }
+      : { ex: 30, ey: 10, k: 1.06, by: -17, ny: 28, my: 43, chx: 52, chy: 32 };
     if (c.head === 'hijab') this.buildHijab(h, front); else this.buildHair(h, front);
     if (front) this.buildFace(h);
   }
