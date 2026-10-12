@@ -1,13 +1,13 @@
 # Voix off des vidéos Dawam
 
-Une narratrice au ton posé et rassurant (débit ralenti, légère chaleur, une pointe de « pièce »), calée sur les scènes de chaque vidéo.
+Une narratrice au ton posé et rassurant (voix grave, débit tranquille, légère chaleur, une pointe de « pièce »), calée sur les scènes de chaque vidéo. Elle est produite avec **Supertonic‑3**, l'un des moteurs de [VoiceStudio](https://github.com/debpalash/VoiceStudio) (détails plus bas).
 
 **Fichiers produits**
 - Vidéos avec voix : `../quotidien/dawam-{aube,trajet,famille,nuit}-voix.mp4` et `../video/dawam-presentation-voix.mp4`. Les versions sans voix restent à côté, pour y ajouter un nashid si besoin.
 - Pistes voix seules : `{aube,trajet,famille,nuit,presentation}/voix-off-*.m4a`, normalisées à -16 LUFS, à poser sous un autre montage.
 - `generer.py` : synthèse, placement au timing des scènes, traitement, mixage. Les textes et les timings se trouvent en tête du fichier.
 
-Pour les mots arabes que la synthèse prononce mal, la voix passe par le sens (« le repentir », « qu'Allah te bénisse », « la prière de l'aube »). L'écran, lui, garde les termes de l'app (tawba, barakAllahu fik, Fajr). Le mot dhikr est écrit « zikr » pour le moteur. Chaque phrase a été relue par une reconnaissance vocale (Whisper) pour contrôler la prononciation.
+Quand le moteur prononce mal un mot, seul le texte prononcé est adapté : « Dawame » pour Dawam (sinon il dit « Dawan »), « zikr » pour dhikr, « Mâchâ'Allah » en un mot, et « Petit mais constant » sans virgule (sinon il fait sonner le *t*). Pour les termes arabes, la voix passe par le sens (« le repentir », « qu'Allah te bénisse », « la prière de l'aube »), tandis que l'écran garde les termes de l'app (tawba, barakAllahu fik, Fajr). Chaque phrase est générée trois fois : une reconnaissance vocale (Whisper turbo) relit les prises et garde la mieux prononcée.
 
 ## Textes
 
@@ -64,18 +64,22 @@ Pour les mots arabes que la synthèse prononce mal, la voix passe par le sens (�
 
 ## Voix et licence
 
-Voix de synthèse : [Piper](https://github.com/rhasspy/piper) (licence MIT), modèle `fr_FR-siwis-medium`, entraîné sur la *SIWIS French Speech Synthesis Database* (Yamagishi, Honnet, Garner, Lazaridis — Idiap / University of Edinburgh, **CC BY 4.0**), exécuté avec [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx). L'usage commercial est autorisé, à condition de citer la source, par exemple dans la description de la publication : *« Voix : synthèse Piper, base SIWIS (CC BY 4.0) »*.
+Voix de synthèse : **Supertonic‑3** (Supertone Inc.), voix « F3 », la plus grave, la moins brillante et la plus lente des cinq voix féminines (mesures de hauteur, de timbre et de débit). C'est l'un des moteurs proposés par [VoiceStudio](https://github.com/debpalash/VoiceStudio). Ici, le modèle tourne avec [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) dans sa version INT8 publiée sur GitHub, car Hugging Face n'est pas accessible depuis l'environnement de génération. Les poids sont les mêmes que dans VoiceStudio, en version compressée.
 
-Ont été écartées : la voix « miro » (CC BY-NC-SA, pas d'usage commercial), « tom » (AGPL) et « upmc » (CC BY-SA), ambiguës pour une publicité, ainsi que « gilles » (domaine public, mais trop dégradée). Il n'existe pas de voix masculine de bonne qualité sous licence libre et commerciale parmi les modèles disponibles. Pour une voix masculine, une voix « studio » (ElevenLabs, Google, Azure…) ou un vrai narrateur pourront remplacer ces pistes : les timings ci-dessus restent valables.
+- Code : licence MIT. Poids du modèle : licence **OpenRAIL-M**, qui autorise l'usage commercial, avec des restrictions d'usage (rien d'illégal, de trompeur ou de nuisible). Crédit facultatif dans la description d'une publication : *« Voix : Supertonic 3 (Supertone) »*.
+- Le moteur par défaut de VoiceStudio, **OmniVoice**, n'a pas été retenu : ses poids sont sous licence **CC BY-NC**, donc interdits d'usage commercial, ce qui exclut la promotion d'une application qu'on veut monétiser. Le seul autre moteur de VoiceStudio à la fois commercial et francophone, **CosyVoice 3** (Apache 2.0, clonage de voix), n'est distribué que via Hugging Face et ModelScope, inaccessibles ici.
+- Pour une voix masculine, il suffit de changer `VOIX` dans `generer.py` : 5 à 9 correspondent aux voix M1 à M5, sous la même licence.
+
+L'ancienne voix (Piper, base SIWIS, CC BY 4.0) reste dans l'historique Git si vous voulez y revenir.
 
 ## Régénérer
 
 ```bash
-pip install sherpa-onnx soundfile numpy        # + ffmpeg
+pip install sherpa-onnx soundfile numpy        # sherpa-onnx 1.13 ou plus, + ffmpeg
 mkdir -p ~/.cache/dawam-tts && cd ~/.cache/dawam-tts
 B=https://github.com/k2-fsa/sherpa-onnx/releases/download
-curl -L $B/tts-models/vits-piper-fr_FR-siwis-medium.tar.bz2 | tar xj
-curl -L $B/asr-models/sherpa-onnx-whisper-small.tar.bz2 | tar xj   # seulement pour --verifier
+curl -L $B/tts-models/sherpa-onnx-supertonic-3-tts-int8-2026-05-11.tar.bz2 | tar xj
+curl -L $B/asr-models/sherpa-onnx-whisper-turbo.tar.bz2 | tar xj   # seulement pour --verifier (choix des prises)
 cd -  # retour dans promo/voix-off
 python3 generer.py --verifier          # ou : python3 generer.py nuit
 ```
