@@ -14,8 +14,8 @@ PROMO = os.path.dirname(ICI)
 MODELES = os.environ.get('DAWAM_TTS', os.path.expanduser('~/.cache/dawam-tts'))
 SUPERTONIC = 'sherpa-onnx-supertonic-3-tts-int8-2026-05-11'
 SR = 44100                       # fréquence native de Supertonic-3
-VOIX = 2                         # F3 : la plus grave, la plus douce et la plus posée des 5 voix féminines
-VITESSE = 1.0                    # débit naturel de F3 (déjà lent)
+VOIX = 9                         # M5 : voix d'homme grave et posée, la mieux prononcée des 5 voix masculines (F1–F5 = 0–4, M1–M5 = 5–9)
+VITESSE = 1.0                    # débit naturel de M5 (le plus lent des voix masculines)
 ETAPES = 12                      # pas de génération : qualité maximale proposée par VoiceStudio
 PRISES = 5                       # avec --verifier : jusqu'à 5 prises par phrase, la mieux relue par Whisper est gardée
 

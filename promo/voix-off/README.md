@@ -1,6 +1,6 @@
 # Voix off des vidéos Dawam
 
-Une narratrice au ton posé et rassurant (voix grave, débit tranquille, légère chaleur, une pointe de « pièce »), calée sur les scènes de chaque vidéo. Elle est produite avec **Supertonic‑3**, l'un des moteurs de [VoiceStudio](https://github.com/debpalash/VoiceStudio) (détails plus bas).
+Un narrateur au ton posé et rassurant (voix d'homme grave, débit tranquille, légère chaleur, une pointe de « pièce »), calé sur les scènes de chaque vidéo. Elle est produite avec **Supertonic‑3**, l'un des moteurs de [VoiceStudio](https://github.com/debpalash/VoiceStudio) (détails plus bas).
 
 **Fichiers produits**
 - Vidéos avec voix : `../quotidien/dawam-{aube,trajet,famille,nuit}-voix.mp4` et `../video/dawam-presentation-voix.mp4`. Les versions sans voix restent à côté, pour y ajouter un nashid si besoin.
@@ -65,11 +65,11 @@ Quand le moteur prononce mal un mot, seul le texte prononcé est adapté : « Da
 
 ## Voix et licence
 
-Voix de synthèse : **Supertonic‑3** (Supertone Inc.), voix « F3 », la plus grave, la moins brillante et la plus lente des cinq voix féminines (mesures de hauteur, de timbre et de débit). C'est l'un des moteurs proposés par [VoiceStudio](https://github.com/debpalash/VoiceStudio). Ici, le modèle tourne avec [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) dans sa version INT8 publiée sur GitHub, car Hugging Face n'est pas accessible depuis l'environnement de génération. Les poids sont les mêmes que dans VoiceStudio, en version compressée.
+Voix de synthèse : **Supertonic‑3** (Supertone Inc.), voix d'homme « M5 » : grave (≈ 97 Hz), la plus lente et la mieux prononcée des cinq voix masculines (mesures de hauteur, de débit et relecture Whisper). C'est l'un des moteurs proposés par [VoiceStudio](https://github.com/debpalash/VoiceStudio). Ici, le modèle tourne avec [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) dans sa version INT8 publiée sur GitHub, car Hugging Face n'est pas accessible depuis l'environnement de génération. Les poids sont les mêmes que dans VoiceStudio, en version compressée.
 
 - Code : licence MIT. Poids du modèle : licence **OpenRAIL-M**, qui autorise l'usage commercial, avec des restrictions d'usage (rien d'illégal, de trompeur ou de nuisible). Crédit facultatif dans la description d'une publication : *« Voix : Supertonic 3 (Supertone) »*.
 - Le moteur par défaut de VoiceStudio, **OmniVoice**, n'a pas été retenu : ses poids sont sous licence **CC BY-NC**, donc interdits d'usage commercial, ce qui exclut la promotion d'une application qu'on veut monétiser. Le seul autre moteur de VoiceStudio à la fois commercial et francophone, **CosyVoice 3** (Apache 2.0, clonage de voix), n'est distribué que via Hugging Face et ModelScope, inaccessibles ici.
-- Pour une voix masculine, il suffit de changer `VOIX` dans `generer.py` : 5 à 9 correspondent aux voix M1 à M5, sous la même licence.
+- Pour changer de voix, il suffit de modifier `VOIX` dans `generer.py` : 0 à 4 pour les voix féminines F1 à F5 (la version précédente utilisait F3), 5 à 9 pour les voix masculines M1 à M5, toutes sous la même licence.
 
 L'ancienne voix (Piper, base SIWIS, CC BY 4.0) reste dans l'historique Git si vous voulez y revenir.
 
