@@ -3,7 +3,7 @@ placement au timing des scènes, traitement (chaleur, compression douce, légèr
 
     python3 generer.py                 # toutes les vidéos
     python3 generer.py aube nuit       # seulement certaines
-    python3 generer.py --verifier      # 3 prises par phrase : Whisper garde la mieux prononcée et affiche ce qu'il entend
+    python3 generer.py --verifier      # jusqu'à 5 prises par phrase : Whisper garde la mieux prononcée et affiche ce qu'il entend
 
 Prérequis : pip install sherpa-onnx soundfile numpy ; ffmpeg ; modèles dans $DAWAM_TTS (voir README.md).
 """
