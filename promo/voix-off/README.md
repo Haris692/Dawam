@@ -6,6 +6,7 @@ Une narratrice au ton posé et rassurant (voix grave, débit tranquille, légèr
 - Vidéos avec voix : `../quotidien/dawam-{aube,trajet,famille,nuit}-voix.mp4` et `../video/dawam-presentation-voix.mp4`. Les versions sans voix restent à côté, pour y ajouter un nashid si besoin.
 - Pistes voix seules : `{aube,trajet,famille,nuit,presentation}/voix-off-*.m4a`, normalisées à -16 LUFS, à poser sous un autre montage.
 - `generer.py` : synthèse, placement au timing des scènes, traitement, mixage. Les textes et les timings se trouvent en tête du fichier.
+- `echantillons-voix.m4a` : les 10 voix de Supertonic‑3 (F1 à F5, M1 à M5) qui lisent la même phrase. Pour en prendre une autre, changer `VOIX` dans `generer.py` (0 à 4 = F1 à F5, 5 à 9 = M1 à M5) et relancer.
 
 Quand le moteur prononce mal un mot, seul le texte prononcé est adapté : « Dawame » pour Dawam (sinon il dit « Dawan »), « zikr » pour dhikr, « Corân » (sinon « coronne » en fin de phrase), « Mâchâ'Allah » en un mot, et « Dawame, petit mais constant », sans virgule après « petit » (sinon il fait sonner le *t*). Pour les termes arabes, la voix passe par le sens (« le repentir », « qu'Allah te bénisse », « la prière de l'aube »), tandis que l'écran garde les termes de l'app (tawba, barakAllahu fik, Fajr). Chaque phrase est générée jusqu'à cinq fois : une reconnaissance vocale (Whisper turbo) relit chaque prise et garde la mieux prononcée, en s'arrêtant dès qu'une prise est parfaite.
 
@@ -24,7 +25,7 @@ Quand le moteur prononce mal un mot, seul le texte prononcé est adapté : « Da
 **2. Le trajet** (20,5 s)
 | | |
 |---|---|
-| 0,4 s | Huit heures dix. Vingt-cinq minutes de métro, comme chaque matin. |
+| 0,3 s | Huit heures dix. Vingt-cinq minutes de métro, comme chaque matin. |
 | 4,7 s | Et si ce trajet devenait un moment pour toi ? |
 | 7,6 s | Une séance de dhikr guidée, à ton rythme : tu choisis ta durée. |
 | 11,9 s | Le cœur s'apaise, station après station. |

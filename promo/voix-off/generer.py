@@ -33,7 +33,8 @@ TEXTES = {
         (18.5, "Dawam. Petit, mais constant.", "Dawame, petit mais constant."),
     ]),
     'trajet': ('quotidien/dawam-trajet.mp4', 20.5, [
-        (0.4, "Huit heures dix. Vingt-cinq minutes de métro, comme chaque matin.", None),
+        (0.3, "Huit heures dix. Vingt-cinq minutes de métro, comme chaque matin.",
+              "Huit heures dix… Vingt-cinq minutes de métro, comme chaque matin.", 1.03),   # pause nette : pas de « dix-vingt-cinq »
         (4.7, "Et si ce trajet devenait un moment pour toi ?", None),
         (7.6, "Une séance de dhikr guidée, à ton rythme : tu choisis ta durée.",
               "Une séance de zikr guidée, à ton rythme : tu choisis ta durée."),
@@ -167,7 +168,8 @@ def piste(nom, tts, rec=None):
             prises.append(rogner(synthese(tts, dit or affiche, vitesse)))
             if not rec: break
             txt = entendu(rec, prises[-1])
-            notes.append((min(ecart(affiche, txt), ecart(dit or affiche, txt)), txt))   # texte affiché ou orthographe prononcée
+            # texte affiché ou orthographe prononcée ; « Dawame » n'est qu'une astuce d'écriture : Whisper doit entendre « Dawam »
+            notes.append((min(ecart(affiche, txt), ecart((dit or affiche).replace('Dawame', 'Dawam'), txt)), txt))
             if notes[-1][0] == 0: break          # prise parfaite : inutile d'en faire d'autres
         k = min(range(len(notes)), key=lambda j: notes[j][0]) if rec else 0
         x = prises[k]
