@@ -34,7 +34,7 @@ TEXTES = {
     ]),
     'trajet': ('quotidien/dawam-trajet.mp4', 20.5, [
         (0.3, "Huit heures dix. Vingt-cinq minutes de métro, comme chaque matin.",
-              "Huit heures dix… Vingt-cinq minutes de métro, comme chaque matin.", 1.03),   # pause nette : pas de « dix-vingt-cinq »
+              "Huit heures 10… Vingt-cinq minutes de métro, comme chaque matin.", 1.03),   # pause nette ; « 10 » évite un « dix » lu « dicks »
         (4.7, "Et si ce trajet devenait un moment pour toi ?", None),
         (7.6, "Une séance de dhikr guidée, à ton rythme : tu choisis ta durée.",
               "Une séance de zikr guidée, à ton rythme : tu choisis ta durée."),
