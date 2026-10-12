@@ -7,7 +7,7 @@ Une narratrice au ton posé et rassurant (voix grave, débit tranquille, légèr
 - Pistes voix seules : `{aube,trajet,famille,nuit,presentation}/voix-off-*.m4a`, normalisées à -16 LUFS, à poser sous un autre montage.
 - `generer.py` : synthèse, placement au timing des scènes, traitement, mixage. Les textes et les timings se trouvent en tête du fichier.
 
-Quand le moteur prononce mal un mot, seul le texte prononcé est adapté : « Dawame » pour Dawam (sinon il dit « Dawan »), « zikr » pour dhikr, « Mâchâ'Allah » en un mot, et « Petit mais constant » sans virgule (sinon il fait sonner le *t*). Pour les termes arabes, la voix passe par le sens (« le repentir », « qu'Allah te bénisse », « la prière de l'aube »), tandis que l'écran garde les termes de l'app (tawba, barakAllahu fik, Fajr). Chaque phrase est générée trois fois : une reconnaissance vocale (Whisper turbo) relit les prises et garde la mieux prononcée.
+Quand le moteur prononce mal un mot, seul le texte prononcé est adapté : « Dawame » pour Dawam (sinon il dit « Dawan »), « zikr » pour dhikr, « Corân » (sinon « coronne » en fin de phrase), « Mâchâ'Allah » en un mot, et « Dawame, petit mais constant », sans virgule après « petit » (sinon il fait sonner le *t*). Pour les termes arabes, la voix passe par le sens (« le repentir », « qu'Allah te bénisse », « la prière de l'aube »), tandis que l'écran garde les termes de l'app (tawba, barakAllahu fik, Fajr). Chaque phrase est générée jusqu'à cinq fois : une reconnaissance vocale (Whisper turbo) relit chaque prise et garde la mieux prononcée, en s'arrêtant dès qu'une prise est parfaite.
 
 ## Textes
 

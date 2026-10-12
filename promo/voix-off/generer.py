@@ -17,19 +17,20 @@ SR = 44100                       # fréquence native de Supertonic-3
 VOIX = 2                         # F3 : la plus grave, la plus douce et la plus posée des 5 voix féminines
 VITESSE = 1.0                    # débit naturel de F3 (déjà lent)
 ETAPES = 12                      # pas de génération : qualité maximale proposée par VoiceStudio
-PRISES = 3                       # avec --verifier : prises par phrase, la mieux relue par Whisper est gardée
+PRISES = 5                       # avec --verifier : jusqu'à 5 prises par phrase, la mieux relue par Whisper est gardée
 
 # (début en s, texte affiché, texte prononcé si différent, vitesse si différente)
-# Orthographe adaptée au moteur : « Dawame » (sinon « Dawan »), « zikr » pour dhikr, pas de virgule après « Petit »
-# (sinon le t final se prononce), « Mâchâ'Allah » en un mot.
+# Orthographe adaptée au moteur : « Dawame » (sinon « Dawan »), « zikr » pour dhikr, « Corân » (sinon « coronne » en fin
+# de phrase), « Mâchâ'Allah » en un mot, et « Dawame, petit mais constant » : sans virgule après « petit », le t reste muet.
 TEXTES = {
     'aube': ('quotidien/dawam-aube.mp4', 21.0, [
         (0.6, "Cinq heures cinquante-deux. Dehors, tout est encore calme.", None),
         (4.2, "Dawam te rappelle, en douceur, ce qui compte vraiment.", "Dawame te rappelle, en douceur, ce qui compte vraiment."),
-        (7.8, "Après la prière de l'aube, quelques minutes : les invocations du matin, un peu de Coran.", None),
+        (7.8, "Après la prière de l'aube, quelques minutes : les invocations du matin, un peu de Coran.",
+              "Après la prière de l'aube, quelques minutes : les invocations du matin, un peu de Corân."),
         (13.9, "Un petit pas, chaque matin.", None),
         (15.75, "Ta journée commence par le rappel.", None),
-        (18.5, "Dawam. Petit, mais constant.", "Dawame. Petit mais constant."),
+        (18.5, "Dawam. Petit, mais constant.", "Dawame, petit mais constant."),
     ]),
     'trajet': ('quotidien/dawam-trajet.mp4', 20.5, [
         (0.4, "Huit heures dix. Vingt-cinq minutes de métro, comme chaque matin.", None),
@@ -38,14 +39,14 @@ TEXTES = {
               "Une séance de zikr guidée, à ton rythme : tu choisis ta durée."),
         (11.9, "Le cœur s'apaise, station après station.", None),
         (14.7, "Chaque minute peut compter.", None),
-        (17.9, "Dawam. Petit, mais constant.", "Dawame. Petit mais constant."),
+        (17.9, "Dawam. Petit, mais constant.", "Dawame, petit mais constant."),
     ]),
     'famille': ('quotidien/dawam-famille.mp4', 19.5, [
         (0.4, "Il est midi quarante-cinq. Samira est à la maison, Yacine au bureau, Inès à la fac.", None),
         (5.8, "Ensemble, ils visent mille prières sur le Prophète, paix et salut sur lui.", None),
         (11.8, "Mâ châ Allah… objectif atteint.", "Mâchâ'Allah, objectif atteint."),
         (14.0, "Chacun de son côté, et pourtant ensemble.", None),
-        (16.9, "Dawam. Petit, mais constant.", "Dawame. Petit mais constant."),
+        (16.9, "Dawam. Petit, mais constant.", "Dawame, petit mais constant."),
     ]),
     'nuit': ('quotidien/dawam-nuit.mp4', 21.0, [
         (0.4, "Vingt-deux heures quarante. La journée se termine, tout ralentit.", None, 1.1),
@@ -57,7 +58,7 @@ TEXTES = {
         (11.15, "Le côté droit.", None, 1.15),
         (12.5, "Journée complète. Qu'Allah te bénisse.", None),
         (15.5, "Demain, on recommence.", None),
-        (18.4, "Dawam. Petit, mais constant.", "Dawame. Petit mais constant."),
+        (18.4, "Dawam. Petit, mais constant.", "Dawame, petit mais constant."),
     ]),
     'presentation': ('video/dawam-presentation.mp4', 36.0, [
         (0.6, "Le Prophète, paix et salut sur lui, a dit :", None, 1.08),
@@ -69,7 +70,7 @@ TEXTES = {
                "Tes invocations du matin et du soir, et des séances de zikr guidées."),
         (23.0, "Suis ta constance, jour après jour, sans pression.", None),
         (27.4, "Et avance à plusieurs, avec tes proches.", None),
-        (32.2, "Dawam. Petit, mais constant.", "Dawame. Petit mais constant."),
+        (32.2, "Dawam. Petit, mais constant.", "Dawame, petit mais constant."),
     ]),
 }
 
@@ -116,7 +117,8 @@ def ecart(ref, hyp):
     """Taux d'erreur sur les mots, sans accents ni ponctuation."""
     def mots(t):
         t = unicodedata.normalize('NFKD', t.lower())
-        return re.sub(r'[^a-z0-9 ]', ' ', ''.join(c for c in t if not unicodedata.combining(c))).split()
+        t = ''.join(c for c in t if not unicodedata.combining(c)).replace("'", '').replace('’', '')
+        return re.sub(r'[^a-z0-9 ]', ' ', t).split()
     r, h = mots(ref), mots(hyp)
     d = list(range(len(h) + 1))
     for i in range(1, len(r) + 1):
@@ -141,13 +143,14 @@ def piste(nom, tts, rec=None):
     track = np.zeros(int(duree * SR), dtype=np.float32)
     for i, (t0, affiche, dit, *opt) in enumerate(lignes):
         vitesse = opt[0] if opt else VITESSE
-        prises = [rogner(synthese(tts, dit or affiche, vitesse)) for _ in range(PRISES if rec else 1)]
-        if rec:
-            notes = [(ecart(affiche, txt), txt) for txt in (entendu(rec, x) for x in prises)]
-            k = min(range(len(prises)), key=lambda j: notes[j][0])
-            x = prises[k]
-        else:
-            x = prises[0]
+        prises, notes = [], []
+        while len(prises) < (PRISES if rec else 1):
+            prises.append(rogner(synthese(tts, dit or affiche, vitesse)))
+            if not rec: break
+            txt = entendu(rec, prises[-1]); notes.append((ecart(affiche, txt), txt))
+            if notes[-1][0] == 0: break          # prise parfaite : inutile d'en faire d'autres
+        k = min(range(len(notes)), key=lambda j: notes[j][0]) if rec else 0
+        x = prises[k]
         fin = lignes[i + 1][0] if i + 1 < len(lignes) else duree
         d = len(x) / SR
         alerte = '  ⚠ déborde de %.2f s' % (t0 + d - fin) if t0 + d > fin + .05 else ''
@@ -166,9 +169,12 @@ def piste(nom, tts, rec=None):
     # vidéo avec voix : image copiée telle quelle, piste audio remplacée
     src = os.path.join(PROMO, video)
     dst = src.replace('.mp4', '-voix.mp4')
+    # écriture dans des fichiers temporaires puis renommage : jamais de fichier à moitié écrit
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', src, '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy',
-                    '-c:a', 'aac', '-b:a', '160k', '-af', f'apad,atrim=0:{duree}', '-movflags', '+faststart', dst], check=True)
-    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', wav, '-c:a', 'aac', '-b:a', '160k', wav.replace('.wav', '.m4a')], check=True)
+                    '-c:a', 'aac', '-b:a', '160k', '-af', f'apad,atrim=0:{duree}', '-movflags', '+faststart', dst + '.tmp.mp4'], check=True)
+    m4a = wav.replace('.wav', '.m4a')
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', wav, '-c:a', 'aac', '-b:a', '160k', m4a + '.tmp.m4a'], check=True)
+    os.replace(dst + '.tmp.mp4', dst); os.replace(m4a + '.tmp.m4a', m4a)
     os.remove(wav)
     print(f'  → {os.path.relpath(dst, PROMO)}')
 
