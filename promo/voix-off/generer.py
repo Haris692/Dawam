@@ -113,12 +113,31 @@ def entendu(rec, x):
     return s.result.text.strip()
 
 
+UNITES = 'zero un deux trois quatre cinq six sept huit neuf dix onze douze treize quatorze quinze seize'.split()
+DIZAINES = {2: 'vingt', 3: 'trente', 4: 'quarante', 5: 'cinquante', 6: 'soixante', 8: 'quatre vingt'}
+
+
+def en_lettres(n):
+    """Nombre (0 à 99, ou 1000) en toutes lettres : Whisper écrit « 5h52 » ou « vingt 5 » là où le texte dit les mots."""
+    if n == 1000: return 'mille'
+    if n < 17: return UNITES[n]
+    if n < 20: return 'dix ' + UNITES[n - 10]
+    if n > 99: return str(n)
+    d, u = divmod(n, 10)
+    if d in (7, 9): d, u = d - 1, u + 10          # soixante-dix, quatre-vingt-dix
+    base = DIZAINES[d]
+    if u == 0: return base
+    return base + (' et ' if u in (1, 11) and d < 8 else ' ') + en_lettres(u)
+
+
 def ecart(ref, hyp):
-    """Taux d'erreur sur les mots, sans accents ni ponctuation."""
+    """Taux d'erreur sur les mots, sans accents, ponctuation ni écriture en chiffres."""
     def mots(t):
         t = unicodedata.normalize('NFKD', t.lower())
         t = ''.join(c for c in t if not unicodedata.combining(c)).replace("'", '').replace('’', '')
-        return re.sub(r'[^a-z0-9 ]', ' ', t).split()
+        t = re.sub(r'(\d)\s*h\s*(\d)', r'\1 heures \2', t)
+        t = re.sub(r'\d+', lambda m: ' ' + en_lettres(int(m.group())) + ' ', t).replace('sh', 'ch')   # Masha'Allah → Macha'Allah
+        return [w[:-1] + 's' if w.endswith('z') else w for w in re.sub(r'[^a-z0-9 ]', ' ', t).split()]   # Inez → Ines
     r, h = mots(ref), mots(hyp)
     d = list(range(len(h) + 1))
     for i in range(1, len(r) + 1):
@@ -147,7 +166,8 @@ def piste(nom, tts, rec=None):
         while len(prises) < (PRISES if rec else 1):
             prises.append(rogner(synthese(tts, dit or affiche, vitesse)))
             if not rec: break
-            txt = entendu(rec, prises[-1]); notes.append((ecart(affiche, txt), txt))
+            txt = entendu(rec, prises[-1])
+            notes.append((min(ecart(affiche, txt), ecart(dit or affiche, txt)), txt))   # texte affiché ou orthographe prononcée
             if notes[-1][0] == 0: break          # prise parfaite : inutile d'en faire d'autres
         k = min(range(len(notes)), key=lambda j: notes[j][0]) if rec else 0
         x = prises[k]
