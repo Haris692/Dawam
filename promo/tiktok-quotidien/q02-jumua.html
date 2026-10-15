@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q02-jumua.mp4">
+<title>Dawam — Au quotidien · Jumuʿa</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — Karim et son fils Adam, vendredi matin à la mosquée : le rappel « Jumuʿa — lis Al-Kahf », la lecture lancée, Adam suit avec lui. -->
+<style>
+#scene{transform-origin:580px 1300px}
+#dim{background:#2A1A0C}
+#qrWrap{position:absolute;left:0;top:0;width:560px;height:1214px}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:600px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const KH = [450, 1250], KS = 1.3;      // Karim : bassin, échelle
+const AH = [716, 1290], AS = 0.8;      // Adam : plus petit, assis à sa gauche (à droite de l'image)
+
+// rangées du tapis de prière (bandes horizontales de plus en plus hautes vers nous, arcs de mihrab répétés)
+function carpetRows() {
+  const ys = [1132, 1172, 1222, 1286, 1366, 1466, 1590, 1740, 1930];
+  let s = '';
+  for (let i = 0; i < ys.length - 1; i++) {
+    const y0 = ys[i], y1 = ys[i + 1], h = y1 - y0, w = h * 1.25, n = Math.ceil(1180 / w) + 1;
+    s += `<rect x="-60" y="${y0}" width="1200" height="${h}" fill="${i % 2 ? '#A8423A' : '#B04A40'}"/>`;
+    for (let k = 0; k < n; k++) {
+      const x = -60 + k * w + (i % 2 ? w / 2 : 0), m = w * .16, top = y0 + h * .2, base = y1 - h * .12;
+      s += `<path d="M${f1(x + m)} ${f1(base)}V${f1(top + h * .28)}Q${f1(x + m)} ${f1(top)} ${f1(x + w / 2)} ${f1(top)}Q${f1(x + w - m)} ${f1(top)} ${f1(x + w - m)} ${f1(top + h * .28)}V${f1(base)}Z" fill="#8E3530" stroke="#E2B862" stroke-width="${f1(Math.max(2, h * .04))}" stroke-opacity=".75"/>`;
+      s += `<circle cx="${f1(x + w / 2)}" cy="${f1(top + h * .36)}" r="${f1(h * .06)}" fill="#E2B862" opacity=".8"/>`;
+    }
+    s += `<rect x="-60" y="${y0 - 2}" width="1200" height="${f1(Math.max(4, h * .07))}" fill="#E2B862" opacity=".85"/>`;
+  }
+  return s;
+}
+
+// lanterne suspendue
+const lamp = (x, y, len, s) => `<g transform="translate(${x} ${y})"><path d="M0 ${-len}V0" stroke="#7A5A3A" stroke-width="4"/>
+  <g transform="scale(${s})"><circle cx="0" cy="58" r="120" fill="url(#mqLampG)"/>
+  <path d="M-14 0H14L22 16H-22Z" fill="#B8862E" ${OLA}/><path d="M-30 16H30L40 60L26 104H-26L-40 60Z" fill="#F6D58A" ${OLA}/>
+  <path d="M-30 16L0 104L30 16M-40 60H40" stroke="#B8862E" stroke-width="5" fill="none" opacity=".8"/>
+  <path d="M-26 104H26L14 120H-14Z" fill="#B8862E" ${OLA}/><circle cx="0" cy="128" r="6" fill="#B8862E"/></g></g>`;
+
+// mosquée claire le matin : mur crème, arcades et fenêtres, lumière du matin en rais, lanternes, tapis à rangées
+function mosque(svg) {
+  const arch = (x, w, top, bot) => `M${x} ${bot}V${top + w * .5}Q${x} ${top} ${x + w / 2} ${top - w * .18}Q${x + w} ${top} ${x + w} ${top + w * .5}V${bot}Z`;
+  svg.innerHTML = `
+  <defs>
+    <linearGradient id="mqWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F1DDBC"/><stop offset="1" stop-color="#F7EAD3"/></linearGradient>
+    <linearGradient id="mqSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE2F2"/><stop offset="1" stop-color="#FFF1CF"/></linearGradient>
+    <linearGradient id="mqBeam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF4D6" stop-opacity=".7"/><stop offset="1" stop-color="#FFF4D6" stop-opacity="0"/></linearGradient>
+    <radialGradient id="mqLampG"><stop offset="0" stop-color="#FFE2A0" stop-opacity=".55"/><stop offset="1" stop-color="#FFE2A0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="mqSpot" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFE9B8" stop-opacity=".55"/><stop offset="1" stop-color="#FFE9B8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="mqPh"><stop offset="0" stop-color="#FFF6E0" stop-opacity=".7"/><stop offset="1" stop-color="#FFF6E0" stop-opacity="0"/></radialGradient>
+    <clipPath id="mqWin1"><path d="${arch(196, 150, 420, 760)}"/></clipPath>
+    <clipPath id="mqWin2"><path d="${arch(465, 150, 380, 760)}"/></clipPath>
+    <clipPath id="mqWin3"><path d="${arch(734, 150, 420, 760)}"/></clipPath>
+  </defs>
+  <rect x="-100" y="-100" width="1280" height="1240" fill="url(#mqWall)"/>
+  <!-- frise géométrique en haut du mur -->
+  <rect x="-100" y="200" width="1280" height="46" fill="#2F6B66"/>
+  <path d="${Array.from({ length: 30 }, (_, i) => { const x = -100 + i * 46; return `M${x + 23} 206l17 17l-17 17l-17 -17z`; }).join('')}" fill="#E2B862"/>
+  <rect x="-100" y="246" width="1280" height="8" fill="#C9A15A"/>
+  <!-- arcades : piliers et grands arcs -->
+  ${[60, 330, 600, 870].map(x => `<rect x="${x}" y="330" width="62" height="820" fill="#E9CFA6" ${OLA}/><rect x="${x - 10}" y="320" width="82" height="22" rx="4" fill="#D9B985" ${OLA}/>`).join('')}
+  ${[[122, 208], [392, 208], [662, 208]].map(([x, w]) => `<path d="M${x} 1150V560Q${x} 340 ${x + w / 2} 300Q${x + w} 340 ${x + w} 560V1150" fill="none" stroke="#D7B27A" stroke-width="14"/>`).join('')}
+  <!-- fenêtres en arc, ciel du matin -->
+  ${[[196, 420, 'mqWin1'], [465, 380, 'mqWin2'], [734, 420, 'mqWin3']].map(([x, top, id]) => `
+    <path d="${arch(x - 12, 174, top - 6, 772)}" fill="#C9A15A" ${OLA}/>
+    <g clip-path="url(#${id})"><rect x="${x}" y="${top - 60}" width="150" height="420" fill="url(#mqSky)"/>
+      <circle cx="${x + 110}" cy="${top + 120}" r="80" fill="#FFF6D8" opacity=".6"/>
+      <path d="M${x} 760V${700}Q${x + 40} 676 ${x + 70} 700Q${x + 110} 664 ${x + 150} 690V760Z" fill="#9FCB9A" opacity=".8"/>
+      <path d="M${x + 75} ${top - 60}V760M${x} ${top + 150}H${x + 150}M${x} ${top + 270}H${x + 150}" stroke="#C9A15A" stroke-width="6"/></g>`).join('')}
+  <!-- soubassement en zellige -->
+  <rect x="-100" y="900" width="1280" height="232" fill="#2F6B66"/>
+  <path d="${Array.from({ length: 24 }, (_, i) => { const x = -100 + i * 56; return `M${x + 28} 916l24 24l-24 24l-24 -24zM${x + 28} 976l24 24l-24 24l-24 -24zM${x + 28} 1036l24 24l-24 24l-24 -24z`; }).join('')}" fill="#3F8A80" stroke="#E2B862" stroke-width="3"/>
+  <rect x="-100" y="892" width="1280" height="14" fill="#E2B862"/>
+  <!-- étagère de Corans (à droite) -->
+  <rect x="842" y="760" width="200" height="380" rx="10" fill="#7A4E32" ${OLA}/>
+  <rect x="856" y="776" width="172" height="350" rx="6" fill="#5C3A26"/>
+  ${[0, 1, 2].map(r => [0, 1, 2, 3, 4, 5, 6].map(i => { const cols = ['#2F6B66', '#8E3530', '#24504B', '#B8862E', '#3A5A86', '#8E3530', '#2F6B66']; return `<rect x="${862 + i * 23}" y="${800 + r * 112}" width="19" height="84" rx="3" fill="${cols[(i + r * 2) % 7]}" ${OLA}/><rect x="${866 + i * 23}" y="${814 + r * 112}" width="11" height="6" fill="#E2B862"/>`; }).join('')).join('')}
+  ${[0, 1, 2].map(r => `<rect x="856" y="${884 + r * 112}" width="172" height="10" fill="#7A4E32"/>`).join('')}
+  <!-- tapis -->
+  <rect x="-100" y="1126" width="1280" height="900" fill="#B04A40"/>
+  ${carpetRows()}
+  <rect x="-100" y="1124" width="1280" height="10" fill="#7A2E28" opacity=".5"/>
+  <!-- rais de lumière du matin depuis les fenêtres -->
+  <g id="mqBeams" style="mix-blend-mode:screen">
+    <path d="M196 480L346 440L760 1500L380 1560Z" fill="url(#mqBeam)" opacity=".5"/>
+    <path d="M465 440L615 400L1040 1450L660 1520Z" fill="url(#mqBeam)" opacity=".45"/>
+    <path d="M734 480L884 440L1200 1250L940 1300Z" fill="url(#mqBeam)" opacity=".4"/>
+  </g>
+  <ellipse cx="600" cy="1380" rx="420" ry="120" fill="url(#mqSpot)"/>
+  <!-- lanternes -->
+  ${lamp(232, 470, 600, 1)}${lamp(850, 430, 560, 1)}${lamp(540, 300, 400, .78)}
+  <!-- ombres au sol -->
+  <ellipse cx="${KH[0]}" cy="${KH[1] + 66}" rx="170" ry="26" fill="#4A1612" opacity=".28"/>
+  <ellipse cx="${AH[0]}" cy="${AH[1] + 42}" rx="104" ry="18" fill="#4A1612" opacity=".28"/>
+  <circle id="mqPhGlow" cx="0" cy="0" r="120" fill="url(#mqPh)" opacity="0"/>
+  <g id="mqKarim"></g><g id="mqAdam"></g>
+  <!-- grains de poussière dans la lumière -->
+  <g id="mqDust">${Array.from({ length: 26 }, () => '<circle r="3" fill="#FFF6DC"/>').join('')}</g>`;
+  const q = s => svg.querySelector(s);
+  return { karim: q('#mqKarim'), adam: q('#mqAdam'), beams: q('#mqBeams'), dust: Array.from(svg.querySelectorAll('#mqDust circle')), phGlow: q('#mqPhGlow') };
+}
+
+const DUST = (() => { const r = mulberry32(7); return Array.from({ length: 26 }, () => ({ x: 200 + r() * 760, y: 500 + r() * 900, v: 6 + r() * 12, ph: r() * 6.28, a: .3 + r() * .5 })); })();
+
+function build() {
+  const st = $('#stage');
+  R.M = mosque($('#scene'));
+  R.k = new Toon(R.M.karim, Object.assign({}, CAST.karim, { legs: 'cross' }));
+  R.a = new Toon(R.M.adam, Object.assign({}, CAST.adam, { legs: 'cross' }));
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">🕌 Karim &amp; Adam · vendredi 11 h</div></div>');
+  R.c1 = cap(st, 'Vendredi matin, notre petit\nrituel avec mon fils 🤍', 'w', 340);
+  R.c2 = cap(st, 'Le vendredi, Dawam\nnous rappelle Al-Kahf 📖', 'k', 330);
+  R.c3 = cap(st, 'Et maintenant\nil lit avec moi 🥹', 'w', 330);
+  R.c4 = cap(st, 'Al-Kahf chaque vendredi.\nPetit, mais constant. 🤍', 'w', 330);
+  const acc = scrAccueil('acc', { hello: 'As-salāmu ʿalaykum,', name: 'Karim', chip: '🕌 Jumuʿa — lis Al-Kahf', sections: [
+    { label: "Après le Fajr", items: [{ e: '🌄', t: "Séance de l'aube", xp: 20 }] },
+    { label: 'Dans la journée', items: [{ e: '📖', t: 'Lecture du Coran', xp: 15 }, { e: '🤲', t: 'Prières complémentaires', xp: 15 }, { e: '💚', t: 'Bénédictions sur le Prophète ﷺ', xp: 20 }] }] });
+  const qr = `<div id="qrWrap">${scrCoran('qr', { ar: 'سُورَةُ الْكَهْفِ', name: 'Al-Kahf', desc: 'Récitée le vendredi — elle illumine entre les deux vendredis et protège du Dajjal.' })}</div>`;
+  R.phone = makePhone([acc, qr]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = tkEnd(st);
+}
+
+const TAP_CORAN = 4.75, QR_IN = 5.05, QR_T0 = 5.35;
+
+function scene(t) {
+  $('#scene').style.transform = `scale(${(1.36 + .05 * P(t, 0, 14, E.lin)).toFixed(4)})`;
+  // lumière qui respire, poussière qui flotte
+  R.M.beams.setAttribute('opacity', (.85 + .15 * Math.sin(t * .9)).toFixed(3));
+  R.M.dust.forEach((d, i) => {
+    const D = DUST[i], y = D.y - ((t * D.v) % 300), x = D.x + Math.sin(t * .7 + D.ph) * 14;
+    d.setAttribute('cx', f1(x)); d.setAttribute('cy', f1(y));
+    d.setAttribute('opacity', (D.a * (.5 + .5 * Math.sin(t * 1.3 + D.ph))).toFixed(3));
+  });
+  // Karim : téléphone à deux mains ; à partir de 7,4 s il l'incline vers Adam
+  const share = P(t, 7.3, .7, E.ioC);
+  const hL = [lerp(-16, 6, share), lerp(-58, -56, share)], hR = [lerp(16, 38, share), lerp(-60, -60, share)];
+  const breathe = Math.sin(t * 1.6) * .8;
+  let kf;
+  const reading = t > 8.0 && t < 10.9;
+  const talk = reading && (t * 3.1) % 1 < .5;
+  if (t < 1.7) kf = { look: [2, 6], mouth: 'smile' };
+  else if (t < 2.7) kf = { look: [10, 1], mouth: 'smile', brow: .2 };
+  else if (t < 7.6) kf = { look: [2, 6], mouth: 'small' };
+  else if (t < 10.9) kf = { look: [4, 6], mouth: talk ? 'small' : 'flat' };
+  else if (t < 12.3) kf = { look: [10, 2], eyes: 'happy', mouth: 'smile', brow: .2 };
+  else kf = { look: [0, 0], mouth: 'grin', eyes: t < 13.2 ? 'happy' : 'open' };
+  const kp = { x: KH[0], y: KH[1], s: KS, lean: 5 * share + breathe * .5, tilt: t > 10.9 && t < 12.3 ? 6 : 0, t, face: kf, hands: { L: hL, R: hR },
+    phone: 'both', phoneAng: 14 * share, glow: .9, faceLight: .25 };
+  R.k.set(kp);
+  // halo du téléphone
+  const pw = R.k.phoneWorld(kp);
+  R.M.phGlow.setAttribute('cx', f1(pw[0])); R.M.phGlow.setAttribute('cy', f1(pw[1]));
+  R.M.phGlow.setAttribute('opacity', '.6');
+  // Adam : regarde son père, se penche vers le téléphone, lit avec lui, puis sourit
+  const leanIn = P(t, 7.6, .7, E.ioC) * (1 - P(t, 10.9, .6, E.ioC));
+  const aReading = t > 8.1 && t < 10.9;
+  const aTalk = aReading && ((t + .17) * 2.7) % 1 < .5;
+  let af;
+  if (t < 2.7) af = { look: [-9, -3], mouth: 'smile', brow: .2 };
+  else if (t < 7.6) af = { look: [-6, 2], mouth: 'small' };
+  else if (t < 8.1) af = { look: [-9, 6], mouth: 'o', brow: .4 };
+  else if (t < 10.9) af = { look: [-9, 7], mouth: aTalk ? 'open' : 'small', brow: .15 };
+  else if (t < 12.3) af = { look: [-8, -2], eyes: 'happy', mouth: 'grin' };
+  else af = { look: [0, 1], mouth: 'grin', eyes: t > 13.4 ? 'happy' : 'open' };
+  const bob = Math.sin(t * 2.1 + 1) * 1.2;
+  R.a.set({ x: AH[0], y: AH[1], s: AS, lean: -13 * leanIn + bob, tilt: -6 * leanIn + (t > 10.9 && t < 12.3 ? -5 : 0), dy: 0, t, face: af,
+    hands: { L: [lerp(-30, -40, leanIn), -4], R: [30, -4] } });
+  R.k.tint('#FFD9A0', .05); R.a.tint('#FFD9A0', .05);
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 2.7);
+  pop(R.c1, t, .35, 2.7);
+  // gros plan téléphone : accueil (puce Jumuʿa) → « Lecture du Coran » → écran Al-Kahf, le chrono démarre
+  T($('#dim'), { op: .5 * P(t, 2.75, .5) * (1 - P(t, 7.1, .5)) });
+  const pin = P(t, 2.85, .9, E.outX), pout = P(t, 7.05, .6, E.inC);
+  const wrap = $('#phoneWrap');
+  if (vis(wrap, pin > 0 && pout < 1)) T(wrap, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.0 });
+  drawAccueil($('#acc'), t, [-1]);
+  const press = P(t, TAP_CORAN, .1) - P(t, TAP_CORAN + .14, .12);
+  const row = $('#acc').querySelectorAll('.row')[1];
+  T(row, { s: 1 - .03 * press });
+  const qin = P(t, QR_IN, .45, E.outC);
+  T($('#qrWrap'), { x: lerp(560, 0, qin), op: qin > 0 ? 1 : 0 });
+  drawCoran($('#qr'), t - QR_T0);
+  drawTaps(R.phone, t, [[TAP_CORAN, 280, 708]]);
+  pop(R.c2, t, 3.1, 7.0);
+  pop(R.c3, t, 7.7, 11.3);
+  pop(R.c4, t, 11.6, 14.2);
+  drawEnd(R.end, t, 14.25, 540, 1100);
+}
+boot({ duration: 16.5, build, render });
+</script>
+</body>
+</html>

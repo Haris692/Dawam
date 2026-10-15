@@ -4,6 +4,7 @@
 'use strict';
 const OKSVG = '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
 const NAV = on => `<div class="e-nav">${['Accueil', 'Invocations', 'Groupes', 'Profil'].map(n => `<b class="${n === on ? 'on' : ''}"><i></i>${n}</b>`).join('')}</div>`;
+const nb = s => String(s).replace(/ ﷺ/g, '\u00A0ﷺ');   // « ﷺ » jamais seul en début de ligne
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 // invocations communes matin / soir (ADHKAR de l'app, dans l'ordre)
@@ -28,7 +29,7 @@ const ADHKAR_FIN = [
 function scrAccueil(id, o) {
   let n = 0;
   const secs = o.sections.map(s => `<div class="sec">${s.label}</div>` + s.items.map(it => `<div class="row e-card" data-i="${n++}"><div class="tile">${it.e}</div>
-      <div class="tt">${it.t}<br><span class="e-xp">+${it.xp} XP</span></div><div class="e-ok"><i>${OKSVG}</i></div></div>`).join('')).join('');
+      <div class="tt">${nb(it.t)}<br><span class="e-xp">+${it.xp} XP</span></div><div class="e-ok"><i>${OKSVG}</i></div></div>`).join('')).join('');
   return `<div class="e e-acc" id="${id}"><div class="e-pad hello"><div class="s">${o.hello || 'Sabāḥ al-khayr,'}</div><div class="e-h1 n">${o.name}</div></div>
     <div class="e-pad prog e-card"><div class="ring"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="36" fill="none" stroke="#FAEEDA" stroke-width="9"/>
       <circle class="arc" cx="42" cy="42" r="36" fill="none" stroke="#BA7517" stroke-width="9" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/></svg><b class="rn">${n}</b></div>
@@ -176,7 +177,7 @@ function drawProfil(root, streak, actifs, msg) {
 function scrCompteur(id, o) {
   const ms = [];
   for (let v = o.step; v <= o.target; v += o.step) ms.push(`<b data-v="${v}">${v}</b>`);
-  return `<div class="e e-cpt" id="${id}"><div class="hd"><div class="k">${o.k}</div><div class="t">${o.title}</div></div>
+  return `<div class="e e-cpt" id="${id}"><div class="hd"><div class="k">${o.k}</div><div class="t">${nb(o.title)}</div></div>
     <div class="e-pad ar">${o.ar}</div>
     <div class="circ"><svg viewBox="0 0 360 360"><circle cx="180" cy="180" r="160" fill="#fff" stroke="#FAEEDA" stroke-width="22"/>
       <circle class="arc" cx="180" cy="180" r="160" fill="none" stroke="#BA7517" stroke-width="22" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/></svg>

@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q04-samedi.mp4">
+<title>Dawam — Au quotidien · Le samedi en famille</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — le samedi matin, Mehdi crée un groupe de dhikr « Famille » au petit-déjeuner : Lina (9 ans) et Youssef (5 ans) tapent avec lui jusqu'à 100 salawat. -->
+<style>
+#scene{transform-origin:540px 1180px}
+#dim{background:#2A1A0E}
+/* tk.css définit un .num global (pastille) : on rend au compteur du groupe son style d'origine */
+.e-grp .main .num{position:static;width:auto;height:auto;border-radius:0;background:none;box-shadow:none;display:block;color:var(--ink)}
+#bub{transform-origin:50% 100%}
+.cnt{position:absolute;left:0;width:1080px;text-align:center}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:470px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const S = 1.18;
+// bassins (assis derrière la table, jambes cachées) et échelles : enfants ≈ 0,64 et 0,56 × l'adulte
+const POS = {
+  mehdi: { x: 540, y: 1340, s: S },
+  lina: { x: 232, y: 1302, s: S * .64 },
+  youssef: { x: 850, y: 1304, s: S * .56 },
+};
+
+// cuisine ensoleillée : fenêtre et rayons de soleil, faïence, étagère ; table du petit-déjeuner au premier plan
+function kitchen(svg) {
+  let tiles = '';
+  for (let x = 0; x < 1080; x += 60) for (let y = 990; y < 1290; y += 60) tiles += `<rect x="${x + 3}" y="${y + 3}" width="54" height="54" rx="7" fill="${(x / 60 + y / 60) % 2 ? '#F3E6CF' : '#EAF0EA'}"/>`;
+  let star = '';
+  for (let x = 30; x < 1080; x += 120) for (let y = 1020; y < 1290; y += 120) star += `<path d="M${x} ${y - 12}L${x + 12} ${y}L${x} ${y + 12}L${x - 12} ${y}Z" fill="#7FB3A6" opacity=".55"/>`;
+  svg.innerHTML = `
+  <defs>
+    <linearGradient id="kSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FD0F0"/><stop offset="1" stop-color="#D8F0F6"/></linearGradient>
+    <linearGradient id="kWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBE8C8"/><stop offset="1" stop-color="#F6DDB4"/></linearGradient>
+    <linearGradient id="kBeam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".7"/><stop offset="1" stop-color="#FFF6D8" stop-opacity="0"/></linearGradient>
+    <radialGradient id="kSun"><stop offset="0" stop-color="#FFF7D6" stop-opacity=".95"/><stop offset=".45" stop-color="#FFE6A0" stop-opacity=".35"/><stop offset="1" stop-color="#FFE6A0" stop-opacity="0"/></radialGradient>
+    <clipPath id="kGlass"><rect x="96" y="420" width="368" height="438" rx="8"/></clipPath>
+    <pattern id="kCloth" width="80" height="80" patternUnits="userSpaceOnUse"><rect width="80" height="80" fill="#F7F1E6"/><path d="M0 40H80M40 0V80" stroke="#E6A15C" stroke-width="6" opacity=".35"/><circle cx="40" cy="40" r="7" fill="#3F8F86" opacity=".45"/></pattern>
+  </defs>
+  <rect width="1080" height="1300" fill="url(#kWall)"/>
+  ${tiles}${star}
+  <rect y="982" width="1080" height="12" fill="#E2C597"/>
+  <!-- fenêtre -->
+  <rect x="78" y="402" width="404" height="474" rx="16" fill="#FFFFFF" ${OLA}/>
+  <g clip-path="url(#kGlass)"><rect x="96" y="420" width="368" height="438" fill="url(#kSky)"/>
+    <circle cx="380" cy="510" r="150" fill="url(#kSun)"/><circle cx="380" cy="510" r="40" fill="#FFF3C4"/>
+    <ellipse cx="190" cy="560" rx="62" ry="22" fill="#FFFFFF" opacity=".9"/><ellipse cx="228" cy="548" rx="40" ry="20" fill="#FFFFFF" opacity=".9"/>
+    <path d="M96 858V760H140V730H196V770H240V716H290V760H330V742H380V780H464V858Z" fill="#E9C9A0"/>
+    <path d="M96 858V800H170V786H250V806H340V794H464V858Z" fill="#D9AE80"/>
+    <circle cx="300" cy="700" r="6" fill="#4F9A6A"/><rect x="170" y="742" width="14" height="16" fill="#A8D6E6"/><rect x="300" y="732" width="14" height="16" fill="#A8D6E6"/></g>
+  <rect x="273" y="420" width="12" height="438" fill="#FFFFFF"/><rect x="96" y="632" width="368" height="12" fill="#FFFFFF"/>
+  <rect x="62" y="870" width="436" height="24" rx="8" fill="#F1E3CC" ${OLA}/>
+  <!-- pot de basilic sur le rebord -->
+  <path d="M120 870L170 870L162 830L128 830Z" fill="#C46E4A" ${OLA}/><path d="M145 830Q120 790 132 770M145 830Q160 790 176 782M145 830Q146 796 150 772" stroke="#5E9C76" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <!-- étagère : bocaux, assiettes -->
+  <rect x="620" y="560" width="390" height="18" rx="6" fill="#C9935E" ${OLA}/>
+  <rect x="640" y="480" width="60" height="80" rx="12" fill="#F6E2B8" ${OLA}/><rect x="640" y="470" width="60" height="18" rx="6" fill="#C46E4A" ${OLA}/>
+  <rect x="716" y="500" width="54" height="60" rx="12" fill="#E8F0E0" ${OLA}/><rect x="716" y="490" width="54" height="16" rx="6" fill="#3F8F86" ${OLA}/>
+  <circle cx="850" cy="502" r="52" fill="#3F8F86" ${OLA}/><circle cx="850" cy="502" r="34" fill="#F2C14E"/><circle cx="850" cy="502" r="14" fill="#C65D4A"/>
+  <circle cx="960" cy="512" r="42" fill="#C65D4A" ${OLA}/><circle cx="960" cy="512" r="26" fill="#F7F1E6"/>
+  <!-- horloge -->
+  <circle cx="815" cy="400" r="50" fill="#FFFFFF" ${OLA}/><path d="M815 400V368M815 400L838 412" stroke="#5B4A3A" stroke-width="6" stroke-linecap="round"/>
+  <!-- calligraphie -->
+  <rect x="640" y="660" width="320" height="200" rx="14" fill="#3F8F86" ${OLA}/><rect x="656" y="676" width="288" height="168" rx="8" fill="#FFF8EA"/>
+  <text x="800" y="782" text-anchor="middle" font-family="Amiri" font-weight="700" font-size="66" fill="#B07D2E">بسم الله</text>
+  <!-- rayons du soleil -->
+  <path d="M120 420L470 420L1080 1300L520 1300Z" fill="url(#kBeam)" opacity=".55" style="mix-blend-mode:screen"/>
+  <g id="kP"></g>
+  <!-- table : plateau et nappe au premier plan -->
+  <rect x="-20" y="1280" width="1120" height="90" fill="#EBC995" ${OLA}/>
+  <rect x="-20" y="1360" width="1120" height="600" fill="url(#kCloth)" ${OLA}/>
+  <path d="M-20 1360H1100" stroke="#C65D4A" stroke-width="14"/>
+  <g id="kTable"></g>
+  <!-- lumière chaude d'ensemble -->
+  <rect width="1080" height="1920" fill="#FFD78A" opacity=".08" style="mix-blend-mode:multiply"/>`;
+  const tb = svg.querySelector('#kTable');
+  // objets de la table (posés sur le plateau, y ≈ 1300-1350)
+  tb.innerHTML = `
+    <ellipse cx="88" cy="1336" rx="62" ry="14" fill="#C9A57A" opacity=".5"/>
+    <path d="M30 1300Q32 1342 88 1344Q144 1342 146 1300Z" fill="#3F8F86" ${OLA}/><ellipse cx="88" cy="1300" rx="58" ry="12" fill="#F7F1E6" ${OLA}/><ellipse cx="88" cy="1300" rx="44" ry="7" fill="#F2C14E"/>
+    <!-- théière et verres -->
+    <g transform="translate(388 1326)"><ellipse cx="0" cy="14" rx="50" ry="10" fill="#C9A57A" opacity=".5"/>
+      <path d="M-40 6Q-46 -50 0 -54Q46 -50 40 6Z" fill="#D9D6D0" ${OLA}/><path d="M38 -16Q72 -26 80 -52" stroke="#B8B4AE" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <path d="M-38 -26Q-66 -28 -60 -6Q-56 6 -38 0" stroke="#B8B4AE" stroke-width="9" fill="none"/>
+      <path d="M-20 -54Q0 -76 20 -54Z" fill="#C9C5BE" ${OLA}/><circle cx="0" cy="-76" r="7" fill="#C9C5BE" ${OLA}/>
+      <path d="M-30 -20H30" stroke="#B07D2E" stroke-width="5" opacity=".7"/></g>
+    ${steam(468, 1240)}
+    <g transform="translate(466 1330)"><path d="M-14 0L14 0L18 -44L-18 -44Z" fill="#E9B04A" fill-opacity=".85" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="4"/><path d="M-17 -34H17" stroke="#FFFFFF" stroke-width="4" opacity=".7"/></g>
+    <!-- plat de msemen -->
+    <ellipse cx="560" cy="1338" rx="104" ry="18" fill="#FFFFFF" ${OLA}/>
+    <path d="M490 1330L540 1306L600 1312L630 1332Z" fill="#E7B66B" ${OLA}/><path d="M510 1324L560 1298L612 1306L628 1326Z" fill="#F0C77E" ${OLA}/>
+    <path d="M530 1316L580 1308M548 1322L604 1314" stroke="#C98F44" stroke-width="3" opacity=".7"/>
+    <!-- miel -->
+    <path d="M668 1338Q664 1296 690 1294Q716 1296 712 1338Z" fill="#E8A23A" fill-opacity=".9" ${OLA}/><rect x="676" y="1284" width="28" height="14" rx="4" fill="#C65D4A" ${OLA}/>
+    <!-- carafe et verre de jus d'orange -->
+    <g transform="translate(990 1334)"><path d="M-30 4L30 4L34 -96L-34 -96Z" fill="#FFFFFF" fill-opacity=".45" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="5"/>
+      <path d="M-28 0L28 0L31 -64L-31 -64Z" fill="#F29E4C" opacity=".9"/><path d="M34 -80Q58 -76 54 -44Q50 -24 32 -24" stroke="#2A1E2C" stroke-opacity=".45" stroke-width="7" fill="none"/></g>`;
+  const q = s => svg.querySelector(s);
+  return { person: q('#kP') };
+}
+
+// accessoire tenu en main : tablette (vue de face, écran allumé) ou téléphone ; inséré sous les avant-bras pour que la main qui tape passe dessus
+function buildDevice(toon, w, h, caseC) {
+  const g = el('g', {});
+  toon.root.insertBefore(g, toon.gFore);
+  g.innerHTML = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${Math.min(w, h) * .16}" fill="${caseC}" stroke="#3A2A26" stroke-width="5" stroke-linejoin="round"/>
+    <rect x="${-w / 2 + 7}" y="${-h / 2 + 7}" width="${w - 14}" height="${h - 14}" rx="${Math.min(w, h) * .1}" fill="#FFF4DC"/>
+    <rect x="${-w / 2 + 12}" y="${-h / 2 + 12}" width="${w - 24}" height="${(h - 24) * .3}" rx="4" fill="#E9C27A"/>
+    <circle cx="0" cy="${h * .14}" r="${Math.min(w, h) * .16}" fill="#BA7517"/>`;
+  return g;
+}
+// petits « +1 » qui montent au-dessus d'un appareil
+function buildPlus(parent, n = 4) {
+  return Array.from({ length: n }, () => el('text', { 'font-family': 'TikTok Sans, Plus Jakarta Sans', 'font-weight': 800, 'font-size': 40, fill: '#FFFFFF',
+    stroke: '#BA7517', 'stroke-width': 8, 'paint-order': 'stroke', 'stroke-linejoin': 'round', 'text-anchor': 'middle', opacity: 0 }, parent));
+}
+function drawPlus(list, t, taps, x, y, on) {
+  const recent = on ? taps.filter(k => t >= k && t < k + .7).slice(-list.length) : [];
+  list.forEach((n, i) => {
+    const k = recent[i];
+    if (k === undefined) { n.setAttribute('opacity', 0); return; }
+    const a = (t - k) / .7;
+    n.textContent = '+1';
+    n.setAttribute('x', f1(x + Math.sin(k * 13) * 22));
+    n.setAttribute('y', f1(y - 20 - a * 110));
+    n.setAttribute('font-size', f1(34 + 14 * Math.min(1, a * 4)));
+    n.setAttribute('opacity', (a < .15 ? a / .15 : 1 - Math.max(0, (a - .55) / .45)).toFixed(3));
+  });
+}
+
+// touchers : Papa, Lina et Youssef tapent chacun à leur rythme (Youssef le plus vite) jusqu'à 100 au total
+const TAPS = { P: [], L: [], Y: [] };
+let WIN = 0;
+(function () {
+  const ev = [];
+  for (let t = 4.6; t < 14; t += .27) ev.push([t, 'P']);
+  for (let t = 4.75; t < 14; t += .22) ev.push([t, 'L']);
+  for (let t = 4.68; t < 14; t += .17) ev.push([t, 'Y']);
+  ev.sort((a, b) => a[0] - b[0]);
+  ev.slice(0, 100).forEach(e => TAPS[e[1]].push(+e[0].toFixed(3)));
+  WIN = ev[99][0];
+})();
+const count = (list, t) => { let n = 0; for (const k of list) if (k <= t) n++; return n; };
+// main qui tape : 1 au moment d'un toucher, 0 entre deux
+const press = (list, t, w = .085) => { let p = 0; for (const k of list) { const d = Math.abs(t - k); if (d < w) p = Math.max(p, 1 - d / w); } return p; };
+
+function build() {
+  const st = $('#stage');
+  R.K = kitchen($('#scene'));
+  R.m = new Toon(R.K.person, Object.assign({}, CAST.mehdi, { legs: 'none' }));
+  R.l = new Toon(R.K.person, Object.assign({}, CAST.lina, { legs: 'none' }));
+  R.y = new Toon(R.K.person, Object.assign({}, CAST.youssef, { legs: 'none' }));
+  R.mPh = buildDevice(R.m, 36, 64, '#2B2A33');
+  R.lTab = buildDevice(R.l, 112, 82, '#8E6CC9');
+  R.yTab = buildDevice(R.y, 120, 88, '#F25F5C');
+  // verre de jus (Lina) et morceau de msemen (Youssef) au début
+  R.glass = el('g', {}); R.l.root.insertBefore(R.glass, R.l.gThumbs);
+  R.glass.innerHTML = '<path d="M-16 -26L16 -26L13 26L-13 26Z" fill="#FFFFFF" fill-opacity=".5" stroke="#3A2A26" stroke-width="5" stroke-linejoin="round"/><path d="M-14 -6L14 -6L12 23L-12 23Z" fill="#F29E4C"/>';
+  R.msemen = el('g', {}); R.y.root.insertBefore(R.msemen, R.y.gThumbs);
+  R.msemen.innerHTML = '<path d="M-26 -12L22 -20L28 14L-22 18Z" fill="#F0C77E" stroke="#3A2A26" stroke-width="5" stroke-linejoin="round"/><path d="M-14 -4L16 -8M-12 6L18 2" stroke="#C98F44" stroke-width="3"/>';
+  R.plus = { P: buildPlus(R.K.person), L: buildPlus(R.K.person), Y: buildPlus(R.K.person) };
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">🥞 Mehdi, Lina & Youssef · samedi 9 h</div></div>');
+  R.c1 = cap(st, 'Le samedi matin chez nous ☀️', 'w', 350);
+  R.c2 = cap(st, 'Papa a créé un groupe\n« Famille » 📿', 'w', 330);
+  R.bub = el2(st, `<div id="bub" class="e-bub me" style="left:303px;top:610px;width:474px;font-size:23px">Rejoins notre groupe de dhikr collectif sur Dawam ! Code d'invitation : <b>A3F7Z2</b></div>`);
+  R.c3 = cap(st, 'Objectif : 100 salawat\nensemble 🤍', 'w', 262, '').querySelector('.l').parentNode;
+  R.c3.classList.add('sm');
+  R.c4 = cap(st, 'Youssef, 5 ans,\nle plus motivé 😂', 'w', 360);
+  R.cnt = el2(st, '<div class="cnt" style="top:258px"><div class="sticker gold" style="position:relative;display:inline-block">📿 Famille · <span>0</span> / 100</div></div>');
+  R.cntN = R.cnt.querySelector('span');
+  R.c5 = cap(st, 'Le dhikr en famille.\nMême les petits 🤍', 'w', 330);
+  R.phone = makePhone([scrGroupe('grp', { name: 'Famille', dhikr: 'Salawat sur le Prophète ﷺ', ar: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', goal: 100, code: 'A3F7Z2',
+    members: [['P', '#C65D4A', 'Papa'], ['L', '#5FA77F', 'Lina'], ['Y', '#F29E4C', 'Youssef']], short: 'Salawat sur le Prophète ﷺ' })]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = tkEnd(st);
+}
+
+const PLAY0 = 7.6, PLAY1 = 11.0, CHEER = 13.1;
+// point de la scène → repère du bassin d'un personnage
+function scene(t) {
+  $('#scene').style.transform = `scale(${(1.14 + .06 * P(t, 0, 14, E.lin)).toFixed(4)})`;
+  const tapping = t >= PLAY0 && t < CHEER - .2;   // pendant les gros plans on ne voit pas la scène
+  const cheer = P(t, CHEER, .35, E.outB);
+  const look = P(t, 2.4, .3);   // les enfants se tournent vers Papa
+
+  // ── Mehdi : téléphone dans la main gauche, l'index droit tape ──
+  {
+    const p = POS.mehdi;
+    const typing = t < 2.4 ? press([.5, .78, 1.05, 1.3, 1.62, 1.9, 2.15], t) : 0;
+    const pr = tapping ? press(TAPS.P, t) : typing;
+    let hL = [-20, -70], ph = [hL[0] + 6, hL[1] - 26];
+    let hR = [lerp(34, ph[0] + 6, pr * .9), lerp(-50, ph[1] + 6, pr * .9)];
+    // au moment de l'invitation : il montre l'écran aux enfants (téléphone un peu levé)
+    const show = P(t, 2.45, .35, E.ioC) * (1 - P(t, 3.7, .3));
+    hL = [hL[0], hL[1] - 26 * show]; ph = [hL[0] + 6, hL[1] - 26];
+    if (!tapping && t >= 2.4) hR = [lerp(34, 40, show), lerp(-50, -46, show)];
+    // victoire : les deux poings levés
+    hL = [lerp(hL[0], -74, cheer), lerp(hL[1], -214 + Math.sin(t * 9) * 6, cheer)];
+    hR = [lerp(hR[0], 74, cheer), lerp(hR[1], -214 - Math.sin(t * 9) * 6, cheer)];
+    let face;
+    if (t < 2.4) face = { look: [0, 6], mouth: 'smile' };
+    else if (t < 4) face = { look: [t % 1.2 < .6 ? -10 : 10, 1], mouth: 'grin', brow: .3 };
+    else if (t < CHEER) face = { look: [t % 2.4 > 1.9 ? 9 : 0, t % 2.4 > 1.9 ? 1 : 6], mouth: t % 2.4 > 1.9 ? 'grin' : 'smile', brow: .15 };
+    else face = { eyes: 'happy', mouth: 'grin', brow: .4 };
+    R.m.set({ x: p.x, y: p.y + (cheer ? -6 * cheer : 0), s: p.s, lean: Math.sin(t * 1.7) * 1.2, t, face, hands: { L: hL, R: hR } });
+    vis(R.mPh, cheer < .05);
+    R.mPh.setAttribute('transform', `translate(${f1(R.m.H.L[0] + 6)} ${f1(R.m.H.L[1] - 26)})`);
+    drawPlus(R.plus.P, t, TAPS.P, p.x + (R.m.H.L[0] + 6) * p.s, p.y + (R.m.H.L[1] - 60) * p.s, tapping);
+  }
+
+  // ── Lina : boit son jus, puis tablette (main gauche) et tape de la main droite ──
+  {
+    const p = POS.lina;
+    const sip = P(t, .5, .4, E.ioC) * (1 - P(t, 1.7, .4, E.ioC));
+    let hL = [-36, -24], hR = [30, -26];
+    hR = [lerp(hR[0], -2, sip), lerp(hR[1], -172, sip)];
+    const dev = t >= 4.0;   // la tablette apparaît pendant le gros plan
+    if (dev) {
+      const pr = tapping ? press(TAPS.L, t) : 0;
+      hL = [-40, -58]; const c = [hL[0] + 50, hL[1] - 4];
+      hR = [lerp(c[0] + 50, c[0] + 14, pr), lerp(c[1] + 6, c[1] - 2, pr)];
+    }
+    hL = [lerp(hL[0], -70, cheer), lerp(hL[1], -212 + Math.sin(t * 10 + 1) * 6, cheer)];
+    hR = [lerp(hR[0], 70, cheer), lerp(hR[1], -212 - Math.sin(t * 10 + 1) * 6, cheer)];
+    let face;
+    if (t < 2.4) face = { look: [2, 2], mouth: sip > .5 ? 'small' : 'smile', eyes: sip > .5 ? 'closed' : 'open' };
+    else if (t < 3.0) face = { look: [10 * look, 0], mouth: 'o', brow: .7 };
+    else if (t < 4) face = { look: [10, 0], mouth: 'grin', eyes: 'open', brow: .4 };
+    else if (t < CHEER) face = { look: [3, 7], mouth: 'smile', brow: .15 };
+    else face = { eyes: 'happy', mouth: 'grin', brow: .3 };
+    R.l.set({ x: p.x, y: p.y - 8 * cheer, s: p.s, lean: 3 * look * (t < 4 ? 1 : 0) + Math.sin(t * 2.1) * 1.4, t, face, hands: { L: hL, R: hR } });
+    vis(R.glass, !dev); R.glass.setAttribute('transform', `translate(${f1(R.l.H.R[0])} ${f1(R.l.H.R[1] - 8)})`);
+    vis(R.lTab, dev && cheer < .05);
+    const tc = [R.l.H.L[0] + 50, R.l.H.L[1] - 4];
+    R.lTab.setAttribute('transform', `translate(${f1(tc[0])} ${f1(tc[1])}) rotate(-3)`);
+    drawPlus(R.plus.L, t, TAPS.L, p.x + tc[0] * p.s, p.y + (tc[1] - 50) * p.s, tapping);
+  }
+
+  // ── Youssef : croque son msemen, puis tape à toute vitesse en sautillant ──
+  {
+    const p = POS.youssef;
+    const bite = Math.max(P(t, .7, .3, E.ioC) * (1 - P(t, 1.2, .3, E.ioC)), P(t, 1.75, .3, E.ioC) * (1 - P(t, 2.25, .3, E.ioC)));
+    let hL = [-34, -24], hR = [lerp(36, 4, bite), lerp(-28, -176, bite)];
+    const dev = t >= 4.0;
+    const ex = tapping ? 1 : 0;
+    if (dev) {
+      const pr = tapping ? press(TAPS.Y, t, .07) : 0;
+      hL = [-42, -60]; const c = [hL[0] + 54, hL[1] - 4];
+      hR = [lerp(c[0] + 52, c[0] + 12, pr), lerp(c[1] + 4, c[1] - 4, pr)];
+    }
+    hL = [lerp(hL[0], -70, cheer), lerp(hL[1], -214 + Math.sin(t * 12) * 8, cheer)];
+    hR = [lerp(hR[0], 70, cheer), lerp(hR[1], -214 - Math.sin(t * 12) * 8, cheer)];
+    const hop = ex * Math.abs(Math.sin(t * 9)) * 10 + cheer * Math.abs(Math.sin(t * 8)) * 14;
+    let face;
+    if (t < 2.4) face = { look: [-2, 2], mouth: bite > .4 || (t > 1.2 && t < 1.7) || t > 2.25 ? (t % .4 < .2 ? 'small' : 'flat') : 'smile' };
+    else if (t < 3.0) face = { look: [-10 * look, 0], eyes: 'wide', mouth: 'o', brow: .8 };
+    else if (t < 4) face = { look: [-10, 0], eyes: 'wide', mouth: 'grin', brow: .7 };
+    else if (t < CHEER) face = { look: [-2, 7], eyes: 'wide', mouth: 'grin', brow: .6 };
+    else face = { eyes: 'happy', mouth: 'grin', brow: .6 };
+    R.y.set({ x: p.x, y: p.y - hop, s: p.s, lean: -3 * look * (t < 4 ? 1 : 0) + ex * Math.sin(t * 9) * 3, tilt: cheer * Math.sin(t * 8) * 4, t, face, hands: { L: hL, R: hR } });
+    vis(R.msemen, !dev); R.msemen.setAttribute('transform', `translate(${f1(R.y.H.R[0])} ${f1(R.y.H.R[1] - 10)}) rotate(-10)`);
+    vis(R.yTab, dev && cheer < .05);
+    const tc = [R.y.H.L[0] + 54, R.y.H.L[1] - 4];
+    R.yTab.setAttribute('transform', `translate(${f1(tc[0])} ${f1(tc[1])}) rotate(4)`);
+    drawPlus(R.plus.Y, t, TAPS.Y, p.x + tc[0] * p.s, p.y - hop + (tc[1] - 54) * p.s, tapping);
+  }
+  drawSteam($('#scene'), t);
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 2.5);
+  pop(R.c1, t, .35, 2.5);
+  pop(R.c2, t, 2.55, 4.1);
+  // bulle d'invitation qui sort du téléphone
+  const bi = P(t, 2.75, .45, E.outB), bo = P(t, 3.95, .2, E.inC);
+  T(R.bub, { s: 1.55 * lerp(.4, 1, bi) * (1 - .1 * bo), y: (1 - bi) * 60, op: P(t, 2.75, .12) * (1 - bo) });
+  // gros plans sur le téléphone de Papa : les compteurs montent en temps réel
+  const in1 = P(t, 4.0, .8, E.outX), out1 = P(t, PLAY0 - .35, .5, E.inC);
+  const in2 = P(t, PLAY1, .7, E.outX), out2 = P(t, CHEER - .3, .5, E.inC);
+  const k1 = in1 > 0 && out1 < 1, k2 = in2 > 0 && out2 < 1;
+  T($('#dim'), { op: .5 * (k1 ? Math.min(P(t, 4.0, .5), 1 - out1) : k2 ? Math.min(P(t, PLAY1, .5), 1 - out2) : 0) });
+  const pw = $('#phoneWrap');
+  if (vis(pw, k1 || k2)) {
+    const pin = k1 ? in1 : in2, pout = k1 ? out1 : out2;
+    T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: .9 });
+  }
+  const per = [count(TAPS.P, t), count(TAPS.L, t), count(TAPS.Y, t)];
+  const v = per[0] + per[1] + per[2];
+  drawGroupe($('#grp'), v, per, 100, P(t, WIN + .2, .4, E.outC));
+  drawTaps(R.phone, t, TAPS.P.filter(k => k < WIN + .01).map(k => [k, 280, 1022]));
+  pop(R.c3, t, 4.35, PLAY0 - .3);
+  // dans la scène : compteur du groupe et légende
+  R.cntN.textContent = v;
+  pop(R.cnt, t, PLAY0 + .1, PLAY1 - .1);
+  pop(R.c4, t, PLAY0 + .5, PLAY1 - .1);
+  pop(R.c5, t, CHEER + .2, 14.3);
+  drawEnd(R.end, t, 14.35, 540, 1100);
+}
+boot({ duration: 16.6, build, render });
+</script>
+</body>
+</html>

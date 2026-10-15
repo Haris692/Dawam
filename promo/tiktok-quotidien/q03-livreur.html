@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q03-livreur.mp4">
+<title>Dawam — Au quotidien · Le livreur</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — Sofiane, 26 ans, livreur : 15 min de pause sur un banc, il lance une séance de dhikr de 15 min au lieu de scroller. -->
+<style>
+#scene{transform-origin:470px 1250px}
+#dim{background:#120E24}
+.order{position:absolute;left:0;width:1080px;text-align:center}
+.order b{display:inline-flex;align-items:center;gap:14px;padding:18px 30px;border-radius:30px;background:rgba(24,22,34,.92);color:#fff;
+  font:800 38px/1 var(--tk);box-shadow:0 18px 34px -14px rgba(0,0,0,.6)}
+.order b i{font-style:normal;font-size:40px}
+.ff{position:absolute;left:0;width:1080px;text-align:center}
+.ff b{display:inline-block;padding:10px 22px;border-radius:99px;background:rgba(12,10,8,.72);color:#fff;font:800 32px/1 var(--tk)}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:600px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const HIP = [410, 1250], S = 1.42;
+
+// rue commerçante à la tombée de la nuit : façades, vitrines allumées, réverbère, banc, scooter de livraison (générique)
+function duskStreet(svg) {
+  const win = (x, y, on) => `<rect x="${x}" y="${y}" width="46" height="62" rx="5" fill="${on ? '#FFD58A' : '#4A3F6E'}" ${on ? '' : 'opacity=".9"'}/>`;
+  let wins = '';
+  const lit = [1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0];
+  for (let r = 0; r < 2; r++) for (let i = 0; i < 8; i++) wins += win(70 + i * 122, 660 + r * 120, lit[(r * 8 + i) % lit.length]);
+  svg.innerHTML = `
+  <defs>
+    <linearGradient id="dsSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E2860"/><stop offset=".45" stop-color="#7A4F8E"/><stop offset=".8" stop-color="#E5876A"/><stop offset="1" stop-color="#F6B072"/></linearGradient>
+    <radialGradient id="dsLamp"><stop offset="0" stop-color="#FFE0A0" stop-opacity=".7"/><stop offset=".45" stop-color="#FFC978" stop-opacity=".2"/><stop offset="1" stop-color="#FFC978" stop-opacity="0"/></radialGradient>
+    <radialGradient id="dsPool" cx="50%" cy="50%"><stop offset="0" stop-color="#FFD9A0" stop-opacity=".35"/><stop offset="1" stop-color="#FFD9A0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="dsShop" cx="50%" cy="0%" r="90%"><stop offset="0" stop-color="#FFD58A" stop-opacity=".35"/><stop offset="1" stop-color="#FFD58A" stop-opacity="0"/></radialGradient>
+    <radialGradient id="dsPh"><stop offset="0" stop-color="#FFF1D2" stop-opacity=".75"/><stop offset="1" stop-color="#FFF1D2" stop-opacity="0"/></radialGradient>
+    <pattern id="dsAwnR" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="30" height="60" fill="#C94F4F"/><rect x="30" width="30" height="60" fill="#F3E6D4"/></pattern>
+    <pattern id="dsAwnG" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="30" height="60" fill="#2F7F6A"/><rect x="30" width="30" height="60" fill="#E9E2CF"/></pattern>
+  </defs>
+  <rect width="1080" height="1000" fill="url(#dsSky)"/>
+  ${starsMarkup(33, 14, 120, 260, 860, 160)}
+  <mask id="dsMoonM"><circle cx="820" cy="380" r="22" fill="#fff"/><circle cx="832" cy="372" r="20" fill="#000"/></mask><circle cx="820" cy="380" r="22" fill="#F6E7B8" mask="url(#dsMoonM)"/>
+  <!-- silhouettes lointaines -->
+  <path d="M0 640V520H90V470H170V540H240V430H330V500H420V450H520V520H600V410H700V480H790V440H880V530H960V470H1080V640Z" fill="#4E3F78"/>
+  <rect x="250" y="460" width="10" height="12" fill="#FFD27A" opacity=".7"/><rect x="630" y="440" width="10" height="12" fill="#FFD27A" opacity=".7"/><rect x="900" y="560" width="10" height="12" fill="#FFD27A" opacity=".6"/>
+  <!-- immeuble -->
+  <rect x="0" y="600" width="1080" height="420" fill="#5A4A80" ${OLA}/>
+  <rect x="0" y="600" width="1080" height="18" fill="#6B5A92"/>
+  ${wins}
+  <!-- rez-de-chaussée : boutiques -->
+  <rect x="0" y="930" width="1080" height="420" fill="#4A3C6A"/>
+  <rect x="0" y="924" width="1080" height="14" fill="#3A2F58"/>
+  <!-- boutique 1 -->
+  <rect x="40" y="1040" width="400" height="280" rx="8" fill="#FFD58A" ${OLA}/>
+  <rect x="58" y="1058" width="364" height="244" rx="4" fill="#FFE4A8"/>
+  <rect x="80" y="1180" width="320" height="10" fill="#D9A55E"/><rect x="80" y="1250" width="320" height="10" fill="#D9A55E"/>
+  <rect x="100" y="1140" width="40" height="40" rx="6" fill="#E3784E"/><rect x="160" y="1150" width="34" height="30" rx="6" fill="#7DBE9A"/><rect x="214" y="1136" width="46" height="44" rx="6" fill="#F2C14E"/><rect x="290" y="1146" width="40" height="34" rx="6" fill="#C65D4A"/><rect x="346" y="1140" width="36" height="40" rx="6" fill="#4FA3D1"/>
+  <path d="M28 970H452L470 1040H10Z" fill="url(#dsAwnR)" ${OLA}/>
+  <path d="M10 1040Q34 1062 58 1040Q82 1062 106 1040Q130 1062 154 1040Q178 1062 202 1040Q226 1062 250 1040Q274 1062 298 1040Q322 1062 346 1040Q370 1062 394 1040Q418 1062 442 1040Q456 1056 470 1040Z" fill="#C94F4F" ${OLA}/>
+  <!-- boutique 2 -->
+  <rect x="520" y="1030" width="520" height="290" rx="8" fill="#FFCF7E" ${OLA}/>
+  <rect x="538" y="1048" width="484" height="254" rx="4" fill="#FFDFA0"/>
+  <rect x="560" y="1200" width="440" height="10" fill="#D9A55E"/>
+  <circle cx="610" cy="1170" r="22" fill="#F29E4C"/><circle cx="660" cy="1176" r="18" fill="#E35D4F"/><circle cx="706" cy="1172" r="20" fill="#9CC46A"/><circle cx="900" cy="1172" r="20" fill="#F2C14E"/><circle cx="948" cy="1176" r="17" fill="#E3784E"/>
+  <rect x="780" y="1080" width="150" height="54" rx="27" fill="#3A2F58" ${OLA}/><text x="855" y="1117" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="27" fill="#FF8FA3">OUVERT</text>
+  <path d="M508 960H1052L1072 1030H488Z" fill="url(#dsAwnG)" ${OLA}/>
+  <path d="M488 1030Q512 1052 536 1030Q560 1052 584 1030Q608 1052 632 1030Q656 1052 680 1030Q704 1052 728 1030Q752 1052 776 1030Q800 1052 824 1030Q848 1052 872 1030Q896 1052 920 1030Q944 1052 968 1030Q992 1052 1016 1030Q1044 1052 1072 1030Z" fill="#2F7F6A" ${OLA}/>
+  <rect x="0" y="1000" width="1080" height="420" fill="url(#dsShop)"/>
+  <!-- trottoir et route -->
+  <rect y="1320" width="1080" height="150" fill="#7B6D93"/>
+  <path d="M0 1360H1080M0 1410H1080" stroke="#6E6188" stroke-width="3"/>
+  <path d="M120 1320L90 1470M360 1320L350 1470M600 1320L610 1470M840 1320L870 1470" stroke="#6E6188" stroke-width="3"/>
+  <rect y="1466" width="1080" height="20" fill="#9A8DB0" ${OLA}/>
+  <rect y="1486" width="1080" height="440" fill="#3B3554"/>
+  <path d="M40 1640H200M320 1640H480M600 1640H760M880 1640H1040" stroke="#E9E2CF" stroke-width="12" stroke-linecap="round" opacity=".55"/>
+  <!-- réverbère -->
+  <ellipse cx="160" cy="1400" rx="260" ry="70" fill="url(#dsPool)"/>
+  <rect x="152" y="560" width="16" height="840" rx="6" fill="#3A3350" ${OLA}/>
+  <ellipse cx="160" cy="1402" rx="36" ry="10" fill="#2E2944"/>
+  <path d="M160 580Q160 540 200 540L240 540" fill="none" stroke="#3A3350" stroke-width="14" stroke-linecap="round"/>
+  <path d="M212 540H272L262 566H222Z" fill="#3A3350" ${OLA}/>
+  <ellipse cx="242" cy="570" rx="22" ry="8" fill="#FFF0C8"/>
+  <circle id="dsLampGlow" cx="242" cy="600" r="300" fill="url(#dsLamp)"/>
+  <!-- banc (dossier + assise) -->
+  <rect x="200" y="1070" width="16" height="200" rx="5" fill="#3E3A4E" ${OLA}/><rect x="574" y="1070" width="16" height="200" rx="5" fill="#3E3A4E" ${OLA}/>
+  <rect x="186" y="1086" width="418" height="34" rx="10" fill="#B07A4E" ${OLA}/>
+  <rect x="186" y="1134" width="418" height="34" rx="10" fill="#A26F46" ${OLA}/>
+  <rect x="210" y="1270" width="18" height="138" rx="5" fill="#3E3A4E" ${OLA}/><rect x="562" y="1270" width="18" height="138" rx="5" fill="#3E3A4E" ${OLA}/>
+  <rect x="176" y="1246" width="438" height="36" rx="10" fill="#BC8656" ${OLA}/>
+  <rect x="180" y="1278" width="430" height="12" rx="5" fill="#8E5E3C"/>
+  <!-- scooter de livraison garé à côté du banc (générique) -->
+  <g transform="translate(-56 -36)">
+    <ellipse cx="808" cy="1448" rx="170" ry="12" fill="#2E2944" opacity=".6"/>
+    <path d="M712 1408L690 1236" stroke="#55525E" stroke-width="13" stroke-linecap="round"/>
+    <circle cx="712" cy="1408" r="40" fill="#25222C" ${OLA}/><circle cx="712" cy="1408" r="15" fill="#A9A9B6"/>
+    <circle cx="890" cy="1408" r="40" fill="#25222C" ${OLA}/><circle cx="890" cy="1408" r="15" fill="#A9A9B6"/>
+    <path d="M666 1394Q712 1346 758 1394" fill="none" stroke="#3E8FB0" stroke-width="13" stroke-linecap="round"/>
+    <path d="M736 1352L840 1352L840 1376L730 1376Z" fill="#2E3440" ${OLA}/>
+    <path d="M676 1150L708 1140L742 1250L768 1362L732 1370L702 1250Z" fill="#3E8FB0" ${OLA}/>
+    <path d="M804 1374C800 1316 828 1294 880 1292L944 1298C962 1314 962 1352 944 1374Z" fill="#3E8FB0" ${OLA}/>
+    <path d="M840 1316C860 1308 900 1306 930 1312" fill="none" stroke="#6FB3CF" stroke-width="6" stroke-linecap="round"/>
+    <path d="M808 1290C822 1270 900 1268 932 1280L930 1298L810 1302Z" fill="#2B2A33" ${OLA}/>
+    <path d="M654 1140L730 1130" stroke="#2B2A33" stroke-width="11" stroke-linecap="round"/>
+    <path d="M716 1132L728 1096" stroke="#2B2A33" stroke-width="5"/><ellipse cx="730" cy="1090" rx="12" ry="8" fill="#55525E" ${OLA}/>
+    <ellipse cx="684" cy="1176" rx="12" ry="17" fill="#FFF3C4" ${OLA}/>
+    <rect x="944" y="1306" width="14" height="22" rx="4" fill="#E35D4F" ${OLA}/>
+    <rect x="850" y="1270" width="110" height="10" rx="4" fill="#55525E"/>
+    <rect x="834" y="1124" width="142" height="148" rx="16" fill="#E9853A" ${OLA}/>
+    <rect x="834" y="1124" width="142" height="30" rx="14" fill="#C96A28" ${OLA}/>
+    <rect x="846" y="1222" width="118" height="12" rx="6" fill="#F6E7C8" opacity=".85"/>
+    <path d="M880 1186h50" stroke="#C96A28" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <circle id="dsPhGlow" cx="0" cy="0" r="220" fill="url(#dsPh)" opacity="0"/>
+  <g id="dsPerson"></g>`;
+  const q = s => svg.querySelector(s);
+  return { person: q('#dsPerson'), phGlow: q('#dsPhGlow'), lamp: q('#dsLampGlow') };
+}
+
+function build() {
+  const st = $('#stage');
+  R.L = duskStreet($('#scene'));
+  R.b = new Toon(R.L.person, Object.assign({}, CAST.sofiane));
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">🛵 Sofiane, 26 ans · vendredi 19 h 40</div></div>');
+  R.c1 = cap(st, 'Livreur. 15 min de pause\nentre deux commandes 🛵', 'w', 350);
+  R.c2 = cap(st, 'Avant je scrollais…\nmaintenant 👇', 'w', 270);
+  R.c3 = cap(st, '15 min, pas une de plus ⏱️', 'k', 330);
+  R.c3b = cap(st, 'Istighfar, tranquille 🤲', 'k', 330);
+  R.c4 = cap(st, 'Le cœur léger 🤍\nAllez, on repart 🛵', 'w', 300);
+  R.notif = el2(st, `<div class="bignotif" style="top:480px"><img src="../assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌇<span>maintenant</span></div><div class="nb">Le soir est là — valide tes actes et prépare ta nuit</div></div></div>`);
+  R.order = el2(st, '<div class="order" style="top:500px"><b><i>📦</i>Nouvelle commande !</b></div>');
+  R.ff = el2(st, '<div class="ff" style="top:470px"><b>⏩ accéléré</b></div>');
+  R.phone = makePhone([scrDhikrSetup('ds'), sessionScreen('ses')]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = tkEnd(st);
+}
+
+// réglages : 3 / 4 / 5 min → 5 / 5 / 5 min (touchers sur « + »), puis « Commencer la séance »
+const PLUS = [[6.45, 0], [6.8, 0], [7.2, 1]];
+const CTA = 7.85;
+const TAPS = PLUS.map(([t0, row]) => [t0, 488, 334 + row * 144]).concat([[CTA, 280, 1022]]);
+
+function scene(t) {
+  $('#scene').style.transform = `translateY(70px) scale(${(1.34 + .05 * P(t, 0, 15, E.lin)).toFixed(4)})`;
+  // phases : scrolle bas (ennui) → notif : relève le téléphone → séance (gros plan) → apaisé → commande → range le téléphone
+  const up = P(t, 3.7, .5, E.ioC);                       // téléphone remonté devant la poitrine
+  const away = P(t, 13.55, .55, E.ioC);                  // range le téléphone dans la poche de sa veste
+  const scroll = t < 3.7 ? Math.max(0, Math.sin(t * 5.2)) * 3 : 0;
+  let hL = [lerp(-18, -16, up), lerp(-30, -60, up)];
+  let hR = [lerp(14, 16, up), lerp(-32 - scroll, -62, up)];
+  // range : main droite vers la poche, main gauche se pose sur la cuisse
+  hR = [lerp(hR[0], 52, away), lerp(hR[1], -40, away)];
+  hL = [lerp(hL[0], -40, away), lerp(hL[1], -4, away)];
+  const buzz = t > 12.85 && t < 13.35 ? Math.sin(t * 90) * 2 : 0;
+  hL[0] += buzz; hR[0] += buzz;
+  const breathe = Math.sin(t * 1.6) * .8;
+  const lean = (t < 3.7 ? -3 : 0) + breathe + (t > 12 && t < 13 ? -4 * P(t, 12, .6, E.ioS) * (1 - P(t, 12.8, .3)) : 0);
+  let face;
+  if (t < 3.6) face = { look: [0, 7], lid: .35, mouth: t % 2 < 1 ? 'flat' : 'small', brow: -.1 };
+  else if (t < 4.3) face = { look: [0, 4], brow: .6 * P(t, 3.6, .2), mouth: 'o' };
+  else if (t < 12.0) face = { look: [0, 5], mouth: 'smile' };
+  else if (t < 12.85) face = { eyes: 'closed', mouth: 'smile', brow: .1 };
+  else if (t < 13.4) face = { look: [0, 5], brow: .5, mouth: 'o' };
+  else face = { look: t < 14 ? [0, 3] : [-4, 1], eyes: t > 13.6 && t < 14.0 ? 'happy' : 'open', mouth: 'grin', brow: .2 };
+  const hasPhone = away < .6;
+  const pose = { x: HIP[0], y: HIP[1], s: S, lean, dy: up * 3, t, face, hands: { L: hL, R: hR },
+    phone: hasPhone ? (away > .05 ? 'R' : 'both') : null, phoneAng: away * 20, glow: .95, faceLight: .45 };
+  R.b.set(pose);
+  R.b.tint('#3A2E6A', .1);
+  const pw = R.b.phoneWorld(pose);
+  R.L.phGlow.setAttribute('cx', f1(pw[0])); R.L.phGlow.setAttribute('cy', f1(pw[1]));
+  R.L.phGlow.setAttribute('opacity', (hasPhone ? .8 : 0).toFixed(3));
+  R.L.lamp.setAttribute('opacity', (.85 + .05 * Math.sin(t * 9) * Math.sin(t * 2.3)).toFixed(3));
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 3.3);
+  pop(R.c1, t, .35, 3.0);
+  pop(R.c2, t, 3.05, 5.6);
+  const ni = P(t, 3.6, .55, E.outB), no = P(t, 5.45, .35, E.inC);
+  T(R.notif, { y: lerp(-760, 0, ni) - 760 * no, op: ni > 0 && no < 1 ? 1 : 0 });
+  // gros plan : réglages 5/5/5, Commencer, puis compte à rebours accéléré
+  T($('#dim'), { op: .55 * P(t, 5.6, .5) * (1 - P(t, 11.95, .5)) });
+  const pin = P(t, 5.65, .9, E.outX), pout = P(t, 11.9, .6, E.inC);
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.0 });
+  const nT = k => PLUS.filter(([t0, row]) => row === k && t >= t0 + .12).length;
+  drawDhikrSetup($('#ds'), [3 + nT(0), 4 + nT(1), 5 + nT(2)]);
+  const cta = $('#ds .e-cta');
+  T(cta, { s: 1 - .05 * (P(t, CTA, .1) - P(t, CTA + .14, .15)) });
+  const ses = $('#ses'), sin = P(t, CTA + .3, .45, E.ioC);
+  T(ses, { x: lerp(560, 0, sin) });
+  drawSession(ses, t, 8.6, 70);
+  drawTaps(R.phone, t, TAPS);
+  pop(R.c3, t, 6.0, 8.2);
+  pop(R.c3b, t, 8.35, 11.8);
+  pop(R.ff, t, 8.9, 11.8);
+  // retour sur la scène : apaisé, une commande tombe, il range son téléphone
+  pop(R.c4, t, 12.25, 14.35);
+  T(R.order, { y: (1 - P(t, 12.85, .4, E.outB)) * -30, s: lerp(.8, 1, P(t, 12.85, .4, E.outB2)), op: P(t, 12.85, .15) * (1 - P(t, 14.2, .2)) });
+  drawEnd(R.end, t, 14.4, 540, 1100);
+}
+boot({ duration: 16.6, build, render });
+</script>
+</body>
+</html>
