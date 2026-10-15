@@ -157,7 +157,7 @@ function build() {
   R.c3 = cap(st, 'Mes adhkar du matin,\navant la journée 🤲', 'k', 330);
   R.c4 = cap(st, 'Journée lancée ☀️\nPetit, mais constant.', 'w', 300);
   R.notif = el2(st, `<div class="bignotif" style="top:580px"><img src="../assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌄<span>maintenant</span></div><div class="nb">N'oublie pas tes actes du matin avant de commencer ta journée</div></div></div>`);
-  R.phone = makePhone([scrInvoc('inv', { tab: 'Matin', items: ADHKAR_SOIR, base: 0, total: 10, doneTitle: 'Adhkar du matin ✓', doneSub: 'Que Allah l\'accepte de toi.' })]);
+  R.phone = makePhone([scrInvoc('inv', { tab: 'Matin', items: ADHKAR_SOIR, base: 7, total: 10, doneTitle: 'Adhkar du matin ✓', doneSub: 'Que Allah l\'accepte de toi.' })]);
   $('#phoneWrap').appendChild(R.phone);
   R.done = el2(st, '<div class="c" style="top:520px"><div class="sticker gold" style="position:relative;display:inline-block">✓ Adhkar du matin</div></div>');
   R.end = tkEnd(st);
@@ -172,7 +172,7 @@ const START = 13.45;   // démarrage du moteur
 function scene(t) {
   const shake = t > START && t < START + .5 ? Math.sin(t * 90) * 2.2 * (1 - P(t, START, .5)) : 0;
   const z = 1.33 + .05 * P(t, 0, 14, E.lin);
-  $('#scene').style.transform = `translate(0px,${shake.toFixed(2)}px) scale(${z.toFixed(4)})`;
+  $('#scene').style.transform = `translate(0px,${(60 + shake).toFixed(2)}px) scale(${z.toFixed(4)})`;
   // Adam fait coucou par-dessus le muret de la cour, puis s'éloigne vers l'école
   const go = P(t, 2.1, .9, E.ioC);
   const wave = Math.sin(t * 9) * 16;
@@ -234,7 +234,7 @@ function render(t) {
   const pin = P(t, 5.5, .9, E.outX), pout = P(t, 12.45, .6, E.inC);
   const pw = $('#phoneWrap');
   if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.0 });
-  drawInvoc($('#inv'), t, TAPS, 0);
+  drawInvoc($('#inv'), t, TAPS, 7);
   drawTaps(R.phone, t, TAPS.map(x => [x, 280, 720]));
   pop(R.c3, t, 5.8, 12.4);
   pop(R.done, t, 12.75, 14.5);

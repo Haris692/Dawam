@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q06-papi.mp4">
+<title>Dawam — Au quotidien · Papi</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — le dimanche matin sur le balcon, Naïm (13 ans) installe Dawam à son grand-père Hadj Ahmed : sceptique, puis il récite ses invocations du matin par cœur. Une semaine plus tard, c'est lui qui a la plus longue série. -->
+<style>
+#scene{transform-origin:540px 1250px}
+#dim{background:#1E140C}
+#card{background:radial-gradient(90% 60% at 50% 45%,#3A2716 0%,#1A110A 100%);display:flex;align-items:center;justify-content:center}
+#card .t{font:800 84px/1.2 var(--tk);color:#FFF6E4;letter-spacing:-1.5px;text-align:center}
+#card .s{margin-top:18px;font:600 40px/1 var(--tk);color:#E9C27A;text-align:center}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:470px;width:592px;height:1246px"></div>
+  <div id="card" class="L full"><div><div class="t">1 semaine<br>plus tard</div><div class="s">⏳</div></div></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const PAPI = { x: 432, y: 1290, s: 1.2 }, NAIM = { x: 664, y: 1296, s: .96 };
+
+// balcon le dimanche matin : vue sur les toits, soleil doux, rambarde en fer forgé, plantes, banc et table basse avec le thé à la menthe
+function balcony(svg) {
+  const r = mulberry32(7);
+  let roofs = '';
+  // deux rangées de maisons (toits plats, fenêtres), plus une rangée lointaine
+  for (let x = -20; x < 1100; x += 70 + r() * 50) {
+    const w = 80 + r() * 70, h = 60 + r() * 90, y = 900 - h;
+    roofs += `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h + 60)}" fill="${['#F4E6D2', '#EBD3B4', '#F7EEE2', '#E6C7A2'][Math.floor(r() * 4)]}"/>`;
+    if (r() > .4) roofs += `<rect x="${f1(x + w * .3)}" y="${f1(y + 22)}" width="14" height="20" rx="3" fill="#9FB7C4"/>`;
+    if (r() > .5) roofs += `<rect x="${f1(x + w * .65)}" y="${f1(y + 26)}" width="14" height="20" rx="3" fill="#9FB7C4"/>`;
+    if (r() > .7) roofs += `<path d="M${f1(x + 10)} ${f1(y)}v-14h30v14" stroke="#B9A28A" stroke-width="4" fill="none"/>`;
+  }
+  let far = '';
+  for (let x = -20; x < 1100; x += 50 + r() * 40) { const h = 30 + r() * 60; far += `<rect x="${f1(x)}" y="${f1(800 - h)}" width="${f1(60 + r() * 40)}" height="${f1(h + 40)}" fill="#E9D6C6"/>`; }
+  let rail = '';
+  for (let x = 20; x < 1080; x += 70) rail += `<path d="M${x} 1010V1180" stroke="#3B3A44" stroke-width="7"/><path d="M${x} 1060c18 0 26 14 26 26s-10 22 -22 22" stroke="#3B3A44" stroke-width="5" fill="none"/>`;
+  let floor = '';
+  for (let x = -40; x < 1120; x += 90) for (let y = 1180; y < 1920; y += 90) floor += `<rect x="${x + 3}" y="${y + 3}" width="84" height="84" rx="6" fill="${(x / 90 + y / 90) % 2 ? '#E7B48A' : '#F1C9A2'}"/><path d="M${x + 45} ${y + 25}L${x + 65} ${y + 45}L${x + 45} ${y + 65}L${x + 25} ${y + 45}Z" fill="#3F8F86" opacity=".35"/>`;
+  svg.innerHTML = `
+  <defs>
+    <linearGradient id="bSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FD2EA"/><stop offset=".6" stop-color="#D9EEF2"/><stop offset="1" stop-color="#FCE6CC"/></linearGradient>
+    <radialGradient id="bSun"><stop offset="0" stop-color="#FFF8DE" stop-opacity="1"/><stop offset=".3" stop-color="#FFEBB0" stop-opacity=".55"/><stop offset="1" stop-color="#FFE3A0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bWarm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE7B8" stop-opacity=".45"/><stop offset="1" stop-color="#FFE7B8" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1080" height="1200" fill="url(#bSky)"/>
+  <circle cx="250" cy="420" r="320" fill="url(#bSun)"/><circle cx="250" cy="420" r="62" fill="#FFF6D4"/>
+  <ellipse cx="760" cy="380" rx="110" ry="30" fill="#FFFFFF" opacity=".85"/><ellipse cx="820" cy="362" rx="70" ry="28" fill="#FFFFFF" opacity=".85"/>
+  <path d="M-20 780Q200 700 420 760T880 730T1100 760V820H-20Z" fill="#C9D9C8" opacity=".8"/>
+  ${far}
+  <!-- minaret au loin -->
+  <rect x="806" y="610" width="46" height="220" fill="#E8D2B8" ${OLA}/><rect x="796" y="600" width="66" height="20" fill="#DCC3A4" ${OLA}/>
+  <rect x="814" y="560" width="30" height="42" fill="#E8D2B8" ${OLA}/><path d="M812 560L829 528L846 560Z" fill="#4F9A7A" ${OLA}/>
+  <rect x="822" y="660" width="14" height="24" rx="7" fill="#9FB7C4"/>
+  ${roofs}
+  <!-- muret et rambarde -->
+  <rect y="1150" width="1080" height="50" fill="#D9A47A" ${OLA}/>
+  <rect y="1000" width="1080" height="16" rx="6" fill="#3B3A44"/>
+  ${rail}
+  ${floor}
+  <!-- bougainvillier en haut à gauche -->
+  <path d="M-20 120Q120 160 160 300Q180 420 120 520" stroke="#6B4A3A" stroke-width="10" fill="none"/>
+  ${Array.from({ length: 34 }, (_, i) => { const a = i * 2.4, rr = 30 + (i * 37) % 140; return `<circle cx="${f1(40 + Math.cos(a) * rr * .9)}" cy="${f1(220 + Math.sin(a) * rr * 1.3)}" r="${16 + i % 3 * 5}" fill="${i % 3 ? '#D9488A' : '#E86AA3'}" ${i % 4 ? '' : OLA}/>`; }).join('')}
+  ${Array.from({ length: 12 }, (_, i) => `<ellipse cx="${f1(10 + (i * 53) % 200)}" cy="${f1(150 + (i * 71) % 330)}" rx="16" ry="9" fill="#5E9C76" transform="rotate(${i * 33} ${f1(10 + (i * 53) % 200)} ${f1(150 + (i * 71) % 330)})"/>`).join('')}
+  <!-- grandes plantes en pots -->
+  <path d="M930 1180Q880 1000 910 900M940 1180Q990 1010 1000 920M935 1180Q930 1040 960 960M945 1180Q1040 1080 1060 1010" stroke="#4F8F62" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <path d="M890 1170L1000 1170L984 1300L906 1300Z" fill="#C46E4A" ${OLA}/><rect x="882" y="1160" width="126" height="22" rx="8" fill="#B5603E" ${OLA}/>
+  <path d="M90 1210Q60 1110 80 1050M100 1210Q130 1120 150 1080M95 1210Q100 1120 110 1060" stroke="#5E9C76" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <circle cx="80" cy="1050" r="16" fill="#E35D4F" ${OLA}/><circle cx="150" cy="1078" r="16" fill="#E35D4F" ${OLA}/><circle cx="110" cy="1058" r="14" fill="#F07A6A" ${OLA}/>
+  <path d="M50 1200L150 1200L138 1310L62 1310Z" fill="#3F8F86" ${OLA}/>
+  <!-- banc -->
+  <rect x="200" y="1180" width="680" height="34" rx="12" fill="#A8774F" ${OLA}/>
+  <rect x="190" y="1300" width="700" height="38" rx="12" fill="#B5845A" ${OLA}/>
+  <rect x="220" y="1334" width="22" height="120" rx="6" fill="#7A5236"/><rect x="838" y="1334" width="22" height="120" rx="6" fill="#7A5236"/>
+  <rect x="300" y="1268" width="200" height="40" rx="14" fill="#C65D4A" ${OLA}/>
+  <g id="bP"></g>
+  <!-- table basse au premier plan : thé à la menthe, verres, dattes -->
+  <rect x="180" y="1500" width="720" height="40" rx="14" fill="#7A5236" ${OLA}/>
+  <rect x="210" y="1536" width="26" height="160" rx="8" fill="#5C3C26"/><rect x="844" y="1536" width="26" height="160" rx="8" fill="#5C3C26"/>
+  <ellipse cx="540" cy="1500" rx="210" ry="20" fill="#D8C2A0" ${OLA}/>
+  <g transform="translate(470 1494)"><path d="M-40 4Q-46 -52 0 -56Q46 -52 40 4Z" fill="#D9D6D0" ${OLA}/><path d="M38 -16Q72 -26 80 -54" stroke="#B8B4AE" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M-38 -26Q-66 -28 -60 -6Q-56 6 -38 0" stroke="#B8B4AE" stroke-width="9" fill="none"/><path d="M-20 -56Q0 -78 20 -56Z" fill="#C9C5BE" ${OLA}/><circle cx="0" cy="-78" r="7" fill="#C9C5BE" ${OLA}/></g>
+  ${steam(552, 1420)}
+  <g transform="translate(576 1498)"><path d="M-14 0L14 0L18 -46L-18 -46Z" fill="#9CC46A" fill-opacity=".85" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="4"/><path d="M-6 -46q-8 -14 4 -20q6 10 -4 20" fill="#4F9A6A"/></g>
+  <g transform="translate(626 1498)"><path d="M-14 0L14 0L18 -46L-18 -46Z" fill="#9CC46A" fill-opacity=".85" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="4"/></g>
+  <ellipse cx="380" cy="1496" rx="56" ry="12" fill="#FFFFFF" ${OLA}/><ellipse cx="366" cy="1486" rx="14" ry="8" fill="#6B3A26"/><ellipse cx="388" cy="1484" rx="14" ry="8" fill="#7A4430"/><ellipse cx="400" cy="1490" rx="13" ry="7" fill="#6B3A26"/>
+  <!-- lumière du matin -->
+  <rect width="1080" height="1920" fill="url(#bWarm)" style="mix-blend-mode:screen"/>`;
+  return { person: svg.querySelector('#bP') };
+}
+
+// téléphone de Naïm tenu dans sa main (même taille à l'écran que celui du grand-père)
+function buildPhone(toon, k) {
+  const g = el('g', {});
+  toon.root.insertBefore(g, toon.gThumbs);
+  g.innerHTML = `<g transform="scale(${k})"><rect x="-17" y="-31" width="34" height="62" rx="8" fill="#2B2A33" stroke="#3A2A26" stroke-width="8" paint-order="stroke"/>
+    <rect x="-13" y="-26" width="26" height="52" rx="5" fill="#FFF4DC"/><path d="M-8 -19L5 -23" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".35"/></g>`;
+  return g;
+}
+
+// séries : Papi tape ses invocations du matin (3 puis 7)
+const TAPS = [];
+for (let i = 0; i < 3; i++) TAPS.push(5.0 + i * .26);
+for (let i = 0; i < 7; i++) TAPS.push(6.25 + i * .15);
+const HAND = 3.4;            // Naïm lui passe le téléphone
+const C1 = [4.2, 7.55];      // gros plan invocations
+const CARD = [9.55, 10.75];  // « 1 semaine plus tard »
+const C2 = [11.35, 13.45];   // gros plan profil
+const END = 14.85;
+
+function build() {
+  const st = $('#stage');
+  R.B = balcony($('#scene'));
+  R.p = new Toon(R.B.person, Object.assign({}, CAST.papi));
+  R.n = new Toon(R.B.person, Object.assign({}, CAST.naim));
+  R.nPh = buildPhone(R.n, PAPI.s / NAIM.s);
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:32px">🌿 Hadj Ahmed, 72 ans & Naïm, 13 ans · dimanche</div></div>');
+  R.c1 = cap(st, "J'ai installé Dawam\nà mon grand-père 👴🏽", 'w', 340);
+  R.c2 = cap(st, 'Au début il était\npas convaincu 🤨', 'w', 340);
+  R.c3 = cap(st, 'Ses invocations du matin…', 'w sm', 290);
+  R.c4 = cap(st, '…il les connaissait\ndéjà par cœur 🥹', 'w', 340);
+  R.c5 = cap(st, 'Et là il me montre\nSON profil 👀', 'w', 340);
+  R.c6 = cap(st, '🔥 7 jours de suite', 'w sm', 290);
+  R.c7 = cap(st, "Maintenant c'est lui qui\nme demande ma série 😭", 'w', 330);
+  R.me = el2(st, '<div class="c" style="top:560px"><div class="sticker white" style="position:relative;display:inline-block;font-size:38px">Moi : 🔥 2 j 😬</div></div>');
+  R.phone = makePhone([
+    scrInvoc('inv', { tab: 'Matin', items: ADHKAR_SOIR, base: 0, total: 10, doneTitle: 'Invocations du matin ✓', doneSub: 'Que Allah l\'accepte de toi.' }),
+    `<div class="layer" id="proL" style="opacity:0">${scrProfil('pro', { name: 'Ahmed', palier: '🌕 Le Vaillant', streak: 7, actifs: 7, semaine: 100,
+      badges: [['🔥', '3 jours de suite', 'Débloqué'], ['🔥', '7 jours de suite', 'Débloqué'], ['⭐', '30 jours de suite', 'Meilleure série : 7 j', true]] })}</div>`,
+  ]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = tkEnd(st);
+}
+
+function scene(t) {
+  $('#scene').style.transform = `translateY(130px) scale(${(1.4 + .06 * P(t, 0, 14.5, E.lin)).toFixed(4)})`;
+  const week = t >= CARD[0] + .5;
+  // ── le grand-père ──
+  const take = P(t, HAND - .35, .45, E.ioC);            // il tend la main droite vers le téléphone
+  const hold = t >= HAND;                                // puis le tient à deux mains
+  let hL = [-40, -10], hR = [40, -12], phone = null, phoneAng = 0, lean = 0, tilt = 0, face;
+  if (!week) {
+    lean = 6 * P(t, .3, .8, E.ioC) * (1 - P(t, 7.6, .5));   // se penche vers l'écran de Naïm
+    if (!hold) hR = [lerp(40, 92, take), lerp(-12, -64, take)];
+    else {
+      const lap = P(t, 7.5, .6, E.ioC);                    // il baisse le téléphone : il récite de mémoire
+      hL = [lerp(-16, -20, lap), lerp(-60, -22, lap)]; hR = [lerp(16, 20, lap), lerp(-62, -24, lap)];
+      phone = 'both'; phoneAng = 0;
+    }
+    if (t < 1.4) face = { look: [10, 6], brow: -.3, worry: -.7, mouth: 'flat', blush: .4 };
+    else if (t < 2.9) face = { look: [12, 5], brow: -.45, worry: -.9, mouth: 'frown', blush: .4 };
+    else if (t < 4.2) face = { look: [8, 7], brow: -.1, worry: -.4, mouth: 'flat', blush: .5 };
+    else if (t < 7.6) face = { look: [0, 6], mouth: 'smile' };
+    else face = { eyes: 'closed', brow: .1, mouth: Math.floor(t * 3.2) % 2 ? 'small' : 'open', blush: .8 };
+    tilt = t < 2.9 ? -4 : t > 7.7 ? -3 : 0;
+  } else {
+    // une semaine plus tard : il lève fièrement son téléphone vers Naïm
+    const up = P(t, CARD[1] - .1, .5, E.outB);
+    hL = [-40, -10]; hR = [lerp(40, 98, up), lerp(-12, -150, up)];
+    phone = 'R'; phoneAng = 12 * up;
+    lean = 4 * up;
+    face = t < C2[1] ? { look: [9, -2], eyes: 'open', brow: .5, mouth: 'grin' }
+      : { eyes: 'happy', brow: .5, mouth: 'grin', blush: 1 };
+    tilt = t > C2[1] ? -4 + Math.sin(t * 3) * 1.5 : 0;
+  }
+  R.p.set({ x: PAPI.x, y: PAPI.y, s: PAPI.s, lean, tilt, dy: phone === 'both' && t < 7.6 ? 3 : 0, t, face, hands: { L: hL, R: hR }, phone, phoneAng, glow: .9, faceLight: .25 });
+
+  // ── Naïm ──
+  let nL = [-40, -12], nR = [40, -12], nLean = 0, nTilt = 0, nFace;
+  const nPhoneOn = !week && t < HAND;
+  if (!week) {
+    // il tend son téléphone vers son grand-père, main gauche
+    const reach = P(t, .2, .5, E.ioC);
+    const back = P(t, HAND, .4, E.ioC);
+    nL = [lerp(-40, -128, reach * (1 - back)), lerp(-12, -96, reach * (1 - back))];
+    nLean = -8 * reach * (1 - back) - 3 * P(t, 7.6, .4) * (1 - P(t, 9, .4));
+    if (t < 2.9) nFace = { look: [-8, 3], mouth: t % 1.4 < .7 ? 'open' : 'smile', brow: .4 };
+    else if (t < 4.2) nFace = { look: [-10, 1], mouth: 'smile', brow: .2 };
+    else if (t < 8.3) nFace = { look: [-10, 0], eyes: 'wide', mouth: 'o', brow: .9 };
+    else nFace = { look: [-10, 1], eyes: 'open', mouth: 'smile', brow: .5 };
+  } else {
+    const shy = P(t, C2[1] + .1, .4, E.ioC);
+    nLean = -6 * (1 - shy) + 4 * shy;
+    // gêné : il se gratte la tête
+    nR = [lerp(40, 92, shy), lerp(-12, -214 + Math.sin(t * 14) * 5 * shy, shy)];
+    nTilt = 7 * shy;
+    nFace = t < C2[1] ? { look: [-10, -2], eyes: 'wide', mouth: 'o', brow: .9 }
+      : { look: [7, 4], worry: .9, brow: .2, mouth: 'wavy', blush: 1.2 };
+  }
+  R.n.set({ x: NAIM.x, y: NAIM.y, s: NAIM.s, lean: nLean, tilt: nTilt, t, face: nFace, hands: { L: nL, R: nR } });
+  vis(R.nPh, nPhoneOn);
+  R.nPh.setAttribute('transform', `translate(${f1(R.n.H.L[0])} ${f1(R.n.H.L[1] - 18)}) rotate(-10)`);
+  drawSteam($('#scene'), t);
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 2.6);
+  pop(R.c1, t, .35, 2.6);
+  pop(R.c2, t, 2.7, 4.3);
+  // gros plans : invocations du matin, puis le profil
+  const in1 = P(t, C1[0], .8, E.outX), out1 = P(t, C1[1] - .3, .5, E.inC);
+  const in2 = P(t, C2[0], .7, E.outX), out2 = P(t, C2[1] - .3, .5, E.inC);
+  const k1 = in1 > 0 && out1 < 1, k2 = in2 > 0 && out2 < 1;
+  T($('#dim'), { op: .5 * (k1 ? Math.min(P(t, C1[0], .5), 1 - out1) : k2 ? Math.min(P(t, C2[0], .5), 1 - out2) : 0) });
+  const pw = $('#phoneWrap');
+  if (vis(pw, k1 || k2)) {
+    const pin = k1 ? in1 : in2, pout = k1 ? out1 : out2;
+    T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: .9 });
+  }
+  $('#proL').style.opacity = k2 ? 1 : 0;
+  drawInvoc($('#inv'), t, TAPS, 0);
+  drawProfil($('#pro'), 7, 7);
+  const badge = $('#pro').querySelectorAll('.badges .e-card')[1];
+  T(badge, { s: 1 + .06 * Math.sin(Math.PI * P(t, 12.45, .5)) });
+  badge.style.boxShadow = t > 12.4 ? `0 0 0 ${(4 * P(t, 12.4, .3)).toFixed(1)}px #EAC876, 0 18px 40px -20px rgba(186,117,23,.7)` : '';
+  drawTaps(R.phone, t, k1 ? TAPS.map(x => [x, 280, 760]) : [[12.4, 280, 900]]);
+  pop(R.c3, t, C1[0] + .3, C1[1] - .3);
+  pop(R.c4, t, 7.75, CARD[0]);
+  // carton « 1 semaine plus tard »
+  const ci = P(t, CARD[0], .25), co = P(t, CARD[1] - .25, .3);
+  T($('#card'), { op: ci * (1 - co) });
+  T($('#card .t'), { s: lerp(.85, 1, P(t, CARD[0], .45, E.outB)) });
+  pop(R.c5, t, CARD[1], C2[0] + .1);
+  pop(R.c6, t, C2[0] + .4, C2[1] - .3);
+  pop(R.c7, t, C2[1] + .15, END);
+  pop(R.me, t, C2[1] + .55, END, { r: -4, x: 170 });
+  drawEnd(R.end, t, END, 540, 1100);
+}
+boot({ duration: 17.0, build, render });
+</script>
+</body>
+</html>

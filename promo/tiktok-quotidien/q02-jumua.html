@@ -200,7 +200,7 @@ function render(t) {
   T(row, { s: 1 - .03 * press });
   const qin = P(t, QR_IN, .45, E.outC);
   T($('#qrWrap'), { x: lerp(560, 0, qin), op: qin > 0 ? 1 : 0 });
-  drawCoran($('#qr'), t - QR_T0);
+  drawCoran($('#qr'), (t - QR_T0) * 90);   // chrono accéléré
   drawTaps(R.phone, t, [[TAP_CORAN, 280, 708]]);
   pop(R.c2, t, 3.1, 7.0);
   pop(R.c3, t, 7.7, 11.3);
