@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q08-voiture.mp4">
+<title>Dawam — Au quotidien · Devant l'école</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — lundi 7 h 55, Karim vient de déposer Adam à l'école : garé, moteur coupé, il fait ses adhkar du matin avant d'aller au travail. -->
+<style>
+#scene{transform-origin:600px 1200px}
+#dim{background:#1A1410}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:600px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const KH = [640, 1420], KS = 1.45;        // Karim, au volant (côté conducteur = à droite de l'image, vu de face)
+const HOLDER = [452, 1288];                // support de téléphone sur la grille d'aération
+const WHEEL = [640, 1446];                 // centre du volant
+const ADAM = { x: 352, y: 902, s: .55 };   // Adam dans la cour, derrière le muret (vu par la lunette arrière)
+const CAR = '#E07A5F', CARD = '#B85A43', CARL = '#F2A48C';
+
+// rue de l'école au soleil du matin (ce qu'on voit autour de la voiture)
+function street() {
+  return `
+  <rect x="-100" y="-100" width="1280" height="2100" fill="url(#vSky)"/>
+  <rect x="120" y="60" width="840" height="420" fill="#F2DFC0" ${OLA}/>
+  <path d="M100 66L540 -30L980 66Z" fill="#C9694E" ${OLA}/>
+  ${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${170 + i * 130}" y="120" width="70" height="96" rx="6" fill="#9CC9E6" ${OLA}/><rect x="${170 + i * 130}" y="166" width="70" height="6" fill="#E9D3AE"/>`).join('')}
+  ${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${170 + i * 130}" y="270" width="70" height="96" rx="6" fill="#9CC9E6" ${OLA}/>`).join('')}
+  <path d="M-100 250Q-40 120 60 170Q120 60 200 160Q240 260 160 330L-100 360Z" fill="#6FAE6A" ${OLA}/>
+  <path d="M1180 230Q1120 110 1020 160Q960 60 880 170Q850 270 930 330L1180 360Z" fill="#6FAE6A" ${OLA}/>
+  <rect x="-100" y="1300" width="1280" height="700" fill="#B9B2A6"/>`;
+}
+
+// cour d'école vue par la lunette arrière : façade, portail « ÉCOLE », muret à grille, drapeau, arbres
+function schoolView() {
+  return `
+  <rect x="180" y="540" width="720" height="380" fill="url(#vSky)"/>
+  <circle cx="800" cy="600" r="70" fill="#FFF3C8" opacity=".8"/>
+  <rect x="200" y="640" width="680" height="240" fill="#F4E4C6" ${OLA}/>
+  <path d="M180 646L540 590L900 646Z" fill="#C9694E" ${OLA}/>
+  ${[0, 1, 2, 3, 4].map(i => `<rect x="${236 + i * 132}" y="668" width="58" height="70" rx="5" fill="#9CC9E6" ${OLA}/>`).join('')}
+  <path d="M760 600V700" stroke="#7A6A5A" stroke-width="4"/>
+  <rect x="762" y="600" width="18" height="30" fill="#2E5AA8"/><rect x="780" y="600" width="18" height="30" fill="#FFFFFF"/><rect x="798" y="600" width="18" height="30" fill="#E0463C"/>
+  <rect x="404" y="752" width="272" height="44" rx="10" fill="#2F6B66" ${OLA}/>
+  <text x="540" y="784" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="27" letter-spacing="3" fill="#FFF3D6">ÉCOLE</text>
+  <path d="M190 760Q200 700 240 716Q260 680 300 712Q320 760 290 790L190 800Z" fill="#7DBE76" ${OLA}/>
+  <path d="M890 770Q880 700 840 716Q820 690 790 720Q776 770 806 796L890 804Z" fill="#7DBE76" ${OLA}/>
+  <g id="vAdam"></g>
+  <!-- muret et grille de la cour -->
+  <rect x="180" y="842" width="720" height="80" fill="#D8C3A0" ${OLA}/>
+  <rect x="180" y="836" width="720" height="14" fill="#E8D6B4" ${OLA}/>
+  <path d="${Array.from({ length: 30 }, (_, i) => `M${196 + i * 24} 836V800`).join('')}M180 806H900" stroke="#3F7A5C" stroke-width="5"/>
+  <rect x="180" y="900" width="720" height="30" fill="#A8A196"/>`;
+}
+
+function carScene(svg) {
+  const GLASS = 'M206 404Q540 384 874 404Q890 406 894 422L1000 1440Q1002 1462 980 1462L100 1462Q78 1462 80 1440L186 422Q190 406 206 404Z';
+  svg.innerHTML = `
+  <defs>
+    <linearGradient id="vSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FCBEA"/><stop offset=".6" stop-color="#CFE8F2"/><stop offset="1" stop-color="#FFF0D2"/></linearGradient>
+    <linearGradient id="vHood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${CARL}"/><stop offset=".25" stop-color="${CAR}"/><stop offset="1" stop-color="${CARD}"/></linearGradient>
+    <linearGradient id="vRefl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity=".9"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <radialGradient id="vSun"><stop offset="0" stop-color="#FFF4D0" stop-opacity=".55"/><stop offset="1" stop-color="#FFF4D0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="vPh"><stop offset="0" stop-color="#FFF6E0" stop-opacity=".8"/><stop offset="1" stop-color="#FFF6E0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="vDash"><stop offset="0" stop-color="#8FE3FF" stop-opacity=".9"/><stop offset="1" stop-color="#8FE3FF" stop-opacity="0"/></radialGradient>
+    <clipPath id="vGlass"><path d="${GLASS}"/></clipPath>
+    <clipPath id="vRear"><path d="M262 556Q540 540 818 556Q838 558 842 578L870 892L210 892L238 578Q242 558 262 556Z"/></clipPath>
+  </defs>
+  ${street()}
+  <!-- intérieur, vu à travers le pare-brise -->
+  <g clip-path="url(#vGlass)">
+    <rect x="0" y="380" width="1080" height="1100" fill="#7C7670"/>
+    <path d="M60 380H1020V560Q540 520 60 560Z" fill="#D8CFC2"/>
+    <path d="M60 540Q540 506 1020 540" stroke="#BFB5A6" stroke-width="6" fill="none"/>
+    <!-- lunette arrière -->
+    <path d="M250 546Q540 530 830 546Q856 548 860 574L890 904L190 904L220 574Q224 548 250 546Z" fill="#45434A"/>
+    <g clip-path="url(#vRear)">${schoolView()}</g>
+    <!-- montants intérieurs, banquette arrière -->
+    <path d="M60 560L220 574L190 904L60 980Z" fill="#8C857C"/><path d="M1020 560L860 574L890 904L1020 980Z" fill="#8C857C"/>
+    <path d="M150 900Q540 880 930 900L960 1060L120 1060Z" fill="#4D4C56" ${OLA}/>
+    <!-- siège passager (vide) -->
+    <rect x="236" y="858" width="132" height="120" rx="40" fill="#3E3E48" ${OLA}/>
+    <path d="M276 978V1000M328 978V1000" stroke="#9A9AA4" stroke-width="8"/>
+    <rect x="166" y="990" width="272" height="480" rx="70" fill="#3E3E48" ${OLA}/>
+    <path d="M214 1040Q302 1022 390 1040M214 1120Q302 1102 390 1120" stroke="#55555F" stroke-width="5" fill="none"/>
+    <!-- siège conducteur -->
+    <rect x="574" y="866" width="132" height="120" rx="40" fill="#3E3E48" ${OLA}/>
+    <rect x="490" y="1000" width="300" height="470" rx="70" fill="#3E3E48" ${OLA}/>
+    <g id="vKarim"></g>
+    <!-- rétroviseur intérieur -->
+    <path d="M540 384V430" stroke="#2E2E36" stroke-width="10"/>
+    <rect x="462" y="428" width="156" height="50" rx="18" fill="#2E2E36" ${OLA}/><rect x="472" y="436" width="136" height="34" rx="12" fill="#9CB8C8"/>
+    <!-- tableau de bord -->
+    <path d="M40 1350Q60 1322 160 1320L540 1314L920 1320Q1020 1322 1040 1350V1480H40Z" fill="#33343D" ${OLA}/>
+    <path d="M70 1340Q540 1318 1010 1340" stroke="#4A4B56" stroke-width="10" fill="none"/>
+    <path d="M520 1318Q530 1278 640 1276Q750 1278 760 1318Z" fill="#2A2B33" ${OLA}/>
+    <g id="vCluster" opacity="0"><ellipse cx="640" cy="1306" rx="110" ry="30" fill="url(#vDash)"/>
+      <path d="M590 1312A26 26 0 0 1 616 1290M664 1290A26 26 0 0 1 690 1312" stroke="#BFF2FF" stroke-width="5" fill="none"/></g>
+    <rect x="330" y="1350" width="110" height="38" rx="10" fill="#26272E" ${OLA}/>
+    <path d="M346 1362h78M346 1374h78" stroke="#3E404A" stroke-width="5"/>
+    <rect x="852" y="1352" width="96" height="34" rx="10" fill="#26272E" ${OLA}/>
+    <!-- support de téléphone et téléphone posé -->
+    <path d="M${HOLDER[0]} ${HOLDER[1] + 40}V1356" stroke="#1E1E24" stroke-width="12"/>
+    <rect x="${HOLDER[0] - 34}" y="${HOLDER[1] + 30}" width="68" height="14" rx="5" fill="#1E1E24"/>
+    <circle id="vPhGlow" cx="${HOLDER[0]}" cy="${HOLDER[1]}" r="150" fill="url(#vPh)" opacity="0"/>
+    <g id="vHolderPhone" transform="translate(${HOLDER[0]} ${HOLDER[1]})"><g transform="scale(1.45)"><rect x="-17" y="-31" width="34" height="62" rx="8" fill="#2B2A33" stroke="#3A2A26" stroke-width="5"/><rect id="vHolderScr" x="-13" y="-26" width="26" height="52" rx="5" fill="#2b2b30"/></g></g>
+    <!-- volant (le haut seulement dépasse du tableau de bord) -->
+    <g id="vWheel">
+      <path d="M${WHEEL[0] - 26} ${WHEEL[1]}L${WHEEL[0] - 18} 1480H${WHEEL[0] + 18}L${WHEEL[0] + 26} ${WHEEL[1]}Z" fill="#26272E"/>
+      <path d="M${WHEEL[0] - 120} ${WHEEL[1] + 14}Q${WHEEL[0]} ${WHEEL[1] - 34} ${WHEEL[0] + 120} ${WHEEL[1] + 14}" stroke="#2A2B33" stroke-width="22" fill="none"/>
+      <ellipse cx="${WHEEL[0]}" cy="${WHEEL[1] + 4}" rx="44" ry="30" fill="#2A2B33" ${OLA}/>
+      <ellipse cx="${WHEEL[0]}" cy="${WHEEL[1]}" rx="172" ry="126" fill="none" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="40"/>
+      <ellipse cx="${WHEEL[0]}" cy="${WHEEL[1]}" rx="172" ry="126" fill="none" stroke="#2C2D35" stroke-width="30"/>
+      <path d="M${WHEEL[0] - 140} ${WHEEL[1] - 70}Q${WHEEL[0]} ${WHEEL[1] - 150} ${WHEEL[0] + 140} ${WHEEL[1] - 70}" stroke="#4A4B56" stroke-width="6" fill="none"/>
+    </g>
+    <!-- reflets du pare-brise -->
+    <path d="M300 400L420 400L180 1460L60 1460Z" fill="url(#vRefl)" opacity=".1"/>
+    <path d="M760 400L800 400L560 1460L520 1460Z" fill="url(#vRefl)" opacity=".08"/>
+    <circle cx="920" cy="460" r="260" fill="url(#vSun)"/>
+  </g>
+  <!-- carrosserie : toit, montants, capot, essuie-glaces, rétroviseurs -->
+  <path d="M-40 300Q540 250 1120 300V420L894 422Q890 406 874 404Q540 384 206 404Q190 406 186 422L-40 420Z" fill="${CAR}" ${OLA}/>
+  <path d="M60 330Q540 290 1020 330" stroke="${CARL}" stroke-width="10" fill="none" opacity=".7"/>
+  <path d="M186 422L80 1440Q78 1462 100 1462L60 1462L-40 1462L-40 420Z" fill="${CAR}" ${OLA}/>
+  <path d="M894 422L1000 1440Q1002 1462 980 1462L1020 1462L1120 1462L1120 420Z" fill="${CAR}" ${OLA}/>
+  <path d="M150 440L60 1300" stroke="${CARL}" stroke-width="8" opacity=".6"/>
+  <path d="M-40 1140Q-10 1080 40 1100L44 1220Q0 1240 -40 1220Z" fill="${CARD}" ${OLA}/>
+  <path d="M1120 1140Q1090 1080 1040 1100L1036 1220Q1080 1240 1120 1220Z" fill="${CARD}" ${OLA}/>
+  <path d="M-40 1460H1120V1960H-40Z" fill="url(#vHood)" ${OLA}/>
+  <path d="M120 1500Q540 1470 960 1500" stroke="${CARL}" stroke-width="10" fill="none" opacity=".8"/>
+  <path d="M150 1478L520 1446M600 1478L960 1446" stroke="#22222A" stroke-width="10" stroke-linecap="round"/>
+  <path d="M540 1620Q545 1720 540 1900" stroke="${CARD}" stroke-width="6" fill="none"/>`;
+  const q = s => svg.querySelector(s);
+  return { karim: q('#vKarim'), adam: q('#vAdam'), holderPhone: q('#vHolderPhone'), holderScr: q('#vHolderScr'), phGlow: q('#vPhGlow'), cluster: q('#vCluster') };
+}
+
+function build() {
+  const st = $('#stage');
+  R.V = carScene($('#scene'));
+  R.k = new Toon(R.V.karim, Object.assign({}, CAST.karimWork, { legs: 'none' }));
+  R.a = new Toon(R.V.adam, Object.assign({}, CAST.adam, { legs: 'none' }));
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">🚗 Karim · lundi 7 h 55</div></div>');
+  R.c1 = cap(st, "7 h 55, devant l'école.\n5 minutes avant le boulot ⏱️", 'w', 340);
+  R.c2 = cap(st, 'Garé, moteur coupé 🅿️', 'k', 330);
+  R.c3 = cap(st, 'Mes adhkar du matin,\navant la journée 🤲', 'k', 330);
+  R.c4 = cap(st, 'Journée lancée ☀️\nPetit, mais constant.', 'w', 300);
+  R.notif = el2(st, `<div class="bignotif" style="top:580px"><img src="../assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌄<span>maintenant</span></div><div class="nb">N'oublie pas tes actes du matin avant de commencer ta journée</div></div></div>`);
+  R.phone = makePhone([scrInvoc('inv', { tab: 'Matin', items: ADHKAR_SOIR, base: 0, total: 10, doneTitle: 'Adhkar du matin ✓', doneSub: 'Que Allah l\'accepte de toi.' })]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.done = el2(st, '<div class="c" style="top:520px"><div class="sticker gold" style="position:relative;display:inline-block">✓ Adhkar du matin</div></div>');
+  R.end = tkEnd(st);
+}
+
+// touchers : 3, puis 7, puis 7
+const TAPS = [6.6, 6.85, 7.1];
+for (let i = 0; i < 7; i++) TAPS.push(8.3 + i * .15);
+for (let i = 0; i < 7; i++) TAPS.push(10.35 + i * .15);
+const START = 13.45;   // démarrage du moteur
+
+function scene(t) {
+  const shake = t > START && t < START + .5 ? Math.sin(t * 90) * 2.2 * (1 - P(t, START, .5)) : 0;
+  const z = 1.0 + .05 * P(t, 0, 14, E.lin);
+  $('#scene').style.transform = `translate(0px,${shake.toFixed(2)}px) scale(${z.toFixed(4)})`;
+  // Adam fait coucou par-dessus le muret de la cour, puis s'éloigne vers l'école
+  const go = P(t, 2.1, .9, E.ioC);
+  const wave = Math.sin(t * 9) * 16;
+  const ap = { x: ADAM.x + 30 * go, y: lerp(ADAM.y, 872, go), s: lerp(ADAM.s, .36, go), lean: Math.sin(t * 3) * 2, t,
+    face: { look: [4, 2], eyes: t > 1.2 && t < 1.8 ? 'happy' : 'open', mouth: 'grin' },
+    hands: { L: [-30, -60], R: [lerp(70 + wave, 30, go), lerp(-196, -60, go)] } };
+  R.a.set(ap);
+  R.a.root.setAttribute('opacity', (1 - P(t, 2.5, .5)).toFixed(3));
+  // Karim
+  const reach = P(t, 3.8, .45, E.ioC) * (1 - P(t, 4.3, .45, E.ioC));
+  const hold = P(t, 4.3, .5, E.ioC) * (1 - P(t, 12.6, .4, E.ioC));
+  const putBack = P(t, 12.6, .4, E.ioC) * (1 - P(t, 13.0, .4, E.ioC));
+  const toWheel = P(t, 13.0, .45, E.ioC);
+  const picked = t >= 4.3 && t < 12.95;
+  const waveK = P(t, .4, .4, E.ioC) * (1 - P(t, 2.3, .4, E.ioC));
+  const hp = [(HOLDER[0] - KH[0]) / KS, (HOLDER[1] - KH[1]) / KS + 14];
+  const rest = { L: [-34, -40], R: [34, -40] };
+  let hL = [lerp(rest.L[0], -96 + Math.sin(t * 10) * 10, waveK), lerp(rest.L[1], -196, waveK)];
+  let hR = rest.R.slice();
+  hL = [lerp(hL[0], hp[0], reach + putBack), lerp(hL[1], hp[1], reach + putBack)];
+  hL = [lerp(hL[0], -18, hold), lerp(hL[1], -100, hold)];
+  hR = [lerp(hR[0], 18, hold), lerp(hR[1], -102, hold)];
+  const wl = [(WHEEL[0] - 128 - KH[0]) / KS, (WHEEL[1] - 84 - KH[1]) / KS], wr = [(WHEEL[0] + 128 - KH[0]) / KS, (WHEEL[1] - 84 - KH[1]) / KS];
+  hL = [lerp(hL[0], wl[0], toWheel), lerp(hL[1], wl[1], toWheel)];
+  hR = [lerp(hR[0], wr[0], toWheel), lerp(hR[1], wr[1], toWheel)];
+  let face, turn = 0;
+  if (t < 2.5) { face = { look: [-10, -3], mouth: 'grin', eyes: t > 1.4 && t < 2.0 ? 'happy' : 'open', brow: .2 }; turn = -.35 * waveK; }
+  else if (t < 3.0) face = { look: [-6, 2], mouth: 'smile' };
+  else if (t < 3.9) face = { look: [-10, 7], mouth: 'o', brow: .45 };
+  else if (t < 12.7) face = { look: [0, 6], mouth: 'smile' };
+  else if (t < START) face = { look: [-6, 4], mouth: 'smile' };
+  else face = { look: [0, 0], eyes: t < START + .8 ? 'happy' : 'open', mouth: 'grin', brow: .2 };
+  const lean = -6 * reach - 6 * putBack + Math.sin(t * 1.7) * .6;
+  const kp = { x: KH[0], y: KH[1], s: KS, lean, turn, tilt: t < 2.5 ? -5 * waveK : 0, t, face, hands: { L: hL, R: hR },
+    phone: picked ? 'both' : null, glow: .9, faceLight: .3 };
+  R.k.set(kp);
+  // téléphone sur le support : vibre et s'allume à la notification
+  const lit = picked ? 0 : P(t, 2.6, .2) * (1 - P(t, 13.2, .4));
+  const buzz = t > 2.6 && t < 3.4 ? Math.sin(t * 80) * 2.2 : 0;
+  vis(R.V.holderPhone, !picked);
+  R.V.holderPhone.setAttribute('transform', `translate(${f1(HOLDER[0] + buzz)} ${HOLDER[1]})`);
+  R.V.holderScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', lit));
+  R.V.phGlow.setAttribute('opacity', (.7 * lit).toFixed(3));
+  // le moteur démarre : le combiné s'allume
+  R.V.cluster.setAttribute('opacity', P(t, START, .3).toFixed(3));
+  R.k.tint('#FFE2B0', .04); R.a.tint('#FFE2B0', .06);
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 2.8);
+  pop(R.c1, t, .35, 2.8);
+  const ni = P(t, 2.85, .55, E.outB), no = P(t, 5.2, .35, E.inC);
+  T(R.notif, { y: lerp(-700, 0, ni) - 700 * no, op: ni > 0 && no < 1 ? 1 : 0 });
+  pop(R.c2, t, 3.15, 5.5);
+  // gros plan sur le téléphone : série du matin, les compteurs descendent jusqu'au ✓
+  T($('#dim'), { op: .55 * P(t, 5.4, .5) * (1 - P(t, 12.5, .5)) });
+  const pin = P(t, 5.5, .9, E.outX), pout = P(t, 12.45, .6, E.inC);
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.0 });
+  drawInvoc($('#inv'), t, TAPS, 0);
+  drawTaps(R.phone, t, TAPS.map(x => [x, 280, 720]));
+  pop(R.c3, t, 5.8, 12.4);
+  pop(R.done, t, 12.75, 14.5);
+  pop(R.c4, t, 13.1, 14.5);
+  drawEnd(R.end, t, 14.55, 540, 1100);
+}
+boot({ duration: 16.8, build, render });
+</script>
+</body>
+</html>
