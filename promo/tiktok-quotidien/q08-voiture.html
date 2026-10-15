@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
 <!-- Au quotidien avec Dawam — lundi 7 h 55, Karim vient de déposer Adam à l'école : garé, moteur coupé, il fait ses adhkar du matin avant d'aller au travail. -->
 <style>
-#scene{transform-origin:600px 1200px}
+#scene{transform-origin:620px 1300px}
 #dim{background:#1A1410}
 </style>
 </head>
@@ -152,7 +152,7 @@ function build() {
   R.k = new Toon(R.V.karim, Object.assign({}, CAST.karimWork, { legs: 'none' }));
   R.a = new Toon(R.V.adam, Object.assign({}, CAST.adam, { legs: 'none' }));
   R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">🚗 Karim · lundi 7 h 55</div></div>');
-  R.c1 = cap(st, "7 h 55, devant l'école.\n5 minutes avant le boulot ⏱️", 'w', 340);
+  R.c1 = cap(st, "7 h 55, devant l'école.\n5 min avant le boulot ⏱️", 'w', 340);
   R.c2 = cap(st, 'Garé, moteur coupé 🅿️', 'k', 330);
   R.c3 = cap(st, 'Mes adhkar du matin,\navant la journée 🤲', 'k', 330);
   R.c4 = cap(st, 'Journée lancée ☀️\nPetit, mais constant.', 'w', 300);
@@ -171,7 +171,7 @@ const START = 13.45;   // démarrage du moteur
 
 function scene(t) {
   const shake = t > START && t < START + .5 ? Math.sin(t * 90) * 2.2 * (1 - P(t, START, .5)) : 0;
-  const z = 1.0 + .05 * P(t, 0, 14, E.lin);
+  const z = 1.33 + .05 * P(t, 0, 14, E.lin);
   $('#scene').style.transform = `translate(0px,${shake.toFixed(2)}px) scale(${z.toFixed(4)})`;
   // Adam fait coucou par-dessus le muret de la cour, puis s'éloigne vers l'école
   const go = P(t, 2.1, .9, E.ioC);
@@ -190,7 +190,7 @@ function scene(t) {
   const waveK = P(t, .4, .4, E.ioC) * (1 - P(t, 2.3, .4, E.ioC));
   const hp = [(HOLDER[0] - KH[0]) / KS, (HOLDER[1] - KH[1]) / KS + 14];
   const rest = { L: [-34, -40], R: [34, -40] };
-  let hL = [lerp(rest.L[0], -96 + Math.sin(t * 10) * 10, waveK), lerp(rest.L[1], -196, waveK)];
+  let hL = [lerp(rest.L[0], -98 + Math.sin(t * 10) * 9, waveK), lerp(rest.L[1], -206, waveK)];
   let hR = rest.R.slice();
   hL = [lerp(hL[0], hp[0], reach + putBack), lerp(hL[1], hp[1], reach + putBack)];
   hL = [lerp(hL[0], -18, hold), lerp(hL[1], -100, hold)];

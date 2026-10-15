@@ -228,7 +228,7 @@ function scene(t) {
     const sip = P(t, .5, .4, E.ioC) * (1 - P(t, 1.7, .4, E.ioC));
     let hL = [-36, -24], hR = [30, -26];
     hR = [lerp(hR[0], -2, sip), lerp(hR[1], -172, sip)];
-    const dev = t >= 4.0;   // la tablette apparaît pendant le gros plan
+    const dev = t >= 4.7;   // la tablette apparaît pendant le gros plan
     if (dev) {
       const pr = tapping ? press(TAPS.L, t) : 0;
       hL = [-40, -58]; const c = [hL[0] + 50, hL[1] - 4];
@@ -255,7 +255,7 @@ function scene(t) {
     const p = POS.youssef;
     const bite = Math.max(P(t, .7, .3, E.ioC) * (1 - P(t, 1.2, .3, E.ioC)), P(t, 1.75, .3, E.ioC) * (1 - P(t, 2.25, .3, E.ioC)));
     let hL = [-34, -24], hR = [lerp(36, 4, bite), lerp(-28, -176, bite)];
-    const dev = t >= 4.0;
+    const dev = t >= 4.7;
     const ex = tapping ? 1 : 0;
     if (dev) {
       const pr = tapping ? press(TAPS.Y, t, .07) : 0;
