@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="planche2.mp4">
+<title>Dawam — La série « Au quotidien »</title>
+<link rel="stylesheet" href="../lib/base.css">
+<!-- Planche des personnages cartoon (référence de style pour les vidéos). -->
+<style>
+#stage{background:radial-gradient(120% 80% at 50% 20%,#FBF3E6 0%,#F5EDE0 45%,#EAD9BE 100%)}
+.ttl{position:absolute;left:0;top:60px;width:1080px;text-align:center;font:800 64px/1 var(--sans);letter-spacing:-2px;color:var(--ink)}
+.ttl em{font:italic 500 66px/1 var(--serif);color:var(--accent)}
+.lbl{position:absolute;width:270px;margin-left:-135px;text-align:center;font:800 23px/1.2 var(--sans);color:var(--ink)}
+.lbl span{display:block;margin-top:6px;font:600 20px/1.2 var(--sans);color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div class="ttl">Au quotidien <em>avec Dawam</em></div>
+  <svg id="sv" class="L" width="1080" height="1920"></svg>
+</div></div>
+<script src="../lib/engine.js"></script>
+<script src="../lib/cartoon.js"></script>
+<script src="../lib/casting.js"></script>
+<script>
+'use strict';
+const X = [135, 405, 675, 945], Y = [440, 875, 1310, 1745], S = .62;
+const L = [
+  ['bilal', 'Bilal, 19 ans', 'le joueur', { hands: { L: [-30, -40], R: [30, -40] }, face: { mouth: 'grin', eyes: 'happy' } }],
+  ['karim', 'Karim, 38 ans', 'papa, le vendredi', { legs: 'cross', hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, face: { look: [0, 4], mouth: 'smile' } }],
+  ['adam', 'Adam, 7 ans', 'son fils', { s: .55, legs: 'cross', hands: { L: [-34, -64], R: [34, -64] }, face: { eyes: 'closed', mouth: 'small' } }],
+  ['sofiane', 'Sofiane, 26 ans', 'livreur', { hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, face: { look: [0, 4], mouth: 'smile' } }],
+  ['mehdi', 'Mehdi, 35 ans', 'papa, le samedi', { hands: { L: [-96, -200], R: [40, -10] }, face: { mouth: 'grin', brow: .4 } }],
+  ['lina', 'Lina, 9 ans', 'sa fille', { s: .58, hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, face: { eyes: 'happy', mouth: 'grin' } }],
+  ['youssef', 'Youssef, 5 ans', 'son fils', { s: .5, hands: { L: [-96, -200], R: [96, -200] }, face: { eyes: 'wide', mouth: 'grin', brow: .6 } }],
+  ['ilyes', 'Ilyes, 21 ans', 'le footeux', { hands: { L: [-40, -10], R: [20, -64] }, phone: 'R', glow: 1, faceLight: .4, face: { eyes: 'wide', mouth: 'o', brow: 1 } }],
+  ['papi', 'Hadj Ahmed, 72 ans', 'le grand-père', { hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, dy: 3, face: { look: [0, 4], mouth: 'smile' } }],
+  ['naim', 'Naïm, 13 ans', 'son petit-fils', { s: .62, hands: { L: [-42, -10], R: [96, -196] }, face: { mouth: 'grin', brow: .4 } }],
+  ['rayan', 'Rayan, 22 ans', "l'étudiant", { hands: { L: [-38, -8], R: [38, -8] }, tilt: 8, face: { lid: .55, mouth: 'wavy', worry: .6 } }],
+  ['yanis', 'Yanis, 24 ans', 'debout la nuit', { legs: 'cross', hands: { L: [-14, -80], R: [14, -80] }, face: { eyes: 'closed', mouth: 'small' } }],
+  ['nassim', 'Nassim, 30 ans', 'au bureau', { hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, face: { eyes: 'happy', mouth: 'smile' } }],
+  ['thomas', 'Thomas', 'son collègue', { hands: { L: [-38, -10], R: [38, -10] }, face: { mouth: 'o', brow: .8, look: [-4, 0] } }],
+  ['ilyesJacket', 'Ilyes', 'après le match', { hands: { L: [-40, -8], R: [36, -40] }, phone: 'R', glow: .4, face: { eyes: 'happy', mouth: 'grin', brow: .3 } }],
+  ['karimWork', 'Karim', 'en semaine', { hands: { L: [-16, -58], R: [16, -60] }, phone: 'both', glow: 1, faceLight: .3, face: { look: [0, 4], mouth: 'smile' } }],
+];
+const R = [];
+function build() {
+  L.forEach(([k, n, d, pose], i) => {
+    const x = X[i % 4], y = Y[Math.floor(i / 4)];
+    const cfg = Object.assign({}, CAST[k], pose.legs ? { legs: pose.legs } : {});
+    R.push({ toon: new Toon($('#sv'), cfg), x, y, pose });
+    const l = document.createElement('div');
+    l.className = 'lbl'; l.style.left = x + 'px'; l.style.top = (y + 100) + 'px';
+    l.innerHTML = `${n}<span>${d}</span>`;
+    $('#stage').appendChild(l);
+  });
+}
+function render(t) {
+  for (const r of R) r.toon.set(Object.assign({ x: r.x, y: r.y, s: S, face: {} }, r.pose, { face: Object.assign({ blink: 0 }, r.pose.face || {}) }));
+}
+boot({ duration: 1, build, render });
+</script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q01-joueur.mp4">
+<title>Dawam — Au quotidien · Le joueur</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — Bilal, 19 ans, en pleine partie : le rappel du soir arrive, il met pause et fait ses invocations du soir. -->
+<style>
+#scene{transform-origin:540px 1230px}
+#dim{background:#0E1020}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:600px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const HIP = [540, 1252], S = 1.3, SEAT_PHONE = [690, 1238];
+
+// salon de nuit : canapé face à nous, la télé est hors champ (devant lui), sa lumière bleue l'éclaire
+function livingRoom(svg) {
+  svg.innerHTML = `
+  <defs>
+    <linearGradient id="lrSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E1433"/><stop offset="1" stop-color="#2A2A5C"/></linearGradient>
+    <radialGradient id="lrLamp"><stop offset="0" stop-color="#FFD59A" stop-opacity=".55"/><stop offset=".5" stop-color="#FFC978" stop-opacity=".16"/><stop offset="1" stop-color="#FFC978" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lrTv" cx="50%" cy="100%" r="80%"><stop offset="0" stop-color="#7FA2FF" stop-opacity=".55"/><stop offset=".6" stop-color="#5B78E0" stop-opacity=".18"/><stop offset="1" stop-color="#5B78E0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lrPh"><stop offset="0" stop-color="#FFF1D2" stop-opacity=".8"/><stop offset="1" stop-color="#FFF1D2" stop-opacity="0"/></radialGradient>
+    <clipPath id="lrGlass"><rect x="716" y="446" width="238" height="330" rx="6"/></clipPath>
+    <mask id="lrMoonM"><circle cx="900" cy="520" r="30" fill="#fff"/><circle cx="915" cy="508" r="26" fill="#000"/></mask>
+  </defs>
+  <rect width="1080" height="1420" fill="#2A2F55"/>
+  <rect y="1150" width="1080" height="270" fill="#252A4D"/><rect y="1146" width="1080" height="10" fill="#323862"/>
+  <rect y="1410" width="1080" height="510" fill="#1D2140"/>
+  <path d="M0 1520H1080M0 1660H1080M0 1830H1080" stroke="#232749" stroke-width="3"/>
+  <ellipse cx="540" cy="1640" rx="470" ry="110" fill="#3A2F52"/><ellipse cx="540" cy="1640" rx="410" ry="84" fill="none" stroke="#4E406A" stroke-width="7"/>
+  <!-- fenêtre -->
+  <rect x="700" y="430" width="270" height="362" rx="14" fill="#353B68" ${OLA}/>
+  <g clip-path="url(#lrGlass)"><rect x="716" y="446" width="238" height="330" fill="url(#lrSky)"/>${starsMarkup(21, 18, 716, 446, 238, 220)}
+    <circle cx="900" cy="520" r="30" fill="#F6E7B8" mask="url(#lrMoonM)"/>
+    <path d="M716 776V700H750V680H786V715H820V660H846V700H880V690H912V720H954V776Z" fill="#0A0E26"/>
+    <rect x="760" y="694" width="8" height="10" fill="#FFD27A" opacity=".8"/><rect x="826" y="676" width="8" height="10" fill="#FFD27A" opacity=".7"/><rect x="890" y="704" width="8" height="10" fill="#FFD27A" opacity=".8"/></g>
+  <rect x="831" y="446" width="8" height="330" fill="#353B68"/>
+  <path d="M684 416L760 416Q748 640 730 820L676 820Q668 620 684 416Z" fill="#43386A" ${OLA}/>
+  <path d="M986 416L910 416Q922 640 940 820L994 820Q1002 620 986 416Z" fill="#43386A" ${OLA}/>
+  <rect x="670" y="404" width="336" height="12" rx="6" fill="#5A5078" ${OLA}/>
+  <!-- calligraphie encadrée -->
+  <rect x="190" y="470" width="300" height="190" rx="12" fill="#4A3F63" ${OLA}/><rect x="208" y="488" width="264" height="154" rx="6" fill="#F2E8DA" opacity=".9"/>
+  <text x="340" y="590" text-anchor="middle" font-family="Amiri" font-weight="700" font-size="70" fill="#B07D2E">الحمد لله</text>
+  <!-- lampadaire -->
+  <circle cx="96" cy="760" r="460" fill="url(#lrLamp)"/>
+  <rect x="91" y="760" width="10" height="650" fill="#5A4A5E"/><ellipse cx="96" cy="1412" rx="56" ry="12" fill="#3C3250"/>
+  <path d="M40 760L152 760L132 670L60 670Z" fill="#F2E3C8" ${OLA}/>
+  <!-- plante -->
+  <path d="M1000 1150Q960 1040 990 960M1004 1150Q1040 1050 1030 970M1002 1150Q990 1060 950 1010M1006 1150Q1050 1080 1064 1030" stroke="#3E7A5A" stroke-width="16" fill="none" stroke-linecap="round"/>
+  <path d="M970 1150L1040 1150L1030 1240L980 1240Z" fill="#B5674A" ${OLA}/>
+  <!-- canapé -->
+  <rect x="150" y="960" width="780" height="300" rx="56" fill="#3E6E7A" ${OLA}/>
+  <rect x="190" y="990" width="340" height="230" rx="44" fill="#4A7F8B" ${OLA}/><rect x="550" y="990" width="340" height="230" rx="44" fill="#4A7F8B" ${OLA}/>
+  <rect x="700" y="1060" width="150" height="130" rx="36" fill="#E2B252" transform="rotate(10 775 1125)" ${OLA}/>
+  <rect x="160" y="1200" width="760" height="120" rx="34" fill="#4A7F8B" ${OLA}/>
+  <rect x="96" y="1050" width="130" height="300" rx="50" fill="#3E6E7A" ${OLA}/><rect x="854" y="1050" width="130" height="300" rx="50" fill="#3E6E7A" ${OLA}/>
+  <rect x="150" y="1300" width="780" height="70" rx="20" fill="#30596A" ${OLA}/>
+  <rect x="180" y="1366" width="30" height="40" rx="6" fill="#2A1E2C"/><rect x="870" y="1366" width="30" height="40" rx="6" fill="#2A1E2C"/>
+  <g id="lrSeatPhone" transform="translate(${SEAT_PHONE[0]} ${SEAT_PHONE[1]}) rotate(-78)"><rect x="-15" y="-29" width="30" height="58" rx="7" fill="#1d1d1f" stroke="#2A1E2C" stroke-width="4"/><rect id="lrPhScr" x="-11" y="-25" width="22" height="50" rx="4" fill="#2b2b30"/></g>
+  <circle id="lrPhGlow" cx="${SEAT_PHONE[0]}" cy="${SEAT_PHONE[1]}" r="200" fill="url(#lrPh)" opacity="0"/>
+  <g id="lrPerson"></g>
+  <!-- table basse au premier plan : chips, verre -->
+  <rect x="200" y="1600" width="680" height="40" rx="14" fill="#6B4A3A" ${OLA}/>
+  <rect x="230" y="1636" width="26" height="150" rx="8" fill="#4E3428"/><rect x="824" y="1636" width="26" height="150" rx="8" fill="#4E3428"/>
+  <path d="M300 1600Q300 1560 360 1556Q420 1560 420 1600Z" fill="#E35D4F" ${OLA}/><path d="M318 1566l20 -14l16 12l22 -16l18 14" stroke="#F6C453" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <rect x="690" y="1540" width="50" height="64" rx="10" fill="#FFFFFF" fill-opacity=".35" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="5"/><rect x="696" y="1566" width="38" height="32" rx="6" fill="#F29E4C" opacity=".85"/>
+  <!-- lumière de la télé (hors champ, devant) -->
+  <rect id="lrTv" x="-100" y="500" width="1280" height="1500" fill="url(#lrTv)" style="mix-blend-mode:screen"/>`;
+  const q = s => svg.querySelector(s);
+  return { person: q('#lrPerson'), tv: q('#lrTv'), seatPhone: q('#lrSeatPhone'), phScr: q('#lrPhScr'), phGlow: q('#lrPhGlow') };
+}
+
+// manette tenue à deux mains (dessinée entre les paumes et les pouces)
+function buildPad(toon) {
+  const g = el('g', {});
+  toon.root.insertBefore(g, toon.gThumbs);
+  g.innerHTML = `<path d="M-46 -14C-62 -14 -70 2 -66 20C-62 34 -50 36 -40 26L-28 14L28 14L40 26C50 36 62 34 66 20C70 2 62 -14 46 -14Z" fill="#2E3140" stroke="#3A2A26" stroke-width="5" stroke-linejoin="round"/>
+    <circle cx="-34" cy="2" r="7" fill="#4A4E60"/><circle cx="30" cy="-2" r="4.5" fill="#5DD39E"/><circle cx="40" cy="6" r="4.5" fill="#F25F5C"/><circle cx="20" cy="6" r="4.5" fill="#4EA8DE"/><circle cx="30" cy="14" r="4.5" fill="#F6C453"/>
+    <rect x="-8" y="-6" width="16" height="6" rx="3" fill="#7A7E92"/>`;
+  return g;
+}
+
+function build() {
+  const st = $('#stage');
+  R.L = livingRoom($('#scene'));
+  R.b = new Toon(R.L.person, Object.assign({}, CAST.bilal));
+  R.pad = buildPad(R.b);
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">🎮 Bilal, 19 ans · 21 h 30</div></div>');
+  R.c1 = cap(st, "POV : t'es en pleine game…", 'w', 350);
+  R.c2 = cap(st, '…et ton tel te rappelle\ntes invocations du soir 🌙', 'w', 300);
+  R.c3 = cap(st, '3 minutes chrono ⏱️', 'k', 330);
+  R.c4 = cap(st, 'La game peut attendre\n3 minutes 😌🤍', 'w', 300);
+  R.notif = el2(st, `<div class="bignotif" style="top:560px"><img src="../assets/img/app-icon.png" alt=""><div style="flex:1"><div class="nt">Dawam 🌇<span>maintenant</span></div><div class="nb">Le soir est là — valide tes actes et prépare ta nuit</div></div></div>`);
+  R.phone = makePhone([scrInvoc('inv', { tab: 'Soir', items: ADHKAR_FIN, base: 5, total: 8, doneTitle: 'Invocations du soir ✓', doneSub: 'Que Allah l\'accepte de toi.' })]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.done = el2(st, '<div class="c" style="top:575px"><div class="sticker gold" style="position:relative;display:inline-block">✓ Invocations du soir · 8/8</div></div>');
+  R.end = tkEnd(st);
+}
+
+// touchers sur la carte : 10 × Al-Ikhlas, puis 3 et 3
+const TAPS = [];
+for (let i = 0; i < 10; i++) TAPS.push(7.0 + i * .14);
+for (const t0 of [8.95, 9.2, 9.45, 10.1, 10.35, 10.6]) TAPS.push(t0);
+
+function scene(t) {
+  $('#scene').style.transform = `scale(${(1.32 + .06 * P(t, 0, 14, E.lin)).toFixed(4)})`;
+  // phases : joue → pause (manette sur les genoux) → attrape le téléphone → lit → reprend la manette
+  const playing = t < 4.7 || t > 12.3;
+  const lapPad = P(t, 4.6, .45, E.ioC) * (1 - P(t, 12.0, .45, E.ioC));
+  const reach = P(t, 5.15, .45, E.ioC) * (1 - P(t, 5.75, .4, E.ioC));
+  const hold = P(t, 5.75, .45, E.ioC) * (1 - P(t, 11.75, .4, E.ioC));
+  const picked = t >= 5.7 && t < 11.95;
+  const mash = playing ? Math.sin(t * 31) * 2.2 + Math.sin(t * 47) * 1.4 : 0;
+  // mains : manette devant le ventre → posée sur les genoux ; main droite vers le téléphone posé sur le canapé
+  const padL = [-30, -44 + mash], padR = [30, -44 - mash];
+  const lapL = [-30, -2], lapR = [30, -2];
+  const sp = [(SEAT_PHONE[0] - HIP[0]) / S, (SEAT_PHONE[1] - HIP[1]) / S - 4];
+  let hL = [lerp(padL[0], lapL[0], lapPad), lerp(padL[1], lapL[1], lapPad)];
+  let hR = [lerp(padR[0], lapR[0], lapPad), lerp(padR[1], lapR[1], lapPad)];
+  hR = [lerp(hR[0], sp[0], reach), lerp(hR[1], sp[1], reach)];
+  hL = [lerp(hL[0], -16, hold), lerp(hL[1], -60, hold)];
+  hR = [lerp(hR[0], 16, hold), lerp(hR[1], -62, hold)];
+  const lean = 12 * reach + Math.sin(t * 2.4) * .6 * (playing ? 1 : .4) + (playing ? Math.sin(t * 5.3) * 1.2 : 0);
+  let face;
+  if (t < 3.3) face = { look: [0, 1], brow: .2, worry: .35, mouth: t % 1.6 < .8 ? 'wavy' : 'flat' };
+  else if (t < 4.7) face = { look: [9, 5], brow: .5 * P(t, 3.3, .2), mouth: 'o' };
+  else if (t < 5.8) face = { look: [8, 6], mouth: 'small' };
+  else if (t < 11.4) face = { look: [0, 4], mouth: 'smile' };
+  else if (t < 12.3) face = { eyes: 'happy', mouth: 'grin' };
+  else face = { look: [0, 1], eyes: t < 13 ? 'happy' : 'open', mouth: 'grin', brow: .2 };
+  const pose = { x: HIP[0], y: HIP[1], s: S, lean, dy: picked ? 4 * hold : 0, t, face, hands: { L: hL, R: hR },
+    phone: picked ? 'both' : null, glow: .95, faceLight: .4 };
+  R.b.set(pose);
+  // la manette suit le milieu des mains, sauf quand il tient le téléphone (elle reste sur ses genoux)
+  const inHands = [(R.b.H.L[0] + R.b.H.R[0]) / 2, (R.b.H.L[1] + R.b.H.R[1]) / 2 + 6];
+  const mid = t > 5.05 && t < 12.0 ? [0, 0] : [lerp(inHands[0], 0, lapPad), lerp(inHands[1], 0, lapPad)];
+  R.pad.setAttribute('transform', `translate(${f1(mid[0])} ${f1(mid[1])}) rotate(${(lean * .4).toFixed(1)})`);
+  // lumière de la télé qui scintille pendant la partie, fixe pendant la pause
+  const flick = playing ? .78 + .22 * Math.sin(t * 7.3) * Math.sin(t * 3.1 + 1) : .62;
+  R.L.tv.setAttribute('opacity', flick.toFixed(3));
+  R.b.tint('#4E66C9', playing ? .1 + .05 * Math.sin(t * 7.3) : .07);
+  // téléphone posé sur le canapé : vibre et s'allume
+  const lit = t < 5.7 ? P(t, 2.7, .2) : 0;
+  const buzz = t > 2.7 && t < 3.6 ? Math.sin(t * 80) * 2.2 : 0;
+  vis(R.L.seatPhone, !picked);
+  R.L.seatPhone.setAttribute('transform', `translate(${f1(SEAT_PHONE[0] + buzz)} ${SEAT_PHONE[1]}) rotate(-78)`);
+  R.L.phScr.setAttribute('fill', mix('#2b2b30', '#FFF4DC', lit));
+  R.L.phGlow.setAttribute('opacity', (.8 * lit).toFixed(3));
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 3.2);
+  pop(R.c1, t, .35, 3.2);
+  const ni = P(t, 3.0, .55, E.outB), no = P(t, 5.3, .35, E.inC);
+  T(R.notif, { y: lerp(-700, 0, ni) - 700 * no, op: ni > 0 && no < 1 ? 1 : 0 });
+  pop(R.c2, t, 3.3, 6.2);
+  // gros plan sur le téléphone : les compteurs descendent jusqu'au ✓
+  T($('#dim'), { op: .55 * P(t, 6.2, .5) * (1 - P(t, 11.9, .5)) });
+  const pin = P(t, 6.3, .9, E.outX), pout = P(t, 11.85, .6, E.inC);
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.0 });
+  drawInvoc($('#inv'), t, TAPS, 5);
+  drawTaps(R.phone, t, TAPS.map(x => [x, 280, 720]));
+  pop(R.c3, t, 6.6, 11.8);
+  pop(R.done, t, 11.95, 14.2);
+  pop(R.c4, t, 12.25, 14.2);
+  drawEnd(R.end, t, 14.25, 540, 1100);
+}
+boot({ duration: 16.5, build, render });
+</script>
+</body>
+</html>

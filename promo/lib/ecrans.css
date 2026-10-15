@@ -1,0 +1,180 @@
+/* Écrans de l'app recréés en HTML (560×1214) pour les vidéos « quotidien » : accueil, invocations, groupes, Qiyam, profil, compteur, Coran.
+   Textes repris de l'app (index.html). À charger après base.css et screens.css. */
+.e{position:absolute;left:0;top:0;width:560px;height:1214px;background:var(--bg);overflow:hidden;font-family:var(--sans);color:var(--ink)}
+.e-pad{position:absolute;left:30px;right:30px}
+.e-k{font:800 15px/1 var(--sans);letter-spacing:2.4px;text-transform:uppercase;color:var(--muted2)}
+.e-h1{font:800 46px/1.05 var(--sans);letter-spacing:-1.4px;color:var(--ink)}
+.e-card{background:#fff;border-radius:30px;box-shadow:0 18px 40px -26px rgba(80,48,8,.45),0 2px 6px rgba(80,48,8,.05)}
+.e-nav{position:absolute;left:0;right:0;bottom:0;height:104px;background:#fff;box-shadow:0 -6px 20px rgba(80,48,8,.06);display:flex;justify-content:space-around;align-items:flex-start;padding-top:22px}
+.e-nav b{font:700 17px/1 var(--sans);color:#A79E90;display:flex;flex-direction:column;align-items:center;gap:7px}
+.e-nav b i{width:30px;height:30px;border-radius:9px;border:3px solid currentColor;display:block}
+.e-nav b.on{color:var(--accent)}
+.e-xp{display:inline-block;padding:5px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font:800 15px/1 var(--sans)}
+.e-cta{position:absolute;left:30px;right:30px;height:84px;border-radius:26px;background:var(--accent);color:#fff;font:800 25px/84px var(--sans);text-align:center;box-shadow:0 16px 30px -14px var(--accent)}
+.e-cta.ok{background:var(--green);box-shadow:0 16px 30px -14px var(--green)}
+.e-ok{width:44px;height:44px;border-radius:50%;border:3px solid #E4D8C4;background:#fff;display:flex;align-items:center;justify-content:center;flex:none;position:relative}
+.e-ok i{position:absolute;inset:-3px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;opacity:0}
+.e-ok svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* accueil */
+.e-acc .hello{top:110px}
+.e-acc .hello .s{font:italic 500 26px/1 var(--serif);color:var(--accent)}
+.e-acc .hello .n{margin-top:8px}
+.e-acc .prog{top:228px;height:128px;display:flex;align-items:center;gap:22px;padding:0 26px}
+.e-acc .ring{width:84px;height:84px;position:relative;flex:none}
+.e-acc .ring svg{width:84px;height:84px;transform:rotate(-90deg)}
+.e-acc .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 30px/1 var(--sans);color:var(--accent)}
+.e-acc .prog .t{font:800 29px/1.1 var(--sans);letter-spacing:-.6px}
+.e-acc .prog .u{margin-top:6px;font:600 19px/1.2 var(--sans);color:var(--muted)}
+.e-acc .jchip{top:380px;display:flex;justify-content:center}
+.e-acc .jchip span{padding:12px 20px;border-radius:99px;background:linear-gradient(135deg,#2F6B66,#24504B);color:#FFF3D6;font:800 20px/1 var(--sans);box-shadow:0 12px 24px -12px #24504B}
+.e-acc .sec{font:800 15px/1 var(--sans);letter-spacing:2.4px;text-transform:uppercase;color:var(--muted2);margin:26px 4px 14px}
+.e-acc .row{height:104px;display:flex;align-items:center;gap:18px;padding:0 22px;margin-bottom:14px}
+.e-acc .row .tile{width:62px;height:62px;border-radius:18px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:32px;flex:none}
+.e-acc .row .tt{flex:1;font:800 23px/1.15 var(--sans);letter-spacing:-.4px}
+.e-acc .row .tt .e-xp{margin-top:7px}
+.e-acc .row.now{box-shadow:0 0 0 3px var(--accent),0 18px 40px -26px rgba(80,48,8,.45)}
+
+/* invocations (onglets Matin / Soir / Dhikr) */
+.e-inv .top{top:100px;display:flex;justify-content:space-between;align-items:flex-end}
+.e-inv .top .r{text-align:right;font:800 15px/1.3 var(--sans);letter-spacing:1.6px;color:var(--accent)}
+.e-inv .top .r span{display:block;letter-spacing:0;font:600 15px/1.3 var(--sans);color:var(--muted)}
+.e-inv .tabs{top:206px;display:flex;gap:12px}
+.e-inv .tabs b{padding:13px 24px;border-radius:99px;font:800 20px/1 var(--sans);color:#8B7A62}
+.e-inv .tabs b.on{background:var(--accent);color:#fff}
+.e-inv .serie{top:280px;height:84px;border-radius:22px;background:#FBF2E2;padding:16px 22px}
+.e-inv .serie .k{font:800 15px/1 var(--sans);letter-spacing:2px;color:var(--accent)}
+.e-inv .serie .v{margin-top:8px;font:700 17px/1 var(--sans);color:var(--ink)}
+.e-inv .serie .bar{position:absolute;left:22px;width:300px;bottom:14px;height:5px;border-radius:9px;background:#EADFCB;overflow:hidden}
+.e-inv .serie .bar i{display:block;height:100%;background:var(--accent)}
+.e-inv .serie .pill{position:absolute;right:20px;top:24px;padding:9px 14px;border-radius:99px;background:var(--accent);color:#fff;font:800 17px/1 var(--sans)}
+.e-inv .tip{top:386px;font:500 17px/1.4 var(--sans);color:var(--muted)}
+.e-inv .stack{top:446px;height:640px}
+.e-inv .icard{position:absolute;left:0;right:0;top:0;padding:28px 26px;border-radius:30px}
+.e-inv .icard .hd{display:flex;gap:16px;align-items:center}
+.e-inv .icard .cnt{width:60px;height:60px;border-radius:50%;border:4px solid var(--accent-soft);display:flex;align-items:center;justify-content:center;font:800 22px/1 var(--sans);color:var(--accent);flex:none;position:relative;background:#fff}
+.e-inv .icard .cnt i{position:absolute;inset:-4px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;opacity:0}
+.e-inv .icard .cnt i svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.e-inv .icard .kk{font:800 14px/1 var(--sans);letter-spacing:2px;color:var(--muted2)}
+.e-inv .icard .tt{margin-top:6px;font:800 23px/1.1 var(--sans)}
+.e-inv .icard .ar{margin-top:16px;font:400 32px/1.85 var(--ar);direction:rtl;text-align:right;color:var(--ink)}
+.e-inv .icard .ph{margin-top:8px;font:italic 500 17px/1.45 var(--sans);color:var(--accent)}
+.e-inv .icard .fr{margin-top:10px;font:500 18px/1.5 var(--sans);color:#4E4232}
+.e-inv .icard .ft{margin-top:16px;display:flex;justify-content:space-between;align-items:center;font:italic 500 15px/1 var(--sans);color:var(--muted)}
+.e-inv .icard .ft b{padding:7px 12px;border-radius:99px;background:var(--green-soft);color:var(--green);font:800 15px/1 var(--sans);font-style:normal}
+.e-inv .done{position:absolute;left:0;right:0;top:120px;text-align:center}
+.e-inv .done .big{width:150px;height:150px;margin:0 auto;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;box-shadow:0 24px 40px -18px var(--green)}
+.e-inv .done .big svg{width:80px;height:80px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.e-inv .done .t{margin-top:30px;font:800 34px/1.1 var(--sans);letter-spacing:-.8px}
+.e-inv .done .s{margin-top:12px;font:italic 500 23px/1.35 var(--serif);color:var(--accent)}
+
+/* séance de dhikr : réglage des durées */
+.e-ds .hd{top:110px}
+.e-ds .hd .s{margin-top:12px;font:600 20px/1.3 var(--sans);color:var(--muted)}
+.e-ds .rows{top:270px}
+.e-ds .row{height:128px;margin-bottom:16px;display:flex;align-items:center;gap:16px;padding:0 22px}
+.e-ds .row .em{width:62px;height:62px;border-radius:18px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:30px;flex:none}
+.e-ds .row .tt{flex:1;font:800 22px/1.15 var(--sans)}
+.e-ds .row .tt span{display:block;margin-top:6px;font:600 16px/1 var(--sans);color:var(--muted)}
+.e-ds .row .ctl{display:flex;align-items:center;gap:10px}
+.e-ds .row .ctl b{width:40px;height:40px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font:800 26px/40px var(--sans);text-align:center}
+.e-ds .row .ctl .m{width:62px;text-align:center;font:800 24px/1 var(--sans);font-variant-numeric:tabular-nums}
+.e-ds .tot{top:740px;text-align:center;font:700 22px/1 var(--sans);color:var(--muted)}
+.e-ds .tot b{font:800 44px/1 var(--sans);color:var(--ink);letter-spacing:-1px;margin-left:8px}
+
+/* groupe de dhikr collectif */
+.e-grp .hd{top:104px}
+.e-grp .hd .s{margin-top:8px;font:600 19px/1 var(--sans);color:var(--muted)}
+.e-grp .code{position:absolute;right:30px;top:118px;padding:10px 14px;border-radius:14px;background:#fff;font:800 18px/1 var(--sans);letter-spacing:2px;color:var(--accent);box-shadow:0 8px 20px -12px rgba(80,48,8,.5)}
+.e-grp .main{top:220px;padding:30px 26px;text-align:center}
+.e-grp .main .dk{font:800 15px/1 var(--sans);letter-spacing:2.2px;color:var(--muted2);text-transform:uppercase}
+.e-grp .main .ar{margin-top:20px;font:700 38px/1.4 var(--ar);color:var(--accent);direction:rtl}
+.e-grp .main .num{margin-top:14px;font:800 118px/1 var(--sans);letter-spacing:-5px;font-variant-numeric:tabular-nums}
+.e-grp .main .of{margin-top:6px;font:700 22px/1 var(--sans);color:var(--muted)}
+.e-grp .main .bar{margin:24px 0 0;height:16px;border-radius:99px;background:var(--accent-soft);overflow:hidden}
+.e-grp .main .bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.e-grp .main .pct{margin-top:12px;font:800 22px/1 var(--sans);color:var(--accent)}
+.e-grp .mem{top:676px}
+.e-grp .mrow{height:74px;display:flex;align-items:center;gap:16px;padding:0 18px;margin-bottom:10px;border-radius:22px;background:#fff}
+.e-grp .mrow .av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 19px/1 var(--sans);color:#fff;flex:none}
+.e-grp .mrow .nm{flex:1;font:800 20px/1 var(--sans)}
+.e-grp .mrow .c{font:800 20px/1 var(--sans);color:var(--accent);font-variant-numeric:tabular-nums}
+.e-grp .tapb{bottom:150px}
+.e-grp .win{position:absolute;inset:0;background:rgba(245,237,224,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0}
+.e-grp .win .em{font-size:110px;line-height:1}
+.e-grp .win .t{margin-top:24px;font:800 48px/1.05 var(--sans);letter-spacing:-1.4px;color:var(--accent)}
+.e-grp .win .s{margin-top:14px;font:800 26px/1.3 var(--sans);color:var(--ink)}
+
+/* Qiyam entre frères */
+.e-qy{background:#1E2142;color:#F5EDE0}
+.e-qy .hd{top:104px}
+.e-qy .hd .e-k{color:#9C97C2}
+.e-qy .hd .e-h1{color:#FFF3D6;font-size:40px}
+.e-qy .moon{position:absolute;right:34px;top:104px;font-size:54px}
+.e-qy .defi{top:262px;height:70px;border-radius:20px;background:rgba(255,243,214,.1);display:flex;align-items:center;justify-content:center;font:800 20px/1 var(--sans);color:#F6DCA0}
+.e-qy .list{top:356px}
+.e-qy .mrow{height:96px;display:flex;align-items:center;gap:16px;padding:0 20px;margin-bottom:12px;border-radius:24px;background:rgba(255,255,255,.07)}
+.e-qy .mrow .av{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 21px/1 var(--sans);color:#fff;flex:none}
+.e-qy .mrow .nm{flex:1;font:800 22px/1 var(--sans)}
+.e-qy .mrow .nm span{display:block;margin-top:7px;font:700 16px/1 var(--sans);color:#B7B2D8}
+.e-qy .mrow .st{font:800 17px/1 var(--sans);color:#7FD6A6;text-align:right}
+.e-qy .mrow .st.no{color:#8E89B4}
+.e-qy .mrow.me{background:rgba(234,200,118,.14);box-shadow:inset 0 0 0 2px rgba(234,200,118,.5)}
+.e-qy .btn{bottom:150px;background:linear-gradient(135deg,#EAC876,#C8871F);font-size:23px}
+.e-qy .btn.ok{background:var(--green)}
+
+/* profil */
+.e-pro .head{position:absolute;left:0;right:0;top:0;height:420px;background:var(--hero-grad);border-radius:0 0 40px 40px}
+.e-pro .head .k{position:absolute;left:34px;top:108px;font:800 16px/1 var(--sans);letter-spacing:3px;color:rgba(255,248,232,.8)}
+.e-pro .head .av{position:absolute;left:40px;top:160px;width:104px;height:104px;border-radius:50%;background:var(--warm-grad);border:4px solid rgba(255,248,232,.6);display:flex;align-items:center;justify-content:center;font:800 46px/1 var(--sans);color:#fff}
+.e-pro .head .nm{position:absolute;left:170px;top:170px;font:800 40px/1 var(--sans);color:#FFF8E8;letter-spacing:-1px}
+.e-pro .head .pl{position:absolute;left:170px;top:224px;display:flex;gap:10px}
+.e-pro .head .pl b{padding:8px 14px;border-radius:99px;background:rgba(255,248,232,.18);font:800 17px/1 var(--sans);color:#FFF8E8}
+.e-pro .head .cs{position:absolute;left:40px;right:40px;top:310px;font:700 18px/1 var(--sans);color:#FFF8E8;display:flex;justify-content:space-between}
+.e-pro .head .cb{position:absolute;left:40px;right:40px;top:342px;height:9px;border-radius:9px;background:rgba(255,248,232,.25);overflow:hidden}
+.e-pro .head .cb i{display:block;height:100%;background:#FFF8E8}
+.e-pro .stats{top:450px;display:flex;gap:14px}
+.e-pro .stats .e-card{flex:1;height:176px;padding:20px 18px}
+.e-pro .stats .ic{width:40px;height:40px;border-radius:12px;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:20px}
+.e-pro .stats .v{margin-top:16px;font:800 40px/1 var(--sans);letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
+.e-pro .stats .l{margin-top:8px;font:800 13px/1 var(--sans);letter-spacing:1.6px;color:var(--muted2);text-transform:uppercase}
+.e-pro .msg{top:660px;padding:22px 24px;font:800 24px/1.25 var(--sans);text-align:center;color:var(--accent)}
+.e-pro .bt{top:780px;font:800 28px/1 var(--sans)}
+.e-pro .badges{top:830px;display:flex;gap:14px}
+.e-pro .badges .e-card{flex:1;height:160px;padding:18px 16px}
+.e-pro .badges .ic{width:46px;height:46px;border-radius:13px;background:var(--warm-grad);display:flex;align-items:center;justify-content:center;font-size:24px}
+.e-pro .badges .lk .ic{background:#EFE8DC;filter:grayscale(1);opacity:.7}
+.e-pro .badges .n{margin-top:14px;font:800 19px/1.15 var(--sans)}
+.e-pro .badges .s{margin-top:6px;font:600 15px/1 var(--sans);color:var(--muted)}
+
+/* compteur guidé (Salawat, Tahlil…) */
+.e-cpt .hd{position:absolute;left:0;right:0;top:0;height:330px;background:var(--warm-grad);color:#fff;padding:120px 30px 0}
+.e-cpt .hd .k{font:800 16px/1 var(--sans);letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.e-cpt .hd .t{margin-top:12px;font:800 32px/1.08 var(--sans);letter-spacing:-.8px}
+.e-cpt .ar{top:372px;text-align:center;font:700 40px/1.5 var(--ar);color:var(--ink);direction:rtl}
+.e-cpt .circ{position:absolute;left:100px;top:470px;width:360px;height:360px}
+.e-cpt .circ svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.e-cpt .circ .v{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.e-cpt .circ .v b{font:800 104px/1 var(--sans);letter-spacing:-4px;font-variant-numeric:tabular-nums}
+.e-cpt .circ .v span{margin-top:6px;font:700 22px/1 var(--sans);color:var(--muted)}
+.e-cpt .ms{top:870px;display:flex;justify-content:center;gap:14px}
+.e-cpt .ms b{padding:11px 18px;border-radius:99px;background:#EFE6D6;color:#A79E90;font:800 19px/1 var(--sans)}
+.e-cpt .ms b.on{background:var(--green);color:#fff}
+.e-cpt .hint{top:950px;text-align:center;font:600 18px/1 var(--sans);color:var(--muted)}
+
+/* lecture du Coran (chrono) */
+.e-qr .hd{position:absolute;left:0;right:0;top:0;height:330px;background:linear-gradient(160deg,#2F6B66,#1F4A46);color:#fff;padding:120px 30px 0}
+.e-qr .hd .k{font:800 16px/1 var(--sans);letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.e-qr .hd .t{margin-top:12px;font:800 38px/1.08 var(--sans);letter-spacing:-.8px}
+.e-qr .sc{top:370px;padding:30px 26px;text-align:center}
+.e-qr .sc .ar{font:700 50px/1.5 var(--ar);color:#2F6B66;direction:rtl}
+.e-qr .sc .n{margin-top:4px;font:800 28px/1 var(--sans)}
+.e-qr .sc .d{margin-top:14px;font:500 19px/1.5 var(--sans);color:#4E4232}
+.e-qr .tm{top:720px;text-align:center}
+.e-qr .tm b{display:block;font:800 110px/1 var(--sans);letter-spacing:-4px;font-variant-numeric:tabular-nums}
+.e-qr .tm span{display:block;margin-top:10px;font:700 20px/1 var(--sans);color:var(--muted)}
+
+/* message d'invitation (messagerie générique) */
+.e-bub{position:absolute;max-width:430px;padding:18px 22px;border-radius:26px 26px 26px 8px;background:#fff;font:600 21px/1.4 var(--sans);color:#1d1d1f;box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
+.e-bub.me{border-radius:26px 26px 8px 26px;background:#DCF5C8}
+.e-bub .who{font:800 16px/1 var(--sans);color:#2F8F6B;margin-bottom:6px}

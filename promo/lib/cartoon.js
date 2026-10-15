@@ -161,6 +161,27 @@ class Toon {
       this.S_('path', { d: 'M-52 -96h22v18q0 4 -4 4h-14q-4 0 -4 -4z' }, g, top, 1.6);
     } else if (c.collar === 'tee') {
       this.line('M-24 -144Q0 -120 24 -144', dk2, 4, g);
+    } else if (c.collar === 'hoodie') {
+      // poche ventrale, cordons et capuche roulée autour du cou
+      this.S_('path', { d: 'M-46 -54Q0 -60 46 -54L54 -10Q0 -4 -54 -10Z' }, g, dk, 2.6);
+      this.line('M-30 -52Q-38 -32 -50 -14M30 -52Q38 -32 50 -14', dk2, 3, g);
+      for (const sg of [-1, 1]) {
+        this.line(`M${sg * 14} -128Q${sg * 18} -104 ${sg * 15} -82`, shade(top, .55), 4, g);
+        this.S_('rect', { x: sg * 15 - 3.5, y: -84, width: 7, height: 11, rx: 3 }, g, shade(top, .55), 1.6);
+      }
+      this.tube(g, 20, top, 'M-60 -160Q-70 -128 -40 -124Q0 -116 40 -124Q70 -128 60 -160');
+    } else if (c.collar === 'zip') {
+      // veste de survêtement : col montant, fermeture éclair, bandes sur les côtés
+      const st = c.stripe || '#FFFFFF';
+      for (const sg of [-1, 1]) this.line(`M${sg * 58} -118Q${sg * 66} -60 ${sg * 70} 4`, st, 7, g);
+      this.line('M0 -136V10', dk2, 4, g);
+      this.line('M0 -136V10', shade(top, .45), 1.6, g, { 'stroke-dasharray': '3 4' });
+      this.S_('rect', { x: -5, y: -112, width: 10, height: 16, rx: 3 }, g, '#D8D8D8', 1.6);
+      this.S_('path', { d: 'M-34 -150Q0 -138 34 -150L30 -128Q0 -118 -30 -128Z' }, g, shade(top, -.08), 2.6);
+    }
+    if (c.neckphones) {   // casque posé autour du cou
+      this.tube(g, 9, shade(c.neckphones, -.2), 'M-48 -142Q0 -118 48 -142');
+      for (const sg of [-1, 1]) this.S_('ellipse', { cx: sg * 46, cy: -138, rx: 15, ry: 19, transform: `rotate(${sg * 18} ${sg * 46} -138)` }, g, c.neckphones, 3.4);
     }
   }
 
@@ -191,7 +212,7 @@ class Toon {
       this.P_('path', { d: HEAD + circleD(-12, -14, 93), 'fill-rule': 'evenodd', fill: skD }, sh);
       this.light = el('ellipse', { cx: 0, cy: 80, rx: 110, ry: 84, fill: `url(#${this.id}-light)`, opacity: 0 }, sh);
       this.P_('path', { d: HAIR_F, fill: skD, transform: 'translate(0 9)' }, sh);   // ombre de la frange
-      if (c.tuft !== false) this.S_('path', { d: TUFT }, h, hair);
+      if (c.tuft !== false && !c.cap) this.S_('path', { d: TUFT }, h, hair);
       this.S_('path', { d: HAIR_F }, h, hair);
     } else {
       this.S_('path', { d: HAIR_B }, h, hair);
@@ -202,6 +223,20 @@ class Toon {
       const ks = el('g', { 'clip-path': this.clip('kufi', KUFI) }, h);
       this.P_('path', { d: 'M30 -124C70 -94 82 -62 78 -30L130 -30L130 -124Z', fill: shade(c.kufi, -.1) }, ks);
       this.line('M-73 -45C-40 -57 40 -57 73 -45', c.kufiBand, 4.5, h, { 'stroke-dasharray': '.5 8' });
+    }
+    if (c.cap && front) {   // casquette, visière vers nous
+      const CAP = 'M-86 -46C-90 -104 -46 -118 0 -118C46 -118 90 -104 86 -46C40 -58 -40 -58 -86 -46Z';
+      this.S_('path', { d: CAP }, h, c.cap);
+      const cs = el('g', { 'clip-path': this.clip('cap', CAP) }, h);
+      this.P_('path', { d: 'M30 -128C70 -98 84 -66 82 -40L130 -40L130 -128Z', fill: shade(c.cap, -.12) }, cs);
+      this.line('M0 -118V-56', shade(c.cap, -.2), 3, h);
+      this.S_('circle', { cx: 0, cy: -116, r: 6 }, h, shade(c.cap, -.1), 2.4);
+      this.S_('path', { d: 'M-80 -52Q0 -66 80 -52Q86 -36 70 -31Q0 -42 -70 -31Q-86 -36 -80 -52Z' }, h, shade(c.cap, -.18));
+      if (c.capLogo) this.S_('circle', { cx: 0, cy: -84, r: 11 }, h, c.capLogo, 2.4);
+    }
+    if (c.headphones && front) {   // casque sur les oreilles
+      this.tube(h, 12, shade(c.headphones, -.2), 'M-84 -10C-96 -110 96 -110 84 -10');
+      for (const sg of [-1, 1]) this.S_('rect', { x: sg * 90 - 15, y: -16, width: 30, height: 46, rx: 14 }, h, c.headphones, 4);
     }
   }
   buildHijab(h, front) {
@@ -232,8 +267,13 @@ class Toon {
     if (c.beard) {
       const bg = el('g', { 'clip-path': this.clip('beard', circleD(0, 0, TOON.R + 2)) }, f);
       const bc = c.beardColor || mix(c.hair, c.skin, .22);
-      this.S_('path', { d: BEARD }, bg, bc, 3);
-      this.S_('path', { d: 'M-14 31C-7 25 7 25 14 31C9 34 -9 34 -14 31Z' }, f, bc, 2.2);   // moustache
+      if (c.beard === 'stubble') {   // barbe naissante (jeune)
+        this.P_('path', { d: BEARD, fill: bc, opacity: .38 }, bg);
+        this.P_('path', { d: 'M-14 31C-7 25 7 25 14 31C9 34 -9 34 -14 31Z', fill: bc, opacity: .5 }, f);
+      } else {
+        this.S_('path', { d: BEARD }, bg, bc, 3);
+        this.S_('path', { d: 'M-14 31C-7 25 7 25 14 31C9 34 -9 34 -14 31Z' }, f, bc, 2.2);   // moustache
+      }
     }
     this.eyes = [-1, 1].map(sg => this.buildEye(f, sg));
     if (c.glasses) {
