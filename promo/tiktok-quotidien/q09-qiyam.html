@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q09-qiyam.mp4">
+<title>Dawam — Au quotidien · Le Qiyam</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — Yanis, 24 ans, finit sa prière de la nuit (dernier tiers), ouvre le groupe Qiyam « Les frères » et coche « J'ai fait le Qiyam cette nuit ». -->
+<style>
+#scene{transform-origin:540px 1832px}
+#dim{background:#0E1020}
+.e-qy .mrow{transition:none}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:600px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const MAT = { x: 540, y: 1660, s: 1.35 };   // Yanis assis en tailleur sur le tapis, face à nous
+const TAP = 6.2, SOF = 8.4;                 // toucher du bouton ; Sofiane passe à « Fait »
+const MEMBERS = [
+  ['Y', '#B07D2E', 'Yanis (moi)', 4, 1, null],
+  ['B', CAST.bilal.top, 'Bilal', 6, 2, '03:58'],
+  ['I', CAST.ilyes.top, 'Ilyes', 3, 2, '04:20'],
+  ['S', CAST.sofiane.top, 'Sofiane', 5, 1, null],
+];
+
+function build() {
+  const st = $('#stage');
+  R.D = dawnRoom($('#scene'));
+  R.y = new Toon(R.D.person, Object.assign({}, CAST.yanis, { legs: 'cross' }));
+  // téléphone posé sur les genoux pendant l'invocation
+  R.lapPhone = el('g', {}, R.D.front);
+  R.lapPhone.innerHTML = '<rect x="-30" y="-11" width="60" height="22" rx="7" fill="#2B2A33" stroke="#3A2A26" stroke-width="5"/><rect x="-24" y="-6" width="48" height="12" rx="4" fill="#45444F"/>';
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">🌙 Yanis, 24 ans · 04:46</div></div>');
+  R.c1 = cap(st, 'Groupe Qiyam\navec les frères 🌙', 'w', 350);
+  R.c2 = cap(st, 'Bilal et Ilyes l\'ont\ndéjà fait 👀', 'w', 330);
+  R.c3 = cap(st, 'Personne veut être\nle seul à dormir 😅', 'w', 330);
+  R.c4 = cap(st, 'On se tire\nvers le haut 🤍', 'k', 350);
+  R.phone = makePhone([scrQiyam('qy', { name: 'Les frères', members: MEMBERS, me: 0 })], '', '#fff');
+  $('#phoneWrap').appendChild(R.phone);
+  R.fire = el2(st, '<div class="c" style="top:900px"><div class="sticker gold" style="position:relative;display:inline-block">🔥 +1</div></div>');
+  R.end = tkEnd(st);
+}
+
+function scene(t) {
+  $('#scene').style.transform = `scale(${(1.52 + .05 * P(t, 0, 14, E.lin)).toFixed(4)})`;
+  // dernier tiers de la nuit : étoiles, lune, pas de soleil
+  paint(R.D.pal, .1);
+  R.D.stars.setAttribute('opacity', (.85 + .15 * Math.sin(t * 1.3)).toFixed(3));
+  R.D.moon.setAttribute('opacity', 1);
+  R.D.moon.setAttribute('transform', 'translate(60 320)');   // lune descendue dans la fenêtre pour rester dans le cadre
+  R.D.sun.setAttribute('opacity', 0); R.D.sunGlow.setAttribute('opacity', 0); R.D.shaft.setAttribute('opacity', 0);
+  // invocation (mains levées) → mains sur les genoux → prend le téléphone → lit → le repose → mains levées, reconnaissant
+  const down = P(t, 1.75, .5, E.ioC);
+  const grab = P(t, 2.4, .35, E.ioC);
+  const hold = P(t, 2.75, .45, E.ioC) * (1 - P(t, 10.1, .45, E.ioC));
+  const picked = t >= 2.72 && t < 10.5;
+  const dua2 = P(t, 11.6, .6, E.ioC);
+  const lap = [36, -4];
+  let hL = [lerp(-14, -40, down), lerp(-80, -6, down)], hR = [lerp(14, 40, down), lerp(-80, -6, down)];
+  hR = [lerp(hR[0], lap[0], grab), lerp(hR[1], lap[1] - 4, grab)];
+  hL = [lerp(hL[0], -16, hold), lerp(hL[1], -60, hold)];
+  hR = [lerp(hR[0], 16, hold), lerp(hR[1], -62, hold)];
+  if (t >= 10.5) { hL = [lerp(-40, -14, dua2), lerp(-6, -80, dua2)]; hR = [lerp(40, 14, dua2), lerp(-6, -80, dua2)]; }
+  const after = P(t, 10.1, .45, E.ioC);
+  if (t >= 10.1 && t < 10.5) { hR = [lerp(16, lap[0], after), lerp(-62, lap[1] - 4, after)]; hL = [lerp(-16, -40, after), lerp(-60, -6, after)]; }
+  let face;
+  if (t < 1.9) face = { eyes: 'closed', mouth: 'small', brow: .1 };
+  else if (t < 2.5) face = { mouth: 'smile', look: [0, 3] };
+  else if (t < 3.4) face = { look: [3, 6], mouth: 'smile', brow: .3 };
+  else if (t < TAP) face = { look: [0, 5], mouth: t < 4.6 ? 'o' : 'smile', brow: .4 * (1 - P(t, 4.6, .4)) };
+  else if (t < 10.3) face = t < 8.6 ? { eyes: 'happy', mouth: 'grin' } : { look: [0, 5], mouth: 'grin', brow: .5 };
+  else if (t < 11.6) face = { eyes: 'happy', mouth: 'grin' };
+  else face = { eyes: 'closed', mouth: 'smile' };
+  const pose = Object.assign({}, MAT, { lean: Math.sin(t * 1.8) * .5 + (picked ? 0 : 0), dy: picked ? 4 * hold : 0, t, face, hands: { L: hL, R: hR },
+    phone: picked ? 'both' : null, glow: .95, faceLight: picked ? .5 : 0 });
+  R.y.set(pose);
+  R.y.tint('#191B3A', .32);
+  // téléphone sur les genoux, allumé quand il le prend
+  vis(R.lapPhone, !picked);
+  R.lapPhone.setAttribute('transform', `translate(${f1(MAT.x + 36 * MAT.s)} ${f1(MAT.y - 4 * MAT.s)}) rotate(-6)`);
+  const pw = R.y.phoneWorld(pose);
+  R.D.glow.setAttribute('cx', f1(pw[0])); R.D.glow.setAttribute('cy', f1(pw[1]));
+  R.D.glow.setAttribute('opacity', picked ? (.6 * hold).toFixed(3) : 0);
+}
+
+function qiyam(t) {
+  const root = $('#qy');
+  drawQiyam(root, P(t, TAP + .15, .3), 0, '04:47', MEMBERS[0][3]);
+  // Sofiane se lève à son tour, juste après
+  const so = root.querySelectorAll('.mrow')[3], on = t >= SOF;
+  const st = so.querySelector('.st');
+  st.className = 'st' + (on ? '' : ' no');
+  st.textContent = on ? '✓ Fait à 04:49' : 'pas encore';
+  so.querySelector('.sk').textContent = on ? MEMBERS[3][3] + 1 : MEMBERS[3][3];
+  const pulse = P(t, SOF, .2) * (1 - P(t, SOF + .25, .5));
+  T(so, { s: 1 + .04 * pulse });
+  so.style.boxShadow = on ? `inset 0 0 0 2px rgba(127,214,166,${(.25 + .55 * pulse).toFixed(2)})` : 'none';
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 3.1);
+  pop(R.c1, t, .35, 3.1);
+  // gros plan sur le groupe Qiyam
+  T($('#dim'), { op: .55 * P(t, 3.15, .5) * (1 - P(t, 9.95, .5)) });
+  const pin = P(t, 3.25, .9, E.outX), pout = P(t, 9.9, .6, E.inC);
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.0 });
+  qiyam(t);
+  drawTaps(R.phone, t, [[TAP, 280, 1022]]);
+  pop(R.c2, t, 3.7, TAP);
+  pop(R.fire, t, TAP + .35, 8.2, { x: 150, r: -4 });
+  pop(R.c3, t, 6.6, 9.85);
+  pop(R.c4, t, 10.4, 13.6);
+  drawEnd(R.end, t, 13.65, 540, 1100);
+}
+boot({ duration: 15.9, build, render });
+</script>
+</body>
+</html>

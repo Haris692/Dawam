@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="video-output" content="dawam-q05-footeux.mp4">
+<title>Dawam — Au quotidien · Le footeux</title>
+<link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
+<!-- Au quotidien avec Dawam — Ilyes, 21 ans, après le five du samedi : il voit sa série de 12 jours, fait ses 100 Salawat sur le banc, la série passe à 13. -->
+<style>
+#scene{transform-origin:470px 1250px}
+#dim{background:#1E1226}
+.ff{position:absolute;left:0;width:1080px;text-align:center}
+.ff b{display:inline-block;padding:10px 22px;border-radius:99px;background:rgba(12,10,8,.72);color:#fff;font:800 32px/1 var(--tk)}
+.e-pro .stats .e-card:nth-child(2){transform-origin:50% 50%}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <svg id="scene" class="L" width="1080" height="1920"></svg>
+  <div id="dim" class="L full"></div>
+  <div id="phoneWrap" class="L" style="left:244px;top:600px;width:592px;height:1246px"></div>
+  <div id="black" class="L full" style="background:#000"></div>
+</div></div>
+<script src="../lib/engine.js"></script><script src="../lib/screens.js"></script><script src="../lib/ecrans.js"></script>
+<script src="../lib/cartoon.js"></script><script src="../lib/decor.js"></script><script src="../lib/casting.js"></script><script src="../tiktok/tk.js"></script>
+<script>
+'use strict';
+const R = {};
+const HIP = [410, 1250], S = 1.42;
+const BOTTLE_SEAT = [92, -30];   // bouteille posée sur le banc, à sa gauche (repère du bassin)
+
+// city stade au coucher du soleil : ciel orange-rose, grillage, but, projecteurs qui s'allument, banc
+function cityPitch(svg) {
+  const flood = (x, id) => `
+    <rect x="${x - 8}" y="430" width="16" height="760" rx="5" fill="#4A3E5A" ${OLA}/>
+    <rect x="${x - 62}" y="380" width="124" height="70" rx="8" fill="#4A3E5A" ${OLA}/>
+    <g id="${id}">${[0, 1, 2, 3].map(i => [0, 1].map(j => `<rect x="${x - 54 + i * 28}" y="${388 + j * 30}" width="24" height="24" rx="5" fill="#CFC6BC"/>`).join('')).join('')}</g>`;
+  svg.innerHTML = `
+  <defs>
+    <linearGradient id="cpSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A4790"/><stop offset=".35" stop-color="#B85F95"/><stop offset=".7" stop-color="#F08A78"/><stop offset="1" stop-color="#FFC27A"/></linearGradient>
+    <radialGradient id="cpSun"><stop offset="0" stop-color="#FFE6A8" stop-opacity=".95"/><stop offset=".35" stop-color="#FFB870" stop-opacity=".45"/><stop offset="1" stop-color="#FFB870" stop-opacity="0"/></radialGradient>
+    <radialGradient id="cpFl"><stop offset="0" stop-color="#FFF6D6" stop-opacity=".85"/><stop offset=".4" stop-color="#FFF0C0" stop-opacity=".25"/><stop offset="1" stop-color="#FFF0C0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="cpPh"><stop offset="0" stop-color="#FFF1D2" stop-opacity=".7"/><stop offset="1" stop-color="#FFF1D2" stop-opacity="0"/></radialGradient>
+    <pattern id="cpMesh" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M0 0L34 34M34 0L0 34" stroke="#3E3350" stroke-width="2.4" opacity=".45"/></pattern>
+    <pattern id="cpNet" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M0 0H22M0 0V22" stroke="#FFFFFF" stroke-width="2" opacity=".55"/></pattern>
+  </defs>
+  <rect width="1080" height="1140" fill="url(#cpSky)"/>
+  <circle cx="800" cy="860" r="260" fill="url(#cpSun)"/>
+  <circle cx="800" cy="880" r="70" fill="#FFE2A0" opacity=".95"/>
+  <!-- ville au loin -->
+  <path d="M0 960V850H70V800H150V870H220V760H300V830H380V780H460V860H540V740H620V820H690V790H780V880H860V800H940V850H1010V770H1080V960Z" fill="#7A4C7E" opacity=".85"/>
+  <path d="M0 990V910H110V880H200V930H320V890H430V940H560V900H680V930H800V895H920V935H1080V990Z" fill="#69406E"/>
+  <!-- projecteurs -->
+  ${flood(130, 'cpFl1')}${flood(960, 'cpFl2')}
+  <circle id="cpGlow1" cx="130" cy="420" r="320" fill="url(#cpFl)" opacity="0"/>
+  <circle id="cpGlow2" cx="960" cy="420" r="320" fill="url(#cpFl)" opacity="0"/>
+  <!-- grillage -->
+  <rect x="0" y="770" width="1080" height="380" fill="url(#cpMesh)"/>
+  <path d="M0 770H1080" stroke="#4A3E5A" stroke-width="10"/>
+  ${[60, 280, 500, 720, 940].map(x => `<rect x="${x - 6}" y="760" width="12" height="390" rx="4" fill="#4A3E5A"/>`).join('')}
+  <!-- terrain synthétique -->
+  <rect y="1130" width="1080" height="800" fill="#3E9A5A"/>
+  ${[0, 1, 2, 3, 4, 5].map(i => `<rect y="${1130 + i * 130}" width="1080" height="65" fill="#45A462"/>`).join('')}
+  <rect y="1124" width="1080" height="14" fill="#2F7A48"/>
+  <path d="M0 1200H1080" stroke="#F4F1EA" stroke-width="7" opacity=".85"/>
+  <path d="M560 1200Q650 1250 820 1250Q990 1250 1080 1210" fill="none" stroke="#F4F1EA" stroke-width="7" opacity=".7"/>
+  <!-- but (au fond à droite) -->
+  <rect x="640" y="950" width="320" height="250" fill="url(#cpNet)"/>
+  <path d="M640 1200V950H960V1200" fill="none" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="22" stroke-linejoin="round"/>
+  <path d="M640 1200V950H960V1200" fill="none" stroke="#F7F4EE" stroke-width="12" stroke-linejoin="round"/>
+  <!-- banc de touche -->
+  <rect x="196" y="1080" width="16" height="190" rx="5" fill="#3E4A5A" ${OLA}/><rect x="604" y="1080" width="16" height="190" rx="5" fill="#3E4A5A" ${OLA}/>
+  <rect x="182" y="1096" width="452" height="34" rx="10" fill="#3F7FC0" ${OLA}/>
+  <rect x="182" y="1144" width="452" height="34" rx="10" fill="#3A74B0" ${OLA}/>
+  <rect x="206" y="1270" width="18" height="140" rx="5" fill="#3E4A5A" ${OLA}/><rect x="592" y="1270" width="18" height="140" rx="5" fill="#3E4A5A" ${OLA}/>
+  <rect x="172" y="1246" width="472" height="36" rx="10" fill="#4A8BCC" ${OLA}/>
+  <rect x="176" y="1278" width="464" height="12" rx="5" fill="#2F5F92"/>
+  <ellipse cx="410" cy="1418" rx="260" ry="16" fill="#2E7A44" opacity=".7"/>
+  <!-- sac de sport sous le banc, à droite -->
+  <path d="M500 1408C496 1360 520 1350 560 1350C600 1350 624 1360 620 1408Z" fill="#2B2A33" ${OLA}/>
+  <path d="M528 1352Q560 1320 592 1352" fill="none" stroke="#2B2A33" stroke-width="8"/>
+  <path d="M514 1384H606" stroke="#E04848" stroke-width="6"/>
+  <circle id="cpPhGlow" cx="0" cy="0" r="210" fill="url(#cpPh)" opacity="0"/>
+  <g id="cpPerson"></g>
+  <!-- ballon à ses pieds -->
+  <g id="cpBall" transform="translate(262 1388)">
+    <circle r="36" fill="#F7F4EE" ${OLA}/>
+    <path d="M0 -12L11 -4L7 10L-7 10L-11 -4Z" fill="#2B2A33"/>
+    <path d="M0 -12V-34M11 -4L32 -12M7 10L20 28M-7 10L-20 28M-11 -4L-32 -12" stroke="#2B2A33" stroke-width="3"/>
+    <path d="M-14 -34L0 -34L8 -36M28 -20L33 -6M24 26L14 33M-24 26L-14 33M-28 -20L-33 -6" stroke="#2B2A33" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <rect id="cpWarm" x="0" y="0" width="1080" height="1920" fill="#FF9A5A" opacity=".06" style="mix-blend-mode:soft-light"/>`;
+  const q = s => svg.querySelector(s);
+  return { person: q('#cpPerson'), phGlow: q('#cpPhGlow'), fl: [q('#cpFl1'), q('#cpFl2')], glow: [q('#cpGlow1'), q('#cpGlow2')] };
+}
+
+// bouteille d'eau (tenue en main ou posée sur le banc), dans le repère du personnage
+function buildBottle(toon) {
+  const g = el('g', {});
+  toon.root.insertBefore(g, toon.gThumbs);
+  g.innerHTML = `<g transform="translate(0 -6)">
+    <rect x="-15" y="-44" width="30" height="82" rx="10" fill="#BFE3F2" fill-opacity=".9" stroke="#3A2A26" stroke-width="4.5"/>
+    <rect x="-15" y="-6" width="30" height="26" fill="#3F7FC0" stroke="#3A2A26" stroke-width="3"/>
+    <rect x="-9" y="-58" width="18" height="16" rx="4" fill="#E04848" stroke="#3A2A26" stroke-width="4"/>
+    <path d="M-7 -34V-14" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".7"/></g>`;
+  return g;
+}
+
+function build() {
+  const st = $('#stage');
+  R.L = cityPitch($('#scene'));
+  R.b = new Toon(R.L.person, Object.assign({}, CAST.ilyes));
+  R.bottle = buildBottle(R.b);
+  R.who = el2(st, '<div class="c" style="top:250px"><div class="sticker white" style="position:relative;display:inline-block;font-size:34px">⚽ Ilyes, 21 ans · samedi 19 h</div></div>');
+  R.c1 = cap(st, 'Après le foot,\nil me manquait un truc ⚽', 'w', 350);
+  R.c2 = cap(st, 'Je check ma série… 👀', 'w', 330);
+  R.c3 = cap(st, "12 jours… et aujourd'hui\nj'ai encore rien fait 😬", 'k', 290);
+  R.c3b = cap(st, '100 Salawat, direct 💚', 'k', 330);
+  R.ff = el2(st, '<div class="ff" style="top:470px"><b>⏩ accéléré</b></div>');
+  R.plus = el2(st, '<div class="c" style="top:455px"><div class="sticker gold" style="position:relative;display:inline-block">🔥 Série : 13 jours</div></div>');
+  R.c4 = cap(st, '13 jours.\nOn lâche rien 🔥', 'w', 300);
+  R.phone = makePhone([
+    scrProfil('pro', { name: 'Ilyes', palier: '🌒 Le Marcheur', streak: 12, actifs: 18, semaine: 86,
+      badges: [['✨', 'Première séance', 'Débloqué'], ['🔥', '7 jours de suite', 'Débloqué'], ['🌙', '30 jours de suite', 'Meilleure série : 12 j', true]] }),
+    scrCompteur('cpt', { k: 'Étape 1 sur 1 · +10 XP', title: 'Bénédictions sur le Prophète ﷺ', ar: 'صَلَّى ٱللَّٰهُ عَلَيْهِ وَسَلَّمَ', target: 100, step: 25 }),
+  ]);
+  $('#phoneWrap').appendChild(R.phone);
+  R.end = tkEnd(st);
+}
+
+// 20 touchers visibles sur le cercle (accéléré : chaque toucher = 5 récitations)
+const CTAPS = [];
+for (let i = 0; i < 20; i++) CTAPS.push(7.55 + i * .14);
+const CDONE = CTAPS[CTAPS.length - 1];
+
+function scene(t) {
+  $('#scene').style.transform = `translateY(70px) scale(${(1.34 + .05 * P(t, 0, 15, E.lin)).toFixed(4)})`;
+  // projecteurs qui s'allument
+  const fl = P(t, 1.4, .25) * .6 + P(t, 2.6, 1.6) * .4;
+  for (const g of R.L.fl) for (const r of g.children) r.setAttribute('fill', mix('#CFC6BC', '#FFF6D2', fl));
+  R.L.glow.forEach((g, i) => g.setAttribute('opacity', (fl * (.9 + .1 * Math.sin(t * 7 + i))).toFixed(3)));
+  // phases : boit → pose la bouteille → sort le téléphone → (gros plan) → poing levé
+  const drink = P(t, .2, .5, E.ioC) * (1 - P(t, 2.0, .45, E.ioC));
+  const place = P(t, 2.0, .45, E.ioC) * (1 - P(t, 2.75, .4, E.ioC));
+  const pocket = P(t, 2.85, .35, E.ioC) * (1 - P(t, 3.25, .4, E.ioC));
+  const up = P(t, 3.25, .45, E.ioC);
+  const fist = P(t, 12.7, .35, E.outB) * (1 - P(t, 13.8, .4, E.ioC));
+  // main gauche du personnage = côté de l'écran à gauche ; la bouteille est à sa droite (côté x > 0)
+  const rest = [[-34, -6], [34, -6]];
+  let hL = rest[0].slice(), hR = rest[1].slice();
+  const sip = Math.sin(t * 6) * 2;
+  hR = [lerp(hR[0], 44, drink), lerp(hR[1], -196 + sip, drink)];
+  hR = [lerp(hR[0], BOTTLE_SEAT[0], place), lerp(hR[1], BOTTLE_SEAT[1], place)];
+  hR = [lerp(hR[0], 56, pocket), lerp(hR[1], -6, pocket)];
+  hL = [lerp(hL[0], -16, up), lerp(hL[1], -60, up)];
+  hR = [lerp(hR[0], 16, up), lerp(hR[1], -62, up)];
+  // poing levé (main droite), téléphone dans la main gauche
+  hR = [lerp(hR[0], 112, fist), lerp(hR[1], -172 + 6 * Math.sin(t * 9) * fist, fist)];
+  hL = [lerp(hL[0], -22, fist), lerp(hL[1], -48, fist)];
+  const lean = 13 * place - 4 * drink + Math.sin(t * 1.7) * .8 + 3 * fist;
+  const hold = t > 3.15;
+  let face;
+  if (t < 2.0) face = { eyes: drink > .6 ? 'closed' : 'open', look: [0, -2], mouth: drink > .6 ? 'o' : 'smile', brow: .2 };
+  else if (t < 3.3) face = { look: [8, 5], mouth: 'smile' };
+  else if (t < 12.3) face = { look: [0, 5], mouth: t < 5.3 ? 'small' : 'smile', brow: t > 5 && t < 6.5 ? .3 : 0, worry: t > 5 && t < 6.5 ? .4 : 0 };
+  else if (t < 12.7) face = { look: [0, 2], mouth: 'smile', brow: .3 };
+  else face = { eyes: t < 13.6 ? 'happy' : 'open', look: [0, 0], mouth: 'grin', brow: .3 };
+  const pose = { x: HIP[0], y: HIP[1], s: S, lean, tilt: drink * -8, dy: up * 3 * (1 - fist), t, face, hands: { L: hL, R: hR },
+    phone: hold ? (fist > .02 ? 'L' : 'both') : null, glow: .95, faceLight: .3 };
+  R.b.set(pose);
+  R.b.tint('#FF8A5A', .06);
+  // bouteille : dans la main droite (boire, poser), puis sur le banc
+  const inHand = t < 2.55;
+  const ang = inHand ? -105 * drink : 0;
+  const bp = inHand ? [R.b.H.R[0], R.b.H.R[1]] : BOTTLE_SEAT;
+  R.bottle.setAttribute('transform', `translate(${f1(bp[0])} ${f1(bp[1])}) rotate(${ang.toFixed(1)})`);
+  const pw = R.b.phoneWorld(pose);
+  R.L.phGlow.setAttribute('cx', f1(pw[0])); R.L.phGlow.setAttribute('cy', f1(pw[1]));
+  R.L.phGlow.setAttribute('opacity', (hold ? .55 : 0).toFixed(3));
+}
+
+function render(t) {
+  T($('#black'), { op: 1 - P(t, 0, .5, E.ioC) });
+  scene(t);
+  pop(R.who, t, .15, 3.3);
+  pop(R.c1, t, .35, 3.4);
+  pop(R.c2, t, 3.5, 5.15);
+  // gros plan : profil (12 j) → compteur Salawat → profil (13 j)
+  T($('#dim'), { op: .55 * P(t, 4.6, .5) * (1 - P(t, 12.2, .5)) });
+  const pin = P(t, 4.65, .9, E.outX), pout = P(t, 12.15, .6, E.inC);
+  const pw = $('#phoneWrap');
+  if (vis(pw, pin > 0 && pout < 1)) T(pw, { y: lerp(1400, 0, pin) + 1500 * pout, rx: lerp(28, 0, pin) + 18 * pout, ry: 4 * pin, r: lerp(7, 0, pin), s: 1.0 });
+  const cin = P(t, 6.85, .45, E.ioC), cout = P(t, CDONE + .55, .45, E.ioC);
+  const cpt = $('#cpt');
+  T(cpt, { y: lerp(1214, 0, cin), x: -560 * cout });
+  T($('#pro'), { x: 560 * (1 - cout) * (cin > .99 ? 1 : 0) });
+  const n = CTAPS.filter(x => t >= x).length;
+  drawCompteur(cpt, n * 5, 100);
+  const press = CTAPS.some(x => t >= x && t < x + .1) ? .97 : 1;
+  T(cpt.querySelector('.circ'), { s: press });
+  const bump = P(t, 11.3, .2) - P(t, 11.55, .35);
+  drawProfil($('#pro'), t > 11.3 ? 13 : 12, t > 11.3 ? 19 : 18);
+  T($('#pro .stats .e-card:nth-child(2)'), { s: 1 + .12 * bump });
+  T($('#pro .head .pl b:nth-child(2)'), { s: 1 + .18 * bump });
+  drawTaps(R.phone, t, CTAPS.map(x => [x, 280, 650]));
+  pop(R.c3, t, 5.25, 6.95);
+  pop(R.c3b, t, 7.05, CDONE + .4);
+  pop(R.ff, t, 7.4, CDONE + .4);
+  pop(R.plus, t, 11.35, 12.1);
+  // retour sur la scène : poing levé
+  pop(R.c4, t, 12.55, 14.4);
+  drawEnd(R.end, t, 14.45, 540, 1100);
+}
+boot({ duration: 16.7, build, render });
+</script>
+</body>
+</html>

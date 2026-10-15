@@ -8,9 +8,10 @@
 <link rel="stylesheet" href="../lib/base.css"><link rel="stylesheet" href="../lib/screens.css"><link rel="stylesheet" href="../lib/ecrans.css"><link rel="stylesheet" href="../tiktok/tk.css">
 <!-- Au quotidien avec Dawam — le samedi matin, Mehdi crée un groupe de dhikr « Famille » au petit-déjeuner : Lina (9 ans) et Youssef (5 ans) tapent avec lui jusqu'à 100 salawat. -->
 <style>
-#scene{transform-origin:540px 1180px}
+#scene{transform-origin:540px 1250px}
 #dim{background:#2A1A0E}
 /* tk.css définit un .num global (pastille) : on rend au compteur du groupe son style d'origine */
+.e-grp .mrow .c{position:static;width:auto;text-align:right}
 .e-grp .main .num{position:static;width:auto;height:auto;border-radius:0;background:none;box-shadow:none;display:block;color:var(--ink)}
 #bub{transform-origin:50% 100%}
 .cnt{position:absolute;left:0;width:1080px;text-align:center}
@@ -32,8 +33,8 @@ const S = 1.18;
 // bassins (assis derrière la table, jambes cachées) et échelles : enfants ≈ 0,64 et 0,56 × l'adulte
 const POS = {
   mehdi: { x: 540, y: 1340, s: S },
-  lina: { x: 232, y: 1302, s: S * .64 },
-  youssef: { x: 850, y: 1304, s: S * .56 },
+  lina: { x: 298, y: 1302, s: S * .64 },
+  youssef: { x: 782, y: 1304, s: S * .56 },
 };
 
 // cuisine ensoleillée : fenêtre et rayons de soleil, faïence, étagère ; table du petit-déjeuner au premier plan
@@ -90,16 +91,16 @@ function kitchen(svg) {
   const tb = svg.querySelector('#kTable');
   // objets de la table (posés sur le plateau, y ≈ 1300-1350)
   tb.innerHTML = `
-    <ellipse cx="88" cy="1336" rx="62" ry="14" fill="#C9A57A" opacity=".5"/>
-    <path d="M30 1300Q32 1342 88 1344Q144 1342 146 1300Z" fill="#3F8F86" ${OLA}/><ellipse cx="88" cy="1300" rx="58" ry="12" fill="#F7F1E6" ${OLA}/><ellipse cx="88" cy="1300" rx="44" ry="7" fill="#F2C14E"/>
+    <g transform="translate(90 0)"><ellipse cx="88" cy="1336" rx="62" ry="14" fill="#C9A57A" opacity=".5"/>
+    <path d="M30 1300Q32 1342 88 1344Q144 1342 146 1300Z" fill="#3F8F86" ${OLA}/><ellipse cx="88" cy="1300" rx="58" ry="12" fill="#F7F1E6" ${OLA}/><ellipse cx="88" cy="1300" rx="44" ry="7" fill="#F2C14E"/></g>
     <!-- théière et verres -->
-    <g transform="translate(388 1326)"><ellipse cx="0" cy="14" rx="50" ry="10" fill="#C9A57A" opacity=".5"/>
+    <g transform="translate(424 1326)"><ellipse cx="0" cy="14" rx="50" ry="10" fill="#C9A57A" opacity=".5"/>
       <path d="M-40 6Q-46 -50 0 -54Q46 -50 40 6Z" fill="#D9D6D0" ${OLA}/><path d="M38 -16Q72 -26 80 -52" stroke="#B8B4AE" stroke-width="10" fill="none" stroke-linecap="round"/>
       <path d="M-38 -26Q-66 -28 -60 -6Q-56 6 -38 0" stroke="#B8B4AE" stroke-width="9" fill="none"/>
       <path d="M-20 -54Q0 -76 20 -54Z" fill="#C9C5BE" ${OLA}/><circle cx="0" cy="-76" r="7" fill="#C9C5BE" ${OLA}/>
       <path d="M-30 -20H30" stroke="#B07D2E" stroke-width="5" opacity=".7"/></g>
-    ${steam(468, 1240)}
-    <g transform="translate(466 1330)"><path d="M-14 0L14 0L18 -44L-18 -44Z" fill="#E9B04A" fill-opacity=".85" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="4"/><path d="M-17 -34H17" stroke="#FFFFFF" stroke-width="4" opacity=".7"/></g>
+    ${steam(492, 1240)}
+    <g transform="translate(492 1330)"><path d="M-14 0L14 0L18 -44L-18 -44Z" fill="#E9B04A" fill-opacity=".85" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="4"/><path d="M-17 -34H17" stroke="#FFFFFF" stroke-width="4" opacity=".7"/></g>
     <!-- plat de msemen -->
     <ellipse cx="560" cy="1338" rx="104" ry="18" fill="#FFFFFF" ${OLA}/>
     <path d="M490 1330L540 1306L600 1312L630 1332Z" fill="#E7B66B" ${OLA}/><path d="M510 1324L560 1298L612 1306L628 1326Z" fill="#F0C77E" ${OLA}/>
@@ -107,7 +108,7 @@ function kitchen(svg) {
     <!-- miel -->
     <path d="M668 1338Q664 1296 690 1294Q716 1296 712 1338Z" fill="#E8A23A" fill-opacity=".9" ${OLA}/><rect x="676" y="1284" width="28" height="14" rx="4" fill="#C65D4A" ${OLA}/>
     <!-- carafe et verre de jus d'orange -->
-    <g transform="translate(990 1334)"><path d="M-30 4L30 4L34 -96L-34 -96Z" fill="#FFFFFF" fill-opacity=".45" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="5"/>
+    <g transform="translate(905 1334)"><path d="M-30 4L30 4L34 -96L-34 -96Z" fill="#FFFFFF" fill-opacity=".45" stroke="#2A1E2C" stroke-opacity=".5" stroke-width="5"/>
       <path d="M-28 0L28 0L31 -64L-31 -64Z" fill="#F29E4C" opacity=".9"/><path d="M34 -80Q58 -76 54 -44Q50 -24 32 -24" stroke="#2A1E2C" stroke-opacity=".45" stroke-width="7" fill="none"/></g>`;
   const q = s => svg.querySelector(s);
   return { person: q('#kP') };
@@ -128,15 +129,15 @@ function buildPlus(parent, n = 4) {
   return Array.from({ length: n }, () => el('text', { 'font-family': 'TikTok Sans, Plus Jakarta Sans', 'font-weight': 800, 'font-size': 40, fill: '#FFFFFF',
     stroke: '#BA7517', 'stroke-width': 8, 'paint-order': 'stroke', 'stroke-linejoin': 'round', 'text-anchor': 'middle', opacity: 0 }, parent));
 }
-function drawPlus(list, t, taps, x, y, on) {
+function drawPlus(list, t, taps, x, y, on, dx = 0) {
   const recent = on ? taps.filter(k => t >= k && t < k + .7).slice(-list.length) : [];
   list.forEach((n, i) => {
     const k = recent[i];
     if (k === undefined) { n.setAttribute('opacity', 0); return; }
     const a = (t - k) / .7;
     n.textContent = '+1';
-    n.setAttribute('x', f1(x + Math.sin(k * 13) * 22));
-    n.setAttribute('y', f1(y - 20 - a * 110));
+    n.setAttribute('x', f1(x + dx * Math.min(1, a * 2.5) + Math.sin(k * 13) * 30));
+    n.setAttribute('y', f1(y - 6 - a * 90));
     n.setAttribute('font-size', f1(34 + 14 * Math.min(1, a * 4)));
     n.setAttribute('opacity', (a < .15 ? a / .15 : 1 - Math.max(0, (a - .55) / .45)).toFixed(3));
   });
@@ -177,8 +178,7 @@ function build() {
   R.c1 = cap(st, 'Le samedi matin chez nous ☀️', 'w', 350);
   R.c2 = cap(st, 'Papa a créé un groupe\n« Famille » 📿', 'w', 330);
   R.bub = el2(st, `<div id="bub" class="e-bub me" style="left:303px;top:610px;width:474px;font-size:23px">Rejoins notre groupe de dhikr collectif sur Dawam ! Code d'invitation : <b>A3F7Z2</b></div>`);
-  R.c3 = cap(st, 'Objectif : 100 salawat\nensemble 🤍', 'w', 262, '').querySelector('.l').parentNode;
-  R.c3.classList.add('sm');
+  R.c3 = cap(st, 'Objectif : 100 salawat\nensemble 🤍', 'w sm', 262);
   R.c4 = cap(st, 'Youssef, 5 ans,\nle plus motivé 😂', 'w', 360);
   R.cnt = el2(st, '<div class="cnt" style="top:258px"><div class="sticker gold" style="position:relative;display:inline-block">📿 Famille · <span>0</span> / 100</div></div>');
   R.cntN = R.cnt.querySelector('span');
@@ -192,7 +192,7 @@ function build() {
 const PLAY0 = 7.6, PLAY1 = 11.0, CHEER = 13.1;
 // point de la scène → repère du bassin d'un personnage
 function scene(t) {
-  $('#scene').style.transform = `scale(${(1.14 + .06 * P(t, 0, 14, E.lin)).toFixed(4)})`;
+  $('#scene').style.transform = `translateY(150px) scale(${(1.44 + .06 * P(t, 0, 14, E.lin)).toFixed(4)})`;
   const tapping = t >= PLAY0 && t < CHEER - .2;   // pendant les gros plans on ne voit pas la scène
   const cheer = P(t, CHEER, .35, E.outB);
   const look = P(t, 2.4, .3);   // les enfants se tournent vers Papa
@@ -209,8 +209,8 @@ function scene(t) {
     hL = [hL[0], hL[1] - 26 * show]; ph = [hL[0] + 6, hL[1] - 26];
     if (!tapping && t >= 2.4) hR = [lerp(34, 40, show), lerp(-50, -46, show)];
     // victoire : les deux poings levés
-    hL = [lerp(hL[0], -74, cheer), lerp(hL[1], -214 + Math.sin(t * 9) * 6, cheer)];
-    hR = [lerp(hR[0], 74, cheer), lerp(hR[1], -214 - Math.sin(t * 9) * 6, cheer)];
+    hL = [lerp(hL[0], -118, cheer), lerp(hL[1], -196 + Math.sin(t * 9) * 6, cheer)];
+    hR = [lerp(hR[0], 118, cheer), lerp(hR[1], -196 - Math.sin(t * 9) * 6, cheer)];
     let face;
     if (t < 2.4) face = { look: [0, 6], mouth: 'smile' };
     else if (t < 4) face = { look: [t % 1.2 < .6 ? -10 : 10, 1], mouth: 'grin', brow: .3 };
@@ -219,7 +219,7 @@ function scene(t) {
     R.m.set({ x: p.x, y: p.y + (cheer ? -6 * cheer : 0), s: p.s, lean: Math.sin(t * 1.7) * 1.2, t, face, hands: { L: hL, R: hR } });
     vis(R.mPh, cheer < .05);
     R.mPh.setAttribute('transform', `translate(${f1(R.m.H.L[0] + 6)} ${f1(R.m.H.L[1] - 26)})`);
-    drawPlus(R.plus.P, t, TAPS.P, p.x + (R.m.H.L[0] + 6) * p.s, p.y + (R.m.H.L[1] - 60) * p.s, tapping);
+    drawPlus(R.plus.P, t, TAPS.P, p.x, p.y - 330 * p.s, tapping, 0);
   }
 
   // ── Lina : boit son jus, puis tablette (main gauche) et tape de la main droite ──
@@ -234,8 +234,8 @@ function scene(t) {
       hL = [-40, -58]; const c = [hL[0] + 50, hL[1] - 4];
       hR = [lerp(c[0] + 50, c[0] + 14, pr), lerp(c[1] + 6, c[1] - 2, pr)];
     }
-    hL = [lerp(hL[0], -70, cheer), lerp(hL[1], -212 + Math.sin(t * 10 + 1) * 6, cheer)];
-    hR = [lerp(hR[0], 70, cheer), lerp(hR[1], -212 - Math.sin(t * 10 + 1) * 6, cheer)];
+    hL = [lerp(hL[0], -116, cheer), lerp(hL[1], -194 + Math.sin(t * 10 + 1) * 6, cheer)];
+    hR = [lerp(hR[0], 116, cheer), lerp(hR[1], -194 - Math.sin(t * 10 + 1) * 6, cheer)];
     let face;
     if (t < 2.4) face = { look: [2, 2], mouth: sip > .5 ? 'small' : 'smile', eyes: sip > .5 ? 'closed' : 'open' };
     else if (t < 3.0) face = { look: [10 * look, 0], mouth: 'o', brow: .7 };
@@ -247,7 +247,7 @@ function scene(t) {
     vis(R.lTab, dev && cheer < .05);
     const tc = [R.l.H.L[0] + 50, R.l.H.L[1] - 4];
     R.lTab.setAttribute('transform', `translate(${f1(tc[0])} ${f1(tc[1])}) rotate(-3)`);
-    drawPlus(R.plus.L, t, TAPS.L, p.x + tc[0] * p.s, p.y + (tc[1] - 50) * p.s, tapping);
+    drawPlus(R.plus.L, t, TAPS.L, p.x, p.y - 330 * p.s, tapping, 0);
   }
 
   // ── Youssef : croque son msemen, puis tape à toute vitesse en sautillant ──
@@ -262,8 +262,8 @@ function scene(t) {
       hL = [-42, -60]; const c = [hL[0] + 54, hL[1] - 4];
       hR = [lerp(c[0] + 52, c[0] + 12, pr), lerp(c[1] + 4, c[1] - 4, pr)];
     }
-    hL = [lerp(hL[0], -70, cheer), lerp(hL[1], -214 + Math.sin(t * 12) * 8, cheer)];
-    hR = [lerp(hR[0], 70, cheer), lerp(hR[1], -214 - Math.sin(t * 12) * 8, cheer)];
+    hL = [lerp(hL[0], -116, cheer), lerp(hL[1], -194 + Math.sin(t * 12) * 8, cheer)];
+    hR = [lerp(hR[0], 116, cheer), lerp(hR[1], -194 - Math.sin(t * 12) * 8, cheer)];
     const hop = ex * Math.abs(Math.sin(t * 9)) * 10 + cheer * Math.abs(Math.sin(t * 8)) * 14;
     let face;
     if (t < 2.4) face = { look: [-2, 2], mouth: bite > .4 || (t > 1.2 && t < 1.7) || t > 2.25 ? (t % .4 < .2 ? 'small' : 'flat') : 'smile' };
@@ -276,7 +276,7 @@ function scene(t) {
     vis(R.yTab, dev && cheer < .05);
     const tc = [R.y.H.L[0] + 54, R.y.H.L[1] - 4];
     R.yTab.setAttribute('transform', `translate(${f1(tc[0])} ${f1(tc[1])}) rotate(4)`);
-    drawPlus(R.plus.Y, t, TAPS.Y, p.x + tc[0] * p.s, p.y - hop + (tc[1] - 54) * p.s, tapping);
+    drawPlus(R.plus.Y, t, TAPS.Y, p.x, p.y - hop - 330 * p.s, tapping, 0);
   }
   drawSteam($('#scene'), t);
 }
